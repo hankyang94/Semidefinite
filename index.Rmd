@@ -1,0 +1,32 @@
+--- 
+title: "Optimal Control and Estimation"
+author: "Heng Yang"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: hankyang94/OptimalControlEstimation
+description: "Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation."
+---
+
+# Preface {-}
+
+This is the textbook for Harvard ES/AM 158: Introduction to Optimal Control and Estimation. Information about the offerings of the class is listed below.
+
+#### 2023 Fall {-}
+
+**Time**: Mon/Wed 2:15 - 3:30pm
+
+**Location**: Science and Engineering Complex, Room TBD
+
+**Instructor**: [Heng Yang](https://hankyang.seas.harvard.edu/)
+
+**Teaching Fellow**: [Weiyu Li](https://scholar.harvard.edu/weiyuli/home)
+
+[**Syllabus**](https://docs.google.com/document/d/1q8_jB5dLx9jHOBi3DQ48Vv2E243ocGCGm_H0mJuOojM/edit?usp=sharing)
+
+
+#### Acknowledgment {-}

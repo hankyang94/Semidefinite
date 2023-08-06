@@ -1,0 +1,153 @@
+# The Optimal Control Formulation {#formulation}
+
+## The Basic Problem
+Consider a discrete-time dynamical system
+\begin{equation}
+x_{k+1} = f_k (x_k, u_k, w_k), \quad k =0,1,\dots,N-1
+(\#eq:discrete-time-dynamics)
+\end{equation}
+where
+
+- $x_k \in \mathbb{X} \subseteq \mathbb{R}^n$ is the _state_ of the system, 
+
+- $u_k \in \mathbb{U} \subseteq \mathbb{R}^m$ is the _control_ we wish to design, 
+
+- $w_k \in \mathbb{W} \subseteq \mathbb{R}^p$ a random _disturbance_ or noise (e.g., due to unmodelled dynamics) which is described by a probability distribution $P_k(\cdot \mid x_k, u_k)$ that may depend on $x_k$ and $u_k$ but not on prior disturbances $w_0,\dots,w_{k-1}$,
+
+- $k$ indexes the discrete time,
+
+- $N$ denotes the horizon, 
+
+- $f_k$ models the transition function of the system (typically $f_k \equiv f$ is time-invariant, especially for robotics systems; we use $f_k$ here to keep full generality). 
+
+::: {.remark name="Deterministic v.s. Stochastic"}
+When $w_k \equiv 0$ for all $k$, we say the system \@ref(eq:discrete-time-dynamics) is _deterministic_; otherwise we say the system is _stochastic_. In the following we will deal with the stochastic case, but most of the methodology should carry over to the deterministic setup.
+:::
+
+We consider the class of _controllers_ (also called _policies_) that consist of a sequence of functions
+$$
+\pi = \{ \mu_0,\dots,\mu_{N-1} \},
+$$
+where $\mu_k (x_k) \in \mathbb{U}$ for all $x_k$, i.e., $\mu_k$ is a _feedback_ controller that maps the state to an admissible control. Given an initial state $x_0$ and an admissible policy $\pi$, the state _trajectory_ of the system is a sequence of random variables that evolve according to
+\begin{equation}
+x_{k+1} = f_k(x_k,\mu_k(x_k),w_k), \quad k=0,\dots,N-1
+(\#eq:closed-loop-state-trajectory)
+\end{equation}
+where the randomness comes from the disturbance $w_k$.
+
+We assume the state-control trajectory $\{u_k\}_{k=0}^{N-1}$ and $\{x_k \}_{k=0}^{N}$ induce an _additive cost_
+\begin{equation}
+g_N(x_N) + \sum_{k=0}^{N-1} g_k(x_k,u_k)
+(\#eq:additive-cost)
+\end{equation}
+where $g_k,k=0,\dots,N$ are some user-designed functions. 
+
+With \@ref(eq:closed-loop-state-trajectory) and \@ref(eq:additive-cost), for any admissible policy $\pi$, we denote its induced _expected cost_ with initial state $x_0$ as 
+\begin{equation}
+J_\pi (x_0) = \mathbb{E} \left\{ g_N(x_N) + \sum_{k=0}^{N-1} g_k (x_k, \mu_k(x_k))  \right\},
+(\#eq:expected-cost)
+\end{equation}
+where the expectation is taken over the randomness of $w_k$.
+
+::: {.definition #basicproblem name="Discrete-time, Finite-horizon Optimal Control"} 
+Find the best admissible controller that minimizes the expected cost in \@ref(eq:expected-cost)
+\begin{equation}
+\pi^\star \in \arg\min_{\pi \in \Pi} J_\pi(x_0),
+\end{equation}
+where $\Pi$ is the set of all admissible controllers.
+The cost attained by the optimal controller, i.e., $J^\star = J_{\pi^\star}(x_0)$ is called the optimal _cost-to-go_, or the optimal _value function_.
+:::
+
+::: {.remark name="Open-loop v.s. Closed-loop"}
+An important feature of the basic problem in Definition \@ref(def:basicproblem) is that the problem seeks _feedback policies_, instead of numerical values of the controls, i.e., $u_k = \mu_k(x_k)$ is in general a function of the state $x_k$. In other words, the controls are executed sequentially, one at a time after observing the state at each time. This is called closed-loop control, and is in general better than open-loop control
+$$
+\min_{u_0,\dots,u_{N-1}} \mathbb{E} \left\{ g_N(x_N) + \sum_{k=0}^{N-1} g_k (x_k, u_k)  \right\}
+$$
+where all the controls are planned at $k=0$. Intuitively, a closed-loop policy is able to utilize the extra information received at each timestep (i.e., it observes $x_{k+1}$ and hence also observes the disturbance $w_k$) to obtain a lower cost than an open-loop controller. Example 1.2.1 in [@bertsekas12book-dpocI] gives a concrete application where a closed-loop policy attains a lower cost than an open-loop policy.
+
+In deterministic control (i.e., when $w_k \equiv 0,\forall k$), however, a closed-loop policy has no advantage over an open-loop controller. This is obvious because at $k=0$, even the open-loop controller predicts perfectly the consequences of all its actions and there is no extra information to be observed at later time steps. In fact, even in stochastic problems, a closed-loop policy may not be advantageous, see Exercise 1.27 in [@bertsekas12book-dpocI].
+:::
+
+## Dynamic Programming and Principle of Optimality
+
+We now introduce a general and powerful algorithm, namely _dynamic programming_ (DP), for solving the optimal control problem \@ref(def:basicproblem). The DP algorithm builds upon a quite simple intuition called the _Bellman principle of optimality_.
+
+::: {.}
+::: {.theorem #bellmanoptimality name="Bellman Principle of Optimality"}
+Let $\pi^\star = \{ \mu_0^\star,\mu_1^\star,\dots,\mu_{N-1}^\star \}$ be an optimal policy for the optimal control problem \@ref(def:basicproblem). Assume that when using $\pi^\star$, a given state $x_i$ occurs at timestep $i$ with positive probability (i.e., $x_i$ is reachable at time $i$). 
+
+Now consider the following subproblem where we are at $x_i$ at time $i$ and wish to minimize the cost-to-go from time $i$ to time $N$
+$$
+\min_{\mu_i,\dots,\mu_{N-1}} \mathbb{E} \left\{ g_N(x_N) + \sum_{k=i}^{N-1} g_k (x_k, \mu_k(x_k)) \right\}.
+$$
+Then the truncated policy $\{\mu^\star_i,\mu^\star_{i+1},\dots, \mu^\star_{N-1}\}$ must be optimal for the subproblem.
+:::
+:::
+
+Theorem \@ref(thm:bellmanoptimality) can be proved intuitively by contradiction: if the truncated policy $\{\mu^\star_i,\mu^\star_{i+1},\dots, \mu^\star_{N-1}\}$ is not optimal for the subproblem, say there exists a different policy $\{\mu_i',\mu_{i+1}',\dots, \mu_{N-1}'\}$ that attains a lower cost for the subproblem starting at $x_i$ at time $i$. Then the combined policy $\{\mu_0^\star,\dots,\mu^\star_{i-1},\mu_i',\dots,\mu_{N-1}'\}$ must attain a lower cost for the original optimal control problem \@ref(def:basicproblem) due to the additive cost structure, contradicting the optimality of $\pi^\star$. 
+
+The Bellman principle of optimality is more than just a principle, it is also an algorithm. It suggests that, to build an optimal policy, one can start by solving the last-stage subproblem to obtain $\{\mu^\star_{N-1} \}$, and then proceed to solve the subproblem containing the last two stages to obtain $\{ \mu^\star_{N-2},\mu^\star_{N-1} \}$. The recursion continues until optimal policies at all stages are computed. The following theorem formalizes this concept.
+
+::: {.theorembox}
+::: {.theorem #dynamicprogramming name="Dynamic Programming"}
+The optimal value function $J^\star(x_0)$ of the optimal control problem \@ref(def:basicproblem) (starting from any given initial condition $x_0$) is equal to $J_0(x_0)$, which can be computed backwards and recursively as
+\begin{align}
+J_N(X_N) &= g_N(x_N) \\
+J_k(x_k) &= \min_{u_k \in \mathbb{U}} \displaystyle \mathbb{E}_{w_k \sim P_k(\cdot \mid x_k, u_k)} \displaystyle \left\{ g_k(x_k,u_k) + J_{k+1}(f_k(x_k,u_k,w_k) ) \right\}, \ k=N-1,\dots,1,0.
+(\#eq:dpbackwardrecursion)
+\end{align}
+Moreover, if $u_k^\star = \mu_k^\star(x_k)$ is a minimizer of \@ref(eq:dpbackwardrecursion) for every $x_k$, then the policy $\pi^\star = \{\mu_0^\star,\dots,\mu_{N-1}^\star \}$ is optimal.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+For any admissible policy $\pi = \{ \mu_0,\dots,\mu_{N-1} \}$, denote $\pi^k = \{ \mu_k,\dots,\mu_{N-1} \}$ the last-$(N-k)$-stage truncated policy. Consider the subproblem consisting of the last $N-k$ stages starting from $x_k$, and let $J^\star_k(x_k)$ be its optimal cost-to-go. Mathematically, this is
+\begin{equation}
+J^\star_{k}(x_k) = \min_{\pi^k} \mathbb{E}_{w_k,\dots,w_{N-1}} \left\{ g_N(x_N) + \sum_{i=k}^{N-1} g_i (x_i,\mu_i(x_i)) \right\}, \quad k=0,1,\dots,N-1.
+(\#eq:dptheoremdefineJkstar)
+\end{equation}
+We define $J^\star_N(x_N) = g(x_N)$ for $k=N$.
+
+Our goal is to prove the $J_k(x_k)$ computed by dynamic programming from \@ref(eq:dpbackwardrecursion) is equal to $J^\star_k (x_k)$ for all $k=0,\dots,N$. We will prove this by induction. 
+
+Firstly, we already have $J^\star_N(x_N) = J_N(x_N) = g(x_N)$, so $k=N$ holds automatically. 
+
+Now we assume $J^\star_{k+1}(x_{k+1}) = J_{k+1}(x_{k+1})$ for all $x_{k+1}$, and we wish to induce $J^\star_{k}(x_{k}) = J_{k}(x_{k})$. To show this, we write 
+\begin{align}
+\hspace{-16mm} J^\star_{k}(x_k) &= \min_{\pi^k} \mathbb{E}_{w_k,\dots,w_{N-1}} \left\{ g_N(x_N) + \sum_{i=k}^{N-1} g_i (x_i,\mu_i(x_i)) \right\} (\#eq:dpproof-1)\\
+&= \min_{\mu_k,\pi^{k+1}} \mathbb{E}_{w_k,\dots,w_{N-1}} \left\{ g_k(x_k,\mu_k(x_k)) + g_N(x_N) + \sum_{i=k+1}^{N-1} g_i(x_i,\mu_i(x_i))  \right\}
+(\#eq:dpproof-2)\\
+&= \min_{\mu_k} \left[ \min_{\pi^{k+1}} \mathbb{E}_{w_k,\dots,w_{N-1}} \left\{ g_k(x_k,\mu_k(x_k)) + g_N(x_N) + \sum_{i=k+1}^{N-1} g_i(x_i,\mu_i(x_i))  \right\}\right] (\#eq:dpproof-3)\\
+&= \min_{\mu_k} \mathbb{E}_{w_k} \left\{ g_k(x_k,\mu_k(x_k)) + \min_{\pi^{k+1}} \left[ \mathbb{E}_{w_{k+1},\dots,w_{N-1}} \left\{ g_N(x_N) + \sum_{i=k+1}^{N-1} g_i(x_i,\mu_i(x_i))  \right\}  \right]    \right\} (\#eq:dpproof-4)\\
+&= \min_{\mu_k} \mathbb{E}_{w_k} \left\{ g_k(x_k,\mu_k(x_k)) + J^\star_{k+1}(f_k(x_k,\mu_k(x_k),w_k)) \right\} (\#eq:dpproof-5)\\
+&= \min_{\mu_k} \mathbb{E}_{w_k} \left\{ g_k(x_k,\mu_k(x_k)) + J_{k+1}(f_k(x_k,\mu_k(x_k),w_k)) \right\} (\#eq:dpproof-6)\\
+&= \min_{u_k \in \mathbb{U}} \mathbb{E}_{w_k} \left\{ g_k(x_k,\mu_k(x_k)) + J_{k+1}(f_k(x_k,\mu_k(x_k),w_k)) \right\} (\#eq:dpproof-7)\\
+&= J_k(x_k), (\#eq:dpproof-8)
+\end{align}
+where \@ref(eq:dpproof-1) follows from definition \@ref(eq:dptheoremdefineJkstar); \@ref(eq:dpproof-2) expands $\pi^k = \{ \mu_k, \pi^{k+1}\}$ and $\sum_{i=k}^{N-1} g_i = g_k + \sum_{i=k+1}^{N-1}$; \@ref(eq:dpproof-3) writes the joint minimization over $\mu_k$ and $\pi^{k+1}$ as equivalently first minimizing over $\pi^{k+1}$ and then minimizing over $\mu_k$; \@ref(eq:dpproof-4) is the key step and holds because $g_k$ and $w_k$ depend only on $\mu_k$ but not on $\pi^{k+1}$; \@ref(eq:dpproof-5) follows again from definition \@ref(eq:dptheoremdefineJkstar) with $k$ replaced by $k+1$; \@ref(eq:dpproof-6) results from the induction assumption; \@ref(eq:dpproof-7) clearly holds because any $\mu_k(x_k)$ belongs to $\mathbb{U}$ and any element in $\mathbb{U}$ can be chosen by a feedback controller $\mu_k$; and lastly \@ref(eq:dpproof-8) follows from the dynamic programming algorithm \@ref(eq:dpbackwardrecursion).
+
+By induction, this shows that $J^\star_k(x_k) = J_k(x_k)$ for all $k=0,\dots,N$.
+:::
+:::
+
+The careful reader, especially from a robotics background, may soon become disappointed when seeing the DP algorithm \@ref(eq:dpbackwardrecursion) because it is rather conceptual than practical. To see this, we only need to run DP for $k=N-1$:
+\begin{equation}
+J_{N-1}(x_{N-1}) = \min_{u_{N-1} \in \mathbb{U}} \mathbb{E}_{w_{N-1}} \left\{ g_{N-1}(x_{N-1},u_{N-1}) + J_N(f_{N-1}(x_{N-1},u_{N-1},w_{N-1})) \right\}.
+(\#eq:dptryN-1)
+\end{equation}
+
+Two challenges immediately show up:
+
+- How to perform the minimization over $u_{N-1}$ when $\mathbb{U}$ is a continuous constraint set? Even if we assume $g_{N-1}$ is convex^[You may want to read Appendix \@ref(appconvex) if this is your first time seeing "convex" things.] in $u_{N-1}$, $J_N$ is convex in $x_{N}$, and the dynamics $f_{N-1}$ is also convex in $u_{N-1}$ (so that the optimization \@ref(eq:dptryN-1) is convex), we may be able to solve the minimization _numerically_ for each $x_{N-1}$ using a convex optimization solver, but rarely will we be able to find an analytical policy $\mu_{N-1}^\star$ such that $u_{N-1}^\star = \mu_{N-1}^\star (x_{N-1})$ for every $x_{N-1}$ (i.e., the optimal policy $\mu_{N-1}^\star$ is implict but not explict).
+
+- Suppose we can find an anlytical optimal policy $\mu_{N-1}^\star$, say $\mu_{N-1}^\star = K x_{N-1}$ a linear policy, how will plugging $\mu_{N-1}^\star$ into \@ref(eq:dptryN-1) affect the complexity of $J_{N-1}(x_{N-1})$? One can see that even if $\mu_{N-1}^\star$ is linear in $x_{N-1}$, $J_{N-1}$ may be highly nonlinear in $x_{N-1}$ due to the composition with $g_{N-1}$, $f_{N-1}$ and $J_N$. If $J_{N-1}(x_{N-1})$ becomes too complex, then clearly it becomes more challenging to perform \@ref(eq:dptryN-1) for the next step $k=N-2$.
+
+Due to these challenges, only in a very limited amount of cases will we be able to perform _exact dynamic programming_. For example, when the state space $\mathbb{X}$ and control space $\mathbb{U}$ are discrete, we can design efficient algorithms for exact DP. For another example, when the dynamics $f_k$ is linear and the cost $g_k$ is quadratic, we will also be able to compute $J_k(x_k)$ in closed form (though this sounds a bit surprising!). We will study these problems in more details in Chapter \@ref(exactdp). 
+
+For general optimal control problems with continuous state space and control space (and most problems we care about in robotics), unfortunately, we will have to resort to _approximate dynamic programming_, basically variations of the DP algorithm \@ref(eq:dpbackwardrecursion) where approximate value functions $J_k(x_k)$ and/or control policies $\mu_k(x_k)$ are used (e.g., with neural networks and machine learning).^[Another possible solution is to discretize continuous states and controls. However, when the dimension of state and control is high, discretization becomes too expensive in terms of memory and computational complexity.] We will introduce several popular approximation schemes in Chapter \@ref(approximatedp). We will see that, although exact DP is not possible anymore, the Bellman principle of optimality still remains one of the most important guidelines for designing approximation algorithms. Efficient algorithms for approximate dynamic programming, preferrably with performance guarantees, still remain an active area of research. 
+
+
+
+
+
+

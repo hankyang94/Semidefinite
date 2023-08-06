@@ -1,0 +1,5 @@
+# Continuous-time Optimal Control {#continuous-time-optimal-control}
+
+
+
+## Linear Quadratic Regulator

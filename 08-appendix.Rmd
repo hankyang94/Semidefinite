@@ -1,0 +1,1145 @@
+# (APPENDIX) Appendix {-} 
+
+# Linear System Theory {#app-lti-system-theory}
+
+_Thanks to Shucheng Kang for writing this Appendix._
+
+## Stability {#app-lti-stability}
+
+<!-- Check this [note](https://intra.engr.ucr.edu/~enozari/teaching/ME120_Fall20/Lecture%203%20-%20Stability,%20Controllability%20&%20Observability.pdf).  -->
+
+### Continuous-Time Stability {#app-lti-stability-ct}
+
+Consider the continuous-time linear time-invariant (LTI) system 
+\begin{equation}
+\dot{x} = A x.
+(\#eq:app-stability-ct-linear-system)
+\end{equation}
+
+::: {.definitionbox}
+::: {.definition #ltistable name="Asymptotic and Marginal Stability"}
+The LTI system \@ref(eq:app-stability-ct-linear-system) is
+
+1. "asymptotically stable" if $x(t) \rightarrow 0$ as $t \rightarrow \infty$ for every initial condition $x_0$
+
+2. "marginally stable" if $x(t) \nrightarrow 0$ but remains bounded as $t \rightarrow \infty$ for every initial condition $x_0$
+
+3. "stable" if it is either asymptotically or marginally stable
+
+4. "unstable" if it is not stable
+:::
+:::
+
+One can show that $A$'s eigenvalues determine the LTI system's stability, as the following Theorem states:
+
+::: {.theorembox}
+::: {.theorem #ltistable name="Criteria for Asymptotic and Marginal Stability"}
+
+The LTI system \@ref(eq:app-stability-ct-linear-system) is
+
+
+1. asymptotically stable if $\text{Re} (\lambda_i) < 0$ for all $i$
+
+2. marginally stable if $\text{Re} (\lambda_i) \le 0$ for all $i$ and there exists at least one $i$ for which $\text{Re} (\lambda_i) = 0$
+
+3. stable if $\text{Re} (\lambda_i) \le 0$ for all $i$
+
+4. unstable if $\text{Re} (\lambda_i) > 0$ for at least one $i$
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+Here we only represent the proof of (1). Similar procedure can be adopted for the proof of (2) - (4). 
+
+Suppose $A \in \mathbb{C}^{n \times n}$. There exists a similarity transformation matrix $V := \begin{bmatrix} v_1 & \dots & v_n \end{bmatrix}$, s.t. $A = V J V^{-1}$, where $J$ is the Jordan form of $A$ (Please note that $A$ may be non-diagonalizable so eigenvalue decomposition will fail in general.) Since $\left\{v_1 \dots v_n\right\}$ spans $\mathbb{C}^n$, we can denote the state $x(t)$ as $V a(t)$. Therefore, under the coordinate transformation $V^{-1}$,
+\begin{equation*}
+   \dot{x}(t) = A x(t) \Longrightarrow \dot{a}(t) = J a(t) 
+\end{equation*}
+Now suppose $J$ has $I$ Jordan blocks with corresponding block sizes $K_1, \dots K_I$ and eigenvalues $\lambda_1, \dots, \lambda_I$. Inside the $i$'s Jordan block, the differential equations are:
+\begin{equation*}
+   \begin{split}
+      \dot{a}_{i,1}(t) & = \lambda_i \cdot a_{i,1}(t) \\
+      \dot{a}_{i,2}(t) & = a_{i,1}(t) + \lambda_i \cdot a_{i,2}(t) \\
+      \vdots & \\
+      \dot{a}(t)_{i,K_i} & = a_{i,K_i-1}(t) + \lambda_i \cdot a_{i,K_i}(t)
+   \end{split}
+\end{equation*}
+With Laplace transformation, we represent the above equations in the frequency domain:
+\begin{equation*}
+   \begin{split}
+      s \cdot A_{i,1}(s) - a_{i,1}(0) & = \lambda_i \cdot A_{i,1}(s) \\
+      s \cdot A_{i,2}(s) - a_{i,2}(0) & = A_{i,1}(s) + \lambda_i \cdot A_{i,2}(s) \\
+      \vdots & \\
+      s \cdot A_{i,K_i}(s) - a_{i,K_i}(0) & = A_{i,K_i-1}(s) + \lambda_i \cdot A_{i,K_i}(s) 
+   \end{split}
+\end{equation*}
+where $A_{i,k}(s)$ corresponds to $a_{i,k}(t)$'s Laplace transformation. By solving the above algebraic equations, 
+\begin{equation*}
+   A_{i,k}(s) = \sum_{j=1}^{k} \frac{
+      a_{i, k+1-j}(0)
+   }{
+      (s - \lambda_i)^j
+   }, \quad \forall k \in \left\{1 \dots K_i\right\}
+\end{equation*}
+Via the inverse Laplace transformation:
+\begin{equation*}
+   a_{i,k}(t) = \sum_{j=1}^{k} \frac{
+      a_{i, k+1-j}(0)
+   }{
+      (j-1)!
+   } \cdot e^{\lambda_i t} t^{j-1}, \quad \forall k \in \left\{1 \dots K_i\right\}
+\end{equation*}
+Since $\text{Re}(\lambda_i) < 0$, no matter how we choose $a_{i,k}(0)$, $a_{i,k}(t)$ will always converge to $0$. 
+:::
+:::
+
+### Discrete-Time Stability {#app-lti-stability-dt}
+
+Consider the discrete-time linear time-invariant (LTI) system 
+\begin{equation}
+x_{t+1} = A x_t.
+(\#eq:app-stability-dt-linear-system)
+\end{equation}
+
+::: {.theorembox}
+::: {.theorem #dtltisystemstability name="Stability of Discrete-Time LTI System"}
+The discrete-time LTI system \@ref(eq:app-stability-dt-linear-system) is
+
+1. asymptotically stable if $|\lambda_i| < 1$ for all $i$
+
+2. marginally stable if $|\lambda_i| \leq 1$ for all $i$ and there exists at least one $i$ for which $|\lambda_i| = 1$
+
+3. stable if $|\lambda_i| \leq 1$ for all $i$
+
+4. unstable if $|\lambda_i| > 1$ for at least one $i$.
+
+Note that $|\lambda_i| < 1$ means the eigenvalue lies strictly inside the unit circle in the complex plane.
+:::
+:::
+
+
+### Lyapunov Analysis
+
+::: {.theorembox}
+::: {.theorem #lyapunovequation name="Lyapunov Equation"}
+The following is equivalent for a linear time-invariant system $\dot{x} = A x$
+
+1. The system is globally asymptotically stable, i.e., $A$ is Hurwitz and $\lim_{t \rightarrow \infty} x(t) = 0$ regardless of the initial condition;
+
+2. For any positive definite matrix $Q$, the unique solution $P$ to the Lyapunov equation 
+\begin{equation}
+A^T P + P A = -Q
+(\#eq:lyapunov-equation)
+\end{equation}
+is positive definite.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+(a): $2 \Rightarrow 1$. Suppose we are given two positive definite matrices $P, Q \succ 0$ that satisfies the Lyapunov equation \@ref(eq:lyapunov-equation). Define a scalar function 
+$$
+V(x) = x^T P x.
+$$
+It is clear that $V > 0$ for any $x \neq 0$ and $V(x) = 0$ (i.e., $V(x)$ is positive definite). We also see $V(x)$ is radially unbounded because:
+$$
+V(x) \geq \lambda_{\min}(P) \Vert x \Vert^2 \Rightarrow \lim_{x \rightarrow \infty} V(x) \rightarrow \infty.
+$$
+The time derivative of $V$ reads
+$$
+\dot{V} = 2 x^T P \dot{x} = x^T (A^T P + P A) x = - x^T Q x. 
+$$
+Clearly, $\dot{V} < 0$ for any $x \neq 0$ and $\dot{V}(0) = 0$. According to Lyapunov's global stability theorem \@ref(thm:lyapunovglobalstability), we conclude the linear system $\dot{x} = Ax$ is globally asymptotically stable at $x = 0$.
+
+(b): $1 \Rightarrow 2$. Suppose $A$ is Hurwitz, we want to show that, for any $Q \succ 0$, there exists a unique $P \succ 0$ satisfying the Lyapunov equation \@ref(eq:lyapunov-equation). In fact, consider the matrix 
+$$
+P = \int_{t=0}^{\infty} e^{A^T t} Q e^{At} dt.
+$$
+Because $A$ is Hurwitz, the integral exists, and clearly $P \succ 0$ due to $Q \succ 0$. To show this choice of $P$ satisfies the Lyapunov equation, we write
+\begin{align}
+A^T P + P A &= \int_{t=0}^{\infty} \left( A^T e^{A^T t} Q e^{At} + e^{A^T t} Q e^{At} A  \right) dt \\
+&=\int_{t=0}^{\infty} d \left( e^{A^T t} Q e^{At} \right) \\ 
+& = e^{A^T t} Q e^{At}\vert_{t = \infty} - e^{A^T t} Q e^{At}\vert_{t = 0} = - Q,
+\end{align}
+where the last equality holds because $e^{A \infty} = 0$ (recall $A$ is Hurwitz).
+
+To show the uniqueness of $P$, we assume that there exists another matrix $P'$ that also satisfies the Lyapunov equation. Therefore,
+\begin{align}
+P' &= e^{A^T t} P' e^{At} \vert_{t=0} - e^{A^T t} P' e^{At} \vert_{t=\infty} \\
+ &= - \int_{t=0}^{\infty} d \left( e^{A^T t} P' e^{At} \right) \\
+ &= - \int_{t=0}^{\infty} e^{A^T t} \left( A^T P' + P' A \right) e^{At} dt \\
+ & = \int_{t=0}^{\infty} e^{A^T t} Q e^{At} dt = P,
+\end{align}
+leading to $P' = P$. Hence, the solution is unique. 
+:::
+:::
+
+**Convergence rate estimation**. We now show that Theorem \@ref(thm:lyapunovequation) can allow us to quantify the convergence rate of a (stable) linear system towards zero. 
+
+For a Hurwitz linear system $\dot{x} = Ax$, let us pick a positive definite matrix $Q$. Theorem \@ref(thm:lyapunovequation) tells us we can find a unique $P \succ 0$ satisfying the Lyapunov equation \@ref(eq:lyapunov-equation). In this case, we can upper bound the scalar function $V = x^T P x$ as 
+$$
+V \leq \lambda_{\max}(P) \Vert x \Vert^2.
+$$
+The time derivative of $V$ is $\dot{V} = - x^T Q x$, which can be upper bounded by 
+\begin{align}
+\dot{V} & \leq - \lambda_{\min} (Q) \Vert x \Vert^2 \\
+& = - \frac{\lambda_{\min} (Q)}{\lambda_{\max} (P)} \underbrace{ \left( \lambda_{\max} (P) \Vert x \Vert^2 \right)}_{\geq V} \\
+& \leq - \frac{\lambda_{\min} (Q)}{\lambda_{\max} (P)} V.
+\end{align}
+Denoting $\gamma(Q) = \frac{\lambda_{\min} (Q)}{\lambda_{\max}(P)}$, the above inequality implies 
+$$
+V(0) e^{-\gamma(Q) t} \geq V(t) = x^T P x \geq \lambda_{\min}(P) \Vert x \Vert^2.
+$$
+As a result, $\Vert x \Vert^2$ converges to zero exponentially with a rate at least $\gamma(Q)$, and $\Vert x \Vert$ converges to zero exponentially with a rate at least $\gamma(Q) / 2$.
+
+**Best convergence rate estimation**. I have used $\gamma (Q)$ to make it explict that the rate $\gamma$ depends on the choice of $Q$, because $P$ is computed from the Lyapunov equation as an implicit function of $Q$. Naturally, choosing different $Q$ will lead to different $\gamma (Q)$. So what is the choice of $Q$ that maximizes the convergence rate estimation? 
+
+::: {.corollary #bestconvergencerate name="Maximum Convergence Rate Estimation"}
+$Q = I$ maximizes the convergence rate estimation.
+:::
+::: {.proofbox}
+::: {.proof}
+let us denote $P_0$ as the solution to the Lyapunov equation with $Q = I$
+$$
+A^T P_0 + P_0 A = - I.
+$$
+Let $P$ be the solution corresponding to a different choice of $Q$
+$$
+A^T P + P A = - Q.
+$$
+Without loss of generality, we can assume $\lambda_{\min}(Q) = 1$, because rescaling $Q$ will recale $P$ by the same factor, which does not affect $\gamma(Q)$. Subtracting the two Lyapunov equations above we get 
+$$
+A^T (P - P_0) + (P - P_0) A = - (Q - I).
+$$
+Since $Q - I \succeq 0$ (due to $\lambda_{\min}(Q) = 1$), we know $P - P_0 \succeq 0$ and $\lambda_{\max} (P) \geq \lambda_{\max} (P_0)$. As a result, 
+$$
+\gamma(Q) = \frac{\lambda_{\min}(Q)}{\lambda_{\max}(P)} =  \frac{\lambda_{\min}(I)}{\lambda_{\max}(P)} \leq \frac{\lambda_{\min}(I)}{\lambda_{\max}(P_0)} = \gamma(I),
+$$
+and $Q = I$ maximizes the convergence rate estimation.
+:::
+:::
+
+---
+
+## Controllability and Observability {#app-lti-controllable-observable}
+
+Consider the following linear time-invariant (LTI) system
+\begin{equation}
+    (\#eq:app-linear-system)
+   \begin{split}
+      \dot{x} = A x + B u \\ 
+      y = C x + D u
+   \end{split}
+\end{equation}
+where $x \in \mathbb{R}^n$ the state, $u \in \mathbb{R}^m$ the control input, $y \in \mathbb{R}^p$ the output, and $A,B,C,D$ are constant matrices with proper sizes. If we know the initial state $x(0)$ and the control inputs $u(t)$ over a period of time $t \in [0, t_1]$, the system trajectory $(x(t), y(t))$ can be determined as
+\begin{equation}
+    (\#eq:app-lti-xy)
+   \begin{split}
+      x(t) & = e^{At} x(0) + \int_{0}^{t} e^{A(t-\tau)} B u(\tau) d\tau \\ 
+      y(t) & = C x(t) + D u(t)
+   \end{split}
+\end{equation}
+
+To study the internal structure of linear systems, two important properties should be considered: controllability and observability. In the following analysis, we will see that they are actually dual concepts. Their definitions [@chen1984book-linear] are given below.
+
+::: {.definitionbox}
+::: {.definition #lticontrollable name="Controllability"}
+The LTI system \@ref(eq:app-linear-system), or the pair $(A, B)$, is controllable, if for any initial state $x(0) = x_0$ and final state $x_f$, there exists a sequence of control inputs that transfer the system from $x_0$ to $x_f$ in finite time.
+:::
+:::
+
+::: {.definitionbox}
+::: {.definition #ltiobservable name="Observability"}
+The LTI system \@ref(eq:app-linear-system), or the pair $(C, A)$, is observable, if for any unknown initial state $x(0)$, there exists a finite time $t_1 > 0$, such that knowing $y$ and $u$ over $[0, t_1]$ suffices to determine $x(0)$.
+:::
+:::
+
+Sometimes it will become more convenient for us to analyze the system \@ref(eq:app-linear-system) under another coordinate basis, i.e., $z = T x$, where the coordinate transformation $T$ is nonsingular (i.e., full-rank). Define $A' = TAT^{-1}, B' = PB, C' = CT^{-1}, D' = D$, we get 
+\begin{equation*}
+   \begin{split}
+      \dot{z} = A' z + B' u \\ 
+      y = C' z + D' u
+   \end{split}
+\end{equation*}
+Since the coordinate transformation only changes the system's coordinate basis, physical properties like controllability and observability will not change.
+
+### Cayley-Hamilton Theorem
+
+In the analysis of controllability and observability, Cayley Hamilton Theorem lays the foundation. The statement of the theory and its (elegant) proof are given blow. Some useful corollaries are also presented. 
+
+::: {.theorembox}
+::: {.theorem #cayham name="Cayley-Hamilton"}
+Let $A \in \mathbb{C}^{n \times n}$ and denote the characteristic polynomial of $A$ as 
+$$
+   \text{det}(\lambda I - A) = \lambda^n + a_1 \lambda^{n-1} + \dots + a_n \in \mathbb{C}[\lambda],
+$$
+which is a polynomial in a single variable $\lambda$ with coefficients $a_1,\dots,a_n$.
+Then
+$$
+   A^n + a_1 A^{n-1} + \dots + a_n I = 0
+$$
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+Define the [adjugate](https://en.wikipedia.org/wiki/Adjugate_matrix) of $\lambda I - A$ as 
+$$
+   B = \text{adj}(\lambda I - A)
+$$
+From $B$'s definition, we have 
+\begin{equation}
+(\lambda I - A) B  = \text{det}(\lambda I - A) I = (\lambda^n + a_1 \lambda^{n-1} + \dots + a_n) I
+(\#eq:adjugate-1)
+\end{equation}
+Also, $B$ is a polynomial matrix over $\lambda$, whose maximum degree is no more than $n - 1$. Therefore, we write $B$ as follows:
+$$
+   B = \sum_{i=0}^{n-1} \lambda^i B_i
+$$ 
+where $B_i$'s are constant matrices. In this way, we unfold $(\lambda I - A)B$:
+\begin{equation}
+(\#eq:adjugate-2)
+   \begin{split}
+      (\lambda I - A) B & = (\lambda I - A) \sum_{i=0}^{n-1} \lambda^i B_i \\
+      & = \lambda^n B_{n-1} + \sum_{i=1}^{n-1} \lambda^i (-A B_i + B_{i-1}) - A B_0
+   \end{split}
+\end{equation}
+
+Since $\lambda$ can be arbitrarily set, matching the coefficients of \@ref(eq:adjugate-1) and \@ref(eq:adjugate-2), we have
+\begin{equation*}
+   \begin{split}
+      B_{n-1} & = I \\
+      -A B_i + B_{i-1} & = a_{n-i} I, \quad i = 1 \dots n - 1 \\
+      -A B_0 & = a_n I
+   \end{split}
+\end{equation*}
+Thus, we have 
+\begin{equation*}
+   \begin{split}
+      & B_{n-1} \cdot A^n + \sum_{i=1}^{n-1} (-A B_i + B_{i-1}) \cdot A^i + (-A B_0) \cdot I \\
+      = & I \cdot A^n + \sum_{i=1}^{n-1} (a_{n-i} I) \cdot A^i + (a_n I) \cdot I \\
+      = & A^n + a_1 A^{n-1} + a_2 A^{n-2} + \dots + a_n I 
+   \end{split}
+\end{equation*}
+On the other hand, one can easily check that 
+$$
+   B_{n-1} \cdot A^n + \sum_{i=1}^{n-1} (-A B_i + B_{i-1}) \cdot A^i + (-A B_0) \cdot I = 0
+$$
+since each term offsets completely. Therefore,
+$$
+   A^n + a_1 A^{n-1} + a_2 A^{n-2} + \dots + a_n I = 0,
+$$
+concluding the proof.
+:::
+:::
+
+Here are some corollaries of the Cayley-Hamilton Theorem. 
+
+::: {.theorembox}
+::: {.corollary #cayham-1}
+For any $A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}, k \ge n$, $A^k B$ is a linear combination of $B, AB, A^2B, \dots, A^{n-1}B$.
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+Directly from Cayley Hamilton Theorem, $A^n$ can be expressed as a linear combination of $I, A, A^2, \dots, A^{n-1}$. By recursion, it is easy to show that for all $m > n$, $A^m$ is also a linear combination of $I, A, A^2, \dots, A^{n-1}$. Post-multiply both sides with $B$, we get what we want.
+:::
+:::
+
+::: {.theorembox}
+::: {.corollary #cayham-2}
+For any $A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}, k > n$, the following equality always holds:
+$$
+   \text{rank}(\begin{bmatrix} B & AB & \dots & A^{n-1} B \end{bmatrix}) = 
+   \text{rank}(\begin{bmatrix} B & AB & \dots & A^{k-1} B \end{bmatrix})
+$$
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+First prove LHS $\le$ RHS. $\forall v \in \mathbb{C}^n$ such that 
+$$
+   v^* \begin{bmatrix} B & AB & \dots & A^{k-1} B \end{bmatrix} = v^* \begin{bmatrix} B & AB & \dots & A^{n-1}B & \dots A^{k-1}B \end{bmatrix} = 0
+$$
+$v^* \begin{bmatrix} B & AB & \dots & A^{n-1} B \end{bmatrix} = 0$ must hold.
+
+Second prove LHS $\ge$ RHS. For any $v \in \mathbb{C}^n$ such that $v^* \begin{bmatrix} B & AB & \dots & A^{n-1} B \end{bmatrix} = 0$ and any $k > n$, by Corollary \@ref(cor:cayham-1), there exists a sequence $c_i, i = 0 \dots n-1$ satisfy the following: 
+$$
+   v^* A^k B = v^* \sum_{i=0}^{n-1} c_i A^i B = 0
+$$
+Therefore, $v^* \begin{bmatrix} B & AB & \dots & A^{k-1} B \end{bmatrix} = 0$.
+:::
+:::
+
+::: {.theorembox}
+::: {.corollary #cayham-3}
+For any $A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}$, define 
+$$
+   \mathcal{C} = \begin{bmatrix} B & AB & \dots & A^{n-1} B \end{bmatrix}
+$$
+If $\text{rank}(\mathcal{C}) = k_1 < n$, there exist a similarity transformation $T$ such that 
+$$
+   T A T^{-1} = \begin{bmatrix}
+      \bar{A}_c & \bar{A}_{12} \\
+      0 & \bar{A}_{\bar{c}} 
+   \end{bmatrix}, T B = \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+$$
+where $\bar{A}_c \in \mathbb{C}^{k_1 \times k_1}, \bar{B}_c \in \mathbb{C}^{k_1 \times m}$. Moreover, the matrix 
+\begin{equation*}
+   \bar{\mathcal{C}} := \begin{bmatrix}
+      \bar{B}_c & \bar{A}_c \bar{B}_c & \bar{A}_c^2 \bar{B}_c & \dots & \bar{A}_c^{k_1 - 1} \bar{B}_c
+   \end{bmatrix}
+\end{equation*} 
+has full row rank.
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+Since $\mathcal{C}$ is not full row rank, we pick $k_1$ linearly independent columns from $\mathcal{C}$. Denote them as $q_1\dots q_{k_1}$, $q_i \in \mathbb{C}^n$. Then, we arbitrarily set other $n-k_1$ vectors $q_{k_1+1} \dots q_{n}$ as long as 
+$$
+Q = \begin{bmatrix}
+   q_1 & \dots & q_{k_1} & q_{k_1+1} & \dots & q_{n} 
+\end{bmatrix}
+$$
+is invertible. Define the similarity transformation matrix by $T = Q^{-1}$. Note that $A q_i$ can be seen as a column picked from $A^{k} B, k \in \left\{1 \dots n\right\}$, which is guaranteed to be a linear combination of $B, AB, \dots, A^{n-1}B$ from Cayley Hamilton Theorem. Thus, $A q_i$ is bound to be a linear transformation of columns from $\begin{bmatrix} B & AB & \dots & A^{n-1} B \end{bmatrix} = \mathcal{C}$. Since $q_1\dots q_{k_1}$ is the largest linearly independent column vector set from $\mathcal{C}$, this implies $A q_i$ can be expressed as a linear combination of $q_1\dots q_{k_1}$:
+\begin{equation*}
+   \begin{split}
+      A Q & = A T^{-1} = A \begin{bmatrix}
+         q_1 & \dots & q_{k_1} & q_{k_1+1} & \dots & q_{n} 
+      \end{bmatrix} \\
+      & = \begin{bmatrix}
+         q_1 & \dots & q_{k_1} & q_{k_1+1} & \dots & q_{n} 
+      \end{bmatrix} \begin{bmatrix}
+         \bar{A}_c & \bar{A}_{12} \\
+         0 & \bar{A}_{\bar{c}} 
+      \end{bmatrix} = T^{-1} \begin{bmatrix}
+         \bar{A}_c & \bar{A}_{12} \\
+         0 & \bar{A}_{\bar{c}} 
+      \end{bmatrix}
+   \end{split} 
+\end{equation*}
+Similarly, $B$ itself is part of $\mathcal{C}$. Therefore, each column of $B$ is naturally a linear combination of $q_1 \dots q_{k_1}$:
+\begin{equation*}
+   \begin{split}
+      B = \begin{bmatrix}
+         q_1 & \dots & q_{k_1} & q_{k_1+1} & \dots & q_{n} 
+      \end{bmatrix} \begin{bmatrix}
+         \bar{B}_c \\ 0
+      \end{bmatrix}
+   \end{split} = T^{-1} \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+\end{equation*}
+To see $\bar{\mathcal{C}}$ has full row rank, note that $\text{rank} \mathcal{C} = k_1$ and 
+\begin{equation*}
+   \mathcal{C} = T^{-1} \begin{bmatrix}
+      \bar{B}_c & \bar{A}_c \bar{B}_c & \bar{A}_c^2 \bar{B}_c & \dots & \bar{A}_c^{k_1 - 1} \bar{B}_c & \dots & \bar{A}_c^{n - 1} \bar{B}_c \\
+      0 & 0 & 0 & \dots & 0 & \dots & 0
+   \end{bmatrix}
+\end{equation*}
+Thus, 
+$$\text{rank}\begin{bmatrix}
+   \bar{B}_c & \bar{A}_c \bar{B}_c & \bar{A}_c^2 \bar{B}_c & \dots & \bar{A}_c^{k_1 - 1} \bar{B}_c & \dots & \bar{A}_c^{n - 1} \bar{B}_c
+\end{bmatrix} = k_1.
+$$
+By Corollary \@ref(cor:cayham-2), $\text{rank}\bar{\mathcal{C}} = k_1$.
+:::
+:::
+
+The following Corollary is especially useful in the study of pole assignment in the single-input-multiple-output (SIMO) LTI system.
+
+::: {.theorembox}
+::: {.corollary #cayham-4}
+For any $A \in \mathbb{C}^{n \times n}, b \in \mathbb{C}^{n}$, if 
+\begin{equation*}
+   \mathcal{C} = \begin{bmatrix}
+      b & Ab & \dots & A^{n-1}b
+   \end{bmatrix} \in \mathbb{C}^{n \times n}
+\end{equation*}
+has full rank, then there exists a similarity transformation $T$ such that
+\begin{equation*}
+      T A T^{-1} = A_1 := \begin{bmatrix}
+         -a_1 & -a_2 & \dots & -a_{n-1} & -a_n \\
+         1 & 0 & \dots & 0 & 0 \\
+         0 & 1 & \dots & 0 & 0 \\
+         \vdots & \vdots &  & \vdots & \vdots \\
+         0 & 0 & \dots & 1 & 0
+      \end{bmatrix}, \quad
+      T b = b_1 := \begin{bmatrix}
+         1 \\ 0 \\ 0 \\ \vdots \\ 0
+      \end{bmatrix}
+\end{equation*}
+where $a_1, \dots, a_n$ are the coefficients of $A$'s characteristic polynomial:
+\begin{equation*}
+   \det(A - \lambda I) = \lambda^{n} + a_1 \lambda^{n-1} + \dots + a_n \lambda  
+\end{equation*} 
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+Since $\mathcal{C}$ is invertible, define its inverse
+\begin{equation*}
+   \mathcal{C}^{-1} = \begin{bmatrix}
+      M_1 \\ M_2 \\ \dots \\ M_n
+   \end{bmatrix}
+\end{equation*}
+where $M_i \in \mathbb{C}^{1 \times n}$. Then,
+\begin{equation*}
+   I = \mathcal{C}^{-1} \mathcal{C} = \begin{bmatrix}
+      M_1 b & M_1 Ab & \dots & M_1 A^{n-1}b \\
+      M_2 b & M_2 Ab & \dots & M_2 A^{n-1}b \\
+      \vdots & \vdots &  & \vdots \\
+      M_n b & M_n Ab & \dots & M_n A^{n-1}b
+   \end{bmatrix} \Longrightarrow \begin{cases}
+      M_n A^{n-1}b = 1 \\
+      M_n A^ib = 0, \ i = 0,\dots, n-2
+   \end{cases}
+\end{equation*}
+Now we claim that the transformation matrix $T$ can be constructed as follows:
+\begin{equation*}
+   T = \begin{bmatrix}
+      M_n A^{n-1} \\ M_n A^{n-2} \\ \dots \\ M_n
+   \end{bmatrix}
+\end{equation*}
+We first show $T$ is invertible by calculating $T \mathcal{C}$:
+\begin{equation*}
+   T \mathcal{C} = \begin{bmatrix}
+      M_n A^{n-1}b & \star & \dots & \star \\
+      M_n A^{n-2}b & M_n A^{n-1}b & \dots & \star \\
+      \vdots & \vdots &  & \vdots \\
+      M_n b & M_n Ab & \dots & M_n A^{n-1}b
+   \end{bmatrix} = \begin{bmatrix}
+      1 & \star & \dots & \star \\
+      0 & 1 & \dots & \star \\
+      \vdots & \vdots &  & \vdots \\
+      0 & 0 & \dots & 1
+   \end{bmatrix}
+\end{equation*}
+Then we calculate $Tb$ and $TA$:
+\begin{equation*}
+   \begin{split}
+      Tb & = \begin{bmatrix}
+         M_n A^{n-1}b \\ M_n A^{n-2}b \\ \vdots \\ M_n b
+      \end{bmatrix} = \begin{bmatrix}
+         1 \\ 0 \\ \vdots \\ 0
+      \end{bmatrix} \\
+      T A & = \begin{bmatrix}
+         M_n A^n \\ M_n A^{n-1} \\ \vdots \\ M_n A
+      \end{bmatrix} = \begin{bmatrix}
+         -M_n \cdot \sum_{i=0}^{n-1} a_{n-i} A^i \\ M_n A^{n-1} \\ \vdots \\ M_n A
+      \end{bmatrix} \\
+      & = \begin{bmatrix}
+            -a_1 & -a_2 & \dots & -a_{n-1} & -a_n \\
+            1 & 0 & \dots & 0 & 0 \\
+            0 & 1 & \dots & 0 & 0 \\
+            \vdots & \vdots &  & \vdots & \vdots \\
+            0 & 0 & \dots & 1 & 0
+      \end{bmatrix} \begin{bmatrix}
+         M_n A^{n-1} \\ M_n A^{n-2} \\ \vdots \\ M_n A \\ M_n
+      \end{bmatrix} = A_1 T
+   \end{split}
+\end{equation*}
+where the penultimate equality uses Cayley Hamilton Theorem.
+:::
+:::
+
+### Equivalent Statements for Controllability
+There are a few equivalent statements to express an LTI system's controllability that one should be familiar with:
+
+::: {.theorembox}
+::: {.theorem #lticontrollable name="Equivalent Statements for Controllability"}
+The following statements are equivalent [@chen1984book-linear], [@zhou1996book-robust]:
+
+1. $(A, B)$ is controllable.
+
+2. The matrix
+$$
+   W_c(t) := \int_{0}^{t} e^{A\tau} B B^* e^{A^* \tau} d\tau
+$$
+is positive definite for any $t > 0$.
+
+3. The controllability matrix 
+$$
+   \mathcal{C} = \begin{bmatrix}
+      B & AB & A^2 B & \dots & A^{n-1} B 
+   \end{bmatrix}
+$$
+has full row rank.
+
+4. The matrix $[A - \lambda I, B]$ has full row rank for all $\lambda \in \mathbb{C}$.
+
+5. Let $\lambda$ and $x$ be any eigenvalue and any corresponding left eigenvector $A$, i.e., $x^* A = x^* \lambda$, then $x^* B \ne 0$.
+
+6. The eigenvalues of $A+BF$ can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs) by a suitable choice of $F$.
+
+7. If, in addition, all eigenvalues of $A$ have negative real parts, then the unique solution of 
+$$ 
+   A W_c + W_c A^* = -B B^* 
+$$
+is positive definite. The solution is called the *controllability Gramian* and can be expressed as 
+$$
+   W_c = \int_{0}^{\infty} e^{A \tau} B B^* e^{A^* \tau} d\tau
+$$
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+($1. \Rightarrow 2.$) Prove by contradiction. Assume that $(A, B)$ is controllable but $W_c(t_1)$ is singular for some $t_1 > 0$. This implies there exists a real vector $v \ne 0 \in \mathbb{R}^n$, s.t. 
+$$
+   v^* W_c(t_1) v = v^* (\int_{0}^{t_1} e^{At} B B^* e^{A^*t} dt) v = \int_{0}^{t_1} v^* (e^{At} B B^* e^{A^*t}) v \ dt = 0
+$$
+Since $e^{At} BB^* e^{A^*t} \succeq 0$ for all $t$, we must have
+\begin{equation*}
+   \begin{split}
+      & v^* (e^{At} B B^* e^{A^*t}) v = \parallel v^* B e^{At} \parallel^2 = 0, \quad \forall t \in [0, t_1] \\
+      \Longrightarrow & v^* B e^{At} = 0, \quad \forall t \in [0, t_1]
+   \end{split}
+\end{equation*}
+Setting $x(t_1) = 0$, from \@ref(eq:app-lti-xy), we have 
+$$
+   0 = e^{A t_1} x(0) + \int_{0}^{t_1} e^{A (t_1 - \tau)} B u(\tau) d\tau = 0
+$$
+Pre-multiply the above equation by $v^*$, then 
+$$
+   0 = v^* e^{A t_1} x(0)
+$$
+Since $x(0)$ can be chosen arbitrarily, we set $x(0) = v e^{-A t_1}$, which results in $v = 0$. Contradiction!
+
+($2. \Rightarrow 1.$) For any $x(0) = x_0, t_1 > 0, x(t_1) = x_1$, since $W_c(t_1) \succ 0$, we set the control inputs as
+$$
+   u(t) = -B^* e^{A^*(t_1 - t)} W_c^{-1}(t_1) [e^{At_1} x_0 - x_1]
+$$
+We claim that the picked $u(t)$ satisfies \@ref(eq:app-lti-xy) by 
+\begin{equation*}
+   \begin{split}
+      & e^{At} x_0 + \int_{0}^{t_1} e^{A(t_1-t)} B u(t) dt \\
+      & = e^{At} x_0 - \int_{0}^{t_1} e^{A(t_1-t)} B B^* e^{A^*(t_1-t)} dt \cdot W_c^{-1}(t_1) [e^{At_1} x_0 - x_1] \\
+      & \overset{\tau = t_1-t}{=} e^{At} x_0 - \underbrace{\int_{0}^{t_1} e^{A\tau} BB^* e^{A^*\tau} d\tau}_{W_c(t_1)} \cdot W_c^{-1}(t_1) [e^{At_1} x_0 - x_1] \\
+      & = e^{At} x_0 - [e^{At_1} x_0 - x_1] = x_1
+   \end{split}
+\end{equation*}
+
+($2. \Rightarrow 3.$) Prove by contradiction. Suppose $W_c(t) \succ 0, \forall t > 0$ but $\mathcal{C}$ is not of full row rank. Then there exists $v \ne 0 \in \mathbb{C}^n$, s.t. 
+$$
+   v^* A^k B = 0, \quad k = 0 \dots n - 1
+$$
+By Corollary \@ref(cor:cayham-1), we have 
+$$
+   v^* A^k B = 0, \ \forall k \in \mathbb{N} \Longrightarrow v^* e^{At} B = 0, \ \forall t > 0
+$$
+which implies
+$$
+   v^* W_c(t) v = v^* (\int_{0}^{t} e^{A\tau} B B^* e^{A^*\tau} d\tau) v = 0, \quad \forall t > 0
+$$
+Contradiction!
+
+($3. \Rightarrow 2.$) Prove by contradiction. Suppose $\mathcal{C}$ has full row rank but $W_c(t_1)$ is singular at some $t_1 > 0$. Then, similar to the proof in ($1. \Rightarrow 2.$), there exists $v \ne 0 \in \mathbb{C}^n$, s.t. $F(t) := v^* e^{At} B \equiv 0, \forall t \in [0, t_1]$. Since $F(t)$ is infinitely differentiable, we get its $i$'s derivative at $t=0$, where $i = 0, 1, \dots n-1$. This results in 
+\begin{equation*}
+   \left. \frac{d^i F}{dt^i} \right|_{t=0} = \left. v^* A^{i} e^{At} B \right|_{t=0} = v^* A^i B = 0, \quad i = 0 \dots n-1
+\end{equation*}
+Thus, $v^* \begin{bmatrix}
+   B & AB & \dots & A^{n-1} B
+\end{bmatrix} = 0$. Contradiction!
+
+($3. \Rightarrow 4.$) Proof by contradiction. Suppose $[A - \lambda I, B]$ does not have full row rank for some $\lambda \in \mathbb{C}$. Then, there exists $v \ne 0 \in \mathbb{C}^n$, s.t. $v^* [A - \lambda I, B] = 0$. This implies $v^* A = v^* \lambda$ and $v^* B = 0$. On the other hand, 
+\begin{equation*}
+   v^* \begin{bmatrix}
+      B & AB & \dots & A^{n-1}B
+   \end{bmatrix} = v^* \begin{bmatrix}
+      B & \lambda B & \dots & \lambda^{n-1} B
+   \end{bmatrix} = 0
+\end{equation*}
+Contradiction!
+
+($4. \Rightarrow 5.$) Proof by contradiction. If there exists a left eigenvector and eigenvalue pair $(x, \lambda)$, s.t. $x^* A = \lambda x^*$ while $x^*B = 0$, then $x^* [A - \lambda I, B] = 0$. Contradiction!
+
+($5. \Rightarrow 3.$) Proof by contradiction. If the controllability matrix $\mathcal{C}$ does not have full row rank, i.e., $\text{rank}(\mathcal{C}) = k < n$. Then, from Corollary \@ref(cor:cayham-3), there exists a similarity transformation $T$, s.t. 
+\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_{c} & \bar{A}_{12} \\
+      0 & \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+\end{equation*} 
+where $\bar{A}_c \in \mathbb{R}^{k \times k}, \bar{A}_{\bar{c}} \in \mathbb{R}^{(n-k) \times (n-k)}$. Now arbitrarily pick one of $\bar{A}_{\bar{c}}$'s left eigenvector $x_{\bar{c}}$ and its corresponding eigenvalue $\lambda_1$. Define the vector $x = \begin{bmatrix}
+   0 \\ x_{\bar{c}}
+\end{bmatrix}$. Then,
+\begin{equation*}
+   \begin{split}
+      x^* (TAT^{-1}) = \begin{bmatrix}
+         0 & x_{\bar{c}}^*
+      \end{bmatrix} \begin{bmatrix}
+         \bar{A}_{c} & \bar{A}_{12} \\
+         0 & \bar{A}_{\bar{c}}
+      \end{bmatrix} & = \begin{bmatrix}
+         0 & x_{\bar{c}}^* \bar{A}_{\bar{c}}
+      \end{bmatrix} = \begin{bmatrix}
+         0 & \lambda_1 x_{\bar{c}}^*
+      \end{bmatrix} = \lambda_1 x^* \\
+      x^* (TB) & = \begin{bmatrix}
+         0 & x_{\bar{x}}
+      \end{bmatrix} \begin{bmatrix}
+         B_{\bar{c}} \\ 0
+      \end{bmatrix} = 0
+   \end{split}
+\end{equation*}
+which implies $(TAT^{-1}, TB)$ is not controllable. However, similarity transformation does not change controllability. Contradiction!
+
+($6. \Rightarrow 1.$) Prove by contradiction. If $(A, B)$ is not controllable, i.e., $\text{rank}(\mathcal{C}) = k < n$. Then from Corollary \@ref(cor:cayham-3), there exists a similarity transformation $T$ s.t.
+\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_c & \bar{A}_{12} \\
+      0 & \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\
+      0
+   \end{bmatrix}
+\end{equation*}
+Now arbitrarily pick $F \in \mathbb{R}^{m\times n}$ and define $FT^{-1} = [F_1, F_2]$, where $F_1 \in \mathbb{R}^{m\times k}, F_2 \in \mathbb{R}^{m\times (n-k)}$. Thus,
+\begin{equation*}
+   \begin{split}
+      \text{det}(A+BF-\lambda I) & = \text{det}\left(
+         T^{-1} \begin{bmatrix}
+            \bar{A}_c & \bar{A}_{12} \\
+            0 & \bar{A}_{\bar{c}}
+         \end{bmatrix} T + T^{-1} \begin{bmatrix}
+            \bar{B}_c \\ 0
+         \end{bmatrix} F - \lambda \begin{bmatrix}
+            I_1 & 0 \\
+            0 & I_2
+         \end{bmatrix}
+      \right) \\
+      & = \text{det}\left(
+         T^{-1} \left\{
+            \begin{bmatrix}
+               \bar{A}_c & \bar{A}_{12} \\
+               0 & \bar{A}_{\bar{c}}
+            \end{bmatrix} + \begin{bmatrix}
+               \bar{B}_c \\ 0
+            \end{bmatrix} FT^{-1} - \lambda \begin{bmatrix}
+               I_1 & 0 \\
+               0 & I_2
+            \end{bmatrix}
+         \right\} T
+      \right) \\
+      & = \text{det}\left(
+         \begin{bmatrix}
+            \bar{A}_c & \bar{A}_{12} \\ 0 & \bar{A}_{\bar{c}}
+         \end{bmatrix} + \begin{bmatrix}
+            \bar{B}_c \\ 0
+         \end{bmatrix} \begin{bmatrix}
+            F_1 & F_2
+         \end{bmatrix} - \lambda \begin{bmatrix}
+            I_1 & 0 \\
+            0 & I_2
+         \end{bmatrix}
+      \right) \\
+      & = \text{det} \begin{bmatrix}
+            \bar{A}_c + \bar{B}_c F_1 - \lambda I_1 & \bar{A}_{12} + \bar{B}_c F_2 \\ 0 & \bar{A}_{\bar{c}} - \lambda I_2
+         \end{bmatrix} \\
+      & = \text{det}(\bar{A}_c + \bar{B}_c F_1 - \lambda I_1) \cdot \text{det}(\bar{A}_{\bar{c}} - \lambda I_2)
+   \end{split}
+\end{equation*}
+where $I_1$ is the identity matrix of size $k$. Similarly, $I_2$ of size $n-k$. Thus, at least $n-k$ eigenvalues of $A+BF$ cannot be freely assigned by choosing $F$. Contradiction!
+
+($1. \Rightarrow 6.$) Here we only represent the SIMO case. For the MIMO case, the proof is far more complex. Interesting readers can refer to [@davison1968tac-poleassign] (the shortest proof I can find). Since there is only one input, the matrix $B$ degenerate to vector $b$. From Corollary \@ref(cor:cayham-4), there exist a similarity transformation matrix $T$, s.t.
+\begin{equation*}
+   T A T^{-1} = A_1 := \begin{bmatrix}
+      -a_1 & -a_2 & \dots & -a_{n-1} & -a_n \\
+      1 & 0 & \dots & 0 & 0 \\
+      0 & 1 & \dots & 0 & 0 \\
+      \vdots & \vdots &  & \vdots & \vdots \\
+      0 & 0 & \dots & 1 & 0
+   \end{bmatrix}, \quad
+   T b = b_1 := \begin{bmatrix}
+      1 \\ 0 \\ 0 \\ \vdots \\ 0
+   \end{bmatrix}
+\end{equation*}
+For any $F \in \mathbb{C}^{1 \times n}$, denote $FT^{-1}$ as $[f_1, f_2, \dots, f_n]$. Calculating the characteristic polynomial of $A + bF$:
+\begin{equation*}
+   \begin{split}
+      \text{det}(\lambda I - A - bF) & = \text{det}(\lambda I - T^{-1}A_1 T - T^{-1} b_1 F) \\
+      & = \text{det}(\lambda I - A_1 - b_1 F T^{-1}) \\
+      & = \text{det} \begin{bmatrix}
+         \lambda + a_1 - f_1 & \lambda + a_2 - f_2 & \dots & \lambda + a_{n-1} - f_{n-1} & \lambda + a_n - f_n \\
+         -1 & \lambda & \dots & 0 & 0 \\
+         0 & -1 & \dots & 0 & 0 \\
+         \vdots & \vdots &  & \vdots & \vdots \\
+         0 & 0 & \dots & -1 & \lambda
+      \end{bmatrix} \\
+      & = \lambda^n + (a_1 - f_1) \lambda^{n-1} + \dots + (a_n - f_n)
+   \end{split}
+\end{equation*} 
+By choosing $[f_1, f_2, \dots, f_n]$, $A+bF$'s eigenvalues can be arbitrarily set.
+
+($7. \Rightarrow 1.$) Prove by contradiction. Assume that $(A, B)$ is not controllable. Then from 2., there exists $v \ne 0 \in \mathbb{C}^n$ and $t_1 > 0$, 
+\begin{equation*}
+   F(t) = v^* e^{At} B = 0, \quad \forall t \in [0, t_1]
+\end{equation*} 
+Now consider $F(z) = v^* e^{Az} B, z\in \mathcal{C}$, which is a vector of analytic function in complex analysis. For a arbitrary $t_2 \in (0, t_1)$, we have $F^{(i)}(t_2) = 0, \forall i \in \mathbb{N}$. Then, by invoking the fact from complex analysis: "Let $G$ a connected open set and $f: G \rightarrow \mathbb{C}$ be analytic, then $f \equiv 0$ on $G$, if and only if there is a point $a \in G$ such that $f^{(i)}(a) = 0, \forall n \in \mathbb{N}$", we have $f(z) \equiv 0, \forall z \in \mathbb{C}$. 
+
+On the other hand, however, $W_c \succ 0$ implies there exists $t_3 > 0$, such that for the above $v$, we have $v^* e^{At_3} B \ne 0$. Contradiction!
+
+($1. \Rightarrow 7.$) Since $(A, B)$ is controllable, from 2., $W_c(t) \succ 0, \forall t$. Therefore, $W_c \succ 0$. The existence and uniqueness of the solution for $AW_c + W_cA^* = -BB^*$ can be obtained directly from the proof of Theorem \@ref(thm:lyapunovequation), by setting $Q$ there to be positive semidefinite.
+:::
+:::
+
+### Duality
+
+Although controllability and observability seemingly have no direct connections from their definitions \@ref(def:lticontrollable) and \@ref(def:ltiobservable), the following theorem [@chen1984book-linear] states their tight relations.
+
+::: {.theorembox}
+::: {.theorem #lti-dual-conobs name="Theorem of Duality"}
+The pair $(C,A)$ is observable if and only if $(A^*,C^*)$ is controllable. 
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+(1) We first show that $(C,A)$ is observable if and only if the $n \times n$ matrix $W_o(t) = \int_{0}^{t} e^{A^*\tau} C^*C e^{A\tau}$ is positive definite (nonsingular) for any $t>0$:
+
+"$\Longleftarrow$": From \@ref(eq:app-lti-xy), given initial state $x(0)$ and the inputs $u(t)$, $y(t)$ can be expressed as
+\begin{equation*}
+   y(t) = Ce^{At} x(0) + C \int_{0}^{t} e^{A(t-\tau)} Bu(\tau) d\tau + Du(t) 
+\end{equation*}
+Define a known function $\bar{y}(t)$ as $y(t) - C \int_{0}^{t} e^{A(t-\tau)} Bu(\tau) d\tau - Du(t)$ and we will get 
+\begin{equation*}
+   Ce^{At} x(0) = \bar{y}(t)
+\end{equation*}
+Pre-multiply the above equation by $e^{A^*t}C^*$ and integrate it over $[0,t_1]$ to yield 
+\begin{equation*}
+   (\int_{0}^{t_1} e^{A^*t} C^*C e^{At} dt) x(0) = W_o(t_1) x(0) = \int_{0}^{t_1} e^{A^*t} C^* \bar{y}(t) dt 
+\end{equation*}
+Since $W_o(t_1) \succ 0$, 
+\begin{equation*}
+   x(0) = W_o(t_1)^{-1} \int_{0}^{t_1} e^{A^*t} C^* \bar{y}(t) dt
+\end{equation*}
+can be observed.
+
+"$\Longrightarrow$": Prove by contradiction. Suppose $(C,A)$ is observable but there exists $t_1 >0$, s.t. $W_o(t_1)$ is singular. This implies there exists $v \ne 0 \in \mathbb{C}^n$, s.t. 
+\begin{equation*}
+   v^* W_o(t_1) v = 0 \Longrightarrow Ce^{At} v \equiv 0, \ \forall t \in [0,t_1]
+\end{equation*}
+Similar to the proof of Theorem \@ref(thm:lticontrollable) ($7. \Rightarrow 1.$), we can use conclusions from complex analysis to claim that $Ce^{At} v \equiv 0, \forall t >0$.
+On the other hand, we set $u(t) \equiv 0$, which results in $y(t) = Ce^{At}x(0)$. In this case $x(0) = 0$ and $x(0) = v \ne 0$ will lead to the same output responses $y(t)$ over $t>0$, which implies $(C,A)$ is not observable. Contradiction!
+
+(2) Next we show the duality of controllability and observability:
+
+From (1) we know $(C,A)$ is controllable if and only of 
+\begin{equation*}
+   \int_{0}^{t} e^{A^*\tau} C^*C e^{A\tau} d\tau = \int_{0}^{t} e^{(A^*)\tau} (C^*)^* (C^*) e^{(A^*)^*\tau} d\tau
+\end{equation*}
+is nonsingular for all $t >0$. The latter is exactly the definition of $(A^*, C^*)$'s controllability Gramian $W_c(t)$.
+:::
+:::
+
+### Equivalent Statements for Observability
+
+With the Theorem of Duality \@ref(thm:lti-dual-conobs), we can directly write down the equivalent statements of observability without any additional proofs:
+
+::: {.theorembox}
+::: {.theorem #ltiobservable name="Equivalent Statements for Observability"}
+The following statements are equivalent [@chen1984book-linear], [@zhou1996book-robust]:
+
+1. $(C, A)$ is observable.
+
+2. The matrix 
+\begin{equation*}
+   W_o(t) := \int_{0}^{t} e^{A^*\tau} C^* C e^{A\tau} d\tau
+\end{equation*}
+is positive definite for any $t>0$.
+
+3. The observability matrix
+\begin{equation*}
+   \mathcal{O} = \begin{bmatrix}
+      C \\ CA \\ CA^2 \\ \dots \\ CA^{n-1}
+   \end{bmatrix}
+\end{equation*}
+has full column rank.
+
+4. The matrix $\begin{bmatrix}
+   A - \lambda I \\ C
+\end{bmatrix}$ has full column rank for all $\lambda \in \mathbb{C}$.
+
+5. Let $\lambda$ and $y$ be any eigenvalue and any corresponding right eigenvector of $A$, i.e., $Ay = \lambda y$, then $Cy \ne 0$.
+
+6. The eigenvalues of $A+LC$ can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs) by a suitable choice of $L$.
+
+7. $(A^*, C^*)$ is controllable.
+
+8. If, in addition, all eigenvalues of $A$ have negative parts, then the unique solution of 
+\begin{equation*} 
+   A^* W_o + W_o A = -C^* C 
+\end{equation*}
+is positive definite. The solution is called the *observability Gramian* and can be expressed as 
+\begin{equation*}
+   W_o = \int_{0}^{\infty} e^{A^*\tau} C^* C e^{A\tau} d\tau
+\end{equation*}
+:::
+:::
+
+--- 
+
+## Stabilizability And Detectability
+
+To define stabilizability and detectability of an LTI system, we first introduce the concept of *system mode*, which can be naturally derived from the fifth definition of controllability \@ref(thm:lticontrollable) (observability \@ref(thm:ltiobservable)).
+
+::: {.definitionbox}
+::: {.definition #ltisystemmode name="System Mode"}
+$\lambda$ is a mode of an LTI system, if it is an eigenvalue of $A$. The mode $\lambda$ is said to be:
+
+- stable, if $\text{Re}\lambda < 0$, 
+- controllable, if $x^* B \ne 0$ for all left eigenvectors of $A$ associated with $\lambda$,
+- observable, if $C x \ne 0$ for all right eigenvectors of $A$ associated with $\lambda$. 
+
+Otherwise, the mode is said to be uncontrollable (unobservable).
+:::
+:::
+
+With the concept of system mode, the fifth definition of controllability \@ref(thm:lticontrollable) (observability \@ref(thm:ltiobservable)) can be restated as
+
+> An LTI system is controllable (observable) if and only if all modes are controllable (observable).
+
+Stabilizability (detectability) is defined similarly via loosening part of controllability (observability) conditions.
+
+::: {.definitionbox}
+::: {.definition #ltistabilizable name="Stabilizability"}
+An LTI system is said to be stabilizable if all of its unstable modes are controllable.
+:::
+:::
+
+::: {.definitionbox}
+::: {.definition #ltidetectable name="Detectability"}
+An LTI system is said to be detectable if all of its unstable modes are observable.
+:::
+:::
+
+Like in the case of controllability and observability, duality also holds in stabilizability and detectability. Moreover, similarity transformation will not influence an LTI system's stabilizability and detectability.
+
+### Equivalent Statements for Stabilizability
+
+::: {.theorembox}
+::: {.theorem #ltistabilizable name="Equivalent Statements for Stabilizability"}
+The following statements are equivalent [@zhou1996book-robust]: 
+
+1. $(A,B)$ is stabilizable.
+
+2. For all $\lambda$ and $x$ such that $x^* A = \lambda x^*$ and $\text{Re} \lambda \ge 0$, $x^* B \ne 0$.
+
+3. The matrix $[A-\lambda I, B]$ has full rank for all $\text{Re} \lambda \ge 0$.
+
+4. There exists a matrix $F$ such that $A+BF$ are Hurwitz.
+:::
+:::
+
+::: {.proofbox}
+::: {.proof}
+($1. \Leftrightarrow 2.$) Directly from stabilizability's definition.
+
+($2. \Leftrightarrow 3.$) If 2. holds but 3. not hold, then there exists $v \ne 0 \in \mathbb{C}^n$, s.t. 
+\begin{equation*}
+   v^* [A-\lambda I, B] = 0 \Leftrightarrow v^* A = \lambda v^*, v^* B = 0, \text{Re} \lambda \ge 0
+\end{equation*}
+Contradiction! Vice versa.
+
+($4. \Rightarrow 2.$) Prove by contradiction. Suppose there $x \ne 0 \in \mathbb{C}^n$, s.t.
+\begin{equation*}
+   x^* [A-\lambda I, B] = 0 \Leftrightarrow x^* A = \lambda x^*, x^* B = 0, \text{Re} \lambda \ge 0
+\end{equation*}
+Thus, for any $F$,
+\begin{equation*}
+   x^* (A+BF) = \lambda x^*, \text{Re} \lambda \ge 0
+\end{equation*}
+On the other hand, suppose $A+BF$ has $I$ Jordon blocks, with each equipped with an eigenvalue $\eta_i, i = 1\dots I$ (note that $\eta_\alpha$ may be equal to $\eta_\beta$, i.e., they are equivalent eigenvalues with different Jordon blocks). Since $A+BF$'s eigenvalues all have negative real parts, $\text{Re} (\eta_i) < 0, i = 1\dots I$. For each $\eta_i,i \in \left\{1\dots i\right\}$, denote its $K_i$ generalized left eigenvectors as $v_{i,1}, v_{i,2}, \dots v_{i,K_i}$. By definition, $\sum_{i=1}^{I} K_i = n$ and  
+\begin{equation*}
+   \begin{split}
+      v_{i,1}^* (A+BF) & = v_{i,1}^* \cdot \eta_i \\
+      v_{i,2}^* (A+BF) & = v_{i,1}^* + v_{i,2}^* \cdot \eta_i \\
+      & \vdots \\
+      v_{i,K_i}^* (A+BF) & = v_{i,K_i-1}^* + v_{i,K_i}^* \cdot \eta_i
+   \end{split}
+\end{equation*}
+for all $i \in \left\{1\dots i\right\}$. Also, $v_{i,k},i=1\dots I, k=1\dots K_i$ are linearly independent and spans $\mathbb{C}^n$. Therefore, 
+\begin{equation*}
+   x^* = \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^*
+\end{equation*}
+which leads to
+\begin{equation*}
+   \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^* (A+BF) 
+   = \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot \lambda \cdot v_{i,k}^* 
+\end{equation*}
+Since $v_{i,k}$'s are $A+BF$'s generalized eigenvectors, we have
+\begin{equation*}
+   \begin{split}
+      & \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^* \cdot (A+BF) \\
+      = & \sum_{i=1}^{I} \left\{
+         \xi_{i,1} \cdot \eta_i \cdot v_{i,1}^*  + \sum_{k=2}^{K_i} \xi_{i,k} (v_{i,k-1}^* + \eta_i \cdot v_{i,k}^* )
+      \right\} \\
+      = & \sum_{i=1}^{I} \left\{
+         \sum_{k=1}^{K_i - 1} (\xi_{i,k}\cdot \eta_i + \xi_{i,k+1}) v_{i,k}^* + \xi_{i,K_i} \cdot \eta_i \cdot v_{i,K_i}^*
+      \right\}
+   \end{split}
+\end{equation*}
+Combining the above two equations:
+\begin{equation*}
+   \sum_{i=1}^{I} \left\{
+      \sum_{k=1}^{K_i - 1} \left[ \xi_{i,k}\cdot (\eta_i - \lambda) + \xi_{i,k+1} \right] v_{i,k}^* 
+      + \xi_{i,K_i} \cdot (\eta_i - \lambda) \cdot v_{i,K_i}^* = 0
+   \right\}
+\end{equation*}
+Since $v_{i,k}$'s are linearly independent, for any $i \in \left\{i\dots I\right\}$:
+\begin{equation*}
+   \begin{split}
+      \xi_{i,1} \cdot (\eta_i - \lambda) + \xi_{i,2} & = 0 \Rightarrow \xi_{i,2} = (-1) \cdot \xi_{i,1} \cdot (\eta_i - \lambda) \\
+      \xi_{i,2} \cdot (\eta_i - \lambda) + \xi_{i,3} & = 0 \Rightarrow \xi_{i,3} = (-1)^2 \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^2 \\
+      & \vdots \\
+      \xi_{i,K_i-1} \cdot (\eta_i - \lambda) + \xi_{i,K_i} & = 0 \Rightarrow \xi_{i,K_i} = (-1)^{K_i-1} \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^{K_i-1} \\
+      \xi_{i,K_i} \cdot (\eta_i - \lambda) & = 0
+   \end{split}
+\end{equation*}
+Thus, 
+\begin{equation*}
+   (-1)^{K_i-1} \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^{K_i} = 0
+\end{equation*}
+Denote $\xi_{i,1}$ as $r_1 e^{\theta_1}$, $(\eta_i - \lambda)$ as $r_2 e^{\theta_2}$. Since $\text{Re} \lambda \ge 0, \text{Re}(\eta_i) < 0$, $r_2 > 0$. On the other hand, the following equation suggests
+\begin{equation*}
+   r_1 r_2^{K_i-1} e^{j[\theta_1 + \theta_2 (K_i-1)]} = 0 
+\end{equation*}
+Thus, $r_1$ has to be $0$, which implies $\xi_{i,1} = 0$. By recursion, $\xi_{i,k} = 0, \forall k = 1\dots K_i$. Contradiction!
+
+($1. \Rightarrow 4.$) If $(A,B)$ is controllable, then from Theorem \ref@(thm:lticontrollable)'s sixth definition, we can freely assign the poles of $A+BF$ via choosing $F$ properly. 
+
+Otherwise, if $(A,B)$ is uncontrollable, then from Corollary \@ref(cor:cayham-3) and proof of Theorem \@ref(thm:lticontrollable) ($6. \Rightarrow 1.$), there exists a similarity transformation $T$, s.t. 
+\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_c & \bar{A}_{12} \\
+      0 & \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\
+      0
+   \end{bmatrix}
+\end{equation*}
+and 
+\begin{equation*}
+   \text{det}(A+BF-\lambda I) = \underbrace{\text{det}(\bar{A}_c + \bar{B}_c F_1 - \lambda I_1)}_{\chi_c(\lambda)} \cdot 
+   \underbrace{\text{det}(\bar{A}_{\bar{c}} - \lambda I_2)}_{\chi_{\bar{c}}(\lambda)}
+\end{equation*}
+where $\bar{A}_c \in \mathbb{C}^{k_1 \times k_1}$, $I_1$ identity matrix of size $k_1$, $[F_1,F_2] = FT^{-1}$, and $k_1 = \text{rank} \mathcal{C}$. Additionally, $(\bar{A}_c, \bar{B}_c)$ is controllable. Thus, $\chi_c(\lambda)$'s zeros can be freely assigned by choosing proper $F$, i.e., system modes with $\chi_c(\lambda)$ is controllable, regardless of its stability. On the other hand, system modes with $\chi_{\bar{c}}(\lambda)$ must be stable. Otherwise, we cannot affect it by assigning $F$, which is a contradiction to statement (1). Therefore, $(TAT^{-1}, TB)$ is stabilizable. Since similarity transformation does not change stabilizability, $(A,B)$ is stabilizable.
+:::
+:::
+
+### Equivalent Statements for Detectability
+
+Thanks to duality, we can directly write down the equivalent statements of observability without any additional proofs:
+
+::: {.theorembox}
+::: {.theorem #ltidetectable name="Equivalent Statements for Detectability"}
+The following statements are equivalent [@zhou1996book-robust]: 
+
+1. $(C,A)$ is detectable.
+
+2. For all $\lambda$ and $x$ such that $A x = \lambda x$ and $\text{Re} \lambda \ge 0$, $C x \ne 0$.
+
+3. The matrix $\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}$ has full rank for all $\text{Re} \lambda \ge 0$.
+
+4. There exists a matrix $L$ such that $A+LC$ are Hurwitz.
+
+5. $(A^*, C^*)$ is stabilizable.
+:::
+:::
+
+
+
+
+
+
+---
+
+<!-- Consider the linear time-invariant (LTI) system 
+\begin{equation}
+\dot{x} = A x + B u, \quad y = C x + D u,
+(\#eq:app-linear-system)
+\end{equation}
+where $x \in \mathbb{R}^n$ the state, $u \in \mathbb{R}^m$ the control, and $A,B,C,D$ are constant matrices with proper sizes. 
+
+::: {.theorembox}
+::: {.theorem #ltiobservable name="Observability"}
+The following are equivalent for the LTI system \@ref(eq:app-linear-system):
+
+1. $(A,C)$ is observable;
+
+2. The observability grammian
+$$
+W_o (t) = \int_{0}^t e^{A^* \tau} C^* C e^{A\tau} d\tau
+$$
+is positive definite for any $t > 0$;
+
+1. The observability matrix 
+$$
+\mathcal{O} = \begin{bmatrix} C \\ CA \\ CA^2 \\ \vdots \\ C A^{n-1} \end{bmatrix}
+$$
+has full column rank;
+
+1. The matrix $\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}$ has full column rank for all $\lambda \in \mathbb{C}$;
+
+2. For all $\lambda$ and $x$ such that $Ax = \lambda x$, $Cx \neq 0$;
+
+3. The eigenvalues of $A + LC$ can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs);
+
+4. $(A^*,C^*)$ is controllable.
+:::
+::: -->
+
+<!-- ::: {.theorembox}
+::: {.theorem #ltidetectable name="Detectability"}
+The following are equivalent for the LTI system \@ref(eq:app-linear-system):
+
+1. $(A,C)$ is detectable;
+
+2. The matrix $\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}$ has full column rank for all $\lambda \in \mathbb{C}$ such that $\mathrm{Re}(\lambda) \geq 0$ ;
+
+3. For all $\lambda$ and $x$ such that $Ax = \lambda x$ and $\mathrm{Re}(\lambda) \geq 0$, $Cx \neq 0$;
+
+4. There exists a matrix $L$ such that $A + LC$ is Hurwitz;
+
+5. $(A^*,C^*)$ is stabilizable.
+:::
+::: -->
+
+
+# Convex Analysis and Optimization {#appconvex}
+
+# The Kalman-Yakubovich Lemma 
+
+::: {.lemma #KalmanYakubovich name="Kalman-Yakubovich"}
+Consider a controllable linear time-invariant system 
+$$
+\dot{x} = A x + b u \\
+y = c^T x.
+$$
+The transfer function 
+$$
+h(p) = c^T (p I - A)^{-1} b 
+$$
+is strictly positive real (SPR) if and only if there exist positive definite matrices $P$ and $Q$ such that 
+$$
+A^T P + P A = - Q \\
+Pb = c.
+$$
+:::
+
+
+
+# Feedback Linearization {#feedbacklinearization}
+
+
+# Sliding Control {#slidingcontrol}
+

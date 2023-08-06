@@ -1,0 +1,35 @@
+\usepackage{booktabs}
+\usepackage{amsthm}
+\usepackage[pagebackref=false,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+\usepackage{tcolorbox}
+\usepackage{color}
+\usepackage{framed}
+\setlength{\fboxsep}{.8em}
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+
+
+\newtcolorbox{examplebox}{
+  colback=green,
+  colframe=orange,
+  coltext=black,
+  boxsep=5pt,
+  arc=4pt}
+
+\newtcolorbox{theorembox}{
+  colback=green,
+  colframe=green,
+  coltext=black,
+  boxsep=5pt,
+  arc=4pt}
+
+\newtcolorbox{definitionbox}{
+colback=white,
+colframe=green,
+coltext=black,
+boxsep=5pt,
+arc=4pt}

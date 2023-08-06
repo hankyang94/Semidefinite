@@ -1,0 +1,918 @@
+
+# Output Feedback {#output-feedback}
+
+Consider a continuous-time dynamical system
+\begin{equation}
+\begin{split}
+\dot{x} &= f(x,u)  \\
+y &= h(x,u)
+\end{split} 
+(\#eq:output-feedback-system)
+\end{equation}
+where $x(t) \in \mathbb{X} \subseteq \mathbb{R}^n$ the state of the system, $u(t) \in \mathbb{U} \subseteq \mathbb{R}^m$ the control (or input), $y(t) \in \mathbb{Y} \subseteq \mathbb{R}^{d}$ the output (i.e., measurement) of the state and control, and $f,g$ the evolution and measurement functions (which are sufficiently smooth).
+
+
+
+## State Observer {#state-observer}
+
+For the system \@ref(eq:output-feedback-system), let us denote 
+
+- $X(x_0,t_0;t;u)$ the solution at time $t$ with input $u$ and initial condition $x_0$ at time $t_0$; when $t_0 = 0$, we write $X(x_0;t;u)$
+
+- $Y(x_0,t_0;t;u)$ the output at time $t$ with input $u$ and initial condition $x_0$ at time $t_0$, i.e., $Y(x_0,t_0;t;u) = h(X(x_0,t_0;t;u), u(t))$; when $t_0 = 0$, we write $y_{x_0,u}(t)$; 
+
+- $\mathcal{X}_0$ a subset of $\mathbb{X}$ containing the initial conditions we consider; for any $x_0 \in \mathcal{X}_0$, we write $\sigma^+_{\mathcal{X}}(x_0;u)$ the maximal time of existence of $X(x_0,\cdot;t;u)$ in a set $\mathcal{X}$
+
+- $\mathcal{U}$ the set of all sufficiently many times differentiable inputs $u: [0,+\infty) \rightarrow \mathbb{U}$.
+
+The problem of state observation is to produce an estimated state $\hat{x}(t)$ of the true state $X(x_0,t_0;t;u)$ based on knowledge about the system \@ref(eq:output-feedback-system) and information about the history of inputs $u_{[0,t]}$ and outputs $y_{[0,t]}$, so that $\hat{x}(t)$ asymptotically converges to $X(x_0,t_0;t;u)$, for any initial condition $x_0 \in \mathcal{X}_0$ and any input $u \in \mathcal{U}$.
+
+There are multiple ways for solving the problem of state observation (see e.g., [@bernard19book-observer], [@bernard22arc-observer]). Here we are particularly interested in the approach using a _state observer_, i.e., a dynamical system whose _internal state_ evolves according to the history of inputs and outputs, from which a state estimation can be reconstructed that guarantees asymptotic convergence to the true state. We formalize this concept below.
+
+::: {.definitionbox}
+::: {.definition #stateobserver name="State Observer"}
+A state observer for system \@ref(eq:output-feedback-system) is a couple $(\mathcal{F},\mathcal{T})$ such that 
+
+1. $\mathcal{F}: \mathbb{R}^{l} \times \mathbb{R}^{m} \times \mathbb{R}^d \rightarrow \mathbb{R}^l$ is continuous
+
+2. $\mathcal{T}$ is a family of continuous functions indexed by $u \in \mathcal{U}$ where each $\mathcal{T}_u: \mathbb{R}^l \times [0,+\infty) \rightarrow \mathbb{R}^n$ respects the causality condition
+$$
+\forall \tilde{u}: [0,+\infty) \rightarrow \mathbb{R}^m,\forall t \in [0,+\infty), u_{[0,t]} = \tilde{u}_{[0,t]} \Rightarrow  \mathcal{F}_u (\cdot,t) = \mathcal{F}_{\tilde{u}}(\cdot,t).
+$$
+
+3. For any $u \in \mathcal{U}$, any $z_0 \in \mathbb{R}^l$, and any $x_0 \in \mathcal{X}_0$ such that $\sigma^+_{\mathbb{X}}(x_0;u) = +\infty$, any solution $Z(z_0;t;u,y_{x_0,u})$^[We say "any solution" because there may be several solutions to the observer \@ref(eq:observer-definition-1) due to $\mathcal{F}$ only being continuous. This is not a problem as long as any such solution satisfies the required convergence property.] to 
+\begin{equation}
+\dot{z} = \mathcal{F}(z,u,y_{x_0,u})
+(\#eq:observer-definition-1)
+\end{equation} 
+initialized at $z_0$ at time $0$ with input $u$ and $y_{x_0,u}$ exists on $[0,+\infty)$ and satisfies
+\begin{equation}
+\lim_{t \rightarrow \infty} \Vert \hat{X}(x_0,z_0;t;u) - X(x_0;t;u) \Vert = 0,
+(\#eq:observer-definition-2)
+\end{equation}
+with 
+\begin{equation}
+\hat{X}(x_0,z_0;t;u) = \mathcal{T}_u(Z(z_0;t;u,y_{x_0,u}),t).
+(\#eq:observer-definition-3)
+\end{equation}
+In words, (i) the state observer maintains an internal state (or latent state) $z \in \mathbb{R}^l$ that evolves according to the latent dynamics $\mathcal{F}$ in \@ref(eq:observer-definition-1), where $u$ and $y_{x_0,u}$ are inputs; (ii) an estimated state can be reconstructed from the internal state using $\mathcal{T}_u$ as in \@ref(eq:observer-definition-3); and (iii) the error between the estimated state and the true state (defined by a proper distance function $\Vert \cdot \Vert$ on $\mathbb{X}$) converges to zero.
+
+If $\mathcal{T}_u$ is the same for any $u \in \mathcal{U}$ and is also time independent, then we say $\mathcal{T}$ is _stationary_.^[The time dependence of $\mathcal{T}_u$ enables us to cover the case where the knowledge of the $u$ and $y_{x_0,u}$ is used to construct the estimate from the observer state. In particular, using the output sometimes can reduce the dimension of the observer state (and thus alleviate the computations), thus obtaining a reduced-order observer. For example, see [@karagiannis05cdc-nonlinear] and [@astolfi03tac-immersion].] In this case, we can simply write the observer \@ref(eq:observer-definition-1) and \@ref(eq:observer-definition-3) as 
+\begin{equation}
+\begin{split}
+\dot{z} &= \mathcal{F}(z,u,y) \\
+\hat{x} &= \mathcal{T}(z).
+\end{split}
+(\#eq:observer-definition-simple)
+\end{equation}
+
+If $\hat{x}$ can be read off directly from $z$, then we say the observer \@ref(eq:observer-definition-simple) is _in the given coordinates_. A special case of this is when $\hat{x} = z$, i.e., the internal state of the observer is the same as the system state. 
+:::
+:::
+
+### General Design Strategy
+::: {.theorembox}
+::: {.theorem #observerdesignmeta name="Meta Observer"}
+Let $F: \mathbb{R}^p \times \mathbb{R}^m \times \mathbb{R}^d \rightarrow \mathbb{R}^p$, $H: \mathbb{R}^p \times \mathbb{R}^m \rightarrow \mathbb{R}^d$ and $\mathcal{F}: \mathbb{R}^p \times \mathbb{R}^m \times \mathbb{R}^d \rightarrow \mathbb{R}^p$ be continuous functions such that 
+\begin{equation}
+\dot{\hat{\xi}} = \mathcal{F}(\hat{\xi}, u, \tilde{y})
+(\#eq:meta-observer-zeta-hat)
+\end{equation}
+is an observer for 
+\begin{equation}
+\dot{\xi} = F(\xi,u,H(\xi,u)), \quad \tilde{y} = H(\xi,u),
+(\#eq:meta-observer-zeta)
+\end{equation}
+i.e., for any $\xi_0,\hat{\xi}_0 \in \mathbb{R}^p$ and any $u \in \mathcal{U}$, the solution of the observer \@ref(eq:meta-observer-zeta-hat), 
+denoted by $\hat{\Xi}(\hat{\xi}_0;t;u;\tilde{y}_{\xi_0,u})$, and the solution of the true system \@ref(eq:meta-observer-zeta), denoted by $\Xi(\xi_0;t;u)$, satisfy
+\begin{equation}
+\lim_{t \rightarrow \infty} \Vert \hat{\Xi}(\hat{\xi}_0;t;u;\tilde{y}_{\xi_0,u}) - \Xi(\xi_0;t;u) \Vert = 0.
+(\#eq:meta-observer-zeta-converge)
+\end{equation}
+Note that the observer \@ref(eq:meta-observer-zeta-hat) is stationary and in the given coordinates for system \@ref(eq:meta-observer-zeta). Indeed the internal state of the observer is the same as the system state.
+
+Now suppose for any $u \in \mathcal{U}$, there exists a continuous function (i.e., coordinate transformation) $T_u: \mathbb{R}^n \times \mathbb{R} \rightarrow \mathbb{R}^p$ and a subset $\mathcal{X}$ of $\mathbb{X}$ such that 
+
+1. For any $x_0 \in \mathcal{X}_0$ such that $\sigma^+_{\mathbb{X}}(x_0;u) = + \infty$, $X(x_0;\cdot;u)$ remains in $\mathcal{X}$
+
+2. There exists a concave $\mathcal{K}$^[A function $\rho: \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a $\mathcal{K}$ function if $\rho(0) = 0$, $\rho$ is continuous, and $\rho$ is increasing.] function $\rho$ and a positive number $\bar{t}$ such that 
+$$
+\Vert x_a - x_b \Vert \leq \rho (| T_u(x_a,t) - T_u(x_b,t) |), \quad \forall x_a,x_b \in \mathcal{X}, t \geq \bar{t},
+$$
+i.e., $x \mapsto T_u(x,t)$ becomes injective on $\mathcal{X}$,^[An injective function is a function $f$ that maps distinct elements of its domain to distinct elements. That is, $f(x_a) = f(x_b)$ implies $x_a = x_b$, or equivalently, $x_a \neq x_b$ implies $f(x_a) \neq f(x_b)$.] uniformly in time and space, after a certain time $\bar{t}$.
+
+3. $T_u$ transforms the system \@ref(eq:output-feedback-system) into the system \@ref(eq:meta-observer-zeta), i.e., for all $x \in \mathcal{X}$ and all $t \geq 0$, we have
+\begin{equation}
+L_{(f,1)} T_u(x,t) = F(T_u(x,t),u,h(x,u)), \quad h(x,u) = H(T_u(x,t),u),
+(\#eq:meta-observer-transform)
+\end{equation}
+where $L_{(f,1)} T_u(x,t)$ is the Lie derivative of $T_u$ along the vector field $(f,1)$
+$$
+L_{(f,1)} T_u(x,t) = \lim_{\tau \rightarrow 0} \frac{ T_u (X(x,t;t+\tau;u),t+\tau) - T_u(x,t) }{\tau}.
+$$
+
+4. $T_u$ respects the causality condition
+$$
+\forall \tilde{u}: [0,+\infty) \rightarrow \mathbb{R}^m, \forall t \in [0,+\infty), u_{[0,t]} = \tilde{u}_{[0,t]} \Rightarrow T_u(\cdot,t) = T_{\tilde{u}}(\cdot,t).
+$$
+
+Then, for any $u \in \mathcal{U}$, there exists a function $\mathcal{T}_u: \mathbb{R}^p \times [0,+\infty) \rightarrow \mathcal{X}$ (satisfying the causality condition) such that for any $t \geq \bar{t}$, $\xi \mapsto \mathcal{T}_u (\xi, t)$ is uniformly continuous on $\mathbb{R}^p$ and satisfies 
+$$
+\mathcal{T}_u \left( T_u(x,t),t \right) = x, \forall x \in \mathcal{X}.
+$$
+Moreover, denoting $\mathcal{T}$ the family of functions $\mathcal{T}_u$ for $u \in \mathcal{U}$, the couple $(\mathcal{F}, \mathcal{T})$ is an observer for the system \@ref(eq:output-feedback-system) initialized in $\mathcal{X}_0$.
+:::
+:::
+::: {.proof}
+See Theorem 1.1 in [@bernard19book-observer].
+:::
+
+A simpler version of Theorem \@ref(thm:observerdesignmeta) where the coordinate transformation $T_u$ is stationary and fixed for all $u$ is stated below as a corollary.
+
+::: {.theorembox}
+::: {.corollary #observerdesignmetafixedT name="Meta Observer with Fixed Transformation"}
+Let $F: \mathbb{R}^p \times \mathbb{R}^m \times \mathbb{R}^d \rightarrow \mathbb{R}^p$, $H: \mathbb{R}^p \times \mathbb{R}^m \rightarrow \mathbb{R}^d$ and $\mathcal{F}: \mathbb{R}^p \times \mathbb{R}^m \times \mathbb{R}^d \rightarrow \mathbb{R}^p$ be continuous functions such that \@ref(eq:meta-observer-zeta-hat) is an observer for \@ref(eq:meta-observer-zeta). 
+
+Suppose there exists a continuous coordinate transformation $T: \mathbb{R}^p \rightarrow \mathbb{R}^n$ and a compact subset $\Omega$ of $\mathbb{R}^n$ such that 
+
+1. For any $x_0 \in \mathcal{X}_0$ such that $\sigma^+_{\mathbb{X}}(x_0;u) = + \infty$, $X(x_0;\cdot;u)$ remains in $\Omega$
+
+2. $x \mapsto T(x)$ is injective on $\Omega$
+
+3. $T$ transforms the system \@ref(eq:output-feedback-system) into system \@ref(eq:meta-observer-zeta)
+$$
+L_f T(x) = F(T(x),u,h(x,u)), \quad h(x,u) = H(T(x),u),
+$$
+where $L_f T(x)$ is the Lie derivative of $T(x)$ along $f$
+$$
+L_f T(x) = \lim_{\tau \rightarrow 0} \frac{ T(X(x,t;t+\tau;u))  - T(x)}{\tau}.
+$$
+
+Then, there exists a uniformly continuous function $\mathcal{T}:\mathbb{R}^p \rightarrow \mathbb{R}^{n}$ such that 
+$$
+\mathcal{T}(T(x)) = x, \quad \forall x \in \Omega,
+$$
+and $(\mathcal{F},\mathcal{T})$ is an observer for system \@ref(eq:output-feedback-system) initialized in $\mathcal{X}_0$.
+:::
+:::
+
+Theorem \@ref(thm:observerdesignmeta) and Corollary \@ref(cor:observerdesignmetafixedT) suggest the following general observer design strategy:
+
+1. Find an injective coordinate transformation $T_u$ (that may be time-varying and also dependent on $u$) that transforms the original system \@ref(eq:output-feedback-system) with coordinate $x$ into a new system \@ref(eq:meta-observer-zeta) with coordinate $\xi$
+
+2. Design an observer \@ref(eq:meta-observer-zeta-hat), $\hat{\xi}$, for the new system
+
+3. Compute a left inverse, $\mathcal{T}_u$, of the transformation $T_u$ to recover a state estimation $\hat{x}$ of the original system.
+
+The transformed systems \@ref(eq:meta-observer-zeta) are typically referred to as _normal forms_, or in my opinion, _templates_. 
+
+Of course, the general design strategy is rather conceptual, and in order for it to be practical, we have to answer three questions.
+
+- What templates do we have, what are their associated observers, and what are the conditions for the observers to be asymptotically converging?
+
+- What kinds of (nonlinear) systems can be transformed into the templates, and how to perform the transformation?
+
+- How to invert the coordinate transformation? Is it analytical or does it require numerical approximation?
+
+In the following sections, we will study several representative normal forms and answer the above questions. Before presenting the results, let us first introduce several notions of observability.
+
+::: {.definitionbox}
+::: {.definition #observability name="Observability"}
+Consider an open subset $\mathcal{L}$ of the state space $\mathbb{X} \subseteq \mathbb{R}^n$ of system \@ref(eq:output-feedback-system). The system \@ref(eq:output-feedback-system) is said to be 
+
+- **Distinguishable** on $\mathcal{L}$ for some input $u(t)$, if for all $(x_a,x_b) \in \mathcal{L} \times \mathcal{L}$, 
+$$
+y_{x_a,u}(t) = y_{x_b,u}(t), \forall t \in [0,\min\left\{\sigma^+_{\mathbb{X}}(x_a;u), \sigma^+_{\mathbb{X}}(x_b;u) \right\}] \Longrightarrow x_a = x_b
+$$
+
+- **Instantaneously distinguishable** on $\mathcal{L}$ for some input $u(t)$, if for all $(x_a,x_b) \in \mathcal{L} \times \mathcal{L}$, and for all $\bar{t} \in (0, \min\left\{\sigma^+_{\mathbb{X}}(x_a;u), \sigma^+_{\mathbb{X}}(x_b;u) \right\})$,
+$$
+y_{x_a,u}(t) = y_{x_b,u}(t), \forall t \in [0,\bar{t}) \Longrightarrow x_a = x_b
+$$
+
+- **Uniformly observable** on $\mathcal{L}$ if it is distinguishable on $\mathcal{L}$ for any input $u(t)$ (not only for $u \in \mathcal{U}$)
+
+- **Uniformly instantaneously observable** on $\mathcal{L}$ if it is instantaneously observable on $\mathcal{L}$ for any input $u(t)$ (not only for $u \in \mathcal{U}$).
+
+Moreover, let $\mathcal{X}$ be a subset of $\mathbb{X}$ such that $\mathrm{cl}(\mathcal{X})$, i.e., the closure of $\mathcal{X}$, is contained in $\mathcal{L}$. Then the system \@ref(eq:output-feedback-system) is said to be 
+
+- **Backward $\mathcal{L}$-distinguishable on $\mathcal{X}$** for some input $u(t)$, if for any $(x_a,x_b) \in \mathcal{X} \times \mathcal{X}$ such that $x_a \neq x_b$, there exists $t \in (\max\left\{ \sigma^{-}_{\mathcal{L}}(x_a;u), \sigma^{-}_{\mathcal{L}}(x_b;u) \right\},0]$ such that $y_{x_a,u}(t) \neq y_{x_b,u}(t)$, or in words similar to the definition of distinguishable on $\mathcal{L}$, for all $(x_a,x_b) \in \mathcal{X} \times \mathcal{X}$
+$$
+y_{x_a,u}(t) = y_{x_b,u}(t), \forall t \in (\max\left\{\sigma^{-}_{\mathcal{L}}(x_a;u), \sigma^{-}_{\mathcal{L}}(x_b;u) \right\},0] \Longrightarrow x_a = x_b.
+$$
+:::
+:::
+
+### Luenberger Template
+Consider an instance of the normal form \@ref(eq:meta-observer-zeta) as follows:
+\begin{equation}
+\dot{\xi} = A \xi + B(u,y), \quad y = C \xi,
+(\#eq:Luenberger-linear-template)
+\end{equation}
+where $A,C$ are constant matrices, and $B(u,y)$ can depend nonlinearly on $u$ and $y$.
+
+For this template, we have the well-known Luenberger observer.
+
+::: {.theorembox}
+::: {.theorem #LuenbergerLinear name="Luenberger Observer"}
+If the pair $(A,C)$ is detectable (see Theorem \@ref(thm:ltidetectable)), then there exists a matrix $K$ such that $A-KC$ is Hurwitz and the system 
+\begin{equation}
+\dot{\hat{\xi}} = A \hat{\xi} + B(u,y) + K(y - C \hat{\xi})
+(\#eq:Luenberger-Linear)
+\end{equation}
+is an observer for \@ref(eq:Luenberger-linear-template).
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+Define $e(t) = \xi(t)  - \hat{\xi}(t)$. In that case,
+\begin{equation}
+    \dot{e}(t) = [A - KC] e(t)
+    (\#eq:Luenberger-error)
+\end{equation}
+
+Solving \@ref(eq:Luenberger-error), we obtain
+
+\begin{equation}
+    e(t) = \mathrm{exp}[(A - KC)t] e(0)
+\end{equation}
+
+Then, if the real components of the eigenvalues of $A - KC$ are strictly negative (i.e., $A - KC$ is Hurwitz), then $e(t) \rightarrow 0$ as $t \rightarrow \infty$, independent of the initial error $e(0) = \xi(0) - \hat{\xi}(0)$. From Theorem \@ref(thm:ltidetectable), we know that $(A,C)$ being detectable implies the existence of $K$ such that $A - KC$ is Hurwitz.
+
+If one is further interested in estimating the convergence rate of the Luenberger observer, then one can use the result from Corollary \@ref(cor:bestconvergencerate). Particularly, one can solve the Lyapunov equation
+$$
+(A - KC)^T P + P (A - KC) = - I
+$$
+to obtain $P$. Then the convergence rate of $\Vert e \Vert$ towards zero is $\frac{0.5}{\lambda_{\max}(P)}$.
+:::
+:::
+
+The Luenberger observer is an elegant result in observer design (and even in control theory) that has far-reaching impact. In my opinion, the essence of observer design is twofold: (i) to simulate the dynamics when the state estimation is correct, and (ii) to correct the state estimation from observation when it is off. These two pieces of ideas are evident in \@ref(eq:Luenberger-Linear): the observer is a copy of the original dynamics ($A \hat{\xi} + B(u,y)$) plus a feedback correction from the difference between the "imagined" observation $C\hat{\xi}$ and the true observation $y$. 
+
+You may think the Luenberger template is restricting because it requires the system to be linear (up to the only nonlinearly in $B(u,y)$). However, it turns out the Luenberger template is already quite useful, as I will show in the following pendulum example.
+
+::: {.examplebox}
+::: {.example #pendulumLuenberger name="Luenberger Observer for A Simple Pendulum"}
+Consider a simple pendulum dynamics model
+\begin{equation}
+x = \begin{bmatrix}
+\theta \\ \dot{\theta}
+\end{bmatrix}, \quad 
+\dot{x} = \begin{bmatrix} 
+\dot{\theta} \\
+- \frac{1}{ml^2} (b \dot{\theta} + mgl \sin \theta) 
+\end{bmatrix} + 
+\begin{bmatrix}
+0 \\
+\frac{1}{ml^2} 
+\end{bmatrix} u, \quad y = \theta,
+(\#eq:kbobserver-pendulum)
+\end{equation}
+where $\theta$ the angular position of the pendulum from the vertical line, $m > 0$ the mass of the pendulum, $l > 0$ the length, $g$ the gravitational constant, $b > 0$ the dampling coefficient, and $u$ the control input (torque). 
+
+We assume we can only observe the angular position of the pendulum in \@ref(eq:kbobserver-pendulum), e.g., using a camera, but not the angular velocity. Our goal is to construct an observer that can provide a full state estimation. 
+
+We first note that the pendulum dynamics \@ref(eq:kbobserver-pendulum) can actually be written in the (linear) Luenberger template \@ref(eq:Luenberger-linear-template) as^[I have to say I was a bit surprised when I arrived at this formulation.] 
+\begin{equation}
+\begin{split}
+\dot{x} & = \underbrace{\begin{bmatrix}
+0 & 1 \\
+0 & - \frac{b}{ml^2}
+\end{bmatrix}}_{=:A} x + 
+\underbrace{\begin{bmatrix}
+0 \\
+\frac{u - mgl \sin \theta }{ml^2}
+\end{bmatrix}}_{=:B(u,y)} \\
+y & = \underbrace{\begin{bmatrix}
+1 & 0
+\end{bmatrix}}_{=:C} x 
+\end{split}.
+(\#eq:pendulum-Luenberger-Linear)
+\end{equation}
+
+In order for us to use the Luenberger observer, we need to check if the pair $(A,C)$ is detectable. We can easily find the eigenvalues and eigenvectors of $A$:
+$$
+A \begin{bmatrix}
+1 \\ 0
+\end{bmatrix} = 0,\quad 
+A \begin{bmatrix}
+- \frac{ml^2}{b} \\ 1 
+\end{bmatrix} = \begin{bmatrix}
+1 \\ - \frac{b}{ml^2}
+\end{bmatrix}
+= - \frac{b}{ml^2} \begin{bmatrix}
+- \frac{ml^2}{b} \\ 1 \end{bmatrix}.
+$$
+The first eigenvalue has real part equal to $0$. However, 
+$$
+C \begin{bmatrix}
+1 \\ 0
+\end{bmatrix} = 1 \neq 0.
+$$
+According to Theorem \@ref(thm:ltidetectable), we conclude $(A,C)$ is detectable. In fact, the pair $(A,C)$ is more than just detectable, it is indeed observable (according to Theorem \@ref(thm:ltiobservable)). Therefore, the poles of $A - KC$ can be arbitrarily placed. 
+
+**Finding $K$**. Now we need to find $K$. An easy choice of $K$ is 
+$$
+K = \begin{bmatrix} k \\ 0 \end{bmatrix}, \quad A - KC = 
+\begin{bmatrix}
+- k & 1 \\ 0 & - \frac{b}{ml^2}
+\end{bmatrix}.
+$$
+With $k > 0$, we know $A- KC$ is guaranteed to be Hurwitz (the two eigenvalues of $A-KC$ are $-k$ and $-b/ml^2$), and we have obtained an observer!
+
+We can also estimate the convergence rate of this observer. Let us use $m=1,g=9.8,l=1,b=0.1$ as parameters of the pendulm dynamics. According to Theorem \@ref(thm:LuenbergerLinear), we solve the Lyapunov equation 
+$$
+(A - KC)^T P + P(A - KC) = -I
+$$
+and $\gamma = \frac{0.5}{\lambda_{\max}(P)}$ will be our best estimate of the convergence rate (of $\Vert e \Vert = \Vert \hat{x} - x \Vert$ towards zero). 
+
+Table \@ref(tab:pendulumLuenbergerRate) below shows the convergence rates computed for different values of $k$. We can see that as $k$ is increased, the convergence rate estimation is also increased. However, it appears that $0.1$ is the best convergence rate we can achieve, regardless of how large $k$ is.
+
+Table: (\#tab:pendulumLuenbergerRate) Convergence rate estimation of the Luenberger observer for a simple pendulm.
+
+| $k$ | $0.1$ | $1$ | $10$ | $100$ | $1000$ | $10000$ |
+|:-----------:|:----------:|:-----------:|:----------:|:----------:|:----------:|:----------:|
+| $\gamma$ | $0.0019$ | $0.0523$ | $0.0990$ | $0.1000$ | $0.1000$ | $0.1000$ | 
+
+**Optimal $K$**. Is it true that $0.1$ is the best convergence rate, or in other words, what is the best $K$ that maximizes the convergence rate $\gamma$? 
+
+A natural way (and my favorite way) to answer this question is to formulate an optimization problem. 
+\begin{equation}
+\begin{split}
+\min_{P,K} & \quad \lambda_{\max}(P) \\
+\text{subject to} & \quad (A - KC)^T P + P (A - KC) = -I \\
+& \quad P \succeq 0
+\end{split}
+(\#eq:pendulumLuenbergerMaxgammaNonCVX)
+\end{equation}
+The above formulation seeks the best possible $K$ that minimizes $\lambda_{\max}(P)$ which, according to $\gamma = 0.5 / \lambda_{\max}(P)$, also maximizes $\gamma$. 
+
+However, problem \@ref(eq:pendulumLuenbergerMaxgammaNonCVX) is not a convex formulation due to the bilinear term $PK$. Nevertheless, via a simple change of variable $H = PK$, we arrive at the following convex formulation
+\begin{equation}
+\begin{split}
+\min_{P,H} & \quad \lambda_{\max}(P) \\
+\text{subject to} & \quad A^T P - C^T H^T + PA - H C = - I \\
+& \quad P \succeq 0
+\end{split}
+(\#eq:pendulumLuenbergerMaxgammaCVX)
+\end{equation}
+Problem \@ref(eq:pendulumLuenbergerMaxgammaCVX) is a semidefinite programming problem (SDP), that can be modeled and solved by off-the-shelf tools. We can recover $K = P^{-1} H$ from \@ref(eq:pendulumLuenbergerMaxgammaCVX) after it is solved. 
+
+Interestingly, solving problem \@ref(eq:pendulumLuenbergerMaxgammaCVX) verifies that the minimum $\lambda_{\max}(P)$ is $5$ and the maximum converge rate is $0.1$. An optimal solution of \@ref(eq:pendulumLuenbergerMaxgammaCVX) is
+$$
+P^\star = \begin{bmatrix}
+2.4923 & 0 \\ 0 & 5 \end{bmatrix}, \quad 
+K^\star = \begin{bmatrix}
+0.2006 \\ 0.4985 \end{bmatrix}.
+$$
+You should check out the Matlab code of this example [here](https://github.com/ComputationalRobotics/OptimalControlEstimation-Examples/blob/main/pendulum_luenberger.m).
+:::
+:::
+
+
+### State-affine Template 
+
+Consider an instance of the normal form \@ref(eq:meta-observer-zeta) where the dynamics is linear in $\xi$, but the coefficients are time-varying and dependent on the input and output
+\begin{equation}
+\dot{\xi} = A(u,y) \xi + B(u,y), \quad y = C(u) \xi.
+(\#eq:state-affine-template)
+\end{equation}
+The difference between the state-affine template \@ref(eq:state-affine-template) and the Luenberger template \@ref(eq:Luenberger-linear-template) is that the linear matrices $A,C$ are allowed to depend nonlinearly on the input $(u,y)$.
+
+Kalman and Bucy originally proposed an observer for linear time-varying systems [@kalman61-new]. The result is later extened by [@besanccon96ejc-observer] and [@hammouri90cdc-observer] to deal with coefficient matrices dependent on the control. The following theorem is a direct extension of the result from [@besanccon96ejc-observer] and [@hammouri90cdc-observer] by considering $(u,y)$ as an augmented control input.
+
+Before presenting the theorem, we need to introduce the following terminology.
+
+::: {.definitionbox}
+::: {.definition #lineartimevarying name="Linear Time-Varying System"}
+For a linear time-varying system of the form 
+\begin{equation}
+\dot{\chi} = A(\nu) \chi, \quad y = C(\nu) \chi,
+(\#eq:linear-time-varying)
+\end{equation}
+with input $\nu$ and output $y$, we define
+
+- the _transition matrix_ $\Psi_\nu$ as the unique solution to 
+$$
+\Psi_\nu (t,t) = I, \quad \frac{\partial \Psi_\nu}{\partial \tau}(\tau,t) = A(\nu(\tau)) \Psi_\nu (\tau, t).
+$$
+Note that the transition matrix is used to express the solution to \@ref(eq:linear-time-varying) because it satisfies 
+$$
+\chi(\chi_0,t_0;t;\nu) = \Psi_\nu (t,t_0) \chi_0.
+$$
+
+- the _observability grammian_ as 
+$$
+\Gamma_\nu (t_0,t_1) = \int_{t_0}^{t_1} \Psi_\nu (\tau,t_0)^T C(\nu(\tau))^T C(\nu(\tau)) \Psi_\nu (\tau,t_0) d\tau.
+$$
+
+- the _backward observability grammian_ as
+$$
+\Gamma_\nu^b (t_0,t_1) = \int_{t_0}^{t_1} \Psi_\nu (\tau,t_1)^T C(\nu(\tau))^T C(\nu(\tau)) \Psi_\nu (\tau,t_1) d\tau.
+$$
+:::
+:::
+
+We now introduce the Kalman-Bucy Observer for the state-affine template \@ref(eq:state-affine-template).
+
+::: {.theorembox}
+::: {.theorem #kalmanbucystateaffine name="Kalman-Bucy Observer"}
+Let $y_{\xi_0,u}(t) = C(u(t)) \Xi (\xi_0;t;u)$ be the output of system \@ref(eq:state-affine-template) at time $t$ with initialization $\xi_0$ and control $u$. Suppose the control $u$ satisfies 
+
+- For any $\xi_0$, $t \mapsto A(u(t),y_{\xi_0,u}(t))$ is bounded by $A_{\max}$
+
+- For any $\xi_0$, the augmented input $\nu = (u,y_{\xi_0,u})$ is _regularly persistent_ for the dynamics
+\begin{equation}
+\dot{\chi} = A(\nu) \chi , \quad y = C(\nu) \chi 
+(\#eq:kbobserver-auxilarydynamics)
+\end{equation}
+uniformly with respect to $\xi_0$. That is, there exist strictly positive numbers $t_0,\bar{t}$, and $\alpha$ such that for any $\xi_0$ and any time $t \geq t_0 \geq \bar{t}$,
+$$
+\Gamma_v^b (t-\bar{t}, t) \succeq \alpha I,
+$$
+where $\Gamma_v^b$ is the _backward observability grammian_ associated with system \@ref(eq:kbobserver-auxilarydynamics). 
+
+Then, given any positive definite matrix $P_0$, there exist $\alpha_1,\alpha_2 > 0$ such that for any $\lambda \geq 2 A_{\max}$ and any $\xi_0 \in \mathbb{R}^p$, the matrix differential equation 
+\begin{equation}
+\dot{P} = -\lambda P - A(u,y)^T P - P A(u,y) + C(u)^T C(u)
+(\#eq:kbobserver-matrixdifferential)
+\end{equation}
+initialized at $P(0) = P_0$ admits a unique solution satisfying $P(t)=P(t)^T$ and 
+$$
+\alpha_2 I \succeq P(t) \succeq \alpha_1 I.
+$$
+Moreover, the system 
+\begin{equation}
+\dot{\hat{\xi}} = A(u,y) \hat{\xi} + B(u,y) + K (y - C(u)\hat{\xi})
+(\#eq:kbobserver-observer)
+\end{equation}
+with a time-varying gain matrix
+\begin{equation}
+K = P^{-1} C(u)^T 
+(\#eq:kbobserver-gain)
+\end{equation}
+is an observer for the state-affine system \@ref(eq:state-affine-template).
+:::
+:::
+
+Let us work out an example of the Kalman-Bucy Observer for nonlinear systems.
+
+::: {.examplebox}
+::: {.example #pendulumkbobserver name="Kalman-Bucy Observer for A Simple Pendulum"}
+Let us reconsider the pendulum dynamics \@ref(eq:kbobserver-pendulum) but this time try to design a Kalman-Bucy observer.
+
+We first write the pendulum dynamics in a new coordinate system so that it is in the state-affine normal form \@ref(eq:state-affine-template). We choose $\xi = [\mathfrak{s},\mathfrak{c},\dot{\theta}]^T$ with $\mathfrak{s} = \sin \theta$ and $\mathfrak{c} = \cos \theta$. Clearly, we will be able to observe $y = [\mathfrak{s},\mathfrak{c}]^T$ in this new coordinate. The state-affine normal form of the pendulum dynamics reads
+\begin{equation}
+\begin{split}
+\dot{\xi} = \begin{bmatrix}
+\mathfrak{c} \dot{\theta} \\
+- \mathfrak{s} \dot{\theta} \\
+- \frac{1}{ml^2} (b \dot{\theta} + mgl \mathfrak{s} ) +  \frac{1}{ml^2} u
+\end{bmatrix} & = 
+\underbrace{\begin{bmatrix}
+0 & 0 & \mathfrak{c} \\
+0 & 0 & -\mathfrak{s} \\
+0 & 0 & -\frac{b}{ml^2}
+\end{bmatrix}}_{=:A(u,y)} \xi + 
+\underbrace{\begin{bmatrix}
+0 \\ 0 \\ \frac{u - mgl \mathfrak{s}}{ml^2}
+\end{bmatrix}}_{=:B(u,y)} \\
+y & = \underbrace{\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}}_{=:C(u)} \xi
+\end{split}.
+(\#eq:pendulum-state-affine)
+\end{equation} 
+Note that $C(u)$ is in fact time-invariant, and $B(u,y)$ only depends on $u$; but we adopt the same notation as the general state-affine template \@ref(eq:state-affine-template). 
+
+In order to use the Kalman-Bucy observer in Theorem \@ref(thm:kalmanbucystateaffine), we need to verify the boundedness of $A(u,y)$, and the regular persistence of \@ref(eq:kbobserver-auxilarydynamics).
+
+**Boundedness of $A(u,y)$**. We can easily show the boundedness of $A(u,y)$ by writing 
+$$
+\Vert A(u,y) \xi \Vert = \Vert \xi_3 (\mathfrak{c} - \mathfrak{s} - b/ml^2) \Vert  \leq |\xi_3| \sqrt{3} \sqrt{\mathfrak{c}^2 + \mathfrak{s}^2 + b^2 / m^2 l^4} \leq \Vert \xi \Vert \sqrt{3 + 3b^2 / m^2 l^4}. 
+$$
+Therefore, we can take $A_{\max} = \sqrt{3 + 3b^2 / m^2 l^4}$.
+<!-- <span style="color:red">Does the $A_{\max}$ in Theorem \@ref(thm:kalmanbucystateaffine) refer to the bound in operator norm?</span> -->
+
+**Regular persistence**. We write the backward observability grammian of system \@ref(eq:kbobserver-auxilarydynamics)
+$$
+\Gamma_\nu^b(t - \bar{t},t) = \int_{t - \bar{t}}^t \Psi_\nu(\tau,t)^T C^T C \Psi_\nu (\tau, t) d \tau = \int_{t - \bar{t}}^t \Psi_\nu(\tau,t)^T \underbrace{\begin{bmatrix} 
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 0
+\end{bmatrix}}_{=:\tilde{C}}
+\Psi_\nu (\tau, t) d \tau.
+$$
+$\Gamma_\nu^b(t - \bar{t},t) \succeq \alpha I$ if and only if
+$$
+w^T \Gamma_\nu^b(t - \bar{t},t) w \geq \alpha, \quad \forall w \in \mathbb{R}^3, \Vert w \Vert = 1.
+$$
+With this, we develop $w^T \Gamma_\nu^b(t - \bar{t},t) w$
+\begin{equation}
+\begin{split}
+w^T \Gamma_\nu^b(t - \bar{t},t) w &= \int_{t - \bar{t}}^t s^T \tilde{C} s d\tau, \\
+& = \int_{t - \bar{t}}^t \left( s_1^2 + s_2^2 \right) d\tau, \quad s = \Psi_\nu (\tau, t) w
+\end{split}
+(\#eq:pendulm-regular-persistence-1)
+\end{equation}
+and observe that $s = \Psi_\nu (\tau,t) w$ is equivalent to
+$$
+w = (\Psi_\nu (\tau,t))^{-1} s = \Psi_\nu (t,\tau) s,
+$$
+that is, $w$ is the solution of $\dot{\xi} = A(\nu) \xi$ at time $t$ with initial condition $s$ at time $\tau \leq t$. Equivalently, this is saying $s$ is the initial condition of $\dot{\xi} = A(\nu) \xi$ at time $\tau \leq t$ such that its solution at time $t$ is $w$. Note that from \@ref(eq:pendulm-regular-persistence-1) it is clearly that $\int_{t - \bar{t}}^t \left( s_1^2 + s_2^2 \right) d\tau \geq 0$, and $\int_{t - \bar{t}}^t \left( s_1^2 + s_2^2 \right) d\tau = 0$ if and only if $s_1^2 + s_2^2 = 0$, or equivalently $s_1 = s_2 = 0$ for any $\tau \in [t - \bar{t}, t]$.
+
+We then take a closer look at the system $\dot{\xi} = A(\nu) \xi$:
+\begin{equation}
+\begin{split}
+\dot{\xi}_1 &= \mathfrak{c} \xi_3 \\
+\dot{\xi}_2 &= -\mathfrak{s} \xi_3 \\
+\dot{\xi}_3 &= - \frac{b}{ml^2} \xi_3.
+\end{split}
+(\#eq:pendulm-state-affine-auxiliarysystem)
+\end{equation}
+
+If the solution of $\xi_3$ at time $t$ is $w_3$, then 
+$$
+\xi_3(\tau) = w_3 e^{\frac{b}{ml^2}(t - \tau)}, \quad \tau \leq t.
+$$
+We can now claim it is impossible that $s_1 = s_2 = 0$ at any time $\tau \in [t - \bar{t}, t]$. 
+
+We can show this by contradiction. First of all, $s_1 = s_2 = 0$ at $\tau = t$ implies $w_1 = w_2 = 0$ and hence $w_3 = \pm 1$. This implies $\xi_3 \neq 0$ for any $\tau \in [t - \bar{t}, t]$. Then, $s_1 = 0, \forall \tau \in [t - \bar{t}, t]$ implies $\dot{\xi}_1 = 0$ which, due to $\xi_3 \neq 0$, implies $\mathfrak{c} = 0$ for all $\tau$. Similarly, $s_2 = 0, \forall \tau \in [t - \bar{t}, t]$ implies $\dot{\xi}_2 = 0$ and $\mathfrak{s} = 0$. This creates a contradiction because $\mathfrak{c}^2 + \mathfrak{s}^2 = 1$ and $\mathfrak{c}, \mathfrak{s}$ cannot be simultaneously zero.
+
+The above reasoning proves that the backward observability Grammian is positive definite, which is, however, still insufficient for the Kalman-Bucy observer. We need a stronger uniformly positive definite condition on $\Gamma_\nu^b$, i.e., to find $t_0, \bar{t}$ and $\alpha>0$ so that $\Gamma_\nu^b(t-\bar{t},t) \succeq \alpha I$ for all $t \geq t_0$.
+
+If the control $u$ is unbounded, then sadly, one can show that the uniform positive definite condition fails to hold, as left by you to show in the following exercise.
+
+::: {.exercise #kbobserverpendulumcounterexample name="Counterexample for Kalman-Bucy Observer"}
+Show that, if the control $u$ is unbounded, then for any $\alpha > 0$, $t_0 \geq \bar{t} > 0$, there exists $t \geq t_0$ such that $\Gamma_\nu^b(t - \bar{t},t) \prec \alpha I$. (Hint: consider a controller that spins the pendulum faster and faster such that in time $\bar{t}$ it has rotated $2k\pi$, in this case the angular velocity becomes unobservable because we are not sure how many rounds the pendulum has rotated.)
+:::
+
+Fortunately, if the control $u$ is bounded, then we can prove the uniform positive define condition holds for $\Gamma_\nu^b(t - \bar{t},t)$. The following proof is given by [Weiyu Li](https://scholar.harvard.edu/weiyuli/home).
+
+Without loss of generality, let $\frac{b}{ml^2} = 1$. Assume $u$ is bounded such that the third entry of $B(u,y)$ in \@ref(eq:pendulum-state-affine) is bounded by $\beta > 0$
+$$
+\left| \frac{u - mgl \mathfrak{s}}{ml^2} \right| \leq \beta.
+$$
+Assuming the initial velocity of the pendulum is $\dot{\theta}(0) = \dot{\theta}_0$, we know $\dot{\theta}(t)$ is bounded by 
+$$
+\dot{\theta}(t) \in \left[ c_1(1-\beta)e^{-t} - \beta  , c_2(1-\beta)e^{-t} + \beta \right],
+$$
+where $c_1,c_2$ are constants chosen to satisfy the initial condition. Clearly, for all $t > 0$, we see $\dot{\theta}(t)$ is bounded, and hence we know $\dot{\mathfrak{c}}$ and $\dot{\mathfrak{s}}$ are bounded (due to $\mathfrak{c}$ and $\mathfrak{s}$ are bounded). Intuitively, what we have just shown says that when the control is bounded, the measurements $\mathfrak{c}$ and $\mathfrak{s}$ will have bounded time derivatives. (This will help us analyze the auxiliary system \@ref(eq:pendulm-state-affine-auxiliarysystem).)
+
+Now back to checking regular persistence of the auxilary system \@ref(eq:pendulm-state-affine-auxiliarysystem). We will discuss two cases: (1) $w_3^2 > 1 - \delta$, and (2) $w_3^2 \leq 1 - \delta$, for some constant $\delta < 0.5$ determined later.
+
+1. $w_3^2 > 1 - \delta > 0.5$. In this case we have $w_1^2 + w_2^2 = 1 - w_3^2 < \delta$, and hence $w_1^2 < \delta$, $w_2^2 < \delta$. On the other hand, from \@ref(eq:pendulm-state-affine-auxiliarysystem) we have 
+$$
+\dot{\xi}_1^2(\tau) + \dot{\xi}_2^2(\tau) = \xi_3^2 = w_3^2 e^{2 (t - \tau)} > w_3^2 > 1 - \delta, \quad \forall \tau < t.
+$$
+Without loss of generality assume $\dot{\xi}_1(t)^2 > (1-\delta)/2$. As $\dot{\xi}_1 = \mathfrak{c} \xi_3$ and both $\mathfrak{c}$ and $\xi_3$ have bounded derivatives, we know $\dot{\xi}_1$ will not change sign for some duration $T$ that is independent from the choice of $\delta$ (because the time derivatives of $\mathfrak{c}$ and $\xi_3$ do not depend on $\delta$). That is $|\dot{\xi}_1| > \sqrt{(1-\delta)/2} > 1/2$ for $\tau \in [t - T,t]$. Consequently,
+$$
+|\xi_1(t - \tau)| > \frac{1}{2} \tau - |w_1| > \frac{1}{2} \tau - \sqrt{\delta}, \quad \tau \in [0,T].
+$$
+Choosing $\delta$ small enough, we have $|\xi_1(t - \tau)| > 0.25 \tau$ for $\tau \in [0.5T,T]$. Then we have 
+$$
+\Gamma_\nu^b(t - T, t) \succ [(0.25 \times 0.5 T)^2 \times 0.5T]I.
+$$
+
+2. $w_3^2 \leq 1-\delta$. In this case $w_1^2 + w_2^2 = 1 - w_3^2 \geq \delta$, and at least one of $w_1$ and $w_2$ has absolute value larger than $\sqrt{\delta/2}$. Because the derivatives of $\xi_1$ and $\xi_2$ are both bounded, we know $\xi_1$ and $\xi_2$ will remain large for some constant time. Thus there is a uniform lower bound.
+
+The intuition of the above proof is simple: when $\xi_1$ and/or $\xi_2$ already have large absolute value (case 2), we can find a time window such that $\xi_1$ and/or $\xi_2$ remain large in that time window; when $\xi_1$ and/or $\xi_2$ are small (case 1), using the observation that their time derivatives are large (because $w_3$ is large), together with the fact that these derivatives remain large (because the derivative of these derivatives are bounded), we can also find a time window that $\xi_1$ and/or $\xi_2$ are large (back in time). Therefore, the backward observability Grammian is uniformly positive definite.
+
+<!-- Therefore, there must exist $\alpha > 0$ such that $\Gamma_\nu^b (t - \bar{t},t) \succeq \alpha I$. -->
+<!-- On the other hand,
+$$
+\frac{d}{d\tau}\left( \xi_1^2 + \xi_2^2 \right) = 2 \xi_1 \dot{\xi}_1 + 2 \xi_2 \dot{\xi}_2 = 2 \xi_3 \left(\mathfrak{c} \xi_1 - 2 \mathfrak{s}\xi_2 \right).
+$$
+
+This implies
+$$
+\xi_3^2 \leq w_3^2 e^{\frac{2b}{ml^2} \bar{t}}, \quad \forall t - \bar{t} \leq z \leq t. 
+$$
+
+On the other hand,
+\begin{align}
+(\dot{\xi}_1)^2 + (\dot{\xi}_2)^2 = (\mathfrak{c}^2 + \mathfrak{s}^2) \xi_3^2 \leq w_3^2 e^{\frac{2b}{ml^2} \bar{t}}, \quad \forall t - \bar{t} \leq z \leq t.
+\end{align} -->
+:::
+:::
+
+### Kazantzis-Kravaris-Luenberger (KKL) Template
+
+In Luenberger's original paper about observer design for linear systems [@luenberger64-observer], the goal was to transform a linear system 
+$$
+\dot{x} = F x, \quad y = C x
+$$
+into a Hurwitz form
+\begin{equation}
+\dot{\xi} = A \xi + B y
+(\#eq:kkl-history-dynamics)
+\end{equation}
+with $A$ a Hurwitz (stable) matrix. If such a transformation is available, then the following system 
+$$
+\dot{\hat{\xi}} = A \hat{\xi} + B y,
+$$
+which is nothing but a copy of the dynamics \@ref(eq:kkl-history-dynamics), is in fact an observer. This is because the error $e = \hat{\xi} - \xi$ evolves as 
+$$
+\dot{e} = A e,
+$$
+which implies that $e$ tends to zero regardless of the initial error $e(0)$. Luenberger proved that when $(F,C)$ is observable, a stationary transformation $\xi = T x$ with $p = n$, i.e., $T \in \mathbb{R}^{n\times n}$, always exists and is unique, for any matrix $A$ that is Hurwitz and $(A,B)$ that is controllable. This is based on the fact that 
+\begin{align}
+(A T + B C) x =A \xi + B y =\dot{\xi} = T \dot{x} = TF x, \forall x \\
+\Longleftrightarrow AT + BC = TF,
+\end{align}
+known as the Sylvester equation, admits a unique and invertible solution $T$.
+
+A natural extension of Luenberger's original idea is to find a transformation that converts the nonlinear system \@ref(eq:output-feedback-system) into the following form 
+\begin{equation}
+\dot{\xi} = A \xi + B(u,y), \quad y = H(\xi,u),
+(\#eq:kkl-template)
+\end{equation}
+with $A$ a Hurwitz matrix (but $H$ can be nonlinear, as opposed to the Luenberger template in Theorem \@ref(thm:LuenbergerLinear)). If such a transformation can be found, then we can design a similar observer that copies the dynamics \@ref(eq:kkl-template)
+\begin{equation}
+\dot{\hat{\xi}} = A \hat{\xi} + B(u,y).
+(\#eq:kkl-observer)
+\end{equation}
+We refer to such a nonlinear Luenberger template the Kazantzis-Kravaris-Luenberger (KKL) template, due to the seminal work [@kazantzis98scl-kkl]. 
+
+The KKL template, once found, is nice in the sense that (i) the observer \@ref(eq:kkl-observer) is a simple copy of the dynamics and also very easy to implement (as opposed to the Kalman-Bucy observer); and (ii) checking if the matrix $A$ is Hurwitz is easy, at least when $A$ has reasonable size, (e.g., compared to checking the regular persistence condition in the state-affine template in Theorem \@ref(thm:kalmanbucystateaffine)). 
+
+However, the KKL template is difficult to realize in the sense that (i) what kind of nonlinear systems can be converted to \@ref(eq:kkl-template), and (ii) for those systems, how do we find the coordinate transformation?
+
+Recent works have leveraged deep learning to learn the coordinate transformation, for example in [@janny21cdc-deepkkl], [@niazi23lacc-earning], [@miao23ll4dc-earning]. Before hammering the problem with deep learning, let us look at the fundamentals of the KKL observer.
+
+#### Autonomous Systems 
+Consider the autonomous version of system \@ref(eq:output-feedback-system) without control
+\begin{equation}
+\dot{x} = f(x), \quad y = h(x),
+(\#eq:kkl-autonomous-system)
+\end{equation}
+where $x \in \mathbb{X} \subseteq \mathbb{R}^n, y \in \mathbb{Y} \subseteq \mathbb{R}^d$.
+
+The following result, established by [@andrieu06sicopt-kkl], states that the KKL observer exists under mild conditions.
+
+::: {.theorembox}
+::: {.theorem #kklautonomous name="KKL Observer for Autonomous Systems"}
+Assum $\mathcal{X}$ and $\mathcal{L}$ are open bounded sets in $\mathbb{X}$ (the state space) such that $\mathrm{cl}(\mathcal{X})$ is contained in $\mathcal{L}$ and the system \@ref(eq:kkl-autonomous-system) is backward $\mathcal{L}$-distinguishable on $\mathcal{X}$ (cf. Definition \@ref(def:observability)). Then there exists a strictly positive number $\gamma$ and a set $\mathcal{S}$ of zero Lebesgue measure in $\mathbb{C}^{n+1}$ such that denoting $\Omega = \{ \lambda \in \mathbb{C} \mid \mathrm{Re}(\lambda) < - \gamma \}$, for any $(\lambda_1,\dots,\lambda_{n+1}) \in \Omega^{n+1} \backslash \mathcal{S}$, there exists a function $T: \mathbb{R}^n \rightarrow \mathbb{R}^{(n+1)d}$ uniformly injective on $\mathcal{X}$ satisfying 
+$$
+L_f T(x) = A T(x) + B(h(x))
+$$
+with 
+\begin{align}
+A = \tilde{A} \otimes I_d, \quad B(y) = (\tilde{B} \otimes I_d ) y \\
+\tilde{A} = \begin{bmatrix}
+\lambda_1 & & \\
+& \ddots & \\
+& & \lambda_{n+1} \end{bmatrix} 
+\quad \tilde{B} = \begin{bmatrix}
+1 \\ \vdots \\ 1 \end{bmatrix}.
+\end{align}
+Moreover, if $\mathcal{X}$ is backward invariant, then $T$ is unique and defined by 
+\begin{equation}
+T(x) = \int_{-\infty}^0 e^{-A\tau} B(h(X(x,\tau))) d\tau.
+(\#eq:kkl-autonomous-T)
+\end{equation}
+:::
+:::
+
+::: {.remark}
+The function $T$ in Theorem \@ref(thm:kklautonomous) takes complex numbers. To simulate the observer 
+$$
+\dot{\hat{\xi}} = A \hat{\xi} + B(y),
+$$
+one needs to implement in real numbers, for each $\lambda_i$ and $j \in [d]$
+$$
+\dot{\hat{\xi}}_{\lambda_i,j} = 
+\begin{bmatrix}
+- \mathrm{Re}(\lambda_i) & - \mathrm{Im}(\lambda_i) \\
+\mathrm{Im}(\lambda_i) & - \mathrm{Re}(\lambda_i)
+\end{bmatrix} \hat{\xi}_{\lambda_i,j} + \begin{bmatrix} y_j \\ 0 \end{bmatrix}.   
+$$
+Therefore, the dimension of the observer is $2 \times d (n+1)$.
+:::
+
+Theorem \@ref(thm:kklautonomous) states that as long as the system \@ref(eq:kkl-autonomous-system) is backward distinguishable, then there exists a stationary transformation $T$ that can transform the system to a new coordinate system $\xi$ such that the dynamics in $\xi$ is Hurwitz. A closer look at the structure of $A$ and $B$ reveals that the coordinate transformation needs to satisfy $n+1$ differential equations of the form
+$$
+\frac{\partial T_{\lambda}}{\partial x}(x) \dot{x} = \lambda T_{\lambda} (x) + y 
+$$
+where each $T_{\lambda}$ transforms the state $x$ into a new coordinate having the same dimension of $y$. Clearly, if $T = (T_\lambda)$, i.e., there is a single $\lambda$, then $T$ is not uniformly injective (as the dimension of $\xi$ is $d < n$). Consequently, by choosing 
+$$
+T = (T_{\lambda_1},\dots,T_{\lambda_{n+1}}),
+$$
+the uniform injectivity of $T$ is ensured.
+
+However, the difficulty lies in the computation of $T$ (and $T_\lambda$), let alone its inverse (that recovers $x$ from $\xi$). Even though $\mathcal{X}$ is backward invariant, the formulation \@ref(eq:kkl-autonomous-T) is difficult to compute. I tried very hard to find a coordinate transformation $T$ that can convert the non-controlled pendulum dynamics into the KKL form but did not succeed. **You should let me know if you were able to find one!** Nevertheless, the following example shows you the flavor of how such a transformation may look like for a different system.
+
+::: {.examplebox}
+::: {.example #kklOscillator name="KKL Observer for an Oscillator with Unknown Frequency"}
+Consider a harmonic oscillator with unknown frequency
+$$
+\begin{cases}
+\dot{x}_1 = x_2 \\
+\dot{x}_2 = - x_1 x_3 \\
+\dot{x}_3 = 0
+\end{cases}, \quad y = x_1
+$$
+Consider the coordinate transformation 
+$$
+T_{\lambda_i} (x) = \frac{\lambda_i x_1 - x_2}{\lambda_i^2 + x_3}, \quad \lambda_i > 0, i=1,\dots,p.
+$$
+We have
+\begin{align} 
+\frac{\partial T_{\lambda_i}(x)}{\partial x} \dot{x} &= \left\langle \begin{bmatrix}
+\frac{\lambda_i}{\lambda_i^2 + x_3} \\
+\frac{-1 }{\lambda_i^2 + x_3} \\
+\frac{x_2 - \lambda_i x_1}{(\lambda_i^2 + x_3)^2}
+\end{bmatrix}, \begin{bmatrix}
+x_2 \\ -x_1 x_3 \\ 0 \end{bmatrix}
+\right \rangle = \frac{\lambda_i x_2 + x_1 x_3}{\lambda_i^2 + x_3} \\
+-\lambda_i T_{\lambda_i}(x) + y &= \frac{-\lambda_i^2 x_1 + \lambda_i x_2 + x_1 \lambda_i^2 + x_1 x_3}{\lambda_i^2 + x_3} = \frac{\lambda_i x_2 + x_1 x_3}{\lambda_i^2 + x_3}
+\end{align}
+Therefore, with 
+$$
+\xi = T(x) = [T_{\lambda_1}(x), T_{\lambda_2}(x),\dots,T_{\lambda_p}(x)]^T,
+$$
+we have 
+$$
+\dot{\xi} = \underbrace{\begin{bmatrix}
+- \lambda_1 & & \\
+& \ddots & \\
+ & & -\lambda_p \end{bmatrix}}_{A} \xi + \begin{bmatrix}1 \\ \vdots \\ 1 \end{bmatrix} y
+$$
+with $A$ clearly Hurwitz. 
+
+With some extra arguments (cf. Section 8.1.1 in [@bernard19book-observer]), one can see that the transformation $T$ is injective with $p \geq 4$ distinct $\lambda_i$'s. Therefore, this is a valid KKL observer.
+
+The final issue that one needs to think about is, since the observer is estimating $\hat{\xi}$, how to recover $\hat{x}$? In this example, there is actually no analytical formula for recovering $\hat{x}$ from $\hat{\xi}$. In this case, one approach is to solve the following optimization problem 
+$$
+\hat{x} = \arg\min_{x} \Vert \hat{\xi} - T(x) \Vert^2,
+$$
+which may be quite expensive.
+
+A more general treatment is given in Section 8.2.2 in [@bernard19book-observer].
+:::
+:::
+
+
+
+#### Controlled Systems 
+
+### Triangular Template
+
+
+### Design with Convex Optimization
+Consider a nonlinear system
+\begin{equation}
+\dot{x} = f(x) + \psi(u,y), \quad y = Cx
+(\#eq:observerdesignconvex)
+\end{equation}
+where $x \in \mathbb{X} \subseteq \mathbb{R}^n$, $y \in \mathbb{R}^d$, $C$ a constant matrix, and $\psi(u,y)$ a nonlinear function. We assume that $f(x)$ is a polynomial vector map (i.e., each entry of $f$ is a polynomial function in $x$). Certainly the formulation in \@ref(eq:observerdesignconvex) is not as general as \@ref(eq:output-feedback-system), but it is general enough to include many examples in robotics.
+
+Recall that I said the essence of observer design is to (i) simulate the dynamics when the state estimation is correct, and (ii) to correct the state estimation from observation when it is off. Therefore, we wish to design an observer for \@ref(eq:observerdesignconvex) in the following form
+\begin{equation}
+\dot{\hat{x}} = \underbrace{f(\hat{x}) + \psi(u,y)}_{\text{dynamics simulation}} + \underbrace{K(y - \hat{y},y)(C \hat{x} - y)}_{\text{feedback correction}},
+(\#eq:sos-observer)
+\end{equation}
+where, compared to the Luenberger observer \@ref(eq:Luenberger-Linear), we allow the gain matrix $K$ to be nonlinear functions of the true observation $y$ and the estimated observation $\hat{y}$.
+
+With the observer \@ref(eq:sos-observer), the dynamics on the estimation error $e = \hat{x} - x$ becomes
+$$
+\dot{e} = f(x + e) - f(x) + K(Ce,Cx)C e.
+$$
+
+If we can find a Lyapunov-like function $V(e)$ so that $V(e)$ is positive definite and $\dot{V}(e)$ is negative definite, then Lyapunov stability theorem \@ref(thm:lyapunovglobalstability) tells us that $e=0$ is asymptotically stable. Because we do not know the gain matrix $K$ either, we need to jointly search for $V$ and $K$ (that are polynomials). Mathematically, this is 
+\begin{equation}
+\begin{split}
+\text{find} & \quad V, K \\
+\text{subject to} & \quad V(0) = 0, \quad V(e) > 0, \forall e \neq 0 \\
+& \quad \dot{V}(e) = \frac{\partial V}{\partial e} \left( f(x + e) - f(x) + K(Ce,Cx)C e \right) < 0, \forall e \neq 0, \forall x \in \mathbb{X} \\
+& \quad V(e) \geq \epsilon \Vert e \Vert^2, \forall e
+\end{split}
+(\#eq:sos-observer-nonconvex)
+\end{equation}
+where the last constraint is added to make sure $V(e)$ is radially unbounded. Furthermore, if we replace the second constraint by $\dot{V}(e) \leq - \lambda V(e)$, then we can guarantee $V(e)$ converges to zero exponentially.
+
+Problem \@ref(eq:sos-observer-nonconvex), however, is not a convex optimization problem, due to the term $\frac{\partial V}{\partial e} K$ being bilinear in the coefficients of $V$ and $K$. Nevertheless, as shown in [@ebenbauer05cdc-polynomial], we can use a reparameterization trick to formulate a stronger version of \@ref(eq:sos-observer-nonconvex) as follows.
+\begin{equation}
+\begin{split}
+\text{find} & \quad V, Q(Ce), M(Ce,Cx) \\
+\text{subject to} & \quad V(0) = 0, \quad V(e) > 0, \forall e \neq 0 \\
+& \quad \frac{\partial V}{\partial e} = e^T Q(Ce), \quad Q(Ce) \succ 0 \\
+& \quad e^T Q(Ce) \left( f(x + e) - f(x) \right) + e^T M(Ce,Cx) C e < 0, \forall e \neq 0, \forall x \in \mathbb{X} \\
+& \quad V(e) \geq \epsilon \Vert e \Vert^2, \forall e
+\end{split}
+(\#eq:sos-observer-convex-formulation)
+\end{equation}
+Clearly, if we can solve problem \@ref(eq:sos-observer-convex-formulation), then
+$$
+K = Q(Ce)^{-1} M(Ce,Cx)
+$$
+is the right gain matrix for the formulation \@ref(eq:sos-observer-nonconvex).
+
+Let us bring this idea to action in our pendulum example.
+
+::: {.examplebox}
+::: {.example #pendulumobserverconvex name="Pendulum Observer with Convex Optimization"}
+With $x = [\mathfrak{s}, \mathfrak{c}, \dot{\theta}]^T$ ($\mathfrak{s} = \sin \theta, \mathfrak{c} = \cos \theta$), we can write the pendulum dynamics as 
+$$
+\dot{x} = \underbrace{\begin{bmatrix} 
+\mathfrak{c} \dot{\theta} \\
+- \mathfrak{s} \dot{\theta} \\
+- \frac{b}{ml^2} \dot{\theta} 
+\end{bmatrix}}_{=:f(x)} + \underbrace{\begin{bmatrix} 
+0 \\ 0 \\ \frac{u - mgl \mathfrak{s}}{ml^2} \end{bmatrix}}_{=: \psi(u,y)}, \quad y = 
+\underbrace{\begin{bmatrix} 
+1 & 0 & 0 \\ 
+0 & 1 & 0 \end{bmatrix}}_{=:C} x
+$$
+Clearly $f(x)$ is a polynomial. Solving the convex optimization problem \@ref(eq:sos-observer-convex-formulation), we obtain a solution
+$$
+V(e) = 0.5954 e_1^2 + 0.5954 e_2^2 + 0.9431 e_3^2
+$$
+$$
+Q(Ce) = \begin{bmatrix}
+0.4603 e_2^2 + 1.1909 & -0.4603 e_1 e_2 & 0 \\
+-0.4603 e_1 e_2 & 0.4603 e_1^2 + 1.1909 & 0 \\
+0 & 0 & 1.8863 \end{bmatrix}
+$$
+$$
+M(Ce,Cx) = \begin{bmatrix}
+\substack{-2.0878 e_1^2 - 0.8667 e_2^2 - \\ 0.4588 (y_1^2 + y_2^2) - 0.4885} & - 0.8667 e_1 e_2 \\
+- 0.8667 e_1 e_2 & \substack{-0.8667 e_1^2 - 2.0878 e_2^2 - \\ 0.4588 (y_1^2 + y_2^2) - 0.4885} \\
+-1.1909 y_2 & 1.1909 y_1
+\end{bmatrix}
+$$
+
+Simulating this observer, we verify that the observer is in fact exponentially converging, as shown in Fig. \@ref(fig:sos-observer-pendulum-simulation). 
+
+The Matlab code for formulating and solving the convex optimization \@ref(eq:sos-observer-convex-formulation) can be found [here](https://github.com/ComputationalRobotics/OptimalControlEstimation-Examples/blob/main/pendulum_sos_observer.m). The code for simulating the observer can be found [here](https://github.com/ComputationalRobotics/OptimalControlEstimation-Examples/blob/main/pendulum_sos_observer_simulation.m).
+
+```{r sos-observer-pendulum-simulation, out.width='80%', fig.cap='Simulation of the pendulum observer design from convex optimization', fig.align='center', echo=FALSE}
+knitr::include_graphics('images/pendulum-simulation-sos-observer.png')
+```
+:::
+:::
+
+
+## Observer Feedback
+
+Now that we have good ways to design a state observer, we will see how we can use the observer for feedback control. 
+
+::: {.examplebox}
+::: {.example #pendulumLuenbergerFeedback name="Pendulum Stabilization with A Luenberger Observer"}
+In Example \@ref(exm:pendulumLuenberger), we have written the dynamics of a pendulum, and the dynamics of a Luenberger observer as 
+\begin{align}
+\dot{x} &= A x + B(u,y) \\
+\dot{\hat{x}} &= A \hat{x} + B(u,y) + KC (x - \hat{x})
+\end{align}
+We wish to understand (so we can optimize) the behavior of this system under certain control input $u$. To do so, let us denote $e = \hat{x} - x$, and write the above dynamics as 
+\begin{align}
+\dot{x} &= A x + B(u,Cx) \\
+\dot{e} & = (A - KC) e
+\end{align}
+Denoting $z = [x,e]^T$, we have the augmented dynamics 
+$$
+\dot{z} = \underbrace{\begin{bmatrix} A & 0 \\ 0 & A - KC \end{bmatrix}}_{=:F} z + \underbrace{\begin{bmatrix} B(u,Dz) \\ 0 \end{bmatrix}}_{=:G(z,u)}
+$$
+We want to stabilize the system at $z_0 = [\pi,0,0,0]^T$ (the upright position) subject to control bounds $u \in \mathbb{U} = [-u_{\max},u_{\max}]$.
+
+We need to find a control Lyapunov function (CLF), $V(z)$, that satisfies the following constraints:
+$$
+    V(z_0) = 0
+$$
+$$
+    V(z) > 0 \quad \forall z \in \{z: V(z) < \rho, z \neq z_0 \}
+$$
+$$
+    \inf_{u \in \mathbb{U}} [L_F V(z) + L_G V(z)] \leq 0 \quad \forall z \in \mathcal{Z}
+$$
+
+where $L_F V$ and $L_G V$ are the Lie derivatives of $V$ along $F$ and $G(z,u)$, respectively. $\mathcal{Z}$ is the set of all possible augmented states. The CLF will define the set of admissible control inputs $U$.
+$$
+    U = \{ u: L_f V(z) + L_g V(z)u \leq 0 \}
+$$
+To find the smallest-magnitude control input such that $u \in K$, we may use a quadratic program:
+
+$$
+    \min_{u \in \mathcal{U}} ||u||^2
+$$
+$$
+\mathrm{s.t.} \quad L_f V(z) + L_g V(z)u \leq -c V(z)
+$$
+
+where $c$ is some positive constant. The challenge now is in choosing a suitable $V(z)$.
+
+<!-- \inf_{u \in \mathcalU}
+-->
+
+<!-- Our controller has access to the observation $y$ (recall this is $\theta$) and the estimated state $\hat{x}$. Let us try a controller of the following form
+$$
+u = mgl \sin \theta - G \hat{x} = mgl \sin \theta - G (x + e).
+$$
+This leads to the dynamics 
+\begin{align}
+\dot{x} & = A x - \frac{1}{ml^2} G (x + e) = \left( A - \frac{1}{ml^2}G \right)x - \frac{1}{ml^2} G e \\
+\dot{e} & = (A - KC)e
+\end{align} -->
+:::
+:::
