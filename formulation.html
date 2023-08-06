@@ -4,26 +4,26 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 1 The Optimal Control Formulation | Optimal Control and Estimation</title>
-  <meta name="description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
-  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+  <title>Chapter 1 The Optimal Control Formulation | Semidefinite Optimization and Relaxation</title>
+  <meta name="description" content="Lecture notes for Harvard ES/AM 2XX Semidefinite Optimization and Relaxation." />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 1 The Optimal Control Formulation | Optimal Control and Estimation" />
+  <meta property="og:title" content="Chapter 1 The Optimal Control Formulation | Semidefinite Optimization and Relaxation" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
-  <meta name="github-repo" content="hankyang94/OptimalControlEstimation" />
+  <meta property="og:description" content="Lecture notes for Harvard ES/AM 2XX Semidefinite Optimization and Relaxation." />
+  <meta name="github-repo" content="hankyang94/Semidefinite" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 1 The Optimal Control Formulation | Optimal Control and Estimation" />
+  <meta name="twitter:title" content="Chapter 1 The Optimal Control Formulation | Semidefinite Optimization and Relaxation" />
   
-  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 2XX Semidefinite Optimization and Relaxation." />
   
 
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2023-08-02" />
+<meta name="date" content="2023-08-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="index.html"/>
-<link rel="next" href="exactdp.html"/>
+<link rel="next" href="references.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -55,6 +55,10 @@
 
 
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 <style type="text/css">
 /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
 div.csl-bib-body { }
@@ -91,7 +95,7 @@ div.csl-indent {
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">Optimal Control and Estimation</a></li>
+<li><a href="./">Semidefinite Optimization and Relaxation</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
@@ -100,91 +104,6 @@ div.csl-indent {
 <li class="chapter" data-level="1.1" data-path="formulation.html"><a href="formulation.html#the-basic-problem"><i class="fa fa-check"></i><b>1.1</b> The Basic Problem</a></li>
 <li class="chapter" data-level="1.2" data-path="formulation.html"><a href="formulation.html#dynamic-programming-and-principle-of-optimality"><i class="fa fa-check"></i><b>1.2</b> Dynamic Programming and Principle of Optimality</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="exactdp.html"><a href="exactdp.html"><i class="fa fa-check"></i><b>2</b> Exact Dynamic Programming</a>
-<ul>
-<li class="chapter" data-level="2.1" data-path="exactdp.html"><a href="exactdp.html#lqr"><i class="fa fa-check"></i><b>2.1</b> Linear Quadratic Regulator</a>
-<ul>
-<li class="chapter" data-level="2.1.1" data-path="exactdp.html"><a href="exactdp.html#infinite-horizon-lqr"><i class="fa fa-check"></i><b>2.1.1</b> Infinite-Horizon LQR</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="3" data-path="approximatedp.html"><a href="approximatedp.html"><i class="fa fa-check"></i><b>3</b> Approximate Dynamic Programming</a>
-<ul>
-<li class="chapter" data-level="3.1" data-path="approximatedp.html"><a href="approximatedp.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
-<li class="chapter" data-level="3.2" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-value-space"><i class="fa fa-check"></i><b>3.2</b> Approximation in value space</a>
-<ul>
-<li class="chapter" data-level="3.2.1" data-path="approximatedp.html"><a href="approximatedp.html#problem-approximation"><i class="fa fa-check"></i><b>3.2.1</b> Problem Approximation</a></li>
-<li class="chapter" data-level="3.2.2" data-path="approximatedp.html"><a href="approximatedp.html#parametric-cost-approximation"><i class="fa fa-check"></i><b>3.2.2</b> Parametric cost approximation</a></li>
-<li class="chapter" data-level="3.2.3" data-path="approximatedp.html"><a href="approximatedp.html#online-approximate-optimization"><i class="fa fa-check"></i><b>3.2.3</b> Online approximate optimization</a></li>
-</ul></li>
-<li class="chapter" data-level="3.3" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-policy-space"><i class="fa fa-check"></i><b>3.3</b> Approximation in policy space</a>
-<ul>
-<li class="chapter" data-level="3.3.1" data-path="approximatedp.html"><a href="approximatedp.html#training-by-using-an-expert"><i class="fa fa-check"></i><b>3.3.1</b> Training by using an expert</a></li>
-<li class="chapter" data-level="3.3.2" data-path="approximatedp.html"><a href="approximatedp.html#training-by-cost-optimization"><i class="fa fa-check"></i><b>3.3.2</b> Training by cost optimization</a></li>
-</ul></li>
-<li class="chapter" data-level="3.4" data-path="approximatedp.html"><a href="approximatedp.html#extension"><i class="fa fa-check"></i><b>3.4</b> Extension</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="stability.html"><a href="stability.html"><i class="fa fa-check"></i><b>4</b> Stability Analysis</a>
-<ul>
-<li class="chapter" data-level="4.1" data-path="stability.html"><a href="stability.html#autonomous-systems"><i class="fa fa-check"></i><b>4.1</b> Autonomous Systems</a>
-<ul>
-<li class="chapter" data-level="4.1.1" data-path="stability.html"><a href="stability.html#concepts-of-stability"><i class="fa fa-check"></i><b>4.1.1</b> Concepts of Stability</a></li>
-<li class="chapter" data-level="4.1.2" data-path="stability.html"><a href="stability.html#stability-by-linearization"><i class="fa fa-check"></i><b>4.1.2</b> Stability by Linearization</a></li>
-<li class="chapter" data-level="4.1.3" data-path="stability.html"><a href="stability.html#lyapunov-analysis"><i class="fa fa-check"></i><b>4.1.3</b> Lyapunov Analysis</a></li>
-<li class="chapter" data-level="4.1.4" data-path="stability.html"><a href="stability.html#invariant-set-theorem"><i class="fa fa-check"></i><b>4.1.4</b> Invariant Set Theorem</a></li>
-<li class="chapter" data-level="4.1.5" data-path="stability.html"><a href="stability.html#computing-lyapunov-certificates"><i class="fa fa-check"></i><b>4.1.5</b> Computing Lyapunov Certificates</a></li>
-</ul></li>
-<li class="chapter" data-level="4.2" data-path="stability.html"><a href="stability.html#controlled-systems"><i class="fa fa-check"></i><b>4.2</b> Controlled Systems</a></li>
-<li class="chapter" data-level="4.3" data-path="stability.html"><a href="stability.html#non-autonomous-systems"><i class="fa fa-check"></i><b>4.3</b> Non-autonomous Systems</a></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="output-feedback.html"><a href="output-feedback.html"><i class="fa fa-check"></i><b>5</b> Output Feedback</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="output-feedback.html"><a href="output-feedback.html#state-observer"><i class="fa fa-check"></i><b>5.1</b> State Observer</a>
-<ul>
-<li class="chapter" data-level="5.1.1" data-path="output-feedback.html"><a href="output-feedback.html#general-design-strategy"><i class="fa fa-check"></i><b>5.1.1</b> General Design Strategy</a></li>
-<li class="chapter" data-level="5.1.2" data-path="output-feedback.html"><a href="output-feedback.html#luenberger-template"><i class="fa fa-check"></i><b>5.1.2</b> Luenberger Template</a></li>
-<li class="chapter" data-level="5.1.3" data-path="output-feedback.html"><a href="output-feedback.html#state-affine-template"><i class="fa fa-check"></i><b>5.1.3</b> State-affine Template</a></li>
-<li class="chapter" data-level="5.1.4" data-path="output-feedback.html"><a href="output-feedback.html#kazantzis-kravaris-luenberger-kkl-template"><i class="fa fa-check"></i><b>5.1.4</b> Kazantzis-Kravaris-Luenberger (KKL) Template</a></li>
-<li class="chapter" data-level="5.1.5" data-path="output-feedback.html"><a href="output-feedback.html#triangular-template"><i class="fa fa-check"></i><b>5.1.5</b> Triangular Template</a></li>
-<li class="chapter" data-level="5.1.6" data-path="output-feedback.html"><a href="output-feedback.html#design-with-convex-optimization"><i class="fa fa-check"></i><b>5.1.6</b> Design with Convex Optimization</a></li>
-</ul></li>
-<li class="chapter" data-level="5.2" data-path="output-feedback.html"><a href="output-feedback.html#observer-feedback"><i class="fa fa-check"></i><b>5.2</b> Observer Feedback</a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html"><i class="fa fa-check"></i><b>6</b> Adaptive Control</a>
-<ul>
-<li class="chapter" data-level="6.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#model-reference-adaptive-control"><i class="fa fa-check"></i><b>6.1</b> Model-Reference Adaptive Control</a>
-<ul>
-<li class="chapter" data-level="6.1.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#first-order-systems"><i class="fa fa-check"></i><b>6.1.1</b> First-Order Systems</a></li>
-<li class="chapter" data-level="6.1.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#high-order-systems"><i class="fa fa-check"></i><b>6.1.2</b> High-Order Systems</a></li>
-<li class="chapter" data-level="6.1.3" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#robotic-manipulator"><i class="fa fa-check"></i><b>6.1.3</b> Robotic Manipulator</a></li>
-</ul></li>
-<li class="chapter" data-level="6.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#certainty-equivalent-adaptive-control"><i class="fa fa-check"></i><b>6.2</b> Certainty-Equivalent Adaptive Control</a></li>
-</ul></li>
-<li class="appendix"><span><b>Appendix</b></span></li>
-<li class="chapter" data-level="A" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html"><i class="fa fa-check"></i><b>A</b> Linear System Theory</a>
-<ul>
-<li class="chapter" data-level="A.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability"><i class="fa fa-check"></i><b>A.1</b> Stability</a>
-<ul>
-<li class="chapter" data-level="A.1.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-ct"><i class="fa fa-check"></i><b>A.1.1</b> Continuous-Time Stability</a></li>
-<li class="chapter" data-level="A.1.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-dt"><i class="fa fa-check"></i><b>A.1.2</b> Discrete-Time Stability</a></li>
-<li class="chapter" data-level="A.1.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#lyapunov-analysis-1"><i class="fa fa-check"></i><b>A.1.3</b> Lyapunov Analysis</a></li>
-</ul></li>
-<li class="chapter" data-level="A.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-controllable-observable"><i class="fa fa-check"></i><b>A.2</b> Controllability and Observability</a>
-<ul>
-<li class="chapter" data-level="A.2.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#cayley-hamilton-theorem"><i class="fa fa-check"></i><b>A.2.1</b> Cayley-Hamilton Theorem</a></li>
-<li class="chapter" data-level="A.2.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-controllability"><i class="fa fa-check"></i><b>A.2.2</b> Equivalent Statements for Controllability</a></li>
-<li class="chapter" data-level="A.2.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#duality"><i class="fa fa-check"></i><b>A.2.3</b> Duality</a></li>
-<li class="chapter" data-level="A.2.4" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-observability"><i class="fa fa-check"></i><b>A.2.4</b> Equivalent Statements for Observability</a></li>
-</ul></li>
-<li class="chapter" data-level="A.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#stabilizability-and-detectability"><i class="fa fa-check"></i><b>A.3</b> Stabilizability And Detectability</a>
-<ul>
-<li class="chapter" data-level="A.3.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability"><i class="fa fa-check"></i><b>A.3.1</b> Equivalent Statements for Stabilizability</a></li>
-<li class="chapter" data-level="A.3.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-detectability"><i class="fa fa-check"></i><b>A.3.2</b> Equivalent Statements for Detectability</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="B" data-path="appconvex.html"><a href="appconvex.html"><i class="fa fa-check"></i><b>B</b> Convex Analysis and Optimization</a></li>
-<li class="chapter" data-level="C" data-path="the-kalman-yakubovich-lemma.html"><a href="the-kalman-yakubovich-lemma.html"><i class="fa fa-check"></i><b>C</b> The Kalman-Yakubovich Lemma</a></li>
-<li class="chapter" data-level="D" data-path="feedbacklinearization.html"><a href="feedbacklinearization.html"><i class="fa fa-check"></i><b>D</b> Feedback Linearization</a></li>
-<li class="chapter" data-level="E" data-path="slidingcontrol.html"><a href="slidingcontrol.html"><i class="fa fa-check"></i><b>E</b> Sliding Control</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -198,7 +117,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Optimal Control and Estimation</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Semidefinite Optimization and Relaxation</a>
           </h1>
         </div>
 
@@ -328,8 +247,8 @@ J_{N-1}(x_{N-1}) = \min_{u_{N-1} \in \mathbb{U}} \mathbb{E}_{w_{N-1}} \left\{ g_
 <li><p>How to perform the minimization over <span class="math inline">\(u_{N-1}\)</span> when <span class="math inline">\(\mathbb{U}\)</span> is a continuous constraint set? Even if we assume <span class="math inline">\(g_{N-1}\)</span> is convex<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> in <span class="math inline">\(u_{N-1}\)</span>, <span class="math inline">\(J_N\)</span> is convex in <span class="math inline">\(x_{N}\)</span>, and the dynamics <span class="math inline">\(f_{N-1}\)</span> is also convex in <span class="math inline">\(u_{N-1}\)</span> (so that the optimization <a href="formulation.html#eq:dptryN-1">(1.15)</a> is convex), we may be able to solve the minimization <em>numerically</em> for each <span class="math inline">\(x_{N-1}\)</span> using a convex optimization solver, but rarely will we be able to find an analytical policy <span class="math inline">\(\mu_{N-1}^\star\)</span> such that <span class="math inline">\(u_{N-1}^\star = \mu_{N-1}^\star (x_{N-1})\)</span> for every <span class="math inline">\(x_{N-1}\)</span> (i.e., the optimal policy <span class="math inline">\(\mu_{N-1}^\star\)</span> is implict but not explict).</p></li>
 <li><p>Suppose we can find an anlytical optimal policy <span class="math inline">\(\mu_{N-1}^\star\)</span>, say <span class="math inline">\(\mu_{N-1}^\star = K x_{N-1}\)</span> a linear policy, how will plugging <span class="math inline">\(\mu_{N-1}^\star\)</span> into <a href="formulation.html#eq:dptryN-1">(1.15)</a> affect the complexity of <span class="math inline">\(J_{N-1}(x_{N-1})\)</span>? One can see that even if <span class="math inline">\(\mu_{N-1}^\star\)</span> is linear in <span class="math inline">\(x_{N-1}\)</span>, <span class="math inline">\(J_{N-1}\)</span> may be highly nonlinear in <span class="math inline">\(x_{N-1}\)</span> due to the composition with <span class="math inline">\(g_{N-1}\)</span>, <span class="math inline">\(f_{N-1}\)</span> and <span class="math inline">\(J_N\)</span>. If <span class="math inline">\(J_{N-1}(x_{N-1})\)</span> becomes too complex, then clearly it becomes more challenging to perform <a href="formulation.html#eq:dptryN-1">(1.15)</a> for the next step <span class="math inline">\(k=N-2\)</span>.</p></li>
 </ul>
-<p>Due to these challenges, only in a very limited amount of cases will we be able to perform <em>exact dynamic programming</em>. For example, when the state space <span class="math inline">\(\mathbb{X}\)</span> and control space <span class="math inline">\(\mathbb{U}\)</span> are discrete, we can design efficient algorithms for exact DP. For another example, when the dynamics <span class="math inline">\(f_k\)</span> is linear and the cost <span class="math inline">\(g_k\)</span> is quadratic, we will also be able to compute <span class="math inline">\(J_k(x_k)\)</span> in closed form (though this sounds a bit surprising!). We will study these problems in more details in Chapter <a href="exactdp.html#exactdp">2</a>.</p>
-<p>For general optimal control problems with continuous state space and control space (and most problems we care about in robotics), unfortunately, we will have to resort to <em>approximate dynamic programming</em>, basically variations of the DP algorithm <a href="formulation.html#eq:dpbackwardrecursion">(1.5)</a> where approximate value functions <span class="math inline">\(J_k(x_k)\)</span> and/or control policies <span class="math inline">\(\mu_k(x_k)\)</span> are used (e.g., with neural networks and machine learning).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> We will introduce several popular approximation schemes in Chapter <a href="approximatedp.html#approximatedp">3</a>. We will see that, although exact DP is not possible anymore, the Bellman principle of optimality still remains one of the most important guidelines for designing approximation algorithms. Efficient algorithms for approximate dynamic programming, preferrably with performance guarantees, still remain an active area of research.</p>
+<p>Due to these challenges, only in a very limited amount of cases will we be able to perform <em>exact dynamic programming</em>. For example, when the state space <span class="math inline">\(\mathbb{X}\)</span> and control space <span class="math inline">\(\mathbb{U}\)</span> are discrete, we can design efficient algorithms for exact DP. For another example, when the dynamics <span class="math inline">\(f_k\)</span> is linear and the cost <span class="math inline">\(g_k\)</span> is quadratic, we will also be able to compute <span class="math inline">\(J_k(x_k)\)</span> in closed form (though this sounds a bit surprising!). We will study these problems in more details in Chapter <a href="#exactdp"><strong>??</strong></a>.</p>
+<p>For general optimal control problems with continuous state space and control space (and most problems we care about in robotics), unfortunately, we will have to resort to <em>approximate dynamic programming</em>, basically variations of the DP algorithm <a href="formulation.html#eq:dpbackwardrecursion">(1.5)</a> where approximate value functions <span class="math inline">\(J_k(x_k)\)</span> and/or control policies <span class="math inline">\(\mu_k(x_k)\)</span> are used (e.g., with neural networks and machine learning).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> We will introduce several popular approximation schemes in Chapter <a href="#approximatedp"><strong>??</strong></a>. We will see that, although exact DP is not possible anymore, the Bellman principle of optimality still remains one of the most important guidelines for designing approximation algorithms. Efficient algorithms for approximate dynamic programming, preferrably with performance guarantees, still remain an active area of research.</p>
 
 </div>
 </div>
@@ -342,7 +261,7 @@ Bertsekas, Dimitri. 2012. <em>Dynamic Programming and Optimal Control: Volume i<
 <div class="footnotes">
 <hr />
 <ol start="1">
-<li id="fn1"><p>You may want to read Appendix <a href="appconvex.html#appconvex">B</a> if this is your first time seeing “convex” things.<a href="formulation.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>You may want to read Appendix <a href="#appconvex"><strong>??</strong></a> if this is your first time seeing “convex” things.<a href="formulation.html#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>Another possible solution is to discretize continuous states and controls. However, when the dimension of state and control is high, discretization becomes too expensive in terms of memory and computational complexity.<a href="formulation.html#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
@@ -352,7 +271,7 @@ Bertsekas, Dimitri. 2012. <em>Dynamic Programming and Optimal Control: Volume i<
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="exactdp.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -383,7 +302,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/hankyang94/OptimalControlEstimation/blob/main/01-formulation.Rmd",
+"link": "https://github.com/hankyang94/Semidefinite/blob/main/01-formulation.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -394,7 +313,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["optimal-control-estimation.pdf", "optimal-control-estimation.epub"],
+"download": ["semidefinite-optimization-relaxation.pdf", "semidefinite-optimization-relaxation.epub"],
 "search": {
 "engine": "fuse",
 "options": null
