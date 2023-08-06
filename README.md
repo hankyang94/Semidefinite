@@ -1,6 +1,6 @@
-# Optimal Control and Estimation
+# Semidefinite Optimization and Relaxation
 
-Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation
+Lecture notes for Harvard ES/AM 2XX Semidefinite Optimization and Relaxation
 
 ## How to contribute
 
