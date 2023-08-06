@@ -1,0 +1,48 @@
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+.examplebox {
+  padding: 1em;
+  background: rgb(227, 226, 242);
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(227, 226, 242);
+  border-radius: 10px;
+}
+
+.theorembox {
+  padding: 1em;
+  background: rgba(0, 250, 0, 0.3);
+  color: rgb(0, 0, 0);
+  border: 2px rgb(0, 250, 0, 0.3);
+  border-radius: 10px;
+}
+
+.highlightbox {
+  padding: 1em;
+  background: rgb(88, 95, 88);
+  color: rgb(255, 255, 255);
+  border: 2px rgb(88, 95, 88);
+  border-radius: 10px;
+}
+
+.definitionbox {
+  padding: 1em;
+  border: 2px solid rgb(143, 227, 135);
+  border-radius: 10px;
+}
+
+
+.proofbox {
+  color: rgb(128, 128, 128);
+}

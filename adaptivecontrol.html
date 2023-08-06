@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Adaptive Control | Optimal Control and Estimation</title>
+  <meta name="description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Adaptive Control | Optimal Control and Estimation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="github-repo" content="hankyang94/OptimalControlEstimation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Adaptive Control | Optimal Control and Estimation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2023-08-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="output-feedback.html"/>
+<link rel="next" href="app-lti-system-theory.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Optimal Control and Estimation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="formulation.html"><a href="formulation.html"><i class="fa fa-check"></i><b>1</b> The Optimal Control Formulation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="formulation.html"><a href="formulation.html#the-basic-problem"><i class="fa fa-check"></i><b>1.1</b> The Basic Problem</a></li>
+<li class="chapter" data-level="1.2" data-path="formulation.html"><a href="formulation.html#dynamic-programming-and-principle-of-optimality"><i class="fa fa-check"></i><b>1.2</b> Dynamic Programming and Principle of Optimality</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="exactdp.html"><a href="exactdp.html"><i class="fa fa-check"></i><b>2</b> Exact Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="exactdp.html"><a href="exactdp.html#lqr"><i class="fa fa-check"></i><b>2.1</b> Linear Quadratic Regulator</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="exactdp.html"><a href="exactdp.html#infinite-horizon-lqr"><i class="fa fa-check"></i><b>2.1.1</b> Infinite-Horizon LQR</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="approximatedp.html"><a href="approximatedp.html"><i class="fa fa-check"></i><b>3</b> Approximate Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="approximatedp.html"><a href="approximatedp.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-value-space"><i class="fa fa-check"></i><b>3.2</b> Approximation in value space</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="approximatedp.html"><a href="approximatedp.html#problem-approximation"><i class="fa fa-check"></i><b>3.2.1</b> Problem Approximation</a></li>
+<li class="chapter" data-level="3.2.2" data-path="approximatedp.html"><a href="approximatedp.html#parametric-cost-approximation"><i class="fa fa-check"></i><b>3.2.2</b> Parametric cost approximation</a></li>
+<li class="chapter" data-level="3.2.3" data-path="approximatedp.html"><a href="approximatedp.html#online-approximate-optimization"><i class="fa fa-check"></i><b>3.2.3</b> Online approximate optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-policy-space"><i class="fa fa-check"></i><b>3.3</b> Approximation in policy space</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="approximatedp.html"><a href="approximatedp.html#training-by-using-an-expert"><i class="fa fa-check"></i><b>3.3.1</b> Training by using an expert</a></li>
+<li class="chapter" data-level="3.3.2" data-path="approximatedp.html"><a href="approximatedp.html#training-by-cost-optimization"><i class="fa fa-check"></i><b>3.3.2</b> Training by cost optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="approximatedp.html"><a href="approximatedp.html#extension"><i class="fa fa-check"></i><b>3.4</b> Extension</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="stability.html"><a href="stability.html"><i class="fa fa-check"></i><b>4</b> Stability Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="stability.html"><a href="stability.html#autonomous-systems"><i class="fa fa-check"></i><b>4.1</b> Autonomous Systems</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="stability.html"><a href="stability.html#concepts-of-stability"><i class="fa fa-check"></i><b>4.1.1</b> Concepts of Stability</a></li>
+<li class="chapter" data-level="4.1.2" data-path="stability.html"><a href="stability.html#stability-by-linearization"><i class="fa fa-check"></i><b>4.1.2</b> Stability by Linearization</a></li>
+<li class="chapter" data-level="4.1.3" data-path="stability.html"><a href="stability.html#lyapunov-analysis"><i class="fa fa-check"></i><b>4.1.3</b> Lyapunov Analysis</a></li>
+<li class="chapter" data-level="4.1.4" data-path="stability.html"><a href="stability.html#invariant-set-theorem"><i class="fa fa-check"></i><b>4.1.4</b> Invariant Set Theorem</a></li>
+<li class="chapter" data-level="4.1.5" data-path="stability.html"><a href="stability.html#computing-lyapunov-certificates"><i class="fa fa-check"></i><b>4.1.5</b> Computing Lyapunov Certificates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="stability.html"><a href="stability.html#controlled-systems"><i class="fa fa-check"></i><b>4.2</b> Controlled Systems</a></li>
+<li class="chapter" data-level="4.3" data-path="stability.html"><a href="stability.html#non-autonomous-systems"><i class="fa fa-check"></i><b>4.3</b> Non-autonomous Systems</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="output-feedback.html"><a href="output-feedback.html"><i class="fa fa-check"></i><b>5</b> Output Feedback</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="output-feedback.html"><a href="output-feedback.html#state-observer"><i class="fa fa-check"></i><b>5.1</b> State Observer</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="output-feedback.html"><a href="output-feedback.html#general-design-strategy"><i class="fa fa-check"></i><b>5.1.1</b> General Design Strategy</a></li>
+<li class="chapter" data-level="5.1.2" data-path="output-feedback.html"><a href="output-feedback.html#luenberger-template"><i class="fa fa-check"></i><b>5.1.2</b> Luenberger Template</a></li>
+<li class="chapter" data-level="5.1.3" data-path="output-feedback.html"><a href="output-feedback.html#state-affine-template"><i class="fa fa-check"></i><b>5.1.3</b> State-affine Template</a></li>
+<li class="chapter" data-level="5.1.4" data-path="output-feedback.html"><a href="output-feedback.html#kazantzis-kravaris-luenberger-kkl-template"><i class="fa fa-check"></i><b>5.1.4</b> Kazantzis-Kravaris-Luenberger (KKL) Template</a></li>
+<li class="chapter" data-level="5.1.5" data-path="output-feedback.html"><a href="output-feedback.html#triangular-template"><i class="fa fa-check"></i><b>5.1.5</b> Triangular Template</a></li>
+<li class="chapter" data-level="5.1.6" data-path="output-feedback.html"><a href="output-feedback.html#design-with-convex-optimization"><i class="fa fa-check"></i><b>5.1.6</b> Design with Convex Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="output-feedback.html"><a href="output-feedback.html#observer-feedback"><i class="fa fa-check"></i><b>5.2</b> Observer Feedback</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html"><i class="fa fa-check"></i><b>6</b> Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#model-reference-adaptive-control"><i class="fa fa-check"></i><b>6.1</b> Model-Reference Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#first-order-systems"><i class="fa fa-check"></i><b>6.1.1</b> First-Order Systems</a></li>
+<li class="chapter" data-level="6.1.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#high-order-systems"><i class="fa fa-check"></i><b>6.1.2</b> High-Order Systems</a></li>
+<li class="chapter" data-level="6.1.3" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#robotic-manipulator"><i class="fa fa-check"></i><b>6.1.3</b> Robotic Manipulator</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#certainty-equivalent-adaptive-control"><i class="fa fa-check"></i><b>6.2</b> Certainty-Equivalent Adaptive Control</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html"><i class="fa fa-check"></i><b>A</b> Linear System Theory</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability"><i class="fa fa-check"></i><b>A.1</b> Stability</a>
+<ul>
+<li class="chapter" data-level="A.1.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-ct"><i class="fa fa-check"></i><b>A.1.1</b> Continuous-Time Stability</a></li>
+<li class="chapter" data-level="A.1.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-dt"><i class="fa fa-check"></i><b>A.1.2</b> Discrete-Time Stability</a></li>
+<li class="chapter" data-level="A.1.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#lyapunov-analysis-1"><i class="fa fa-check"></i><b>A.1.3</b> Lyapunov Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-controllable-observable"><i class="fa fa-check"></i><b>A.2</b> Controllability and Observability</a>
+<ul>
+<li class="chapter" data-level="A.2.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#cayley-hamilton-theorem"><i class="fa fa-check"></i><b>A.2.1</b> Cayley-Hamilton Theorem</a></li>
+<li class="chapter" data-level="A.2.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-controllability"><i class="fa fa-check"></i><b>A.2.2</b> Equivalent Statements for Controllability</a></li>
+<li class="chapter" data-level="A.2.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#duality"><i class="fa fa-check"></i><b>A.2.3</b> Duality</a></li>
+<li class="chapter" data-level="A.2.4" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-observability"><i class="fa fa-check"></i><b>A.2.4</b> Equivalent Statements for Observability</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#stabilizability-and-detectability"><i class="fa fa-check"></i><b>A.3</b> Stabilizability And Detectability</a>
+<ul>
+<li class="chapter" data-level="A.3.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability"><i class="fa fa-check"></i><b>A.3.1</b> Equivalent Statements for Stabilizability</a></li>
+<li class="chapter" data-level="A.3.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-detectability"><i class="fa fa-check"></i><b>A.3.2</b> Equivalent Statements for Detectability</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="appconvex.html"><a href="appconvex.html"><i class="fa fa-check"></i><b>B</b> Convex Analysis and Optimization</a></li>
+<li class="chapter" data-level="C" data-path="the-kalman-yakubovich-lemma.html"><a href="the-kalman-yakubovich-lemma.html"><i class="fa fa-check"></i><b>C</b> The Kalman-Yakubovich Lemma</a></li>
+<li class="chapter" data-level="D" data-path="feedbacklinearization.html"><a href="feedbacklinearization.html"><i class="fa fa-check"></i><b>D</b> Feedback Linearization</a></li>
+<li class="chapter" data-level="E" data-path="slidingcontrol.html"><a href="slidingcontrol.html"><i class="fa fa-check"></i><b>E</b> Sliding Control</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Optimal Control and Estimation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="adaptivecontrol" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Adaptive Control<a href="adaptivecontrol.html#adaptivecontrol" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="model-reference-adaptive-control" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Model-Reference Adaptive Control<a href="adaptivecontrol.html#model-reference-adaptive-control" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Basic flow for designing an adaptive controller</p>
+<ol style="list-style-type: decimal">
+<li><p>Design a control law with variable parameters</p></li>
+<li><p>Design an adaptation law for adjusting the control parameters</p></li>
+<li><p>Analyze the convergence of the closed-loop system</p></li>
+</ol>
+<p>The control law design at the first step typically requires the designer to know what a good controller is if the true parameters were actually known, e.g., from feedback linearization (Appendix <a href="feedbacklinearization.html#feedbacklinearization">D</a>), sliding control (Appendix <a href="slidingcontrol.html#slidingcontrol">E</a>) etc.</p>
+<p>The design of the adaptation law typically comes from analyzing the dynamics of the tracking error, which as we will see often appears in the form of Lemma <a href="adaptivecontrol.html#lem:adaptivecontrolbasic">6.1</a>.</p>
+<p>The convergence of the closed-loop system is usually analyzed with the help of a Lyapunov-like function introduced in Chapter <a href="stability.html#stability">4</a>.</p>
+<div class="lemma">
+<p><span id="lem:adaptivecontrolbasic" class="lemma"><strong>Lemma 6.1  (Basic Lemma) </strong></span>Let two signals <span class="math inline">\(e(t)\)</span> and <span class="math inline">\(\phi(t)\)</span> be related by
+<span class="math display" id="eq:acbasiclemmaephi">\[\begin{equation}
+e(t) = H(p)[k \phi(t)^T v(t)]
+\tag{6.1}
+\end{equation}\]</span>
+where <span class="math inline">\(e(t)\)</span> a scalar output signal, <span class="math inline">\(H(p)\)</span> a strictly positive real (SPR) transfer function, <span class="math inline">\(k\)</span> an unknown real number with known sign, <span class="math inline">\(\phi(t) \in \mathbb{R}^m\)</span> a control signal, and <span class="math inline">\(v(t) \in \mathbb{R}^m\)</span> a measurable input signal.</p>
+<p>If the control signal <span class="math inline">\(\phi(t)\)</span> satisfies
+<span class="math display" id="eq:acbasiclemmaphilaw">\[\begin{equation}
+\dot{\phi}(t) = - \mathrm{sgn}(k) \gamma e(t) v(t)
+\tag{6.2}
+\end{equation}\]</span>
+with <span class="math inline">\(\gamma &gt; 0\)</span> a positive constant, then <span class="math inline">\(e(t)\)</span> and <span class="math inline">\(\phi(t)\)</span> are globally bounded. Moreover, if <span class="math inline">\(v(t)\)</span> is bounded, then
+<span class="math display">\[
+\lim_{t \rightarrow \infty} e(t) = 0.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span id="unlabeled-div-9" class="proof"><em>Proof</em>. </span>Let the state-space representation of <a href="adaptivecontrol.html#eq:acbasiclemmaephi">(6.1)</a> be
+<span class="math display" id="eq:acbasiclemmastatespace">\[\begin{equation}
+\dot{x} = A x + b [k \phi^T v], \quad e = c^T x.
+\tag{6.3}
+\end{equation}\]</span>
+Since <span class="math inline">\(H(p)\)</span> is SPR, it follows from the Kalman-Yakubovich Lemma <a href="the-kalman-yakubovich-lemma.html#lem:KalmanYakubovich">C.1</a> that there exist <span class="math inline">\(P,Q \succ 0\)</span> such that
+<span class="math display">\[
+A^T P + P A = -Q, \quad Pb = c.
+\]</span>
+Let
+<span class="math display">\[
+V(x,\phi) = x^T P x + \frac{|k|}{\gamma} \phi^T \phi,
+\]</span>
+clearly <span class="math inline">\(V\)</span> is positive definite (i.e., <span class="math inline">\(V(0,0)=0\)</span>, and <span class="math inline">\(V(x,\phi) &gt; 0\)</span> for all <span class="math inline">\(x \neq 0, \phi \neq 0\)</span>). The time derivative of <span class="math inline">\(V\)</span> along the trajectory defined by <a href="adaptivecontrol.html#eq:acbasiclemmastatespace">(6.3)</a> with <span class="math inline">\(\phi\)</span> chosen as in <a href="adaptivecontrol.html#eq:acbasiclemmaphilaw">(6.2)</a> is
+<span class="math display">\[\begin{align}
+\dot{V} &amp; = \frac{\partial V}{\partial x} \dot{x} + \frac{\partial V}{\partial \phi} \dot{\phi} \\
+&amp;= x^T (PA + A^T P) x + 2 x^T P b (k \phi^T v) + \frac{2|k|}{\gamma} \phi^T (- \mathrm{sgn}(k) \gamma e v) \\
+&amp; = - x^T Q x + 2 (x^T c)(k\phi^T v) - 2 \phi^T (e v) \\
+&amp; = - x^T Q x \leq 0.
+\end{align}\]</span>
+As a result, we know <span class="math inline">\(x\)</span> and <span class="math inline">\(\phi\)</span> must be bounded (<span class="math inline">\(V(x(t),\phi(t)) \leq V(x(0),\phi(0))\)</span> is bounded). Since <span class="math inline">\(e = c^T x\)</span>, we know <span class="math inline">\(e\)</span> must be bounded as well.</p>
+<p>If the input signal <span class="math inline">\(v\)</span> is also bounded, then <span class="math inline">\(\dot{x}\)</span> is bounded as seen from <a href="adaptivecontrol.html#eq:acbasiclemmastatespace">(6.3)</a>. Because <span class="math inline">\(\ddot{V} = -2x^T Q \dot{x}\)</span> is now bounded, we know <span class="math inline">\(\dot{V}\)</span> is uniformly continuous. Therefore, by Barbalat’s stability certificate (Theorem <a href="stability.html#thm:BarbalatStability">4.6</a>), we know <span class="math inline">\(\dot{V}\)</span> tends to zero as <span class="math inline">\(t\)</span> tends to infinity, which implies <span class="math inline">\(\lim_{t \rightarrow \infty} x(t) = 0\)</span> and hence <span class="math inline">\(\lim_{t \rightarrow \infty} e(t) = 0\)</span>.</p>
+</div>
+<div id="first-order-systems" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> First-Order Systems<a href="adaptivecontrol.html#first-order-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<!-- ### Linear Systems  -->
+<p>Consider the first-order single-input single-output (SISO) system
+<span class="math display" id="eq:ac-first-linear">\[\begin{equation}
+\dot{x} = - a x + b u
+\tag{6.4}
+\end{equation}\]</span>
+where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are unknown groundtruth parameters. However, we do assume that the sign of <span class="math inline">\(b\)</span> is known. <span style="color:red">What if the sign of <span class="math inline">\(b\)</span> is unknown too?</span></p>
+<p>Let <span class="math inline">\(r(t)\)</span> be a reference trajectory, e.g., a step function or a sinusoidal function, and <span class="math inline">\(x_d(t)\)</span> be a desired system trajectory that tracks the reference
+<span class="math display" id="eq:ac-first-linear-desired">\[\begin{equation}
+\dot{x}_d = - a_d x_d + b_d r(t),
+\tag{6.5}
+\end{equation}\]</span>
+where <span class="math inline">\(a_d,b_d &gt; 0\)</span> are user-defined constants. Note that the transfer function from <span class="math inline">\(r\)</span> to <span class="math inline">\(x_d\)</span> is
+<span class="math display">\[
+x_d = \frac{b_d}{p + a_d} r
+\]</span>
+and the system is stable. <span style="color:red">Review basics of transfer function.</span></p>
+<p>The goal of adaptive control is to design a control law and an adaptation law such that the tracking error of the system <span class="math inline">\(x(t) - x_d(t)\)</span> converges to zero.</p>
+<p><strong>Control law</strong>. We design the control law as
+<span class="math display" id="eq:ac-first-linear-control">\[\begin{equation}
+u = \hat{a}_r(t) r + \hat{a}_x(t) x
+\tag{6.6}
+\end{equation}\]</span>
+where <span class="math inline">\(\hat{a}_r(t)\)</span> and <span class="math inline">\(\hat{a}_x(t)\)</span> are time-varying feedback gains that we wish to adapt. The closed-loop dynamics of system <a href="adaptivecontrol.html#eq:ac-first-linear">(6.4)</a> with the controller <a href="adaptivecontrol.html#eq:ac-first-linear-control">(6.6)</a> is
+<span class="math display">\[
+\dot{x} = - a x + b (\hat{a}_r r + \hat{a}_x x) = - (a - b \hat{a}_x) x + b \hat{a}_r r.
+\]</span>
+With the equation above,
+the reason for choosing the control law <a href="adaptivecontrol.html#eq:ac-first-linear-control">(6.6)</a> is clear: if the system parameters <span class="math inline">\((a,b)\)</span> were known, then choosing
+<span class="math display" id="eq:ac-first-linear-optimal-gain">\[\begin{equation}
+a_r^\star = \frac{b_d}{b}, \quad a_x^\star = \frac{a - a_d}{b}
+\tag{6.7}
+\end{equation}\]</span>
+leads to the closed-loop dynamics <span class="math inline">\(\dot{x} = - a_d x + b_d r\)</span> that is exactly what we want in <a href="adaptivecontrol.html#eq:ac-first-linear-desired">(6.5)</a>.</p>
+<p>However, in adaptive control, since the true parameters <span class="math inline">\((a,b)\)</span> are not revealed to the control designer, an adaptation law is needed to dynamically adjust the gains <span class="math inline">\(\hat{a}_r\)</span> and <span class="math inline">\(\hat{a}_x\)</span> based on the tracking error <span class="math inline">\(x(t) - x_d(t)\)</span>.</p>
+<p><strong>Adaptation law</strong>. Let <span class="math inline">\(e(t) = x(t) - x_d(t)\)</span> be the tracking error, and we develop its time derivative
+<span class="math display" id="eq:ac-first-linear-error-dynamics">\[\begin{align}
+\dot{e} &amp;= \dot{x} - \dot{x}_d \\
+        &amp;= - a_d (x - x_d) + (a_d - a + b\hat{a}_x)x + (b \hat{a}_r - b_d) r \\
+        &amp; = - a_d e + b\underbrace{(\hat{a}_x - \hat{a}_x^\star)}_{=:\tilde{a}_x} x + b \underbrace{(\hat{a}_r - \hat{a}_r^\star )}_{=:\tilde{a}_r} r \\
+        &amp; = - a_d e + b (\tilde{a}_x x + \tilde{a}_r r) \tag{6.8}
+\end{align}\]</span>
+where <span class="math inline">\(\tilde{a}_x\)</span> and <span class="math inline">\(\tilde{a}_r\)</span> are the gain errors w.r.t. the optimal gains in <a href="adaptivecontrol.html#eq:ac-first-linear-optimal-gain">(6.7)</a> if the true parameters were known. The error dynamics <a href="adaptivecontrol.html#eq:ac-first-linear-error-dynamics">(6.8)</a> is equivalent to the following transfer function
+<span class="math display" id="eq:ac-first-linear-error-dynamics-transfer">\[\begin{equation}
+e = \frac{1}{p + a_d} b(\tilde{a}_x x + \tilde{a}_r r) = \frac{1}{p + a_d} \left(b
+\begin{bmatrix} \tilde{a}_x \\ \tilde{a}_r \end{bmatrix}^T
+\begin{bmatrix} x \\ r \end{bmatrix}
+\right),
+\tag{6.9}
+\end{equation}\]</span>
+which is in the form of <a href="adaptivecontrol.html#eq:acbasiclemmaephi">(6.1)</a>. Therefore, we choose the adaptation law
+<span class="math display" id="eq:ac-first-linear-adaptation-law">\[\begin{equation}
+\begin{bmatrix} \dot{\tilde{a}}_x \\ \dot{\tilde{a}}_r \end{bmatrix} = - \mathrm{sgn}(b) \gamma e \begin{bmatrix} x \\ r \end{bmatrix}.
+\tag{6.10}
+\end{equation}\]</span></p>
+<p><strong>Tracking convergence</strong>. With the control law <a href="adaptivecontrol.html#eq:ac-first-linear-control">(6.6)</a> and the adaptation law <a href="adaptivecontrol.html#eq:ac-first-linear-adaptation-law">(6.10)</a>, we can prove that the tracking error converges to zero, using Lemma <a href="adaptivecontrol.html#lem:adaptivecontrolbasic">6.1</a>. With <span class="math inline">\(\tilde{a}=[\tilde{a}_x, \tilde{a}_r]^T\)</span>, let
+<span class="math display" id="eq:ac-first-linear-lyapunov">\[\begin{equation}
+V(e,\tilde{a}) = e^2 + \frac{|b|}{\gamma} \tilde{a}^T \tilde{a}
+\tag{6.11}
+\end{equation}\]</span>
+be a positive definite Lyapunov function candidate with time derivative
+<span class="math display">\[
+\dot{V} = - 2a_d e^2 \leq 0.
+\]</span>
+Clearly, <span class="math inline">\(e\)</span> and <span class="math inline">\(\tilde{a}\)</span> are both bounded. Assuming the reference trajectory <span class="math inline">\(r\)</span> is bounded, we know <span class="math inline">\(x_d\)</span> is bounded (due to <a href="adaptivecontrol.html#eq:ac-first-linear-desired">(6.5)</a>) and hence <span class="math inline">\(x\)</span> is bounded (due to <span class="math inline">\(e = x - x_d\)</span> being bounded). Consequently, from the error dynamics <a href="adaptivecontrol.html#eq:ac-first-linear-error-dynamics">(6.8)</a> we know <span class="math inline">\(\dot{e}\)</span> is bounded, which implies <span class="math inline">\(\ddot{V} = -4a_d e \dot{e}\)</span> is bounded and <span class="math inline">\(\dot{V}\)</span> is uniformly continuous. By Barbalat’s stability certificate <a href="stability.html#thm:BarbalatStability">4.6</a>, we conlude <span class="math inline">\(e(t) \rightarrow 0\)</span> as <span class="math inline">\(t \rightarrow \infty\)</span>.</p>
+<p>It is always better to combine mathematical analysis with intuitive understanding. Can you explain intuitively why the adaptation law <a href="adaptivecontrol.html#eq:ac-first-linear-adaptation-law">(6.10)</a> makes sense? (Hint: think about how the control should react to a negative/positive tracking error.)</p>
+<p><strong>Parameter convergence</strong>. We have shown the control law <a href="adaptivecontrol.html#eq:ac-first-linear-control">(6.6)</a> and the adaptation law <a href="adaptivecontrol.html#eq:ac-first-linear-adaptation-law">(6.10)</a> guarantee to track the reference trajectory. However, is it guaranteed that the gains of the controller <a href="adaptivecontrol.html#eq:ac-first-linear-control">(6.6)</a> also converge to the optimal gains in <a href="adaptivecontrol.html#eq:ac-first-linear-optimal-gain">(6.7)</a>?</p>
+<p>We will now show that the answer is indefinite and it depends on the reference trajectory <span class="math inline">\(r(t)\)</span>. Because the tracking error <span class="math inline">\(e\)</span> converges to zero, and <span class="math inline">\(e\)</span> is the output of a stable filter <a href="adaptivecontrol.html#eq:ac-first-linear-error-dynamics-transfer">(6.9)</a>, we know the input <span class="math inline">\(b(\tilde{a}_x x + \tilde{a}_r r)\)</span> must also converge to zero. On the other hand, the adaptation law <a href="adaptivecontrol.html#eq:ac-first-linear-adaptation-law">(6.10)</a> shows that both <span class="math inline">\(\dot{\tilde{a}}_x\)</span> and <span class="math inline">\(\dot{\tilde{a}}_r\)</span> converge to zero (due to <span class="math inline">\(e\)</span> converging to zero and <span class="math inline">\(x\)</span>, <span class="math inline">\(r\)</span> being bounded). As a result, we know <span class="math inline">\(\tilde{a} = [\tilde{a}_x,\tilde{a}_r]^T\)</span> converges to a constant that satisfies
+<span class="math display" id="eq:ac-first-linear-parameter-equation">\[\begin{equation}
+v^T \tilde{a} = 0, \quad v = \begin{bmatrix} x \\ r \end{bmatrix},
+\tag{6.12}
+\end{equation}\]</span>
+which is a single linear equation of <span class="math inline">\(\tilde{a}\)</span> with time-varying coeffients.</p>
+<ul>
+<li><p><strong>Constant reference: no guaranteed convergence</strong>. Suppose <span class="math inline">\(r(t) \equiv r_0 \neq 0\)</span> for all <span class="math inline">\(t\)</span>. From <a href="adaptivecontrol.html#eq:ac-first-linear-desired">(6.5)</a> we know <span class="math inline">\(x = x_d = \alpha r_0\)</span> when <span class="math inline">\(t \rightarrow \infty\)</span>, where <span class="math inline">\(\alpha\)</span> is the constant DC gain of the stable filter. Therefore, the linear equation <a href="adaptivecontrol.html#eq:ac-first-linear-parameter-equation">(6.12)</a> reduces to
+<span class="math display">\[
+\alpha \tilde{a}_x + \tilde{a}_r  = 0.
+\]</span>
+This implies that <span class="math inline">\(\tilde{a}\)</span> does not necessarily converge to zero. In fact, it converges to a straight line in the parameter space.</p></li>
+<li><p><strong>Persistent excitation: guaranteed convergence</strong>. However, when the signal <span class="math inline">\(v\)</span> satisfies the so-called <em>persistent excitation</em> condition, which states that for any <span class="math inline">\(t\)</span>, there exists <span class="math inline">\(T, \beta &gt; 0\)</span> such that
+<span class="math display" id="eq:ac-first-linear-persistent-excitation">\[\begin{equation}
+\int_{t}^{t+T} v v^T d\tau \geq \beta I,
+\tag{6.13}
+\end{equation}\]</span>
+then <span class="math inline">\(\tilde{a}\)</span> is guaranteed to converge to zero. To see this, we multiply <a href="adaptivecontrol.html#eq:ac-first-linear-parameter-equation">(6.12)</a> by <span class="math inline">\(v\)</span> and integrate it from <span class="math inline">\(t\)</span> to <span class="math inline">\(t+T\)</span>, which gives rise to
+<span class="math display">\[
+\left( \int_{t}^{t+T} vv^T d\tau \right) \tilde{a} = 0.
+\]</span>
+By the persistent excitation condition <a href="adaptivecontrol.html#eq:ac-first-linear-persistent-excitation">(6.13)</a>, we infer that <span class="math inline">\(\tilde{a} = 0\)</span> is the only solution.</p></li>
+</ul>
+<p>It remains to understand under what conditions of the reference trajectory <span class="math inline">\(r(t)\)</span> can we guarantee the persistent excitation of <span class="math inline">\(v\)</span>. We leave it as an exercise for the reader to show, if <span class="math inline">\(r(t)\)</span> contains at least one sinusoidal component, then the persistent excitation condition of <span class="math inline">\(v\)</span> is guaranteed.</p>
+<!-- ### Nonlinear Systems  -->
+<div class="exercise">
+<p><span id="exr:adaptivecontrolfirstordernonlinearsystem" class="exercise"><strong>Exercise 6.1  (Extension to Nonlinear Systems) </strong></span>Design a control law and an adaptation law for the following system
+<span class="math display">\[
+\dot{x} = - a x - c f(x) + b u
+\]</span>
+with unknown true parameters <span class="math inline">\((a,b,c)\)</span> (assume the sign of <span class="math inline">\(b\)</span> is known) and known nonlinearity <span class="math inline">\(f(x)\)</span> to track a reference trajectory <span class="math inline">\(r(t)\)</span>. Analyze the convergence of tracking error and parameter estimation error.</p>
+</div>
+</div>
+<div id="high-order-systems" class="section level3 hasAnchor" number="6.1.2">
+<h3><span class="header-section-number">6.1.2</span> High-Order Systems<a href="adaptivecontrol.html#high-order-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider an <span class="math inline">\(n\)</span>-th order nonlinear system
+<span class="math display" id="eq:ac-singleinput-nonlinear">\[\begin{equation}
+q^{(n)} + \sum_{i=1}^n \alpha_i f_i(x,t) = bu
+\tag{6.14}
+\end{equation}\]</span>
+where <span class="math inline">\(x=[q,\dot{q},\ddot{q},\dots,q^{(n-1)}]^T\)</span> is the state of the system, <span class="math inline">\(f_i\)</span>’s are known nonlinearities, <span class="math inline">\((\alpha_1,\dots,\alpha_n,b)\)</span> are unknown parameters of the system (with <span class="math inline">\(\mathrm{sgn}(b)\)</span> known).</p>
+<p>The goal of adaptive control is to control the system <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear">(6.14)</a> trajectory to follow a desired trajectory <span class="math inline">\(q_d(t)\)</span> despite no knowing the true parameters.</p>
+<p>To facilitate the derivation of the adaptive controller, let us divide both sides of <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear">(6.14)</a> by <span class="math inline">\(b\)</span>
+<span class="math display" id="eq:ac-singleinput-nonlinear-equivalent">\[\begin{equation}
+h q^{(n)} + \sum_{i=1}^n a_i f_i(x,t) = u
+\tag{6.15}
+\end{equation}\]</span>
+where <span class="math inline">\(h = 1 / b\)</span> and <span class="math inline">\(a_i = \alpha_i / b\)</span>.</p>
+<p><strong>Control law</strong>. Recall that the choice of the control law is tyically inspired by the control design if the true system parameters were known. We will borrow ideas from sliding control (Appendix <a href="slidingcontrol.html#slidingcontrol">E</a>).</p>
+<ul>
+<li><p><strong>Known parameters</strong>. Let <span class="math inline">\(e = q(t) - q_d(t)\)</span> be the tracking error, and define the following combined error
+<span class="math display">\[
+s = e^{(n-1)} + \lambda_{n-2} e^{(n-2)} + \dots + \lambda_0 e = \Delta(p) e
+\]</span>
+where <span class="math inline">\(\Delta(p) = p^{n-1} + \lambda_{n-2} p^{(n-2)} + \dots + \lambda_0\)</span> is a stable polynomial with user-chosen coeffients <span class="math inline">\(\lambda_0,\dots,\lambda_{n-2}\)</span>. The rationale for defining the combined error <span class="math inline">\(s\)</span> is that the convergence of <span class="math inline">\(e\)</span> to zero can be guaranteed by the convergence of <span class="math inline">\(s\)</span> to zero (when <span class="math inline">\(\Delta(p)\)</span> is stable).
+Note that <span class="math inline">\(s\)</span> can be equivalently written as
+<span class="math display">\[\begin{align}
+s &amp; = (q^{(n-1)} - q_d^{(n-1)}) + \lambda_{n-2} e^{(n-2)} + \dots + \lambda_0 e \\
+&amp; = q^{(n-1)} - \underbrace{ \left( q_d^{(n-1)} - \lambda_{n-2} e^{(n-2)} - \dots - \lambda_0 e  \right) }_{q_r^{(n-1)}}.
+\end{align}\]</span>
+Now consider the control law
+<span class="math display" id="eq:ac-singleinput-nonlinear-control-law-knownparam">\[\begin{equation}
+u = h q_r^{(n)} - ks + \sum_{i=1}^n a_i f_i(x,t)
+\tag{6.16}
+\end{equation}\]</span>
+where
+<span class="math display">\[
+q_r^{(n)} = q_d^{(n)} - \lambda_{n-2} e^{(n-1)} - \dots - \lambda_0 \dot{e}
+\]</span>
+and <span class="math inline">\(k\)</span> is a design constant that has the same sign as <span class="math inline">\(h\)</span>. This choice of control, plugged into the system dynamics <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-equivalent">(6.15)</a>, leads to
+<span class="math display">\[\begin{align}
+h q^{(n)} + \sum_{i=1}^n a_i f_i(x,t) = h q_r^{(n)} - ks + \sum_{i=1}^n a_i f_i(x,t) \Longleftrightarrow \\
+h \left( q^{(n)} - q_r^{(n)} \right) + ks = 0 \Longleftrightarrow \\
+h \dot{s} + ks = 0,
+\end{align}\]</span>
+which guarantees the exponential convergence of <span class="math inline">\(s\)</span> to zero (note that <span class="math inline">\(h\)</span> and <span class="math inline">\(k\)</span> have the same sign), and hence the convergence of <span class="math inline">\(e\)</span> to zero.</p></li>
+<li><p><strong>Unknown parameters</strong>. Inspired by the control law with known parameters in <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-control-law-knownparam">(6.16)</a>, we design the adapative control law as
+<span class="math display" id="eq:ac-singleinput-nonlinear-control-law-unknownparam">\[\begin{equation}
+u = \hat{h} q_r^{(n)} - ks + \sum_{i=1}^n \hat{a}_i f_i(x,t),
+\tag{6.17}
+\end{equation}\]</span>
+where the time-varying gains <span class="math inline">\(\hat{h},\hat{a}_1,\dots,\hat{a}_n\)</span> will be adjusted by an adaptation law.</p></li>
+</ul>
+<p><strong>Adaptation law</strong>. Inserting the adapative control law <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-control-law-unknownparam">(6.17)</a> into the system dynamics <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-equivalent">(6.15)</a>, we obtain
+<span class="math display" id="eq:ac-singleinput-nonlinear-error-dynamics">\[\begin{align}
+h \dot{s} + ks = \tilde{h} q_r^{(n)} + \sum_{i=1}^n \tilde{a}_i f_i (x,t) \Longleftrightarrow \\
+s = \frac{1}{p + k/h} \frac{1}{h} \underbrace{ \left(
+    \begin{bmatrix} \tilde{h} \\ \tilde{a}_1 \\ \vdots \\ \tilde{a}_n \end{bmatrix}^T
+    \begin{bmatrix} q_r^{(n)} \\ f_1(x,t) \\ \vdots \\ f_n(x,t) \end{bmatrix}
+    \right)}_{=:\phi^T v}
+\tag{6.18}
+\end{align}\]</span>
+where <span class="math inline">\(\tilde{h} = \hat{h} - h\)</span> and <span class="math inline">\(\tilde{a}_i = \hat{a}_i - a_i,i=1,\dots,n\)</span>. Again, <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-error-dynamics">(6.18)</a> is in the familiar form of <a href="adaptivecontrol.html#eq:acbasiclemmaephi">(6.1)</a>, which naturally leads to the following adaptation law with <span class="math inline">\(\gamma &gt; 0\)</span> a chosen constant
+<span class="math display" id="eq:ac-singleinput-nonlinear-adaptation-law">\[\begin{equation}
+\dot{\phi} = \begin{bmatrix} \dot{\tilde{h}} \\ \dot{\tilde{a}}_1 \\ \vdots \\ \dot{\tilde{a}}_n \end{bmatrix} = - \mathrm{sgn}(h) \gamma s \begin{bmatrix} q_r^{(n)} \\ f_1(x,t) \\ \vdots \\ f_n(x,t) \end{bmatrix}.
+\tag{6.19}
+\end{equation}\]</span></p>
+<p><strong>Tracking and parameter convergence</strong>. With the following Lyapunov function
+<span class="math display" id="eq:ac-singleinput-nonlinear-lyapunov">\[\begin{equation}
+V(s,\phi) = |h| s^2 + \frac{1}{\gamma} \phi^T \phi, \quad \dot{V}(s,\phi) -2|k| s^2,
+\tag{6.20}
+\end{equation}\]</span>
+the global convergence of <span class="math inline">\(s\)</span> to zero can be easily shown. For parameter convergence, it is easy to see that when <span class="math inline">\(v\)</span> satisfies the persistent excitation condition, we have that <span class="math inline">\(\phi\)</span> converges to zero. (However, the relationship between the reference trajectory <span class="math inline">\(q_d(t)\)</span> and the persistent excitation of <span class="math inline">\(v\)</span> becomes nontrivial due to the nonlinearities <span class="math inline">\(f_i\)</span>.)</p>
+</div>
+<div id="robotic-manipulator" class="section level3 hasAnchor" number="6.1.3">
+<h3><span class="header-section-number">6.1.3</span> Robotic Manipulator<a href="adaptivecontrol.html#robotic-manipulator" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>So far our focus has been on systems with a single input (<span class="math inline">\(u \in \mathbb{R}\)</span>). In the following, we will show that similar techniques can be applied to adapative control of systems with multiple inputs, particularly, trajectory control of a robotic manipulator.</p>
+<p>Let <span class="math inline">\(q \in \mathbb{R}^n\)</span> be the joint angles of a multi-link robotic arm, and <span class="math inline">\(\dot{q} \in \mathbb{R}^n\)</span> be the joint velocities. The dynamics of a robotic manipulator reads
+<span class="math display" id="eq:ac-mrac-manipulator-dynamics">\[\begin{equation}
+H(q) \ddot{q} + C(q,\dot{q})\dot{q} + g(q) = \tau,
+\tag{6.21}
+\end{equation}\]</span>
+where <span class="math inline">\(H(q) \in \mathbb{S}^{n}_{++}\)</span> is the manipulator inertia matrix (that is positive definite), <span class="math inline">\(C(q,\dot{q})\dot{q}\)</span> is a vector of centripetal and Coriolis torques (with <span class="math inline">\(C(q,\dot{q}) \in \mathbb{R}^{n \times n}\)</span>), and <span class="math inline">\(g(q)\)</span> denotes gravitational torques.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:planar-two-link"></span>
+<img src="images/drawme.png" alt="Planar two-link manipulator" width="60%" />
+<p class="caption">
+Figure 6.1: Planar two-link manipulator
+</p>
+</div>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:planartwolinkmanipulator" class="example"><strong>Example 6.1  (Planar Two-link Manipulator) </strong></span>The dynamics of a planar two-link manipulator in Fig. <a href="adaptivecontrol.html#fig:planar-two-link">6.1</a> is
+<span class="math display" id="eq:ac-mrac-manipulator-dynamics-planartwolink">\[\begin{equation}
+\begin{bmatrix} H_{11} &amp; H_{12} \\ H_{21} &amp; H_{22} \end{bmatrix}
+\begin{bmatrix} \ddot{q}_1 \\ \ddot{q}_2 \end{bmatrix}
++
+\begin{bmatrix} - h \dot{q}_2 &amp; -h (\dot{q}_1 + \dot{q}_2) \\ h \dot{q}_1 &amp; 0 \end{bmatrix}
+\begin{bmatrix} \dot{q}_1 \\ \dot{q}_2 \end{bmatrix}
+=
+\begin{bmatrix} \tau_1 \\ \tau_2 \end{bmatrix},
+\tag{6.22}
+\end{equation}\]</span>
+where
+<span class="math display">\[\begin{align}
+H_{11} &amp; = a_1 + 2 a_3 \cos q_2 + 2 a_4 \sin q_2 \\
+H_{12} &amp; = H_{21} = a_2 + a_3 \cos q_2 + a_4 \sin q_2 \\
+H_{22} &amp;= a_2 \\
+h &amp;= a_3 \sin q_2 - a_4 \cos q_2
+\end{align}\]</span>
+with
+<span class="math display">\[\begin{align}
+a_1 &amp;= I_1 + m_1 l_{c1}^2 + I_e + m_e l_{ce}^2 + m_e l_1^2 \\
+a_2 &amp;= I_e + m_e l_{ce}^2 \\
+a_3 &amp;= m_e l_1 l_{ce} \cos \delta_e \\
+a_4 &amp;= m_e l_1 l_{ce} \sin \delta_e.
+\end{align}\]</span></p>
+</div>
+</div>
+<p>As seen from the above example, the parameters <span class="math inline">\(a\)</span> (which are nonlinear functions of the physical parameters such as mass and length) enter linearly in <span class="math inline">\(H\)</span> and <span class="math inline">\(C\)</span> (<span class="math inline">\(g(q)\)</span> is ignored because the manipulator is on a horizontal plane).</p>
+<p>The goal of the control design is to have the manipulator track a desired trajectory <span class="math inline">\(q_d(t)\)</span>.</p>
+<p><strong>Known parameters</strong>. When the parameters are known, we follow the sliding control design framework. Let <span class="math inline">\(\tilde{q} = q(t) - q_d(t)\)</span> be the tracking error, and define the combined error
+<span class="math display">\[
+s = \dot{\tilde{q}} + \Lambda \tilde{q} = \dot{q} - \underbrace{\left( \dot{q}_d - \Lambda \tilde{q} \right)}_{\dot{q}_r}
+\]</span>
+where <span class="math inline">\(\Lambda \in \mathbb{S}^n_{++}\)</span> is a user-chosen positive definite matrix (in general we want <span class="math inline">\(-\Lambda\)</span> to be Hurwitz). In this case, <span class="math inline">\(s \rightarrow 0\)</span> implies <span class="math inline">\(\tilde{q} \rightarrow 0\)</span> as <span class="math inline">\(t \rightarrow \infty\)</span>. Choosing the control law (coming from feedback linearization Appendix <a href="feedbacklinearization.html#feedbacklinearization">D</a>)
+<span class="math display" id="eq:ac-mrac-manipulator-controller-knownparam">\[\begin{equation}
+\tau = H \ddot{q}_r - K_D s + C \dot{q} + g(q)
+\tag{6.23}
+\end{equation}\]</span>
+with <span class="math inline">\(K_D \in \mathbb{S}^n_{++}\)</span> positive definite leads to the closed-loop dynamics
+<span class="math display">\[
+H \dot{s} + K_D s = 0 \Longleftrightarrow \dot{s} = - H^{-1} K_D s.
+\]</span>
+Because the matrix <span class="math inline">\(H^{-1} K_D\)</span> is the product of two positive definite matrices (recall <span class="math inline">\(H\)</span> is positive definite and so is <span class="math inline">\(H^{-1}\)</span>), it has strictly positive real eigenvalues.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> Hence, <span class="math inline">\(- H^{-1} K_D\)</span> is <a href="https://en.wikipedia.org/wiki/Hurwitz_matrix">Hurwitz</a> and <span class="math inline">\(s\)</span> is guaranteed to converge to zero.</p>
+<p><strong>Control law</strong>. A closer look at the controller <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-knownparam">(6.23)</a> allows us to write it in the following form
+<span class="math display">\[\begin{align}
+\tau &amp;= H \ddot{q}_r + C(s + \dot{q}_r) + g(q) - K_D s  \\
+&amp;= H \ddot{q}_r + C \dot{q}_r + g(q) + (C - K_D) s \\
+&amp;= Y (q,\dot{q},\dot{q}_r,\ddot{q}_r) a + (C - K_D) s
+\end{align}\]</span>
+where <span class="math inline">\(a \in \mathbb{R}^m\)</span> contains all the parameters and <span class="math inline">\(Y \in \mathbb{R}^{n \times m}\)</span> is the matrix that collects all the coeffients of <span class="math inline">\(a\)</span> in <span class="math inline">\(H \ddot{q}_r + C \dot{q}_r + g(q)\)</span>. As a result, we design the adapative control law to be
+<span class="math display" id="eq:ac-mrac-manipulator-controller-unknownparam">\[\begin{equation}
+\tau = Y \hat{a} - K_D s,
+\tag{6.24}
+\end{equation}\]</span>
+with <span class="math inline">\(\hat{a}\)</span> the time-varying parameter that we wish to adapt. Note that here we have done something strange: the adapative control law does not exactly follow the controller <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-knownparam">(6.23)</a> in the known-parameter case.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> We first separated <span class="math inline">\(s\)</span> from <span class="math inline">\(\dot{q}\)</span> and wrote <span class="math inline">\(Ya = H \ddot{q}_r + C \dot{q}_r + g\)</span> instead of <span class="math inline">\(Ya = H \ddot{q}_r + C \dot{q} + g\)</span>; then we dropped the “<span class="math inline">\(C\)</span>” matrix in front of <span class="math inline">\(s\)</span> in the adapative control law. The reason for doing this will soon become clear when we analyze the tracking convergence.</p>
+<p><strong>Adaptation law and tracking convergence</strong>.
+Recall that the key of adapative control is to design a control law and an adaptation law such that global converge of the tracking error <span class="math inline">\(s\)</span> can be guaranteed by a Lyapunov function. Looking at the previous Lyapunov functions in <a href="adaptivecontrol.html#eq:ac-first-linear-lyapunov">(6.11)</a> and <a href="adaptivecontrol.html#eq:ac-singleinput-nonlinear-lyapunov">(6.20)</a>, we see that they both contain a positive definite term in the tracking error <span class="math inline">\(s\)</span> (or <span class="math inline">\(e\)</span> if in first-order systems) and another positive definite term in the parameter error <span class="math inline">\(\tilde{a}\)</span>. This hints us that we may try a Lyapunov candidate function of the following form
+<span class="math display" id="eq:ac-mrac-manipulator-controller-unknownparam-lyapunov">\[\begin{equation}
+V = \frac{1}{2} \left( s^T H s + \tilde{a} \Gamma^{-1} \tilde{a} \right),
+\tag{6.25}
+\end{equation}\]</span>
+where <span class="math inline">\(\Gamma \in \mathbb{S}^m_{++}\)</span> is a constant positive definite matrix, and <span class="math inline">\(\tilde{a} = \hat{a} - a\)</span> is the parameter error.</p>
+<p>The next step would be to derive the time derivative of <span class="math inline">\(V\)</span>, which, as we can expect, will contain a term that involves <span class="math inline">\(\dot{H}\)</span> and complicates our analysis. Fortunately, the following lemma will help us.</p>
+<div class="lemma">
+<p><span id="lem:skewsymmetricmanipulator" class="lemma"><strong>Lemma 6.2  </strong></span>For the manipulator dynamics <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-dynamics">(6.21)</a>, there exists a way to define <span class="math inline">\(C\)</span> such that <span class="math inline">\(\dot{H} - 2C\)</span> is skew-symmetric.</p>
+</div>
+<div class="proof">
+<p><span id="unlabeled-div-10" class="proof"><em>Proof</em>. </span>See Section 9.1, page 399-402 in <span class="citation">(<a href="#ref-slotine91book-applied">Slotine, Li, et al. 1991</a>)</span>. You should also check if this is true for the planar two-link manipulator dynamics in Example <a href="adaptivecontrol.html#exm:planartwolinkmanipulator">6.1</a>.</p>
+</div>
+<p>With Lemma <a href="adaptivecontrol.html#lem:skewsymmetricmanipulator">6.2</a>, the time derivative of <span class="math inline">\(V\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov">(6.25)</a> reads
+<span class="math display" id="eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative" id="eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-3" id="eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-2" id="eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-1">\[\begin{align}
+\dot{V} &amp; = s^T H \dot{s} + \frac{1}{2} s^T \dot{H} s + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \\
+&amp;= s^T (H \ddot{q} - H \ddot{q}_r) + \frac{1}{2} s^T \dot{H} s + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \\
+&amp;=
+s^T (\tau - C \dot{q} - g - H \ddot{q}_r ) + \frac{1}{2} s^T \dot{H} s + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \tag{6.26} \\
+&amp;= s^T (\tau - H \ddot{q}_r - C (s + \dot{q}_r) - g) + \frac{1}{2} s^T \dot{H} s + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \\
+&amp;= s^T (\tau - H \ddot{q}_r - C \dot{q}_r - g) + \frac{1}{2} s^T (\dot{H}- 2C)s + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \tag{6.27}\\
+&amp;= s^T (\tau - H \ddot{q}_r - C \dot{q}_r - g) + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \\
+&amp;=s^T(Y\hat{a} - K_D s - Ya) + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} \tag{6.28}\\
+&amp;=s^T Y \tilde{a} + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}} - s^T K_D s \tag{6.29},
+\end{align}\]</span>
+where we used the manipulator dynamics <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-dynamics">(6.21)</a> to rewrite <span class="math inline">\(H\ddot{q}\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-1">(6.26)</a>, used <span class="math inline">\(\dot{H} - 2C\)</span> is skew-symmetric in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-2">(6.27)</a>, invoked the adapative control law <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam">(6.24)</a> and reused <span class="math inline">\(Ya = H \ddot{q}_r + C \dot{q}_r + g(q)\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-3">(6.28)</a>. The derivation above explains why the choice of the control law in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam">(6.24)</a> did not exactly follow its counterpart when the parameters are known: we need to use <span class="math inline">\(s^T Cs\)</span> to cancel <span class="math inline">\(\frac{1}{2} s^T \dot{H} s\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative-2">(6.27)</a>.</p>
+<p>We then wonder if we can design <span class="math inline">\(\dot{\tilde{a}}\)</span> such that <span class="math inline">\(\dot{V}\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov-derivative">(6.29)</a> is negative semidefinie? This turns out to be straightforward with the adaptation law
+<span class="math display" id="eq:ac-mrac-manipulator-controller-unknownparam-adaptation-law">\[\begin{equation}
+\dot{\tilde{a}} = -\Gamma Y^T s,
+\tag{6.30}
+\end{equation}\]</span>
+to make <span class="math inline">\(s^T Y \tilde{a} + \tilde{a}^T \Gamma^{-1} \dot{\tilde{a}}\)</span> vanish and so
+<span class="math display">\[
+\dot{V} = - s^T K_D s \leq 0.
+\]</span></p>
+<p>We are not done yet. To show <span class="math inline">\(s\)</span> converges to zero (which is implied by <span class="math inline">\(\dot{V}\)</span> converges to zero), by Barbalat’s stability certificate <a href="stability.html#thm:BarbalatStability">4.6</a>, it suffices to show
+<span class="math display">\[
+\ddot{V} = -2 s^T K_D \dot{s}
+\]</span>
+is bounded. We already know <span class="math inline">\(s\)</span> and <span class="math inline">\(\tilde{a}\)</span> are bounded, due to the fact that <span class="math inline">\(V\)</span> in <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam-lyapunov">(6.25)</a> is bounded. Therefore, we only need to show <span class="math inline">\(\dot{s}\)</span> is bounded. To do so, we plug the adapative control law <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam">(6.24)</a> into the manipulator dynamics <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-dynamics">(6.21)</a> and obtain
+<span class="math display">\[
+H \dot{s} + (C + K_D) s = Y\tilde{a},
+\]</span>
+which implies the boundedness of <span class="math inline">\(\dot{s}\)</span> (note that <span class="math inline">\(H\)</span> is uniformly positive definite, i.e., <span class="math inline">\(H \succeq \alpha I\)</span> for some <span class="math inline">\(\alpha &gt; 0\)</span>). This concludes the analysis of the tracking convergence <span class="math inline">\(s \rightarrow 0\)</span> as <span class="math inline">\(t \rightarrow \infty\)</span>.</p>
+<!-- With the adapative control law \@ref(eq:ac-mrac-manipulator-controller-unknownparam), the closed-loop dynamics becomes 
+\begin{align}
+H \ddot{q} + C \dot{q} + g(q) = \tau = Y \hat{a} - K_D s \Longleftrightarrow \\
+H \ddot{q} + C \dot{q} + g(q) = Y(\hat{a} - a) + Y a - K_D s \Longleftrightarrow \\
+H \ddot{q} + C \dot{q} + g(q) = Y \tilde{a} - K_D s + \underbrace{(H \ddot{q}_r + C \dot{q} + g(q))}_{\text{recall this is }Ya} \Longleftrightarrow \\
+H \dot{s} + K_D s = Y \tilde{a} (\#eq:ac-mrac-manipulator-controller-unknownparam-error-dynamics)
+\end{align}
+with $\tilde{a} = \hat{a} - a$ the parameter error. The above equation \@ref(eq:ac-mrac-manipulator-controller-unknownparam-error-dynamics), however, no longer has the familiar form \@ref(eq:acbasiclemmaephi). How do we design the adaptation law to ensure tracking convergence?
+Let us try the following function as a Lyapunov function candidate
+where $\Gamma \in \mathbb{S}^m_{++}$ is a positive definite constant matrix.
+To derive the time-derivative of $V$, we need the following lemma. -->
+</div>
+</div>
+<div id="certainty-equivalent-adaptive-control" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Certainty-Equivalent Adaptive Control<a href="adaptivecontrol.html#certainty-equivalent-adaptive-control" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+
+</div>
+</div>
+
+
+
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-slotine91book-applied" class="csl-entry">
+Slotine, Jean-Jacques E, Weiping Li, et al. 1991. <em>Applied Nonlinear Control</em>. Vol. 199. 1. Prentice hall Englewood Cliffs, NJ.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="11">
+<li id="fn11"><p>Consider two positive definite matrices <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, let <span class="math inline">\(B = B^{1/2}B^{1/2}\)</span>. The product <span class="math inline">\(AB\)</span> can be written as <span class="math inline">\(AB = A B^{1/2}B^{1/2} = B^{-1/2} (B^{1/2} A B^{1/2}) B^{1/2}\)</span>. Therefore <span class="math inline">\(AB\)</span> is <a href="https://en.wikipedia.org/wiki/Matrix_similarity">similar</a> to <span class="math inline">\(B^{1/2} A B^{1/2}\)</span> and is positive definite.<a href="adaptivecontrol.html#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>In fact, one can show that the controller <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-unknownparam">(6.24)</a> with known parameters, i.e., <span class="math inline">\(\tau = Y a - K_D s\)</span>, also guarantees the convergence of <span class="math inline">\(s\)</span> towards zero, though it is different from the feedback linearization controller <a href="adaptivecontrol.html#eq:ac-mrac-manipulator-controller-knownparam">(6.23)</a>. Try proving the convergence with a Lyapunov candidate <span class="math inline">\(V = \frac{1}{2}s^T H s\)</span>.<a href="adaptivecontrol.html#fnref12" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="output-feedback.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="app-lti-system-theory.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/OptimalControlEstimation/blob/main/07-adaptivecontrol.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["optimal-control-estimation.pdf", "optimal-control-estimation.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

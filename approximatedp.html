@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Approximate Dynamic Programming | Optimal Control and Estimation</title>
+  <meta name="description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Approximate Dynamic Programming | Optimal Control and Estimation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="github-repo" content="hankyang94/OptimalControlEstimation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Approximate Dynamic Programming | Optimal Control and Estimation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2023-08-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="exactdp.html"/>
+<link rel="next" href="stability.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Optimal Control and Estimation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="formulation.html"><a href="formulation.html"><i class="fa fa-check"></i><b>1</b> The Optimal Control Formulation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="formulation.html"><a href="formulation.html#the-basic-problem"><i class="fa fa-check"></i><b>1.1</b> The Basic Problem</a></li>
+<li class="chapter" data-level="1.2" data-path="formulation.html"><a href="formulation.html#dynamic-programming-and-principle-of-optimality"><i class="fa fa-check"></i><b>1.2</b> Dynamic Programming and Principle of Optimality</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="exactdp.html"><a href="exactdp.html"><i class="fa fa-check"></i><b>2</b> Exact Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="exactdp.html"><a href="exactdp.html#lqr"><i class="fa fa-check"></i><b>2.1</b> Linear Quadratic Regulator</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="exactdp.html"><a href="exactdp.html#infinite-horizon-lqr"><i class="fa fa-check"></i><b>2.1.1</b> Infinite-Horizon LQR</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="approximatedp.html"><a href="approximatedp.html"><i class="fa fa-check"></i><b>3</b> Approximate Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="approximatedp.html"><a href="approximatedp.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-value-space"><i class="fa fa-check"></i><b>3.2</b> Approximation in value space</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="approximatedp.html"><a href="approximatedp.html#problem-approximation"><i class="fa fa-check"></i><b>3.2.1</b> Problem Approximation</a></li>
+<li class="chapter" data-level="3.2.2" data-path="approximatedp.html"><a href="approximatedp.html#parametric-cost-approximation"><i class="fa fa-check"></i><b>3.2.2</b> Parametric cost approximation</a></li>
+<li class="chapter" data-level="3.2.3" data-path="approximatedp.html"><a href="approximatedp.html#online-approximate-optimization"><i class="fa fa-check"></i><b>3.2.3</b> Online approximate optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-policy-space"><i class="fa fa-check"></i><b>3.3</b> Approximation in policy space</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="approximatedp.html"><a href="approximatedp.html#training-by-using-an-expert"><i class="fa fa-check"></i><b>3.3.1</b> Training by using an expert</a></li>
+<li class="chapter" data-level="3.3.2" data-path="approximatedp.html"><a href="approximatedp.html#training-by-cost-optimization"><i class="fa fa-check"></i><b>3.3.2</b> Training by cost optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="approximatedp.html"><a href="approximatedp.html#extension"><i class="fa fa-check"></i><b>3.4</b> Extension</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="stability.html"><a href="stability.html"><i class="fa fa-check"></i><b>4</b> Stability Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="stability.html"><a href="stability.html#autonomous-systems"><i class="fa fa-check"></i><b>4.1</b> Autonomous Systems</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="stability.html"><a href="stability.html#concepts-of-stability"><i class="fa fa-check"></i><b>4.1.1</b> Concepts of Stability</a></li>
+<li class="chapter" data-level="4.1.2" data-path="stability.html"><a href="stability.html#stability-by-linearization"><i class="fa fa-check"></i><b>4.1.2</b> Stability by Linearization</a></li>
+<li class="chapter" data-level="4.1.3" data-path="stability.html"><a href="stability.html#lyapunov-analysis"><i class="fa fa-check"></i><b>4.1.3</b> Lyapunov Analysis</a></li>
+<li class="chapter" data-level="4.1.4" data-path="stability.html"><a href="stability.html#invariant-set-theorem"><i class="fa fa-check"></i><b>4.1.4</b> Invariant Set Theorem</a></li>
+<li class="chapter" data-level="4.1.5" data-path="stability.html"><a href="stability.html#computing-lyapunov-certificates"><i class="fa fa-check"></i><b>4.1.5</b> Computing Lyapunov Certificates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="stability.html"><a href="stability.html#controlled-systems"><i class="fa fa-check"></i><b>4.2</b> Controlled Systems</a></li>
+<li class="chapter" data-level="4.3" data-path="stability.html"><a href="stability.html#non-autonomous-systems"><i class="fa fa-check"></i><b>4.3</b> Non-autonomous Systems</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="output-feedback.html"><a href="output-feedback.html"><i class="fa fa-check"></i><b>5</b> Output Feedback</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="output-feedback.html"><a href="output-feedback.html#state-observer"><i class="fa fa-check"></i><b>5.1</b> State Observer</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="output-feedback.html"><a href="output-feedback.html#general-design-strategy"><i class="fa fa-check"></i><b>5.1.1</b> General Design Strategy</a></li>
+<li class="chapter" data-level="5.1.2" data-path="output-feedback.html"><a href="output-feedback.html#luenberger-template"><i class="fa fa-check"></i><b>5.1.2</b> Luenberger Template</a></li>
+<li class="chapter" data-level="5.1.3" data-path="output-feedback.html"><a href="output-feedback.html#state-affine-template"><i class="fa fa-check"></i><b>5.1.3</b> State-affine Template</a></li>
+<li class="chapter" data-level="5.1.4" data-path="output-feedback.html"><a href="output-feedback.html#kazantzis-kravaris-luenberger-kkl-template"><i class="fa fa-check"></i><b>5.1.4</b> Kazantzis-Kravaris-Luenberger (KKL) Template</a></li>
+<li class="chapter" data-level="5.1.5" data-path="output-feedback.html"><a href="output-feedback.html#triangular-template"><i class="fa fa-check"></i><b>5.1.5</b> Triangular Template</a></li>
+<li class="chapter" data-level="5.1.6" data-path="output-feedback.html"><a href="output-feedback.html#design-with-convex-optimization"><i class="fa fa-check"></i><b>5.1.6</b> Design with Convex Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="output-feedback.html"><a href="output-feedback.html#observer-feedback"><i class="fa fa-check"></i><b>5.2</b> Observer Feedback</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html"><i class="fa fa-check"></i><b>6</b> Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#model-reference-adaptive-control"><i class="fa fa-check"></i><b>6.1</b> Model-Reference Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#first-order-systems"><i class="fa fa-check"></i><b>6.1.1</b> First-Order Systems</a></li>
+<li class="chapter" data-level="6.1.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#high-order-systems"><i class="fa fa-check"></i><b>6.1.2</b> High-Order Systems</a></li>
+<li class="chapter" data-level="6.1.3" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#robotic-manipulator"><i class="fa fa-check"></i><b>6.1.3</b> Robotic Manipulator</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#certainty-equivalent-adaptive-control"><i class="fa fa-check"></i><b>6.2</b> Certainty-Equivalent Adaptive Control</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html"><i class="fa fa-check"></i><b>A</b> Linear System Theory</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability"><i class="fa fa-check"></i><b>A.1</b> Stability</a>
+<ul>
+<li class="chapter" data-level="A.1.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-ct"><i class="fa fa-check"></i><b>A.1.1</b> Continuous-Time Stability</a></li>
+<li class="chapter" data-level="A.1.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-dt"><i class="fa fa-check"></i><b>A.1.2</b> Discrete-Time Stability</a></li>
+<li class="chapter" data-level="A.1.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#lyapunov-analysis-1"><i class="fa fa-check"></i><b>A.1.3</b> Lyapunov Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-controllable-observable"><i class="fa fa-check"></i><b>A.2</b> Controllability and Observability</a>
+<ul>
+<li class="chapter" data-level="A.2.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#cayley-hamilton-theorem"><i class="fa fa-check"></i><b>A.2.1</b> Cayley-Hamilton Theorem</a></li>
+<li class="chapter" data-level="A.2.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-controllability"><i class="fa fa-check"></i><b>A.2.2</b> Equivalent Statements for Controllability</a></li>
+<li class="chapter" data-level="A.2.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#duality"><i class="fa fa-check"></i><b>A.2.3</b> Duality</a></li>
+<li class="chapter" data-level="A.2.4" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-observability"><i class="fa fa-check"></i><b>A.2.4</b> Equivalent Statements for Observability</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#stabilizability-and-detectability"><i class="fa fa-check"></i><b>A.3</b> Stabilizability And Detectability</a>
+<ul>
+<li class="chapter" data-level="A.3.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability"><i class="fa fa-check"></i><b>A.3.1</b> Equivalent Statements for Stabilizability</a></li>
+<li class="chapter" data-level="A.3.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-detectability"><i class="fa fa-check"></i><b>A.3.2</b> Equivalent Statements for Detectability</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="appconvex.html"><a href="appconvex.html"><i class="fa fa-check"></i><b>B</b> Convex Analysis and Optimization</a></li>
+<li class="chapter" data-level="C" data-path="the-kalman-yakubovich-lemma.html"><a href="the-kalman-yakubovich-lemma.html"><i class="fa fa-check"></i><b>C</b> The Kalman-Yakubovich Lemma</a></li>
+<li class="chapter" data-level="D" data-path="feedbacklinearization.html"><a href="feedbacklinearization.html"><i class="fa fa-check"></i><b>D</b> Feedback Linearization</a></li>
+<li class="chapter" data-level="E" data-path="slidingcontrol.html"><a href="slidingcontrol.html"><i class="fa fa-check"></i><b>E</b> Sliding Control</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Optimal Control and Estimation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="approximatedp" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Approximate Dynamic Programming<a href="approximatedp.html#approximatedp" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><em>Thanks to <a href="https://jrli.org/">Jiarui Li</a> for writing this Chapter.</em></p>
+<div id="introduction" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Introduction<a href="approximatedp.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The limitations of classical deterministic dynamic programming (DP) were mentioned in Chapter <a href="formulation.html#formulation">1</a>, particularly its inefficiency in fields such as robotics where both the state and control spaces are typically large and continuous. The process of discretization in such contexts is not only challenging but also costly. Even when discretization is achievable, the resultant state and control spaces tend to be extraordinarily vast and often high-dimensional, leading to prohibitive computational demands. This issue, commonly called the <em>curse of dimensionality</em>, renders the use of classical DP unfeasible. <span style="color:red">Add time complexity analysis here</span>.
+To circumvent the constraints of traditional DP algorithms in such contexts, a pragmatic approach involves the adoption of a suboptimal control scheme. This compromises between the ease of implementation and adequate performance. The principal objective of this chapter is to find such suboptimal control. In this chapter, we will spend most of the time discussing finite horizon problems with discrete state and control space, which is the classical scenario. We will also mention the infinite horizon problem and continuous state and control spaces scenario later.</p>
+<p>Broadly, two categories of approximation are used in the context of DP-based suboptimal control. The first is <em>approximation in value space</em>, where we aim to approximate the optimal cost function or the cost function of a given policy. The second is <em>approximation in policy space</em>, where we select the policy by using optimization over a suitable class of policies.</p>
+</div>
+<div id="approximation-in-value-space" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Approximation in value space<a href="approximatedp.html#approximation-in-value-space" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us first recap the iteration process of the generic form of DP as mentioned in theorem <a href="formulation.html#thm:dynamicprogramming">1.2</a>. We can obtain the cost-to-go function <span class="math inline">\(J_k\)</span>, which means the cost-to-go value at time <span class="math inline">\(k\)</span>, thereby defining corresponding control <span class="math inline">\(u_k\)</span> or policy <span class="math inline">\(\mu_k\)</span>.</p>
+<p><span class="math display">\[\begin{equation}
+J_k(x_k) = \min_{u_k \in \mathbb{U}} \displaystyle \mathbb{E} \displaystyle \left\{ g_k(x_k,u_k) + J_{k+1}(f_k(x_k,u_k,w_k) ) \right\}, \ k=N-1,\dots,1,0.
+\end{equation}\]</span></p>
+<p>By using the <em>approximation in value space</em> methods, we could replace the optimal cost-to-go function <span class="math inline">\(J_k\)</span> with some other functions <span class="math inline">\(\tilde J_k\)</span>. In other words, the suboptimal policy <span class="math inline">\(\tilde{\mu}_k(x_k)\)</span> (and the corresponding control) is obtained from the one-step lookahead minimization</p>
+<p><span class="math display" id="eq:apprinv-dp">\[\begin{align}
+\tilde{J}_k(x_k) &amp;= \min_{u_k \in \mathbb{U}_k (x_k)} \displaystyle \mathbb{E} \displaystyle \left\{g_k(x_k,u_k,w_k) + \tilde J_{k+1} (f_k(x_k,u_k,w_k) ) \right\} \\
+\tilde{\mu}_k(x_k) &amp;= \arg \min_{u_k \in \mathbb{U}_k (x_k)} \displaystyle \mathbb{E} \displaystyle \left\{g_k(x_k,u_k,w_k) + \tilde J_{k+1} (f_k(x_k,u_k,w_k) ) \right\} \tag{3.1}
+\end{align}\]</span></p>
+<p>The major issue in value space approximation is how to compute the approximate cost-to-go functions <span class="math inline">\(\tilde J_{k+1}\)</span> in <a href="approximatedp.html#eq:apprinv-dp">(3.1)</a>. We will consider three types of methods:</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Problem approximation</em></p></li>
+<li><p><em>Parametric cost approximation</em></p></li>
+<li><p><em>Online approximate optimization</em></p></li>
+</ol>
+<p>In approximation in value space, we may also distinguish between <em>online</em> and <em>offline</em> methods.</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Offline</em> methods, where the entire function <span class="math inline">\(\tilde J_{k+1}\)</span> in <a href="approximatedp.html#eq:apprinv-dp">(3.1)</a> is computed for every <span class="math inline">\(k\)</span> before the control process begins. The advantage of this is that most of the computation is done offline. Once the control process starts, the only thing we have to do is one-step lookahead minimization. These methods are well-suited for settings where there are strict time constraints for the online computation of the control, and where there is no need for online replanning.</p></li>
+<li><p><em>Online</em> methods, where most of the computation is performed just after the current state <span class="math inline">\(x_k\)</span> becomes known, the values <span class="math inline">\(\tilde J_{k+1}(x_{k+1})\)</span> are computed only at the relevant next states <span class="math inline">\(x_{k+1}\)</span> and are used to compute <span class="math inline">\(u_k\)</span> via <a href="approximatedp.html#eq:apprinv-dp">(3.1)</a>. These methods require the computation of control only for the <span class="math inline">\(N\)</span> states actually encountered in the control process. These methods are well-suited for online replanning.</p></li>
+</ol>
+<div id="problem-approximation" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Problem Approximation<a href="approximatedp.html#problem-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The functions <span class="math inline">\(\tilde J_{k+1}\)</span> are obtained (by exact DP, or other methods) as the optimal or nearly optimal cost functions of a simplified version of the original problem. The problem is how to simplify the problem, which is more convenient for computation. There are three widely-used approaches to simplify the initial problem:</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Simplifying the structure of the problem through enforced decomposition</em>.</p></li>
+<li><p><em>Simplifying the probabilistic structure of the problem</em>, such as replacing the stochastic problem with a deterministic one by <em>certainty equivalence</em>. To be more specific, the original stochastic system contains the disturbance term <span class="math inline">\(w_k(x_k,u_k)\)</span>. To simplify the probabilistic structure of the problem, we could fix the disturbances at some “typical” values and transform the stochastic problem into a deterministic one.</p></li>
+<li><p><em>Aggregation</em>, where the original problem is approximated with a new problem with fewer states, makes it easier to obtain the cost-to-go function. The state in this new problem is the “combination” of the states in the initial problem. It is worth noting that the discretization of continuous state space and action space could be viewed as a kind of aggregation.</p></li>
+</ol>
+</div>
+<div id="parametric-cost-approximation" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Parametric cost approximation<a href="approximatedp.html#parametric-cost-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For discrete problems, it is natural to consider using the tabular method to represent the <span class="math inline">\(\tilde J_k\)</span> functions. However, if the number of the state space is large this method’s memory cost will be overwhelming. On the other hand, for tabular representation, it is not convenient to optimize the function, while we can only update the value of <em>one</em> state at a time, but in many circumstances, there is a cluster of states that have similar attributes, which means their corresponding <span class="math inline">\(\tilde J_k\)</span> are also similar.
+It is inconvenient to update them one by one. In this part, we will discuss an alternative approach to represent <span class="math inline">\(\tilde J_k\)</span> function, whereby <span class="math inline">\(\tilde J_k\)</span> are chosen to be members of a parametric class of functions, with the parameters “optimized” or “trained” by using some algorithms.</p>
+<p>To be more specific, the <span class="math inline">\(\tilde J_k\)</span> functions could be described as <span class="math inline">\(\tilde J_k (x_k,r_k)\)</span> that for each <span class="math inline">\(k\)</span>, depend on the current state <span class="math inline">\(x_k\)</span> and a vector <span class="math inline">\(r_k=(r_{1,k}, ..., r_{m,k})\)</span> of <span class="math inline">\(m\)</span> “tunable” scalar parameters, also called <em>weights</em>. By adjusting the weights, one can change the “shape” of <span class="math inline">\(\tilde J_k\)</span> so that it is a reasonably close approximation to the true cost-to-go function <span class="math inline">\(J_k\)</span>.
+In order to train those weights, we can use some cost functions to measure the accuracy of the approximation. The most common cost function is <em>least squares</em>. Training the parameters <span class="math inline">\(r_k\)</span> using least squares as the cost function is sometimes referred to as <em>fitted value iteration</em>.
+Value iteration could be viewed as a special form of dynamic programming, where the parameter vectors <span class="math inline">\(r_k\)</span> are determined sequentially, starting from the end of the horizon and proceeding backward. The algorithm samples the state space for each stage <span class="math inline">\(k\)</span> and generates a large number of states <span class="math inline">\(x_k^s\)</span>, <span class="math inline">\(s=1,...,q\)</span>. It then determines sequentially the parameter vectors <span class="math inline">\(r_k\)</span> to obtain a good “least square fit” to the DP algorithm.</p>
+<p><span class="math display" id="eq:apprinv-fvi-1">\[\begin{equation}
+\beta_k^s=\min_{u \in \mathbb U_k(x_k^s)} E \displaystyle \left\{g(x_k^s,u,w_k) + \tilde J_{k+1} (f_k(x_k^s,u,w_k),r_{k+1}) \right\} \tag{3.2}
+\end{equation}\]</span>
+<span class="math display" id="eq:apprinv-fvi-2">\[\begin{equation}
+r_k = \arg \min_r \sum_{s=1}^q (\tilde J_k(x_k^s,r) - \beta_k^s)^2 \tag{3.3}
+\end{equation}\]</span></p>
+<p>The next question is how to choose the most suitable class of functions, which is called <em>approximation architecture</em>. It is obvious that approximation architecture can greatly affect the performance of the approximation and the difficulty of training. The most popular architecture is <em>neural networks</em>, which are widely used in <em>reinforcement learning</em>, but the optimization process is difficult and the optimality is not guaranteed. We will start with a simpler linear feature-based approximation architecture.</p>
+<div id="linear-feature-based-architecture" class="section level4 hasAnchor" number="3.2.2.1">
+<h4><span class="header-section-number">3.2.2.1</span> Linear feature-based architecture<a href="approximatedp.html#linear-feature-based-architecture" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>In this architecture, the <span class="math inline">\(\tilde J_k\)</span> function could be parameterized as follows:</p>
+<p><span class="math display">\[\begin{equation}
+\tilde J_k(x_k, r_k)=r_k^T \phi_k(x_k)
+\end{equation}\]</span></p>
+<p>Here <span class="math inline">\(T\)</span> means the transpose of the matrix, <span class="math inline">\(\phi_k(x_k)\)</span> is pre-selected and called the (non-linear) feature vector associated with <span class="math inline">\(x_k\)</span> at time <span class="math inline">\(k\)</span>. The scalar components of the feature vector are called <em>features</em>. Common examples of features include polynomials and radial basis functions.
+The notion of feature is commonly used in the theory of computer vision, where <span class="math inline">\(x_k\)</span> could be interpreted as an image, and the <span class="math inline">\(\phi_k\)</span> function extracts the critical features such as angles and points that could be used for object recognition or image alignment.
+By using this architecture, the fitted value iteration <a href="approximatedp.html#eq:apprinv-fvi-1">(3.2)</a>, <a href="approximatedp.html#eq:apprinv-fvi-2">(3.3)</a> greatly simplifies and admits a closed-form solution.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:featurebasedswingingupapendulum" class="example"><strong>Example 3.1  (Swinging up a pendulum using feature-based method) </strong></span><span style="color:red">EXPERIMENT HERE</span></p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pendulum-feature-example"></span>
+<img src="images/drawme.png" alt="example of swinging up a pendulum using feature-based value function approximation" width="60%" />
+<p class="caption">
+Figure 3.1: example of swinging up a pendulum using feature-based value function approximation
+</p>
+</div>
+</div>
+</div>
+<p>It is worth noting that the cost-to-go function in Linear Quadratic Regulator is also using the linear architecture mentioned above.</p>
+<p><span class="math display">\[\begin{equation}
+J(x,S)=x^T S x
+\end{equation}\]</span></p>
+<p>It is quadratic in <span class="math inline">\(x\)</span> but linear in <span class="math inline">\(S\)</span>. Therefore, except for using the Recatti equation to solve for S, we could also try to use fitted value iteration to handle it.</p>
+</div>
+<div id="neural-networks" class="section level4 hasAnchor" number="3.2.2.2">
+<h4><span class="header-section-number">3.2.2.2</span> Neural networks<a href="approximatedp.html#neural-networks" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The selection of features is frequently manually crafted, relying on human intellect, intuition, or experience, and can pose considerable challenges. The utilization of a neural network as the approximation architecture has emerged as a popular approach in recent years. In this context, the parameter <span class="math inline">\(r_k\)</span> may correspond to the weights of the neural networks. A diverse range of machine learning techniques can then be implemented to manage the training problem, steering the approximation toward the optimal value.</p>
+<p>However, the optimization process of the weights is more difficult due to the non-convexity. According to the equation <a href="approximatedp.html#eq:apprinv-dp">(3.1)</a>, the <span class="math inline">\(J_{k+1}\)</span> is non-convex which makes the entire equation hard to optimize.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:NNbasedswingingupapendulum" class="example"><strong>Example 3.2  (Swinging up a pendulum using NN-based method) </strong></span><span style="color:red">EXPERIMENT HERE</span></p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pendulum-NN-example"></span>
+<img src="images/drawme.png" alt="example of swinging up a pendulum using NN-based value function approximation" width="60%" />
+<p class="caption">
+Figure 3.2: example of swinging up a pendulum using NN-based value function approximation
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="online-approximate-optimization" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Online approximate optimization<a href="approximatedp.html#online-approximate-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Different from previous sections, in this section, we will discuss <em>online</em> approaches for computing the one-step lookahead control <span class="math inline">\(u_k\)</span> just after the current state <span class="math inline">\(x_k\)</span> becomes known. Here, to compute <span class="math inline">\(u_k\)</span>, the values <span class="math inline">\(\tilde J_{k+1} (x_{k+1})\)</span> need only be computed at the relevant next states <span class="math inline">\(x_{k+1}\)</span> (the ones that can occur following application of <span class="math inline">\(u_k\)</span>).</p>
+<p>A particularly effective online approach is <em>rollout</em>. In rollout algorithm, <span class="math inline">\(\tilde J_{k+1}(x_{k+1})\)</span> is calculated by a <em>suboptimal policy</em>, or <em>base policy</em>. <span class="math inline">\(\tilde J_{k+1}\)</span> could be calculated either analytically or by Monte Carlo simulation. This part is interconnected with <em>model predictive control (MPC)</em>, which we will also discuss at the end of this section.</p>
+<div id="rollout-algorithm" class="section level4 hasAnchor" number="3.2.3.1">
+<h4><span class="header-section-number">3.2.3.1</span> Rollout algorithm<a href="approximatedp.html#rollout-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The essence of the rollout is policy improvement, which generates a better policy on top of the base policy. In the rollout algorithm, <span class="math inline">\(\tilde J_{k+1}\)</span> is the cost-to-go of some known suboptimal policy <span class="math inline">\(\pi = \{\mu_0,...,\mu_{N-1}\}\)</span>, referred to as <em>base policy</em>.
+The policy <span class="math inline">\(\bar \pi=\{\bar\mu_0,...,\bar\mu_{N-1}\}\)</span> thus obtained is called the <em>rollout policy</em> based on <span class="math inline">\(\pi\)</span>. In short, <em>the rollout</em> policy is the one-step lookahead policy, with the optimal cost-to-go approximated by the cost-to-go of the base policy_.</p>
+<p><strong>Definition 3.1 (One-step Rollout Algorithm)</strong> We can get an improved policy from the base policy <span class="math inline">\(\pi\)</span></p>
+<p><span class="math display" id="eq:apprinv-rollout">\[\begin{equation}
+\bar\mu_k(x_k) = \arg\min_{u_k\in\mathbb U_k(x_k)} E\left\{g_k(x_k,u_k,w_k)+\tilde J_{k+1}(f_k(x_k,u_k,w_k))\right\} \tag{3.4}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\tilde J_{k+1}\)</span> is the corresponding cost-to-go function of the base policy <span class="math inline">\(\pi\)</span>. If we use <span class="math inline">\(H_{k+1}\)</span> to represent the cost-to-go function of the base policy <span class="math inline">\(\pi\)</span>, the rollout algorithm will be:</p>
+<p><span class="math display" id="eq:apprinv-rollout-2">\[\begin{equation}
+\bar\mu_k(x_k) = \arg\min_{u_k\in\mathbb U_k(x_k)} E\left\{g_k(x_k,u_k,w_k)+H_{k+1}(f_k(x_k,u_k,w_k))\right\} \tag{3.5}
+\end{equation}\]</span></p>
+<p>In the control system, after the current state <span class="math inline">\(x_k\)</span> is revealed, we calculate the cost-to-go function <span class="math inline">\(H_{k+1}\)</span> of the known base policy <span class="math inline">\(\pi\)</span> and conduct one-step lookahead minimization to find <span class="math inline">\(\bar\mu_k(x_k)\)</span> and feed it into the system immediately.</p>
+<p>Note that it is also possible to define the rollout policy that makes use of multistep lookahead. While such multistep lookahead involves much more online computation, it will likely yield better performance than its one-step counterpart. In what follows, we concentrate on rollout policy with one-step lookahead.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:cost-improvement" class="theorem"><strong>Theorem 3.1  (Cost improvement property of rollout algorithm) </strong></span>It is possible to show that the rollout policy’s performance is no worse than the one of the base policy, while some special conditions must hold to guarantee this cost improvement property. Here we introduce the <em>sequential improvement</em> condition. We say that the base policy has sequential improvement property if, for all <span class="math inline">\(x_k\)</span> and <span class="math inline">\(k\)</span>, we have</p>
+<p><span class="math display">\[\begin{equation}
+\min_{u_k \in \mathbb U_k(x_k)} \left\{g_k(x_k,u_k)+H_{k+1}(f_k(x_k,u_k))\right\} \leq H_k(x_k)
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(H_k(x_k)\)</span> denotes the cost of the base policy starting from <span class="math inline">\(x_k\)</span>. Here we use deterministic problems to make our proof concise. Sometimes people also use the <em>Q factor</em> mentioned below:</p>
+<p><span class="math display">\[\begin{equation}
+\tilde Q_k(x_k,u_k) = g_k(x_k,u_k)+H_{k+1}(f_k(x_k,u_k))
+\end{equation}\]</span></p>
+<p>so now the sequential improvement property could also be written as:</p>
+<p><span class="math display">\[\begin{equation}
+\min_{u_k \in \mathbb U_k(x_k)} \tilde Q_k(x_k,u_k) \leq H_k(x_k)
+\end{equation}\]</span></p>
+<p>We will now show that the rollout algorithm obtained with a base policy with sequential improvement property yields no worse cost than the base policy. In particular, consider the rollout policy <span class="math inline">\(\tilde \pi = \{\tilde \mu_0, ..., \tilde \mu_{N-1}\}\)</span>, and let <span class="math inline">\(J_{k, \tilde \pi} (x_k)\)</span> denote the cost obtained with <span class="math inline">\(\tilde \pi\)</span> starting from <span class="math inline">\(x_k\)</span>. We claim that</p>
+<p><span class="math display" id="eq:apprinv-cost-improvement">\[\begin{equation}
+J_{k,\tilde \pi} (x_k) \leq H_k(x_k), for \ all \ x_k \ and \ k \tag{3.6}
+\end{equation}\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-4" class="proof"><em>Proof</em>. </span>We prove this inequality by induction. Clearly it holds for <span class="math inline">\(k=N\)</span>, since <span class="math inline">\(J_{N,\tilde \pi} = H_N = g_N\)</span>. Assume it holds for index <span class="math inline">\(k+1\)</span>. We have:</p>
+<p><span class="math display">\[\begin{align}
+\tilde J_{k, \tilde \pi}(x_k) &amp;= g_k(x_k, \tilde \mu_k(x_k)) + J_{k+1,\tilde \pi}(f_k(x_k, \tilde \mu_k(x_k))) \\
+&amp;\leq g_k(x_k, \tilde \mu_k(x_k)) + H_{k+1}(f_k(x_k, \tilde \mu_k(x_k))) \\
+&amp;= \min_{u_k \in \mathbb U_k(x_k)} \left[g_k(x_k,u_k) + H_{k+1} (f_k(x_k,u_k))\right] \\
+&amp;= \min_{u_k \in \mathbb U_k(x_k)} \tilde Q_k(x_k,u_k) \\
+&amp;\leq H_k(x_k)
+\end{align}\]</span></p>
+<p>where:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>The first equality is the DP equation for the rollout policy <span class="math inline">\(\tilde \pi\)</span>.</p></li>
+<li><p>The first inequality holds by the induction hypothesis.</p></li>
+<li><p>The second equality holds by the definition of the rollout algorithm.</p></li>
+<li><p>The second inequality holds by the sequential improvement property.</p></li>
+</ol>
+<p>This completes the induction proof of the cost improvement property <a href="approximatedp.html#eq:apprinv-cost-improvement">(3.6)</a>.</p>
+</div>
+</div>
+<p><strong>Computational issues in rollout algorithms</strong>. In the rollout algorithm, the cost-to-go function <span class="math inline">\(H_{k+1}\)</span> of the base policy is required to be computed online at all possible next states <span class="math inline">\(f_k(x_k,u_k,w_k)\)</span>. However, the real-time constraint will be a critical problem, for the corresponding cost-to-go function of a given base policy is not easy to calculate in real-time.
+In most cases, we will use the approximate version of the cost-to-go <span class="math inline">\(\tilde H_{k+1}\)</span> to simplify the calculation. So the rollout algorithm will be:</p>
+<p><span class="math display" id="eq:apprinv-rollout-3">\[\begin{equation}
+\bar\mu_k(x_k) = \arg\min_{u_k\in\mathbb U_k(x_k)} E\left\{g_k(x_k,u_k,w_k)+\tilde H_{k+1}(f_k(x_k,u_k,w_k))\right\} \tag{3.7}
+\end{equation}\]</span></p>
+<p>There are two variants to handle the computational difficulties, deterministic case, and stochastic case.</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Deterministic case</em>. If the problem is deterministic, the calculation is greatly simplified.</p></li>
+<li><p><em>Stochastic case</em>. In these cases, the <span class="math inline">\(\tilde H_{k+1}\)</span> are evaluated online by Monte Carlo simulation for all <span class="math inline">\(u_k \in \mathbb U_k(x_k)\)</span>.</p></li>
+</ol>
+<p><strong>Truncated rollout algorithm with multistep lookahead and terminal cost approximation</strong>. We may incorporate multistep lookahead into the rollout framework. Let us start with a two-step lookahead for deterministic problems. Suppose that after <span class="math inline">\(k\)</span> steps we have reached state <span class="math inline">\(x_k\)</span>. We then consider the set of all two-step-ahead states <span class="math inline">\(x_{k+2}\)</span>, run the base policy starting from each of them, and compute the two-stage cost to get from <span class="math inline">\(x_k\)</span> to <span class="math inline">\(x_{k+2}\)</span>, plus the cost of the base policy from <span class="math inline">\(x_{k+2}\)</span>. We select the state, say <span class="math inline">\(\tilde x_{k+2}\)</span>, that is associated with minimum cost, compute the controls <span class="math inline">\(\tilde u_k\)</span> and <span class="math inline">\(\tilde u_{k+1}\)</span> that lead from <span class="math inline">\(x_k\)</span> to <span class="math inline">\(\tilde x_{k+2}\)</span>, and choose <span class="math inline">\(\tilde u_k\)</span> as the next rollout control and <span class="math inline">\(x_{k+1}=f_k(x_k,\tilde u_k)\)</span> as the next state.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:multi-step-rollout"></span>
+<img src="images/drawme.png" alt="Illustration of truncated rollout with two-step lookahead" width="60%" />
+<p class="caption">
+Figure 3.3: Illustration of truncated rollout with two-step lookahead
+</p>
+</div>
+<p>The extension of the algorithm to lookahead of more than two steps is straightforward: instead of the two-step-ahead states <span class="math inline">\(x_{k+2}\)</span> we run the base policy starting from all the possible <span class="math inline">\(l\)</span>-step ahead states <span class="math inline">\(x_{k+l}\)</span>, etc.</p>
+<p>An important variation for problems with a large number of stages is <em>truncated rollout with terminal cost approximation</em>. Here the rollout trajectories are obtained by running the base policy from the leaf nodes of the lookahead tree, and they are truncated after a given number of steps, while a terminal cost approximation is added to the policy cost to compensate for the resulting error. One possibility that works well for many problems is to simply set the terminal cost approximation to zero. Alternatively, the terminal cost function approximation may be obtained by problem approximation or by using some sophisticated offline training process that may involve an approximation architecture such as a neural network.</p>
+</div>
+<div id="model-predictive-control-mpc" class="section level4 hasAnchor" number="3.2.3.2">
+<h4><span class="header-section-number">3.2.3.2</span> Model predictive control (MPC)<a href="approximatedp.html#model-predictive-control-mpc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>In this section, we will discuss a popular control algorithm called <em>model predictive control (MPC)</em>. We will start by considering the case where the objective is to keep the state close to the origin (or more generally some point of interest, called the <em>set point</em>, or <em>fixed point</em>); this is called the <em>regulation problem</em>. Similar approaches have been developed for the problem of maintaining the state of a non-stationary system along a given state trajectory, and also, with appropriate modifications, to control problems involving disturbances. In particular, in some cases, the trajectory is treated like a sequence of set points, and the subsequently described algorithm is applied repeatedly.</p>
+<p>We will consider a deterministic system</p>
+<p><span class="math display">\[\begin{equation}
+x_{k+1} = f_k(x_k,u_k)
+\end{equation}\]</span></p>
+<p>whose state <span class="math inline">\(x_k\)</span> and control <span class="math inline">\(u_k\)</span> are vectors that consist of a finite number of scalar components. The cost per stage is assumed nonnegative</p>
+<p><span class="math display">\[\begin{equation}
+g_k(x_k,u_k) \geq 0, for \ all \ (x_k,u_k)
+\end{equation}\]</span></p>
+<p>(e.g., a quadratic cost). We impose state and control constraints</p>
+<p><span class="math display">\[\begin{equation}
+x_k \in \mathbb X_k, u_k \in \mathbb U_k(x_k), k = 0,1,...
+\end{equation}\]</span></p>
+<p>We also assume that the system can be kept at the origin at zero cost, i.e.,</p>
+<p><span class="math display">\[\begin{equation}
+f_k(0,\bar u_k)=0,g_k(0,\bar u_k)=0
+\end{equation}\]</span></p>
+<p>for some control <span class="math inline">\(\bar u_k \in \mathbb U_k(0)\)</span>. This is a characteristic that all fixed points possess.</p>
+<p>For a given initial state <span class="math inline">\(x_0 \in \mathbb X_0\)</span>, we want to obtain a sequence <span class="math inline">\(\{u_0,u_1,...\}\)</span> such that the states and controls of the system satisfy the state and control constraints with a small total cost.</p>
+<p><strong>The MPC algorithm</strong>. Let us describe the MPC algorithm for the deterministic problem just described. At the current state <span class="math inline">\(x_k\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p>MPC solves an <span class="math inline">\(l\)</span>-step lookahead version of the problem, which requires that <span class="math inline">\(x_{k+l}=0\)</span>.</p></li>
+<li><p>If <span class="math inline">\(\{\tilde u_k, ..., \tilde u_{k+l-1}\}\)</span> is the optimal control sequence of this problem, MPC applies <span class="math inline">\(\tilde u_k\)</span> and discards the other controls <span class="math inline">\(\tilde u_{k+1}, ..., \tilde u_{k+l-1}\)</span>.</p></li>
+<li><p>At the next stage, MPC repeats this process, once the next state <span class="math inline">\(x_{k+1}\)</span> is revealed.</p></li>
+</ol>
+<p>In some literature, this MPC algorithm is also called <em>Receding Horizon Control</em> algorithm, or RHC for short. One obvious drawback of this method is the online computation time limit. The MPC algorithm needs to solve an optimization problem online, which is time-consuming and does not guarantee a solution.</p>
+<p>To make the connection between MPC and rollout, we first recap the case of the truncated rollout algorithm. In a truncated rollout algorithm with multistep lookahead and terminal cost approximation,</p>
+<!-- \begin{equation}
+\min_{u_k \in \mathbb U_k(x_k), ..., u_{k+l} \in \mathbb U_{k+l}(x_{k+l})} \left\{\sum_{i=k}^{k+l} g_i(x_i, u_i) + \tilde H_{k+l+1} (x_{k+l+1}) \right\}
+\end{equation} -->
+<p><span class="math display">\[\begin{equation}
+\min_{u_k \in \mathbb U_k(x_k), ..., u_{k+l} \in \mathbb U_{k+l}(x_{k+l})} \left\{\sum_{i=k}^{k+l} g_i(x_i, u_i) + \sum_{i=k+l+1}^{k+l+m} g_i(x_i,\mu_i(x_i)) + \tilde J (x_{k+l+m+1}) \right\}
+\end{equation}\]</span></p>
+<p>such that</p>
+<p><span class="math display">\[\begin{equation}
+x_{i+1} = f_i(x_i,u_i)
+\end{equation}\]</span></p>
+<p>The control <span class="math inline">\(u_k\)</span> will be used as the control at step <span class="math inline">\(k\)</span> (online current step). All the <span class="math inline">\(x_i\)</span> are admissible states. Here <span class="math inline">\(\tilde J\)</span> means the terminal cost approximation, which can be obtained through offline computation or sometimes be set to zero. <span class="math inline">\(l\)</span> means the number of lookahead steps, and <span class="math inline">\(m\)</span> means the number of steps that the base policy runs to evaluate the cost-to-go function <span class="math inline">\(H_{k+l+1}\)</span>. Let us discuss a special case, where the <span class="math inline">\(\tilde J\)</span> is set to zero while <span class="math inline">\(m\)</span> is also zero. So now the rollout algorithm becomes:</p>
+<p><span class="math display">\[\begin{equation}
+\min_{u_k \in \mathbb U_k(x_k), ..., u_{k+l} \in \mathbb U_{k+l}(x_{k+l})} \sum_{i=k}^{k+l} g_i(x_i, u_i)
+\end{equation}\]</span></p>
+<p>while <span class="math inline">\(u_k\)</span> still be used as the current online control, and all other optimized controls are discarded. We can see that now it is <em>almost</em> the case of model predictive control, without the terminal state constraint (in this case the terminal state constraint is <span class="math inline">\(x_{k+l+1}=0\)</span>). This constraint is also called <em>recursive feasibility</em>, for it guarantees the optimization will not suddenly encounter a situation where the solver returns “infeasible”.</p>
+</div>
+</div>
+</div>
+<div id="approximation-in-policy-space" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Approximation in policy space<a href="approximatedp.html#approximation-in-policy-space" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A major alternative to approximation in value space is <em>approximation in policy space</em>, whereby we select the policy from a suitably restricted class of policies, usually a parametric class of some form. In particular, we can introduce a parametric family of policies</p>
+<p><span class="math display">\[\begin{equation}
+\mu_k(x_k,r_k), k=0,...,N-1
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(r_k\)</span> is a parameter, such as a family represented by a neural network, and then estimate the parameters <span class="math inline">\(r_k\)</span> using some type of optimization.</p>
+<p>An important advantage of approximation in policy space is that the computation of controls during the online operation of the system is often much easier compared with the lookahead minimization <a href="approximatedp.html#eq:apprinv-dp">(3.1)</a>. In this section, we will present two distinct approaches for computing <span class="math inline">\(r\)</span>: <em>training by cost optimization</em> and <em>training by using an expert</em>.</p>
+<div id="training-by-using-an-expert" class="section level3 hasAnchor" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Training by using an expert<a href="approximatedp.html#training-by-using-an-expert" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This approach is pretty similar to <em>supervised learning</em> in machine learning. We <span class="math inline">\(r_k\)</span> by “training” on a large number of sample state-control pairs <span class="math inline">\((x_k^s, u_k^s), s=1, ... ,q\)</span>, such that for each <span class="math inline">\(s\)</span>, <span class="math inline">\(u_k^s\)</span> is a “good” control at state <span class="math inline">\(x_k^s\)</span>. This can be done for example by solving for each <span class="math inline">\(k\)</span> the least squares problem</p>
+<p><span class="math display">\[\begin{equation}
+\min_{r_k} \sum_{s=1}^q \left\Vert{u_k^s - \tilde \mu_k(x_k^s,r_k)}\right\Vert^2
+\end{equation}\]</span></p>
+<p>(possibly with added regularization). In particular, we may determine <span class="math inline">\(u_k^s\)</span> by a human or a software “expert” that can choose “near-optimal” controls at the given states <span class="math inline">\(x_k^s\)</span>, so <span class="math inline">\(\tilde{\mu}_k\)</span> is trained to match the behavior of the expert. Of course, in the expert training approach, we cannot expect to obtain a controller that performs better than the expert with which it is trained.</p>
+<p>The “near-optimal” controls of sampled states <span class="math inline">\(x_k^s, s = 1, ...,q\)</span> could also be calculated from one-step lookahead minimization with a suitable approximation <span class="math inline">\(\tilde{J}_{k+1}\)</span>.</p>
+<p><span class="math display">\[\begin{equation}
+u_k^s = \arg \min_{u_k \in \mathbb{U}_k (x_k)} \displaystyle \mathbb{E} \displaystyle \left\{g_k(x_k^s,u_k,w_k) + \tilde J_{k+1} (f_k(x_k^s,u_k,w_k) ) \right\}
+\end{equation}\]</span></p>
+</div>
+<div id="training-by-cost-optimization" class="section level3 hasAnchor" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Training by cost optimization<a href="approximatedp.html#training-by-cost-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>POLICY GRADIENT</p>
+</div>
+</div>
+<div id="extension" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> Extension<a href="approximatedp.html#extension" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>It is possible for a suboptimal control scheme to employ both types of approximation: in policy space and in value space, with a distinct architecture for each case. This is known as the simultaneous use of a “policy network” (or “actor network”) and a “value network” (or “critic network”), each with its own set of parameters. Simultaneous approximation in policy space and value space through the use of deep neural networks are central in AlphaGo and AlphaZero, DeepMind’s Go and chess playing programs.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="exactdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="stability.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/OptimalControlEstimation/blob/main/03-approximate-dp.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["optimal-control-estimation.pdf", "optimal-control-estimation.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Exact Dynamic Programming | Optimal Control and Estimation</title>
+  <meta name="description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Exact Dynamic Programming | Optimal Control and Estimation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="github-repo" content="hankyang94/OptimalControlEstimation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Exact Dynamic Programming | Optimal Control and Estimation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2023-08-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="formulation.html"/>
+<link rel="next" href="approximatedp.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Optimal Control and Estimation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="formulation.html"><a href="formulation.html"><i class="fa fa-check"></i><b>1</b> The Optimal Control Formulation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="formulation.html"><a href="formulation.html#the-basic-problem"><i class="fa fa-check"></i><b>1.1</b> The Basic Problem</a></li>
+<li class="chapter" data-level="1.2" data-path="formulation.html"><a href="formulation.html#dynamic-programming-and-principle-of-optimality"><i class="fa fa-check"></i><b>1.2</b> Dynamic Programming and Principle of Optimality</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="exactdp.html"><a href="exactdp.html"><i class="fa fa-check"></i><b>2</b> Exact Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="exactdp.html"><a href="exactdp.html#lqr"><i class="fa fa-check"></i><b>2.1</b> Linear Quadratic Regulator</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="exactdp.html"><a href="exactdp.html#infinite-horizon-lqr"><i class="fa fa-check"></i><b>2.1.1</b> Infinite-Horizon LQR</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="approximatedp.html"><a href="approximatedp.html"><i class="fa fa-check"></i><b>3</b> Approximate Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="approximatedp.html"><a href="approximatedp.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-value-space"><i class="fa fa-check"></i><b>3.2</b> Approximation in value space</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="approximatedp.html"><a href="approximatedp.html#problem-approximation"><i class="fa fa-check"></i><b>3.2.1</b> Problem Approximation</a></li>
+<li class="chapter" data-level="3.2.2" data-path="approximatedp.html"><a href="approximatedp.html#parametric-cost-approximation"><i class="fa fa-check"></i><b>3.2.2</b> Parametric cost approximation</a></li>
+<li class="chapter" data-level="3.2.3" data-path="approximatedp.html"><a href="approximatedp.html#online-approximate-optimization"><i class="fa fa-check"></i><b>3.2.3</b> Online approximate optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-policy-space"><i class="fa fa-check"></i><b>3.3</b> Approximation in policy space</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="approximatedp.html"><a href="approximatedp.html#training-by-using-an-expert"><i class="fa fa-check"></i><b>3.3.1</b> Training by using an expert</a></li>
+<li class="chapter" data-level="3.3.2" data-path="approximatedp.html"><a href="approximatedp.html#training-by-cost-optimization"><i class="fa fa-check"></i><b>3.3.2</b> Training by cost optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="approximatedp.html"><a href="approximatedp.html#extension"><i class="fa fa-check"></i><b>3.4</b> Extension</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="stability.html"><a href="stability.html"><i class="fa fa-check"></i><b>4</b> Stability Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="stability.html"><a href="stability.html#autonomous-systems"><i class="fa fa-check"></i><b>4.1</b> Autonomous Systems</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="stability.html"><a href="stability.html#concepts-of-stability"><i class="fa fa-check"></i><b>4.1.1</b> Concepts of Stability</a></li>
+<li class="chapter" data-level="4.1.2" data-path="stability.html"><a href="stability.html#stability-by-linearization"><i class="fa fa-check"></i><b>4.1.2</b> Stability by Linearization</a></li>
+<li class="chapter" data-level="4.1.3" data-path="stability.html"><a href="stability.html#lyapunov-analysis"><i class="fa fa-check"></i><b>4.1.3</b> Lyapunov Analysis</a></li>
+<li class="chapter" data-level="4.1.4" data-path="stability.html"><a href="stability.html#invariant-set-theorem"><i class="fa fa-check"></i><b>4.1.4</b> Invariant Set Theorem</a></li>
+<li class="chapter" data-level="4.1.5" data-path="stability.html"><a href="stability.html#computing-lyapunov-certificates"><i class="fa fa-check"></i><b>4.1.5</b> Computing Lyapunov Certificates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="stability.html"><a href="stability.html#controlled-systems"><i class="fa fa-check"></i><b>4.2</b> Controlled Systems</a></li>
+<li class="chapter" data-level="4.3" data-path="stability.html"><a href="stability.html#non-autonomous-systems"><i class="fa fa-check"></i><b>4.3</b> Non-autonomous Systems</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="output-feedback.html"><a href="output-feedback.html"><i class="fa fa-check"></i><b>5</b> Output Feedback</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="output-feedback.html"><a href="output-feedback.html#state-observer"><i class="fa fa-check"></i><b>5.1</b> State Observer</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="output-feedback.html"><a href="output-feedback.html#general-design-strategy"><i class="fa fa-check"></i><b>5.1.1</b> General Design Strategy</a></li>
+<li class="chapter" data-level="5.1.2" data-path="output-feedback.html"><a href="output-feedback.html#luenberger-template"><i class="fa fa-check"></i><b>5.1.2</b> Luenberger Template</a></li>
+<li class="chapter" data-level="5.1.3" data-path="output-feedback.html"><a href="output-feedback.html#state-affine-template"><i class="fa fa-check"></i><b>5.1.3</b> State-affine Template</a></li>
+<li class="chapter" data-level="5.1.4" data-path="output-feedback.html"><a href="output-feedback.html#kazantzis-kravaris-luenberger-kkl-template"><i class="fa fa-check"></i><b>5.1.4</b> Kazantzis-Kravaris-Luenberger (KKL) Template</a></li>
+<li class="chapter" data-level="5.1.5" data-path="output-feedback.html"><a href="output-feedback.html#triangular-template"><i class="fa fa-check"></i><b>5.1.5</b> Triangular Template</a></li>
+<li class="chapter" data-level="5.1.6" data-path="output-feedback.html"><a href="output-feedback.html#design-with-convex-optimization"><i class="fa fa-check"></i><b>5.1.6</b> Design with Convex Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="output-feedback.html"><a href="output-feedback.html#observer-feedback"><i class="fa fa-check"></i><b>5.2</b> Observer Feedback</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html"><i class="fa fa-check"></i><b>6</b> Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#model-reference-adaptive-control"><i class="fa fa-check"></i><b>6.1</b> Model-Reference Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#first-order-systems"><i class="fa fa-check"></i><b>6.1.1</b> First-Order Systems</a></li>
+<li class="chapter" data-level="6.1.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#high-order-systems"><i class="fa fa-check"></i><b>6.1.2</b> High-Order Systems</a></li>
+<li class="chapter" data-level="6.1.3" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#robotic-manipulator"><i class="fa fa-check"></i><b>6.1.3</b> Robotic Manipulator</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#certainty-equivalent-adaptive-control"><i class="fa fa-check"></i><b>6.2</b> Certainty-Equivalent Adaptive Control</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html"><i class="fa fa-check"></i><b>A</b> Linear System Theory</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability"><i class="fa fa-check"></i><b>A.1</b> Stability</a>
+<ul>
+<li class="chapter" data-level="A.1.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-ct"><i class="fa fa-check"></i><b>A.1.1</b> Continuous-Time Stability</a></li>
+<li class="chapter" data-level="A.1.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-dt"><i class="fa fa-check"></i><b>A.1.2</b> Discrete-Time Stability</a></li>
+<li class="chapter" data-level="A.1.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#lyapunov-analysis-1"><i class="fa fa-check"></i><b>A.1.3</b> Lyapunov Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-controllable-observable"><i class="fa fa-check"></i><b>A.2</b> Controllability and Observability</a>
+<ul>
+<li class="chapter" data-level="A.2.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#cayley-hamilton-theorem"><i class="fa fa-check"></i><b>A.2.1</b> Cayley-Hamilton Theorem</a></li>
+<li class="chapter" data-level="A.2.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-controllability"><i class="fa fa-check"></i><b>A.2.2</b> Equivalent Statements for Controllability</a></li>
+<li class="chapter" data-level="A.2.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#duality"><i class="fa fa-check"></i><b>A.2.3</b> Duality</a></li>
+<li class="chapter" data-level="A.2.4" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-observability"><i class="fa fa-check"></i><b>A.2.4</b> Equivalent Statements for Observability</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#stabilizability-and-detectability"><i class="fa fa-check"></i><b>A.3</b> Stabilizability And Detectability</a>
+<ul>
+<li class="chapter" data-level="A.3.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability"><i class="fa fa-check"></i><b>A.3.1</b> Equivalent Statements for Stabilizability</a></li>
+<li class="chapter" data-level="A.3.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-detectability"><i class="fa fa-check"></i><b>A.3.2</b> Equivalent Statements for Detectability</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="appconvex.html"><a href="appconvex.html"><i class="fa fa-check"></i><b>B</b> Convex Analysis and Optimization</a></li>
+<li class="chapter" data-level="C" data-path="the-kalman-yakubovich-lemma.html"><a href="the-kalman-yakubovich-lemma.html"><i class="fa fa-check"></i><b>C</b> The Kalman-Yakubovich Lemma</a></li>
+<li class="chapter" data-level="D" data-path="feedbacklinearization.html"><a href="feedbacklinearization.html"><i class="fa fa-check"></i><b>D</b> Feedback Linearization</a></li>
+<li class="chapter" data-level="E" data-path="slidingcontrol.html"><a href="slidingcontrol.html"><i class="fa fa-check"></i><b>E</b> Sliding Control</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Optimal Control and Estimation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="exactdp" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Exact Dynamic Programming<a href="exactdp.html#exactdp" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In Chapter <a href="formulation.html#formulation">1</a>, we introduced the basic formulation of the finite-horizon and discrete-time optimal control problem, presented the Bellman principle of optimality, and derived the dynamic programming (DP) algorithm. We mentioned that, despite being a general-purpose algorithm, it can be difficult to implement DP exactly in practical applications.</p>
+<p>In this Chapter, we will introduce two problem setups where DP can in fact be implemented exactly.</p>
+<div id="lqr" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Linear Quadratic Regulator<a href="exactdp.html#lqr" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider a linear discrete-time dynamical system
+<span class="math display" id="eq:lqr-linear-system">\[\begin{equation}
+x_{k+1} = A_k x_k + B_k u_k + w_k, \quad k=0,1,\dots,N-1,
+\tag{2.1}
+\end{equation}\]</span>
+where <span class="math inline">\(x_k \in \mathbb{R}^n\)</span> the state, <span class="math inline">\(u_k \in \mathbb{R}^m\)</span> the control, <span class="math inline">\(w_k \in \mathbb{R}^n\)</span> the independent, zero-mean disturbance with given probability distribution that does not depend on <span class="math inline">\(x_k,u_k\)</span>, and <span class="math inline">\(A_k \in \mathbb{R}^{n \times n}, B_k \in \mathbb{R}^{n \times m}\)</span> are known matrices determining the transition dynamics.</p>
+<p>We want to solve the following optimal control problem
+<span class="math display" id="eq:lqr-formulation">\[\begin{equation}
+\min_{\mu_0,\dots,\mu_{N-1}} \mathbb{E} \left\{ x_N^T Q_N x_N + \sum_{k=0}^{N-1} \left( x_k^T Q_k x_k + u_k^T R_k u_k \right) \right\},
+\tag{2.2}
+\end{equation}\]</span>
+where the expectation is taken over the randomness in <span class="math inline">\(w_0,\dots,w_{N-1}\)</span>. In <a href="exactdp.html#eq:lqr-formulation">(2.2)</a>, <span class="math inline">\(\{Q_k \}_{k=0}^N\)</span> are positive semidefinite matrices, and <span class="math inline">\(\{ R_k \}_{k=0}^{N-1}\)</span> are positive definite matrices. The formulation <a href="exactdp.html#eq:lqr-formulation">(2.2)</a> is typically known as the linear quadratic regulator (LQR) problem because the dynamics is linear, the cost is quadratic, and the formulation can be considered to “regulate” the system around the origin <span class="math inline">\(x=0\)</span>.</p>
+<p>We will now show that the DP algorithm in Theorem <a href="formulation.html#thm:dynamicprogramming">1.2</a> can be exactly implemented for LQR.</p>
+<p>The DP algorithm computes the optimal cost-to-go backwards in time.
+The terminal cost is
+<span class="math display">\[
+J_N(x_N) = x_N^T Q_N x_N
+\]</span>
+by definition.</p>
+<p>The optimal cost-to-go at time <span class="math inline">\(N-1\)</span> is equal to
+<span class="math display" id="eq:lqr-cost-N-1">\[\begin{equation}
+\begin{split}
+J_{N-1}(x_{N-1}) = \min_{u_{N-1}} \mathbb{E}_{w_{N-1}} \{ x_{N-1}^T Q_{N-1} x_{N-1} + u_{N-1}^T R_{N-1} u_{N-1} + \\ \Vert \underbrace{A_{N-1} x_{N-1} + B_{N-1} u_{N-1} + w_{N-1} }_{x_N} \Vert^2_{Q_N} \}
+\end{split}
+\tag{2.3}
+\end{equation}\]</span>
+where <span class="math inline">\(\Vert v \Vert_Q^2 = v^T Q v\)</span> for <span class="math inline">\(Q \succeq 0\)</span>. Now observe that the objective in <a href="exactdp.html#eq:lqr-cost-N-1">(2.3)</a> is
+<span class="math display">\[\begin{equation}
+\begin{split}
+x_{N-1}^T Q_{N-1} x_{N-1} + u_{N-1}^T R_{N-1} u_{N-1} + \Vert A_{N-1} x_{N-1} + B_{N-1} u_{N-1} \Vert_{Q_N}^2 + \\
+\mathbb{E}_{w_{N-1}} \left[ 2(A_{N-1} x_{N-1} + B_{N-1} u_{N-1} )^T Q_{N-1} w_{N-1} \right] + \\
+\mathbb{E}_{w_{N-1}} \left[ w_{N-1}^T Q_N w_{N-1} \right]
+\end{split}
+\end{equation}\]</span>
+where the second line is zero due to <span class="math inline">\(\mathbb{E}(w_{N-1}) = 0\)</span> and the third line is a constant with respect to <span class="math inline">\(u_{N-1}\)</span>. Consequently, the optimal control <span class="math inline">\(u_{N-1}^\star\)</span> can be computed by setting the derivative of the objective with respect to <span class="math inline">\(u_{N-1}\)</span> equal to zero
+<span class="math display" id="eq:optimal-u-N-1">\[\begin{equation}
+u_{N-1}^\star = - \left[ \left( R_{N-1} + B_{N-1}^T Q_N B_{N-1} \right)^{-1} B_{N-1}^T Q_N A_{N-1} \right] x_{N-1}.
+\tag{2.4}
+\end{equation}\]</span>
+Plugging the optimal controller <span class="math inline">\(u^\star_{N-1}\)</span> back to the objective of <a href="exactdp.html#eq:lqr-cost-N-1">(2.3)</a> leads to
+<span class="math display" id="eq:optimal-cost-N-1">\[\begin{equation}
+J_{N-1}(x_{N-1}) = x_{N-1}^T S_{N-1} x_{N-1} + \mathbb{E} \left[ w_{N-1}^T Q_N w_{N-1} \right],
+\tag{2.5}
+\end{equation}\]</span>
+with
+<span class="math display">\[
+S_{N-1} = Q_{N-1} + A_{N-1}^T \left[ Q_N - Q_N B_{N-1} \left( R_{N-1} + B_{N-1}^T Q_N B_{N-1} \right)^{-1} B_{N-1}^T Q_N \right] A_{N-1}.
+\]</span>
+We note that <span class="math inline">\(S_{N-1}\)</span> is positive semidefinite (this is an exercise for you to convince yourself).</p>
+<p>Now we realize that something surprising and nice has happened.</p>
+<ol style="list-style-type: decimal">
+<li><p>The optimal controller <span class="math inline">\(u^{\star}_{N-1}\)</span> in <a href="exactdp.html#eq:optimal-u-N-1">(2.4)</a> is a linear feedback policy of the state <span class="math inline">\(x_{N-1}\)</span>, and</p></li>
+<li><p>The optimal cost-to-go <span class="math inline">\(J_{N-1}(x_{N-1})\)</span> in <a href="exactdp.html#eq:optimal-cost-N-1">(2.5)</a> is quadratic in <span class="math inline">\(x_{N-1}\)</span>, just the same as <span class="math inline">\(J_{N}(x_N)\)</span>.</p></li>
+</ol>
+<p>This implies that, if we continue to compute the optimal cost-to-go at time <span class="math inline">\(N-2\)</span>, we will again compute a linear optimal controller and a quadratic optimal cost-to-go. This is the rare nice property for the LQR problem, that is,</p>
+<blockquote>
+<p>The (representation) complexity of the optimal controller and cost-to-go does not grow as we run the DP recursion backwards in time.</p>
+</blockquote>
+<p>We summarize the solution for the LQR problem <a href="exactdp.html#eq:lqr-formulation">(2.2)</a> as follows.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:discretetimefinitehorizonlqrsolution" class="proposition"><strong>Proposition 2.1  (Solution of Discrete-Time Finite-Horizon LQR) </strong></span>The optimal controller for the LQR problem <a href="exactdp.html#eq:lqr-formulation">(2.2)</a> is a linear state-feedback policy
+<span class="math display" id="eq:lqr-solution-control">\[\begin{equation}
+\mu_k^\star(x_k) = - K_k x_k, \quad k=0,\dots,N-1.
+\tag{2.6}
+\end{equation}\]</span>
+The gain matrix <span class="math inline">\(K_k\)</span> can be computed as
+<span class="math display">\[
+K_k = \left( R_k + B_k^T S_{k+1} B_k  \right)^{-1} B_k^T S_{k+1} A_k,
+\]</span>
+where the matrix <span class="math inline">\(S_k\)</span> satisfies the following backwards recursion
+<span class="math display" id="eq:finite-discrete-lqr-riccati">\[\begin{equation}
+\hspace{-6mm}
+\begin{split}
+S_N &amp;= Q_N \\
+S_k &amp;= Q_k + A_k^T \left[ S_{k+1} - S_{k+1}B_k \left( R_k + B_k^T S_{k+1} B_k  \right)^{-1}  B_k^T S_{k+1}  \right] A_k, k=N-1,\dots,0.
+\end{split}
+\tag{2.7}
+\end{equation}\]</span>
+The optimal cost-to-go is given by
+<span class="math display">\[
+J_0(x_0) = x_0^T S_0 x_0 + \sum_{k=0}^{N-1} \mathbb{E} \left[ w_k^T S_{k+1} w_k\right].
+\]</span>
+The recursion <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> is called the <em>discrete-time Riccati equation</em>.</p>
+</div>
+</div>
+<p>Proposition <a href="exactdp.html#prp:discretetimefinitehorizonlqrsolution">2.1</a> states that, to evaluate the optimal policy <a href="exactdp.html#eq:lqr-solution-control">(2.6)</a>, one can first run the backwards Riccati equation <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> to compute all the positive definite matrices <span class="math inline">\(S_k\)</span>, and then compute the gain matrices <span class="math inline">\(K_k\)</span>. For systems of reasonable dimensions, evalutating the matrix inversion in <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> should be fairly efficient.</p>
+<div id="infinite-horizon-lqr" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Infinite-Horizon LQR<a href="exactdp.html#infinite-horizon-lqr" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In many robotics applications, it is often more useful to study the infinite-horizon LQR problem
+<span class="math display" id="eq:infinite-horizon-lqr-system" id="eq:infinite-horizon-lqr-cost">\[\begin{align}
+\min_{u_k} &amp; \quad  \sum_{k=0}^{\infty} \left( x_k^T Q x_k + u_k^T R u_k \right) \tag{2.8} \\
+\text{subject to} &amp; \quad x_{k+1} = A x_k + B u_k, \quad k=0,\dots,\infty, \tag{2.9}
+\end{align}\]</span>
+where <span class="math inline">\(Q \succeq 0\)</span>, <span class="math inline">\(R \succ 0\)</span>, and <span class="math inline">\(A,B\)</span> are constant matrices. The reason for studying the formulation <a href="exactdp.html#eq:infinite-horizon-lqr-cost">(2.8)</a> is twofold. First, for nonlinear systems, we often linearize the nonlinear dynamics around an (equilibrium) point we care about, leading to constant <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> matrices. Second, we care more about the <em>asymptotic</em> effect of our controller than its behavior in a fixed number of steps. We will soon see an example of this formulation for balancing a simple pendulum.</p>
+<p>The infinite-horizon formulation is essentially the finite-horizon formulation <a href="exactdp.html#eq:lqr-formulation">(2.2)</a> with <span class="math inline">\(N \rightarrow \infty\)</span>. Based on our intuition in deriving the finite-horizon LQR solution, we may want to hypothesize that the optimal cost-to-go is a quadratic function
+<span class="math display" id="eq:infinite-horizon-lqr-optimal-cost">\[\begin{equation}
+J_{k}(x_{k}) = x_{k}^T S x_{k}, k=0,\dots,\infty
+\tag{2.10}
+\end{equation}\]</span>
+for some positive definite matrix <span class="math inline">\(S\)</span>, and proceed to invoke the DP algorithm. Notice that we hypothesize the matrix <span class="math inline">\(S\)</span> is in fact <em>stationary</em>, i.e., it does not change with respect to time. This hypothesis makes sense because the <span class="math inline">\(A,B,Q,R\)</span> matrices are stationary in the formulation <a href="exactdp.html#eq:infinite-horizon-lqr-cost">(2.8)</a>. Invoking the DP algorithm we have
+<span class="math display" id="eq:infinite-horizon-lqr-invoke-dp">\[\begin{equation}
+x_k^T S x_k = J_k(x_k) = \min_{u_k} \left\{ x_k^T Q x_k + u_k^T R u_k + \Vert \underbrace{A x_k + B u_k}_{x_{k+1}} \Vert_S^2  \right\}.
+\tag{2.11}
+\end{equation}\]</span>
+The minimization over <span class="math inline">\(u_k\)</span> in <a href="exactdp.html#eq:infinite-horizon-lqr-invoke-dp">(2.11)</a> can again be solved in closed-form by setting the gradient of the objective with respect to <span class="math inline">\(u_k\)</span> to be zero
+<span class="math display" id="eq:infinite-horizon-lqr-control">\[\begin{equation}
+u_k^\star = - \underbrace{\left[ \left( R + B^T S B \right)^{-1} B^T S A \right]}_{K} x_k.
+\tag{2.12}
+\end{equation}\]</span>
+Plugging the optimal <span class="math inline">\(u_k^\star\)</span> back into <a href="exactdp.html#eq:infinite-horizon-lqr-invoke-dp">(2.11)</a>, we see that the matrix <span class="math inline">\(S\)</span> has to satisfy the following equation
+<span class="math display" id="eq:algebraic-riccati">\[\begin{equation}
+S = Q + A^T \left[  S - SB \left( R + B^T S B  \right)^{-1} B^T S \right] A.
+\tag{2.13}
+\end{equation}\]</span>
+Equation <a href="exactdp.html#eq:algebraic-riccati">(2.13)</a> is the famous <em>algebraic Riccati equation</em>.</p>
+<p>Let’s zoom out to see what we have done. We started with a hypothetical optimal cost-to-go <a href="exactdp.html#eq:infinite-horizon-lqr-optimal-cost">(2.10)</a> that is stationary, and invoked the DP algorithm in <a href="exactdp.html#eq:infinite-horizon-lqr-invoke-dp">(2.11)</a>, which led us to the algebraic Riccati equation <a href="exactdp.html#eq:algebraic-riccati">(2.13)</a>. Therefore, if there actually exists a solution to the algebraic Riccati equation <a href="exactdp.html#eq:algebraic-riccati">(2.13)</a>, then the linear controller <a href="exactdp.html#eq:infinite-horizon-lqr-control">(2.12)</a> is indeed optimal (by the optimality of DP)!</p>
+<p>So the question boils down to if the algebraic Riccati equation has a solution <span class="math inline">\(S\)</span> that is positive definite? The following proposition gives an answer.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:infinitehorizonlqrsolution" class="proposition"><strong>Proposition 2.2  (Solution of Discrete-Time Infinite-Horizon LQR) </strong></span>Consider a linear system
+<span class="math display">\[
+x_{k+1} = A x_k + B u_k,
+\]</span>
+with <span class="math inline">\((A,B)\)</span> controllable (see Appendix <a href="app-lti-system-theory.html#app-lti-controllable-observable">A.2</a>). Let <span class="math inline">\(Q \succeq 0\)</span> in <a href="exactdp.html#eq:infinite-horizon-lqr-cost">(2.8)</a> be such that <span class="math inline">\(Q\)</span> can be written as <span class="math inline">\(Q = C^T C\)</span> with <span class="math inline">\((A,C)\)</span> observable.</p>
+<p>Then the optimal controller for the infinite-horizon LQR problem <a href="exactdp.html#eq:infinite-horizon-lqr-cost">(2.8)</a> is a stationary linear policy
+<span class="math display">\[
+\mu^\star (x) = - K x,
+\]</span>
+with
+<span class="math display">\[
+K = \left( R + B^T S B \right)^{-1} B^T S A.
+\]</span>
+The matrix <span class="math inline">\(S\)</span> is the unique positive definite matrix that satisfies the algebraic Riccati equation
+<span class="math display">\[
+S = Q + A^T \left[  S - SB \left( R + B^T S B  \right)^{-1} B^T S \right] A.
+\]</span></p>
+<p>Moreover, the closed-loop system
+<span class="math display">\[
+x_{k+1} = A x_k + B (-K x_k) = (A - BK) x_k
+\]</span>
+is stable, i.e., the eigenvalues of the matrix <span class="math inline">\(A - BK\)</span> are strictly within the unit circle (see Appendix <a href="app-lti-system-theory.html#app-lti-stability-dt">A.1.2</a>).</p>
+</div>
+</div>
+<p>A rigorous proof of Proposition <a href="exactdp.html#prp:infinitehorizonlqrsolution">2.2</a> is available in Proposition 3.1.1 of <span class="citation">(<a href="#ref-bertsekas12book-dpocI">Bertsekas 2012</a>)</span>. The proof basically studies the limit of the discrete-time Riccati equation <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> when <span class="math inline">\(N \rightarrow \infty\)</span>. Indeed, the algebraic Riccati equation <a href="exactdp.html#eq:algebraic-riccati">(2.13)</a> is the limit of the discrete-time Riccati equation <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> when <span class="math inline">\(N \rightarrow \infty\)</span>. The assumptions of <span class="math inline">\((A,B)\)</span> being controllable and <span class="math inline">\((A,C)\)</span> being observable can be relaxted to <span class="math inline">\((A,B)\)</span> being stabilizable and <span class="math inline">\((A,C)\)</span> being detectable (for definitions of stabilizability and detectability, see Appendix <a href="app-lti-system-theory.html#app-lti-system-theory">A</a>).</p>
+<p>We have not discussed how to solve the algebraic Riccati equation <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a>. It is clear that <a href="exactdp.html#eq:finite-discrete-lqr-riccati">(2.7)</a> is not a linear system of equations in <span class="math inline">\(S\)</span>. In fact, the numerical algorithms for solving the algebraic Riccati equation can be highly nontrivial, for example see <span class="citation">(<a href="#ref-arnold84ieee-generalized">Arnold and Laub 1984</a>)</span>. Fortunately, such algorithms are often readily available, and as practitioners we do not need to worry about solving the algebraic Riccati equation by ourselves. For example, the Matlab <a href="https://www.mathworks.com/help/control/ref/dlqr.html"><code>dlqr</code></a> function computes the <span class="math inline">\(K\)</span> and <span class="math inline">\(S\)</span> matrices from <span class="math inline">\(A,B,Q,R\)</span>.</p>
+<p>Let us now apply the infinite-horizon LQR solution to stabilizing a simple pendulum.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:lqr-pendulum-stabilization" class="example"><strong>Example 2.1  (Pendulum Stabilization by LQR) </strong></span>Consider the simple pendulum dynamics</p>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-arnold84ieee-generalized" class="csl-entry">
+Arnold, William F, and Alan J Laub. 1984. <span>“Generalized Eigenproblem Algorithms and Software for Algebraic Riccati Equations.”</span> <em>Proceedings of the IEEE</em> 72 (12): 1746–54.
+</div>
+<div id="ref-bertsekas12book-dpocI" class="csl-entry">
+Bertsekas, Dimitri. 2012. <em>Dynamic Programming and Optimal Control: Volume i</em>. Vol. 1. Athena scientific.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="formulation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="approximatedp.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/OptimalControlEstimation/blob/main/02-exact-dp.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["optimal-control-estimation.pdf", "optimal-control-estimation.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>A Linear System Theory | Optimal Control and Estimation</title>
+  <meta name="description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="A Linear System Theory | Optimal Control and Estimation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  <meta name="github-repo" content="hankyang94/OptimalControlEstimation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="A Linear System Theory | Optimal Control and Estimation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2023-08-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="adaptivecontrol.html"/>
+<link rel="next" href="appconvex.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Optimal Control and Estimation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="formulation.html"><a href="formulation.html"><i class="fa fa-check"></i><b>1</b> The Optimal Control Formulation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="formulation.html"><a href="formulation.html#the-basic-problem"><i class="fa fa-check"></i><b>1.1</b> The Basic Problem</a></li>
+<li class="chapter" data-level="1.2" data-path="formulation.html"><a href="formulation.html#dynamic-programming-and-principle-of-optimality"><i class="fa fa-check"></i><b>1.2</b> Dynamic Programming and Principle of Optimality</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="exactdp.html"><a href="exactdp.html"><i class="fa fa-check"></i><b>2</b> Exact Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="exactdp.html"><a href="exactdp.html#lqr"><i class="fa fa-check"></i><b>2.1</b> Linear Quadratic Regulator</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="exactdp.html"><a href="exactdp.html#infinite-horizon-lqr"><i class="fa fa-check"></i><b>2.1.1</b> Infinite-Horizon LQR</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="approximatedp.html"><a href="approximatedp.html"><i class="fa fa-check"></i><b>3</b> Approximate Dynamic Programming</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="approximatedp.html"><a href="approximatedp.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-value-space"><i class="fa fa-check"></i><b>3.2</b> Approximation in value space</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="approximatedp.html"><a href="approximatedp.html#problem-approximation"><i class="fa fa-check"></i><b>3.2.1</b> Problem Approximation</a></li>
+<li class="chapter" data-level="3.2.2" data-path="approximatedp.html"><a href="approximatedp.html#parametric-cost-approximation"><i class="fa fa-check"></i><b>3.2.2</b> Parametric cost approximation</a></li>
+<li class="chapter" data-level="3.2.3" data-path="approximatedp.html"><a href="approximatedp.html#online-approximate-optimization"><i class="fa fa-check"></i><b>3.2.3</b> Online approximate optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="approximatedp.html"><a href="approximatedp.html#approximation-in-policy-space"><i class="fa fa-check"></i><b>3.3</b> Approximation in policy space</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="approximatedp.html"><a href="approximatedp.html#training-by-using-an-expert"><i class="fa fa-check"></i><b>3.3.1</b> Training by using an expert</a></li>
+<li class="chapter" data-level="3.3.2" data-path="approximatedp.html"><a href="approximatedp.html#training-by-cost-optimization"><i class="fa fa-check"></i><b>3.3.2</b> Training by cost optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="approximatedp.html"><a href="approximatedp.html#extension"><i class="fa fa-check"></i><b>3.4</b> Extension</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="stability.html"><a href="stability.html"><i class="fa fa-check"></i><b>4</b> Stability Analysis</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="stability.html"><a href="stability.html#autonomous-systems"><i class="fa fa-check"></i><b>4.1</b> Autonomous Systems</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="stability.html"><a href="stability.html#concepts-of-stability"><i class="fa fa-check"></i><b>4.1.1</b> Concepts of Stability</a></li>
+<li class="chapter" data-level="4.1.2" data-path="stability.html"><a href="stability.html#stability-by-linearization"><i class="fa fa-check"></i><b>4.1.2</b> Stability by Linearization</a></li>
+<li class="chapter" data-level="4.1.3" data-path="stability.html"><a href="stability.html#lyapunov-analysis"><i class="fa fa-check"></i><b>4.1.3</b> Lyapunov Analysis</a></li>
+<li class="chapter" data-level="4.1.4" data-path="stability.html"><a href="stability.html#invariant-set-theorem"><i class="fa fa-check"></i><b>4.1.4</b> Invariant Set Theorem</a></li>
+<li class="chapter" data-level="4.1.5" data-path="stability.html"><a href="stability.html#computing-lyapunov-certificates"><i class="fa fa-check"></i><b>4.1.5</b> Computing Lyapunov Certificates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="stability.html"><a href="stability.html#controlled-systems"><i class="fa fa-check"></i><b>4.2</b> Controlled Systems</a></li>
+<li class="chapter" data-level="4.3" data-path="stability.html"><a href="stability.html#non-autonomous-systems"><i class="fa fa-check"></i><b>4.3</b> Non-autonomous Systems</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="output-feedback.html"><a href="output-feedback.html"><i class="fa fa-check"></i><b>5</b> Output Feedback</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="output-feedback.html"><a href="output-feedback.html#state-observer"><i class="fa fa-check"></i><b>5.1</b> State Observer</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="output-feedback.html"><a href="output-feedback.html#general-design-strategy"><i class="fa fa-check"></i><b>5.1.1</b> General Design Strategy</a></li>
+<li class="chapter" data-level="5.1.2" data-path="output-feedback.html"><a href="output-feedback.html#luenberger-template"><i class="fa fa-check"></i><b>5.1.2</b> Luenberger Template</a></li>
+<li class="chapter" data-level="5.1.3" data-path="output-feedback.html"><a href="output-feedback.html#state-affine-template"><i class="fa fa-check"></i><b>5.1.3</b> State-affine Template</a></li>
+<li class="chapter" data-level="5.1.4" data-path="output-feedback.html"><a href="output-feedback.html#kazantzis-kravaris-luenberger-kkl-template"><i class="fa fa-check"></i><b>5.1.4</b> Kazantzis-Kravaris-Luenberger (KKL) Template</a></li>
+<li class="chapter" data-level="5.1.5" data-path="output-feedback.html"><a href="output-feedback.html#triangular-template"><i class="fa fa-check"></i><b>5.1.5</b> Triangular Template</a></li>
+<li class="chapter" data-level="5.1.6" data-path="output-feedback.html"><a href="output-feedback.html#design-with-convex-optimization"><i class="fa fa-check"></i><b>5.1.6</b> Design with Convex Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="output-feedback.html"><a href="output-feedback.html#observer-feedback"><i class="fa fa-check"></i><b>5.2</b> Observer Feedback</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html"><i class="fa fa-check"></i><b>6</b> Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#model-reference-adaptive-control"><i class="fa fa-check"></i><b>6.1</b> Model-Reference Adaptive Control</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#first-order-systems"><i class="fa fa-check"></i><b>6.1.1</b> First-Order Systems</a></li>
+<li class="chapter" data-level="6.1.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#high-order-systems"><i class="fa fa-check"></i><b>6.1.2</b> High-Order Systems</a></li>
+<li class="chapter" data-level="6.1.3" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#robotic-manipulator"><i class="fa fa-check"></i><b>6.1.3</b> Robotic Manipulator</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="adaptivecontrol.html"><a href="adaptivecontrol.html#certainty-equivalent-adaptive-control"><i class="fa fa-check"></i><b>6.2</b> Certainty-Equivalent Adaptive Control</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html"><i class="fa fa-check"></i><b>A</b> Linear System Theory</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability"><i class="fa fa-check"></i><b>A.1</b> Stability</a>
+<ul>
+<li class="chapter" data-level="A.1.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-ct"><i class="fa fa-check"></i><b>A.1.1</b> Continuous-Time Stability</a></li>
+<li class="chapter" data-level="A.1.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-stability-dt"><i class="fa fa-check"></i><b>A.1.2</b> Discrete-Time Stability</a></li>
+<li class="chapter" data-level="A.1.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#lyapunov-analysis-1"><i class="fa fa-check"></i><b>A.1.3</b> Lyapunov Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#app-lti-controllable-observable"><i class="fa fa-check"></i><b>A.2</b> Controllability and Observability</a>
+<ul>
+<li class="chapter" data-level="A.2.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#cayley-hamilton-theorem"><i class="fa fa-check"></i><b>A.2.1</b> Cayley-Hamilton Theorem</a></li>
+<li class="chapter" data-level="A.2.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-controllability"><i class="fa fa-check"></i><b>A.2.2</b> Equivalent Statements for Controllability</a></li>
+<li class="chapter" data-level="A.2.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#duality"><i class="fa fa-check"></i><b>A.2.3</b> Duality</a></li>
+<li class="chapter" data-level="A.2.4" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-observability"><i class="fa fa-check"></i><b>A.2.4</b> Equivalent Statements for Observability</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#stabilizability-and-detectability"><i class="fa fa-check"></i><b>A.3</b> Stabilizability And Detectability</a>
+<ul>
+<li class="chapter" data-level="A.3.1" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability"><i class="fa fa-check"></i><b>A.3.1</b> Equivalent Statements for Stabilizability</a></li>
+<li class="chapter" data-level="A.3.2" data-path="app-lti-system-theory.html"><a href="app-lti-system-theory.html#equivalent-statements-for-detectability"><i class="fa fa-check"></i><b>A.3.2</b> Equivalent Statements for Detectability</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="appconvex.html"><a href="appconvex.html"><i class="fa fa-check"></i><b>B</b> Convex Analysis and Optimization</a></li>
+<li class="chapter" data-level="C" data-path="the-kalman-yakubovich-lemma.html"><a href="the-kalman-yakubovich-lemma.html"><i class="fa fa-check"></i><b>C</b> The Kalman-Yakubovich Lemma</a></li>
+<li class="chapter" data-level="D" data-path="feedbacklinearization.html"><a href="feedbacklinearization.html"><i class="fa fa-check"></i><b>D</b> Feedback Linearization</a></li>
+<li class="chapter" data-level="E" data-path="slidingcontrol.html"><a href="slidingcontrol.html"><i class="fa fa-check"></i><b>E</b> Sliding Control</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Optimal Control and Estimation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="app-lti-system-theory" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">A</span> Linear System Theory<a href="app-lti-system-theory.html#app-lti-system-theory" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><em>Thanks to Shucheng Kang for writing this Appendix.</em></p>
+<div id="app-lti-stability" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">A.1</span> Stability<a href="app-lti-system-theory.html#app-lti-stability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<!-- Check this [note](https://intra.engr.ucr.edu/~enozari/teaching/ME120_Fall20/Lecture%203%20-%20Stability,%20Controllability%20&%20Observability.pdf).  -->
+<div id="app-lti-stability-ct" class="section level3 hasAnchor" number="7.1.1">
+<h3><span class="header-section-number">A.1.1</span> Continuous-Time Stability<a href="app-lti-system-theory.html#app-lti-stability-ct" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider the continuous-time linear time-invariant (LTI) system
+<span class="math display" id="eq:app-stability-ct-linear-system">\[\begin{equation}
+\dot{x} = A x.
+\tag{A.1}
+\end{equation}\]</span></p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ltistable" class="definition"><strong>Definition A.1  (Asymptotic and Marginal Stability) </strong></span>The LTI system <a href="app-lti-system-theory.html#eq:app-stability-ct-linear-system">(A.1)</a> is</p>
+<ol style="list-style-type: decimal">
+<li><p>“asymptotically stable” if <span class="math inline">\(x(t) \rightarrow 0\)</span> as <span class="math inline">\(t \rightarrow \infty\)</span> for every initial condition <span class="math inline">\(x_0\)</span></p></li>
+<li><p>“marginally stable” if <span class="math inline">\(x(t) \nrightarrow 0\)</span> but remains bounded as <span class="math inline">\(t \rightarrow \infty\)</span> for every initial condition <span class="math inline">\(x_0\)</span></p></li>
+<li><p>“stable” if it is either asymptotically or marginally stable</p></li>
+<li><p>“unstable” if it is not stable</p></li>
+</ol>
+</div>
+</div>
+<p>One can show that <span class="math inline">\(A\)</span>’s eigenvalues determine the LTI system’s stability, as the following Theorem states:</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ltistable" class="theorem"><strong>Theorem A.1  (Criteria for Asymptotic and Marginal Stability) </strong></span>The LTI system <a href="app-lti-system-theory.html#eq:app-stability-ct-linear-system">(A.1)</a> is</p>
+<ol style="list-style-type: decimal">
+<li><p>asymptotically stable if <span class="math inline">\(\text{Re} (\lambda_i) &lt; 0\)</span> for all <span class="math inline">\(i\)</span></p></li>
+<li><p>marginally stable if <span class="math inline">\(\text{Re} (\lambda_i) \le 0\)</span> for all <span class="math inline">\(i\)</span> and there exists at least one <span class="math inline">\(i\)</span> for which <span class="math inline">\(\text{Re} (\lambda_i) = 0\)</span></p></li>
+<li><p>stable if <span class="math inline">\(\text{Re} (\lambda_i) \le 0\)</span> for all <span class="math inline">\(i\)</span></p></li>
+<li><p>unstable if <span class="math inline">\(\text{Re} (\lambda_i) &gt; 0\)</span> for at least one <span class="math inline">\(i\)</span></p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-11" class="proof"><em>Proof</em>. </span>Here we only represent the proof of (1). Similar procedure can be adopted for the proof of (2) - (4).</p>
+<p>Suppose <span class="math inline">\(A \in \mathbb{C}^{n \times n}\)</span>. There exists a similarity transformation matrix <span class="math inline">\(V := \begin{bmatrix} v_1 &amp; \dots &amp; v_n \end{bmatrix}\)</span>, s.t. <span class="math inline">\(A = V J V^{-1}\)</span>, where <span class="math inline">\(J\)</span> is the Jordan form of <span class="math inline">\(A\)</span> (Please note that <span class="math inline">\(A\)</span> may be non-diagonalizable so eigenvalue decomposition will fail in general.) Since <span class="math inline">\(\left\{v_1 \dots v_n\right\}\)</span> spans <span class="math inline">\(\mathbb{C}^n\)</span>, we can denote the state <span class="math inline">\(x(t)\)</span> as <span class="math inline">\(V a(t)\)</span>. Therefore, under the coordinate transformation <span class="math inline">\(V^{-1}\)</span>,
+<span class="math display">\[\begin{equation*}
+   \dot{x}(t) = A x(t) \Longrightarrow \dot{a}(t) = J a(t)
+\end{equation*}\]</span>
+Now suppose <span class="math inline">\(J\)</span> has <span class="math inline">\(I\)</span> Jordan blocks with corresponding block sizes <span class="math inline">\(K_1, \dots K_I\)</span> and eigenvalues <span class="math inline">\(\lambda_1, \dots, \lambda_I\)</span>. Inside the <span class="math inline">\(i\)</span>’s Jordan block, the differential equations are:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      \dot{a}_{i,1}(t) &amp; = \lambda_i \cdot a_{i,1}(t) \\
+      \dot{a}_{i,2}(t) &amp; = a_{i,1}(t) + \lambda_i \cdot a_{i,2}(t) \\
+      \vdots &amp; \\
+      \dot{a}(t)_{i,K_i} &amp; = a_{i,K_i-1}(t) + \lambda_i \cdot a_{i,K_i}(t)
+   \end{split}
+\end{equation*}\]</span>
+With Laplace transformation, we represent the above equations in the frequency domain:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      s \cdot A_{i,1}(s) - a_{i,1}(0) &amp; = \lambda_i \cdot A_{i,1}(s) \\
+      s \cdot A_{i,2}(s) - a_{i,2}(0) &amp; = A_{i,1}(s) + \lambda_i \cdot A_{i,2}(s) \\
+      \vdots &amp; \\
+      s \cdot A_{i,K_i}(s) - a_{i,K_i}(0) &amp; = A_{i,K_i-1}(s) + \lambda_i \cdot A_{i,K_i}(s)
+   \end{split}
+\end{equation*}\]</span>
+where <span class="math inline">\(A_{i,k}(s)\)</span> corresponds to <span class="math inline">\(a_{i,k}(t)\)</span>’s Laplace transformation. By solving the above algebraic equations,
+<span class="math display">\[\begin{equation*}
+   A_{i,k}(s) = \sum_{j=1}^{k} \frac{
+      a_{i, k+1-j}(0)
+   }{
+      (s - \lambda_i)^j
+   }, \quad \forall k \in \left\{1 \dots K_i\right\}
+\end{equation*}\]</span>
+Via the inverse Laplace transformation:
+<span class="math display">\[\begin{equation*}
+   a_{i,k}(t) = \sum_{j=1}^{k} \frac{
+      a_{i, k+1-j}(0)
+   }{
+      (j-1)!
+   } \cdot e^{\lambda_i t} t^{j-1}, \quad \forall k \in \left\{1 \dots K_i\right\}
+\end{equation*}\]</span>
+Since <span class="math inline">\(\text{Re}(\lambda_i) &lt; 0\)</span>, no matter how we choose <span class="math inline">\(a_{i,k}(0)\)</span>, <span class="math inline">\(a_{i,k}(t)\)</span> will always converge to <span class="math inline">\(0\)</span>.</p>
+</div>
+</div>
+</div>
+<div id="app-lti-stability-dt" class="section level3 hasAnchor" number="7.1.2">
+<h3><span class="header-section-number">A.1.2</span> Discrete-Time Stability<a href="app-lti-system-theory.html#app-lti-stability-dt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider the discrete-time linear time-invariant (LTI) system
+<span class="math display" id="eq:app-stability-dt-linear-system">\[\begin{equation}
+x_{t+1} = A x_t.
+\tag{A.2}
+\end{equation}\]</span></p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:dtltisystemstability" class="theorem"><strong>Theorem A.2  (Stability of Discrete-Time LTI System) </strong></span>The discrete-time LTI system <a href="app-lti-system-theory.html#eq:app-stability-dt-linear-system">(A.2)</a> is</p>
+<ol style="list-style-type: decimal">
+<li><p>asymptotically stable if <span class="math inline">\(|\lambda_i| &lt; 1\)</span> for all <span class="math inline">\(i\)</span></p></li>
+<li><p>marginally stable if <span class="math inline">\(|\lambda_i| \leq 1\)</span> for all <span class="math inline">\(i\)</span> and there exists at least one <span class="math inline">\(i\)</span> for which <span class="math inline">\(|\lambda_i| = 1\)</span></p></li>
+<li><p>stable if <span class="math inline">\(|\lambda_i| \leq 1\)</span> for all <span class="math inline">\(i\)</span></p></li>
+<li><p>unstable if <span class="math inline">\(|\lambda_i| &gt; 1\)</span> for at least one <span class="math inline">\(i\)</span>.</p></li>
+</ol>
+<p>Note that <span class="math inline">\(|\lambda_i| &lt; 1\)</span> means the eigenvalue lies strictly inside the unit circle in the complex plane.</p>
+</div>
+</div>
+</div>
+<div id="lyapunov-analysis-1" class="section level3 hasAnchor" number="7.1.3">
+<h3><span class="header-section-number">A.1.3</span> Lyapunov Analysis<a href="app-lti-system-theory.html#lyapunov-analysis-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:lyapunovequation" class="theorem"><strong>Theorem A.3  (Lyapunov Equation) </strong></span>The following is equivalent for a linear time-invariant system <span class="math inline">\(\dot{x} = A x\)</span></p>
+<ol style="list-style-type: decimal">
+<li><p>The system is globally asymptotically stable, i.e., <span class="math inline">\(A\)</span> is Hurwitz and <span class="math inline">\(\lim_{t \rightarrow \infty} x(t) = 0\)</span> regardless of the initial condition;</p></li>
+<li><p>For any positive definite matrix <span class="math inline">\(Q\)</span>, the unique solution <span class="math inline">\(P\)</span> to the Lyapunov equation
+<span class="math display" id="eq:lyapunov-equation">\[\begin{equation}
+A^T P + P A = -Q
+\tag{A.3}
+\end{equation}\]</span>
+is positive definite.</p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>(a): <span class="math inline">\(2 \Rightarrow 1\)</span>. Suppose we are given two positive definite matrices <span class="math inline">\(P, Q \succ 0\)</span> that satisfies the Lyapunov equation <a href="app-lti-system-theory.html#eq:lyapunov-equation">(A.3)</a>. Define a scalar function
+<span class="math display">\[
+V(x) = x^T P x.
+\]</span>
+It is clear that <span class="math inline">\(V &gt; 0\)</span> for any <span class="math inline">\(x \neq 0\)</span> and <span class="math inline">\(V(x) = 0\)</span> (i.e., <span class="math inline">\(V(x)\)</span> is positive definite). We also see <span class="math inline">\(V(x)\)</span> is radially unbounded because:
+<span class="math display">\[
+V(x) \geq \lambda_{\min}(P) \Vert x \Vert^2 \Rightarrow \lim_{x \rightarrow \infty} V(x) \rightarrow \infty.
+\]</span>
+The time derivative of <span class="math inline">\(V\)</span> reads
+<span class="math display">\[
+\dot{V} = 2 x^T P \dot{x} = x^T (A^T P + P A) x = - x^T Q x.
+\]</span>
+Clearly, <span class="math inline">\(\dot{V} &lt; 0\)</span> for any <span class="math inline">\(x \neq 0\)</span> and <span class="math inline">\(\dot{V}(0) = 0\)</span>. According to Lyapunov’s global stability theorem <a href="stability.html#thm:lyapunovglobalstability">4.3</a>, we conclude the linear system <span class="math inline">\(\dot{x} = Ax\)</span> is globally asymptotically stable at <span class="math inline">\(x = 0\)</span>.</p>
+<p>(b): <span class="math inline">\(1 \Rightarrow 2\)</span>. Suppose <span class="math inline">\(A\)</span> is Hurwitz, we want to show that, for any <span class="math inline">\(Q \succ 0\)</span>, there exists a unique <span class="math inline">\(P \succ 0\)</span> satisfying the Lyapunov equation <a href="app-lti-system-theory.html#eq:lyapunov-equation">(A.3)</a>. In fact, consider the matrix
+<span class="math display">\[
+P = \int_{t=0}^{\infty} e^{A^T t} Q e^{At} dt.
+\]</span>
+Because <span class="math inline">\(A\)</span> is Hurwitz, the integral exists, and clearly <span class="math inline">\(P \succ 0\)</span> due to <span class="math inline">\(Q \succ 0\)</span>. To show this choice of <span class="math inline">\(P\)</span> satisfies the Lyapunov equation, we write
+<span class="math display">\[\begin{align}
+A^T P + P A &amp;= \int_{t=0}^{\infty} \left( A^T e^{A^T t} Q e^{At} + e^{A^T t} Q e^{At} A  \right) dt \\
+&amp;=\int_{t=0}^{\infty} d \left( e^{A^T t} Q e^{At} \right) \\
+&amp; = e^{A^T t} Q e^{At}\vert_{t = \infty} - e^{A^T t} Q e^{At}\vert_{t = 0} = - Q,
+\end{align}\]</span>
+where the last equality holds because <span class="math inline">\(e^{A \infty} = 0\)</span> (recall <span class="math inline">\(A\)</span> is Hurwitz).</p>
+<p>To show the uniqueness of <span class="math inline">\(P\)</span>, we assume that there exists another matrix <span class="math inline">\(P&#39;\)</span> that also satisfies the Lyapunov equation. Therefore,
+<span class="math display">\[\begin{align}
+P&#39; &amp;= e^{A^T t} P&#39; e^{At} \vert_{t=0} - e^{A^T t} P&#39; e^{At} \vert_{t=\infty} \\
+&amp;= - \int_{t=0}^{\infty} d \left( e^{A^T t} P&#39; e^{At} \right) \\
+&amp;= - \int_{t=0}^{\infty} e^{A^T t} \left( A^T P&#39; + P&#39; A \right) e^{At} dt \\
+&amp; = \int_{t=0}^{\infty} e^{A^T t} Q e^{At} dt = P,
+\end{align}\]</span>
+leading to <span class="math inline">\(P&#39; = P\)</span>. Hence, the solution is unique.</p>
+</div>
+</div>
+<p><strong>Convergence rate estimation</strong>. We now show that Theorem <a href="app-lti-system-theory.html#thm:lyapunovequation">A.3</a> can allow us to quantify the convergence rate of a (stable) linear system towards zero.</p>
+<p>For a Hurwitz linear system <span class="math inline">\(\dot{x} = Ax\)</span>, let us pick a positive definite matrix <span class="math inline">\(Q\)</span>. Theorem <a href="app-lti-system-theory.html#thm:lyapunovequation">A.3</a> tells us we can find a unique <span class="math inline">\(P \succ 0\)</span> satisfying the Lyapunov equation <a href="app-lti-system-theory.html#eq:lyapunov-equation">(A.3)</a>. In this case, we can upper bound the scalar function <span class="math inline">\(V = x^T P x\)</span> as
+<span class="math display">\[
+V \leq \lambda_{\max}(P) \Vert x \Vert^2.
+\]</span>
+The time derivative of <span class="math inline">\(V\)</span> is <span class="math inline">\(\dot{V} = - x^T Q x\)</span>, which can be upper bounded by
+<span class="math display">\[\begin{align}
+\dot{V} &amp; \leq - \lambda_{\min} (Q) \Vert x \Vert^2 \\
+&amp; = - \frac{\lambda_{\min} (Q)}{\lambda_{\max} (P)} \underbrace{ \left( \lambda_{\max} (P) \Vert x \Vert^2 \right)}_{\geq V} \\
+&amp; \leq - \frac{\lambda_{\min} (Q)}{\lambda_{\max} (P)} V.
+\end{align}\]</span>
+Denoting <span class="math inline">\(\gamma(Q) = \frac{\lambda_{\min} (Q)}{\lambda_{\max}(P)}\)</span>, the above inequality implies
+<span class="math display">\[
+V(0) e^{-\gamma(Q) t} \geq V(t) = x^T P x \geq \lambda_{\min}(P) \Vert x \Vert^2.
+\]</span>
+As a result, <span class="math inline">\(\Vert x \Vert^2\)</span> converges to zero exponentially with a rate at least <span class="math inline">\(\gamma(Q)\)</span>, and <span class="math inline">\(\Vert x \Vert\)</span> converges to zero exponentially with a rate at least <span class="math inline">\(\gamma(Q) / 2\)</span>.</p>
+<p><strong>Best convergence rate estimation</strong>. I have used <span class="math inline">\(\gamma (Q)\)</span> to make it explict that the rate <span class="math inline">\(\gamma\)</span> depends on the choice of <span class="math inline">\(Q\)</span>, because <span class="math inline">\(P\)</span> is computed from the Lyapunov equation as an implicit function of <span class="math inline">\(Q\)</span>. Naturally, choosing different <span class="math inline">\(Q\)</span> will lead to different <span class="math inline">\(\gamma (Q)\)</span>. So what is the choice of <span class="math inline">\(Q\)</span> that maximizes the convergence rate estimation?</p>
+<div class="corollary">
+<p><span id="cor:bestconvergencerate" class="corollary"><strong>Corollary A.1  (Maximum Convergence Rate Estimation) </strong></span><span class="math inline">\(Q = I\)</span> maximizes the convergence rate estimation.</p>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-13" class="proof"><em>Proof</em>. </span>let us denote <span class="math inline">\(P_0\)</span> as the solution to the Lyapunov equation with <span class="math inline">\(Q = I\)</span>
+<span class="math display">\[
+A^T P_0 + P_0 A = - I.
+\]</span>
+Let <span class="math inline">\(P\)</span> be the solution corresponding to a different choice of <span class="math inline">\(Q\)</span>
+<span class="math display">\[
+A^T P + P A = - Q.
+\]</span>
+Without loss of generality, we can assume <span class="math inline">\(\lambda_{\min}(Q) = 1\)</span>, because rescaling <span class="math inline">\(Q\)</span> will recale <span class="math inline">\(P\)</span> by the same factor, which does not affect <span class="math inline">\(\gamma(Q)\)</span>. Subtracting the two Lyapunov equations above we get
+<span class="math display">\[
+A^T (P - P_0) + (P - P_0) A = - (Q - I).
+\]</span>
+Since <span class="math inline">\(Q - I \succeq 0\)</span> (due to <span class="math inline">\(\lambda_{\min}(Q) = 1\)</span>), we know <span class="math inline">\(P - P_0 \succeq 0\)</span> and <span class="math inline">\(\lambda_{\max} (P) \geq \lambda_{\max} (P_0)\)</span>. As a result,
+<span class="math display">\[
+\gamma(Q) = \frac{\lambda_{\min}(Q)}{\lambda_{\max}(P)} =  \frac{\lambda_{\min}(I)}{\lambda_{\max}(P)} \leq \frac{\lambda_{\min}(I)}{\lambda_{\max}(P_0)} = \gamma(I),
+\]</span>
+and <span class="math inline">\(Q = I\)</span> maximizes the convergence rate estimation.</p>
+</div>
+</div>
+<hr />
+</div>
+</div>
+<div id="app-lti-controllable-observable" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">A.2</span> Controllability and Observability<a href="app-lti-system-theory.html#app-lti-controllable-observable" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider the following linear time-invariant (LTI) system
+<span class="math display" id="eq:app-linear-system">\[\begin{equation}
+    \tag{A.4}
+   \begin{split}
+      \dot{x} = A x + B u \\
+      y = C x + D u
+   \end{split}
+\end{equation}\]</span>
+where <span class="math inline">\(x \in \mathbb{R}^n\)</span> the state, <span class="math inline">\(u \in \mathbb{R}^m\)</span> the control input, <span class="math inline">\(y \in \mathbb{R}^p\)</span> the output, and <span class="math inline">\(A,B,C,D\)</span> are constant matrices with proper sizes. If we know the initial state <span class="math inline">\(x(0)\)</span> and the control inputs <span class="math inline">\(u(t)\)</span> over a period of time <span class="math inline">\(t \in [0, t_1]\)</span>, the system trajectory <span class="math inline">\((x(t), y(t))\)</span> can be determined as
+<span class="math display" id="eq:app-lti-xy">\[\begin{equation}
+    \tag{A.5}
+   \begin{split}
+      x(t) &amp; = e^{At} x(0) + \int_{0}^{t} e^{A(t-\tau)} B u(\tau) d\tau \\
+      y(t) &amp; = C x(t) + D u(t)
+   \end{split}
+\end{equation}\]</span></p>
+<p>To study the internal structure of linear systems, two important properties should be considered: controllability and observability. In the following analysis, we will see that they are actually dual concepts. Their definitions <span class="citation">(<a href="#ref-chen1984book-linear">Chen 1984</a>)</span> are given below.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:lticontrollable" class="definition"><strong>Definition A.2  (Controllability) </strong></span>The LTI system <a href="app-lti-system-theory.html#eq:app-linear-system">(A.4)</a>, or the pair <span class="math inline">\((A, B)\)</span>, is controllable, if for any initial state <span class="math inline">\(x(0) = x_0\)</span> and final state <span class="math inline">\(x_f\)</span>, there exists a sequence of control inputs that transfer the system from <span class="math inline">\(x_0\)</span> to <span class="math inline">\(x_f\)</span> in finite time.</p>
+</div>
+</div>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ltiobservable" class="definition"><strong>Definition A.3  (Observability) </strong></span>The LTI system <a href="app-lti-system-theory.html#eq:app-linear-system">(A.4)</a>, or the pair <span class="math inline">\((C, A)\)</span>, is observable, if for any unknown initial state <span class="math inline">\(x(0)\)</span>, there exists a finite time <span class="math inline">\(t_1 &gt; 0\)</span>, such that knowing <span class="math inline">\(y\)</span> and <span class="math inline">\(u\)</span> over <span class="math inline">\([0, t_1]\)</span> suffices to determine <span class="math inline">\(x(0)\)</span>.</p>
+</div>
+</div>
+<p>Sometimes it will become more convenient for us to analyze the system <a href="app-lti-system-theory.html#eq:app-linear-system">(A.4)</a> under another coordinate basis, i.e., <span class="math inline">\(z = T x\)</span>, where the coordinate transformation <span class="math inline">\(T\)</span> is nonsingular (i.e., full-rank). Define <span class="math inline">\(A&#39; = TAT^{-1}, B&#39; = PB, C&#39; = CT^{-1}, D&#39; = D\)</span>, we get
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      \dot{z} = A&#39; z + B&#39; u \\
+      y = C&#39; z + D&#39; u
+   \end{split}
+\end{equation*}\]</span>
+Since the coordinate transformation only changes the system’s coordinate basis, physical properties like controllability and observability will not change.</p>
+<div id="cayley-hamilton-theorem" class="section level3 hasAnchor" number="7.2.1">
+<h3><span class="header-section-number">A.2.1</span> Cayley-Hamilton Theorem<a href="app-lti-system-theory.html#cayley-hamilton-theorem" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the analysis of controllability and observability, Cayley Hamilton Theorem lays the foundation. The statement of the theory and its (elegant) proof are given blow. Some useful corollaries are also presented.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:cayham" class="theorem"><strong>Theorem A.4  (Cayley-Hamilton) </strong></span>Let <span class="math inline">\(A \in \mathbb{C}^{n \times n}\)</span> and denote the characteristic polynomial of <span class="math inline">\(A\)</span> as
+<span class="math display">\[
+   \text{det}(\lambda I - A) = \lambda^n + a_1 \lambda^{n-1} + \dots + a_n \in \mathbb{C}[\lambda],
+\]</span>
+which is a polynomial in a single variable <span class="math inline">\(\lambda\)</span> with coefficients <span class="math inline">\(a_1,\dots,a_n\)</span>.
+Then
+<span class="math display">\[
+   A^n + a_1 A^{n-1} + \dots + a_n I = 0
+\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-14" class="proof"><em>Proof</em>. </span>Define the <a href="https://en.wikipedia.org/wiki/Adjugate_matrix">adjugate</a> of <span class="math inline">\(\lambda I - A\)</span> as
+<span class="math display">\[
+   B = \text{adj}(\lambda I - A)
+\]</span>
+From <span class="math inline">\(B\)</span>’s definition, we have
+<span class="math display" id="eq:adjugate-1">\[\begin{equation}
+(\lambda I - A) B  = \text{det}(\lambda I - A) I = (\lambda^n + a_1 \lambda^{n-1} + \dots + a_n) I
+\tag{A.6}
+\end{equation}\]</span>
+Also, <span class="math inline">\(B\)</span> is a polynomial matrix over <span class="math inline">\(\lambda\)</span>, whose maximum degree is no more than <span class="math inline">\(n - 1\)</span>. Therefore, we write <span class="math inline">\(B\)</span> as follows:
+<span class="math display">\[
+   B = \sum_{i=0}^{n-1} \lambda^i B_i
+\]</span>
+where <span class="math inline">\(B_i\)</span>’s are constant matrices. In this way, we unfold <span class="math inline">\((\lambda I - A)B\)</span>:
+<span class="math display" id="eq:adjugate-2">\[\begin{equation}
+\tag{A.7}
+   \begin{split}
+      (\lambda I - A) B &amp; = (\lambda I - A) \sum_{i=0}^{n-1} \lambda^i B_i \\
+      &amp; = \lambda^n B_{n-1} + \sum_{i=1}^{n-1} \lambda^i (-A B_i + B_{i-1}) - A B_0
+   \end{split}
+\end{equation}\]</span></p>
+<p>Since <span class="math inline">\(\lambda\)</span> can be arbitrarily set, matching the coefficients of <a href="app-lti-system-theory.html#eq:adjugate-1">(A.6)</a> and <a href="app-lti-system-theory.html#eq:adjugate-2">(A.7)</a>, we have
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      B_{n-1} &amp; = I \\
+      -A B_i + B_{i-1} &amp; = a_{n-i} I, \quad i = 1 \dots n - 1 \\
+      -A B_0 &amp; = a_n I
+   \end{split}
+\end{equation*}\]</span>
+Thus, we have
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      &amp; B_{n-1} \cdot A^n + \sum_{i=1}^{n-1} (-A B_i + B_{i-1}) \cdot A^i + (-A B_0) \cdot I \\
+      = &amp; I \cdot A^n + \sum_{i=1}^{n-1} (a_{n-i} I) \cdot A^i + (a_n I) \cdot I \\
+      = &amp; A^n + a_1 A^{n-1} + a_2 A^{n-2} + \dots + a_n I
+   \end{split}
+\end{equation*}\]</span>
+On the other hand, one can easily check that
+<span class="math display">\[
+   B_{n-1} \cdot A^n + \sum_{i=1}^{n-1} (-A B_i + B_{i-1}) \cdot A^i + (-A B_0) \cdot I = 0
+\]</span>
+since each term offsets completely. Therefore,
+<span class="math display">\[
+   A^n + a_1 A^{n-1} + a_2 A^{n-2} + \dots + a_n I = 0,
+\]</span>
+concluding the proof.</p>
+</div>
+</div>
+<p>Here are some corollaries of the Cayley-Hamilton Theorem.</p>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:cayham-1" class="corollary"><strong>Corollary A.2  </strong></span>For any <span class="math inline">\(A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}, k \ge n\)</span>, <span class="math inline">\(A^k B\)</span> is a linear combination of <span class="math inline">\(B, AB, A^2B, \dots, A^{n-1}B\)</span>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-15" class="proof"><em>Proof</em>. </span>Directly from Cayley Hamilton Theorem, <span class="math inline">\(A^n\)</span> can be expressed as a linear combination of <span class="math inline">\(I, A, A^2, \dots, A^{n-1}\)</span>. By recursion, it is easy to show that for all <span class="math inline">\(m &gt; n\)</span>, <span class="math inline">\(A^m\)</span> is also a linear combination of <span class="math inline">\(I, A, A^2, \dots, A^{n-1}\)</span>. Post-multiply both sides with <span class="math inline">\(B\)</span>, we get what we want.</p>
+</div>
+</div>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:cayham-2" class="corollary"><strong>Corollary A.3  </strong></span>For any <span class="math inline">\(A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}, k &gt; n\)</span>, the following equality always holds:
+<span class="math display">\[
+   \text{rank}(\begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix}) =
+   \text{rank}(\begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{k-1} B \end{bmatrix})
+\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-16" class="proof"><em>Proof</em>. </span>First prove LHS <span class="math inline">\(\le\)</span> RHS. <span class="math inline">\(\forall v \in \mathbb{C}^n\)</span> such that
+<span class="math display">\[
+   v^* \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{k-1} B \end{bmatrix} = v^* \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1}B &amp; \dots A^{k-1}B \end{bmatrix} = 0
+\]</span>
+<span class="math inline">\(v^* \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix} = 0\)</span> must hold.</p>
+<p>Second prove LHS <span class="math inline">\(\ge\)</span> RHS. For any <span class="math inline">\(v \in \mathbb{C}^n\)</span> such that <span class="math inline">\(v^* \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix} = 0\)</span> and any <span class="math inline">\(k &gt; n\)</span>, by Corollary <a href="app-lti-system-theory.html#cor:cayham-1">A.2</a>, there exists a sequence <span class="math inline">\(c_i, i = 0 \dots n-1\)</span> satisfy the following:
+<span class="math display">\[
+   v^* A^k B = v^* \sum_{i=0}^{n-1} c_i A^i B = 0
+\]</span>
+Therefore, <span class="math inline">\(v^* \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{k-1} B \end{bmatrix} = 0\)</span>.</p>
+</div>
+</div>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:cayham-3" class="corollary"><strong>Corollary A.4  </strong></span>For any <span class="math inline">\(A \in \mathbb{C}^{n \times n}, B \in \mathbb{C}^{n \times m}\)</span>, define
+<span class="math display">\[
+   \mathcal{C} = \begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix}
+\]</span>
+If <span class="math inline">\(\text{rank}(\mathcal{C}) = k_1 &lt; n\)</span>, there exist a similarity transformation <span class="math inline">\(T\)</span> such that
+<span class="math display">\[
+   T A T^{-1} = \begin{bmatrix}
+      \bar{A}_c &amp; \bar{A}_{12} \\
+      0 &amp; \bar{A}_{\bar{c}}
+   \end{bmatrix}, T B = \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+\]</span>
+where <span class="math inline">\(\bar{A}_c \in \mathbb{C}^{k_1 \times k_1}, \bar{B}_c \in \mathbb{C}^{k_1 \times m}\)</span>. Moreover, the matrix
+<span class="math display">\[\begin{equation*}
+   \bar{\mathcal{C}} := \begin{bmatrix}
+      \bar{B}_c &amp; \bar{A}_c \bar{B}_c &amp; \bar{A}_c^2 \bar{B}_c &amp; \dots &amp; \bar{A}_c^{k_1 - 1} \bar{B}_c
+   \end{bmatrix}
+\end{equation*}\]</span>
+has full row rank.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-17" class="proof"><em>Proof</em>. </span>Since <span class="math inline">\(\mathcal{C}\)</span> is not full row rank, we pick <span class="math inline">\(k_1\)</span> linearly independent columns from <span class="math inline">\(\mathcal{C}\)</span>. Denote them as <span class="math inline">\(q_1\dots q_{k_1}\)</span>, <span class="math inline">\(q_i \in \mathbb{C}^n\)</span>. Then, we arbitrarily set other <span class="math inline">\(n-k_1\)</span> vectors <span class="math inline">\(q_{k_1+1} \dots q_{n}\)</span> as long as
+<span class="math display">\[
+Q = \begin{bmatrix}
+   q_1 &amp; \dots &amp; q_{k_1} &amp; q_{k_1+1} &amp; \dots &amp; q_{n}
+\end{bmatrix}
+\]</span>
+is invertible. Define the similarity transformation matrix by <span class="math inline">\(T = Q^{-1}\)</span>. Note that <span class="math inline">\(A q_i\)</span> can be seen as a column picked from <span class="math inline">\(A^{k} B, k \in \left\{1 \dots n\right\}\)</span>, which is guaranteed to be a linear combination of <span class="math inline">\(B, AB, \dots, A^{n-1}B\)</span> from Cayley Hamilton Theorem. Thus, <span class="math inline">\(A q_i\)</span> is bound to be a linear transformation of columns from <span class="math inline">\(\begin{bmatrix} B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix} = \mathcal{C}\)</span>. Since <span class="math inline">\(q_1\dots q_{k_1}\)</span> is the largest linearly independent column vector set from <span class="math inline">\(\mathcal{C}\)</span>, this implies <span class="math inline">\(A q_i\)</span> can be expressed as a linear combination of <span class="math inline">\(q_1\dots q_{k_1}\)</span>:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      A Q &amp; = A T^{-1} = A \begin{bmatrix}
+         q_1 &amp; \dots &amp; q_{k_1} &amp; q_{k_1+1} &amp; \dots &amp; q_{n}
+      \end{bmatrix} \\
+      &amp; = \begin{bmatrix}
+         q_1 &amp; \dots &amp; q_{k_1} &amp; q_{k_1+1} &amp; \dots &amp; q_{n}
+      \end{bmatrix} \begin{bmatrix}
+         \bar{A}_c &amp; \bar{A}_{12} \\
+         0 &amp; \bar{A}_{\bar{c}}
+      \end{bmatrix} = T^{-1} \begin{bmatrix}
+         \bar{A}_c &amp; \bar{A}_{12} \\
+         0 &amp; \bar{A}_{\bar{c}}
+      \end{bmatrix}
+   \end{split}
+\end{equation*}\]</span>
+Similarly, <span class="math inline">\(B\)</span> itself is part of <span class="math inline">\(\mathcal{C}\)</span>. Therefore, each column of <span class="math inline">\(B\)</span> is naturally a linear combination of <span class="math inline">\(q_1 \dots q_{k_1}\)</span>:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      B = \begin{bmatrix}
+         q_1 &amp; \dots &amp; q_{k_1} &amp; q_{k_1+1} &amp; \dots &amp; q_{n}
+      \end{bmatrix} \begin{bmatrix}
+         \bar{B}_c \\ 0
+      \end{bmatrix}
+   \end{split} = T^{-1} \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+\end{equation*}\]</span>
+To see <span class="math inline">\(\bar{\mathcal{C}}\)</span> has full row rank, note that <span class="math inline">\(\text{rank} \mathcal{C} = k_1\)</span> and
+<span class="math display">\[\begin{equation*}
+   \mathcal{C} = T^{-1} \begin{bmatrix}
+      \bar{B}_c &amp; \bar{A}_c \bar{B}_c &amp; \bar{A}_c^2 \bar{B}_c &amp; \dots &amp; \bar{A}_c^{k_1 - 1} \bar{B}_c &amp; \dots &amp; \bar{A}_c^{n - 1} \bar{B}_c \\
+      0 &amp; 0 &amp; 0 &amp; \dots &amp; 0 &amp; \dots &amp; 0
+   \end{bmatrix}
+\end{equation*}\]</span>
+Thus,
+<span class="math display">\[\text{rank}\begin{bmatrix}
+   \bar{B}_c &amp; \bar{A}_c \bar{B}_c &amp; \bar{A}_c^2 \bar{B}_c &amp; \dots &amp; \bar{A}_c^{k_1 - 1} \bar{B}_c &amp; \dots &amp; \bar{A}_c^{n - 1} \bar{B}_c
+\end{bmatrix} = k_1.
+\]</span>
+By Corollary <a href="app-lti-system-theory.html#cor:cayham-2">A.3</a>, <span class="math inline">\(\text{rank}\bar{\mathcal{C}} = k_1\)</span>.</p>
+</div>
+</div>
+<p>The following Corollary is especially useful in the study of pole assignment in the single-input-multiple-output (SIMO) LTI system.</p>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:cayham-4" class="corollary"><strong>Corollary A.5  </strong></span>For any <span class="math inline">\(A \in \mathbb{C}^{n \times n}, b \in \mathbb{C}^{n}\)</span>, if
+<span class="math display">\[\begin{equation*}
+   \mathcal{C} = \begin{bmatrix}
+      b &amp; Ab &amp; \dots &amp; A^{n-1}b
+   \end{bmatrix} \in \mathbb{C}^{n \times n}
+\end{equation*}\]</span>
+has full rank, then there exists a similarity transformation <span class="math inline">\(T\)</span> such that
+<span class="math display">\[\begin{equation*}
+      T A T^{-1} = A_1 := \begin{bmatrix}
+         -a_1 &amp; -a_2 &amp; \dots &amp; -a_{n-1} &amp; -a_n \\
+         1 &amp; 0 &amp; \dots &amp; 0 &amp; 0 \\
+         0 &amp; 1 &amp; \dots &amp; 0 &amp; 0 \\
+         \vdots &amp; \vdots &amp;  &amp; \vdots &amp; \vdots \\
+         0 &amp; 0 &amp; \dots &amp; 1 &amp; 0
+      \end{bmatrix}, \quad
+      T b = b_1 := \begin{bmatrix}
+         1 \\ 0 \\ 0 \\ \vdots \\ 0
+      \end{bmatrix}
+\end{equation*}\]</span>
+where <span class="math inline">\(a_1, \dots, a_n\)</span> are the coefficients of <span class="math inline">\(A\)</span>’s characteristic polynomial:
+<span class="math display">\[\begin{equation*}
+   \det(A - \lambda I) = \lambda^{n} + a_1 \lambda^{n-1} + \dots + a_n \lambda  
+\end{equation*}\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-18" class="proof"><em>Proof</em>. </span>Since <span class="math inline">\(\mathcal{C}\)</span> is invertible, define its inverse
+<span class="math display">\[\begin{equation*}
+   \mathcal{C}^{-1} = \begin{bmatrix}
+      M_1 \\ M_2 \\ \dots \\ M_n
+   \end{bmatrix}
+\end{equation*}\]</span>
+where <span class="math inline">\(M_i \in \mathbb{C}^{1 \times n}\)</span>. Then,
+<span class="math display">\[\begin{equation*}
+   I = \mathcal{C}^{-1} \mathcal{C} = \begin{bmatrix}
+      M_1 b &amp; M_1 Ab &amp; \dots &amp; M_1 A^{n-1}b \\
+      M_2 b &amp; M_2 Ab &amp; \dots &amp; M_2 A^{n-1}b \\
+      \vdots &amp; \vdots &amp;  &amp; \vdots \\
+      M_n b &amp; M_n Ab &amp; \dots &amp; M_n A^{n-1}b
+   \end{bmatrix} \Longrightarrow \begin{cases}
+      M_n A^{n-1}b = 1 \\
+      M_n A^ib = 0, \ i = 0,\dots, n-2
+   \end{cases}
+\end{equation*}\]</span>
+Now we claim that the transformation matrix <span class="math inline">\(T\)</span> can be constructed as follows:
+<span class="math display">\[\begin{equation*}
+   T = \begin{bmatrix}
+      M_n A^{n-1} \\ M_n A^{n-2} \\ \dots \\ M_n
+   \end{bmatrix}
+\end{equation*}\]</span>
+We first show <span class="math inline">\(T\)</span> is invertible by calculating <span class="math inline">\(T \mathcal{C}\)</span>:
+<span class="math display">\[\begin{equation*}
+   T \mathcal{C} = \begin{bmatrix}
+      M_n A^{n-1}b &amp; \star &amp; \dots &amp; \star \\
+      M_n A^{n-2}b &amp; M_n A^{n-1}b &amp; \dots &amp; \star \\
+      \vdots &amp; \vdots &amp;  &amp; \vdots \\
+      M_n b &amp; M_n Ab &amp; \dots &amp; M_n A^{n-1}b
+   \end{bmatrix} = \begin{bmatrix}
+      1 &amp; \star &amp; \dots &amp; \star \\
+      0 &amp; 1 &amp; \dots &amp; \star \\
+      \vdots &amp; \vdots &amp;  &amp; \vdots \\
+      0 &amp; 0 &amp; \dots &amp; 1
+   \end{bmatrix}
+\end{equation*}\]</span>
+Then we calculate <span class="math inline">\(Tb\)</span> and <span class="math inline">\(TA\)</span>:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      Tb &amp; = \begin{bmatrix}
+         M_n A^{n-1}b \\ M_n A^{n-2}b \\ \vdots \\ M_n b
+      \end{bmatrix} = \begin{bmatrix}
+         1 \\ 0 \\ \vdots \\ 0
+      \end{bmatrix} \\
+      T A &amp; = \begin{bmatrix}
+         M_n A^n \\ M_n A^{n-1} \\ \vdots \\ M_n A
+      \end{bmatrix} = \begin{bmatrix}
+         -M_n \cdot \sum_{i=0}^{n-1} a_{n-i} A^i \\ M_n A^{n-1} \\ \vdots \\ M_n A
+      \end{bmatrix} \\
+      &amp; = \begin{bmatrix}
+            -a_1 &amp; -a_2 &amp; \dots &amp; -a_{n-1} &amp; -a_n \\
+            1 &amp; 0 &amp; \dots &amp; 0 &amp; 0 \\
+            0 &amp; 1 &amp; \dots &amp; 0 &amp; 0 \\
+            \vdots &amp; \vdots &amp;  &amp; \vdots &amp; \vdots \\
+            0 &amp; 0 &amp; \dots &amp; 1 &amp; 0
+      \end{bmatrix} \begin{bmatrix}
+         M_n A^{n-1} \\ M_n A^{n-2} \\ \vdots \\ M_n A \\ M_n
+      \end{bmatrix} = A_1 T
+   \end{split}
+\end{equation*}\]</span>
+where the penultimate equality uses Cayley Hamilton Theorem.</p>
+</div>
+</div>
+</div>
+<div id="equivalent-statements-for-controllability" class="section level3 hasAnchor" number="7.2.2">
+<h3><span class="header-section-number">A.2.2</span> Equivalent Statements for Controllability<a href="app-lti-system-theory.html#equivalent-statements-for-controllability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>There are a few equivalent statements to express an LTI system’s controllability that one should be familiar with:</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:lticontrollable" class="theorem"><strong>Theorem A.5  (Equivalent Statements for Controllability) </strong></span>The following statements are equivalent <span class="citation">(<a href="#ref-chen1984book-linear">Chen 1984</a>)</span>, <span class="citation">(<a href="#ref-zhou1996book-robust">Zhou, Doyle, and Glover 1996</a>)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\((A, B)\)</span> is controllable.</p></li>
+<li><p>The matrix
+<span class="math display">\[
+W_c(t) := \int_{0}^{t} e^{A\tau} B B^* e^{A^* \tau} d\tau
+\]</span>
+is positive definite for any <span class="math inline">\(t &gt; 0\)</span>.</p></li>
+<li><p>The controllability matrix
+<span class="math display">\[
+\mathcal{C} = \begin{bmatrix}
+   B &amp; AB &amp; A^2 B &amp; \dots &amp; A^{n-1} B
+\end{bmatrix}
+\]</span>
+has full row rank.</p></li>
+<li><p>The matrix <span class="math inline">\([A - \lambda I, B]\)</span> has full row rank for all <span class="math inline">\(\lambda \in \mathbb{C}\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(x\)</span> be any eigenvalue and any corresponding left eigenvector <span class="math inline">\(A\)</span>, i.e., <span class="math inline">\(x^* A = x^* \lambda\)</span>, then <span class="math inline">\(x^* B \ne 0\)</span>.</p></li>
+<li><p>The eigenvalues of <span class="math inline">\(A+BF\)</span> can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs) by a suitable choice of <span class="math inline">\(F\)</span>.</p></li>
+<li><p>If, in addition, all eigenvalues of <span class="math inline">\(A\)</span> have negative real parts, then the unique solution of
+<span class="math display">\[
+A W_c + W_c A^* = -B B^*
+\]</span>
+is positive definite. The solution is called the <em>controllability Gramian</em> and can be expressed as
+<span class="math display">\[
+W_c = \int_{0}^{\infty} e^{A \tau} B B^* e^{A^* \tau} d\tau
+\]</span></p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-19" class="proof"><em>Proof</em>. </span>(<span class="math inline">\(1. \Rightarrow 2.\)</span>) Prove by contradiction. Assume that <span class="math inline">\((A, B)\)</span> is controllable but <span class="math inline">\(W_c(t_1)\)</span> is singular for some <span class="math inline">\(t_1 &gt; 0\)</span>. This implies there exists a real vector <span class="math inline">\(v \ne 0 \in \mathbb{R}^n\)</span>, s.t.
+<span class="math display">\[
+   v^* W_c(t_1) v = v^* (\int_{0}^{t_1} e^{At} B B^* e^{A^*t} dt) v = \int_{0}^{t_1} v^* (e^{At} B B^* e^{A^*t}) v \ dt = 0
+\]</span>
+Since <span class="math inline">\(e^{At} BB^* e^{A^*t} \succeq 0\)</span> for all <span class="math inline">\(t\)</span>, we must have
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      &amp; v^* (e^{At} B B^* e^{A^*t}) v = \parallel v^* B e^{At} \parallel^2 = 0, \quad \forall t \in [0, t_1] \\
+      \Longrightarrow &amp; v^* B e^{At} = 0, \quad \forall t \in [0, t_1]
+   \end{split}
+\end{equation*}\]</span>
+Setting <span class="math inline">\(x(t_1) = 0\)</span>, from <a href="app-lti-system-theory.html#eq:app-lti-xy">(A.5)</a>, we have
+<span class="math display">\[
+   0 = e^{A t_1} x(0) + \int_{0}^{t_1} e^{A (t_1 - \tau)} B u(\tau) d\tau = 0
+\]</span>
+Pre-multiply the above equation by <span class="math inline">\(v^*\)</span>, then
+<span class="math display">\[
+   0 = v^* e^{A t_1} x(0)
+\]</span>
+Since <span class="math inline">\(x(0)\)</span> can be chosen arbitrarily, we set <span class="math inline">\(x(0) = v e^{-A t_1}\)</span>, which results in <span class="math inline">\(v = 0\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(2. \Rightarrow 1.\)</span>) For any <span class="math inline">\(x(0) = x_0, t_1 &gt; 0, x(t_1) = x_1\)</span>, since <span class="math inline">\(W_c(t_1) \succ 0\)</span>, we set the control inputs as
+<span class="math display">\[
+   u(t) = -B^* e^{A^*(t_1 - t)} W_c^{-1}(t_1) [e^{At_1} x_0 - x_1]
+\]</span>
+We claim that the picked <span class="math inline">\(u(t)\)</span> satisfies <a href="app-lti-system-theory.html#eq:app-lti-xy">(A.5)</a> by
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      &amp; e^{At} x_0 + \int_{0}^{t_1} e^{A(t_1-t)} B u(t) dt \\
+      &amp; = e^{At} x_0 - \int_{0}^{t_1} e^{A(t_1-t)} B B^* e^{A^*(t_1-t)} dt \cdot W_c^{-1}(t_1) [e^{At_1} x_0 - x_1] \\
+      &amp; \overset{\tau = t_1-t}{=} e^{At} x_0 - \underbrace{\int_{0}^{t_1} e^{A\tau} BB^* e^{A^*\tau} d\tau}_{W_c(t_1)} \cdot W_c^{-1}(t_1) [e^{At_1} x_0 - x_1] \\
+      &amp; = e^{At} x_0 - [e^{At_1} x_0 - x_1] = x_1
+   \end{split}
+\end{equation*}\]</span></p>
+<p>(<span class="math inline">\(2. \Rightarrow 3.\)</span>) Prove by contradiction. Suppose <span class="math inline">\(W_c(t) \succ 0, \forall t &gt; 0\)</span> but <span class="math inline">\(\mathcal{C}\)</span> is not of full row rank. Then there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span>, s.t.
+<span class="math display">\[
+   v^* A^k B = 0, \quad k = 0 \dots n - 1
+\]</span>
+By Corollary <a href="app-lti-system-theory.html#cor:cayham-1">A.2</a>, we have
+<span class="math display">\[
+   v^* A^k B = 0, \ \forall k \in \mathbb{N} \Longrightarrow v^* e^{At} B = 0, \ \forall t &gt; 0
+\]</span>
+which implies
+<span class="math display">\[
+   v^* W_c(t) v = v^* (\int_{0}^{t} e^{A\tau} B B^* e^{A^*\tau} d\tau) v = 0, \quad \forall t &gt; 0
+\]</span>
+Contradiction!</p>
+<p>(<span class="math inline">\(3. \Rightarrow 2.\)</span>) Prove by contradiction. Suppose <span class="math inline">\(\mathcal{C}\)</span> has full row rank but <span class="math inline">\(W_c(t_1)\)</span> is singular at some <span class="math inline">\(t_1 &gt; 0\)</span>. Then, similar to the proof in (<span class="math inline">\(1. \Rightarrow 2.\)</span>), there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span>, s.t. <span class="math inline">\(F(t) := v^* e^{At} B \equiv 0, \forall t \in [0, t_1]\)</span>. Since <span class="math inline">\(F(t)\)</span> is infinitely differentiable, we get its <span class="math inline">\(i\)</span>’s derivative at <span class="math inline">\(t=0\)</span>, where <span class="math inline">\(i = 0, 1, \dots n-1\)</span>. This results in
+<span class="math display">\[\begin{equation*}
+   \left. \frac{d^i F}{dt^i} \right|_{t=0} = \left. v^* A^{i} e^{At} B \right|_{t=0} = v^* A^i B = 0, \quad i = 0 \dots n-1
+\end{equation*}\]</span>
+Thus, <span class="math inline">\(v^* \begin{bmatrix}  B &amp; AB &amp; \dots &amp; A^{n-1} B \end{bmatrix} = 0\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(3. \Rightarrow 4.\)</span>) Proof by contradiction. Suppose <span class="math inline">\([A - \lambda I, B]\)</span> does not have full row rank for some <span class="math inline">\(\lambda \in \mathbb{C}\)</span>. Then, there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span>, s.t. <span class="math inline">\(v^* [A - \lambda I, B] = 0\)</span>. This implies <span class="math inline">\(v^* A = v^* \lambda\)</span> and <span class="math inline">\(v^* B = 0\)</span>. On the other hand,
+<span class="math display">\[\begin{equation*}
+   v^* \begin{bmatrix}
+      B &amp; AB &amp; \dots &amp; A^{n-1}B
+   \end{bmatrix} = v^* \begin{bmatrix}
+      B &amp; \lambda B &amp; \dots &amp; \lambda^{n-1} B
+   \end{bmatrix} = 0
+\end{equation*}\]</span>
+Contradiction!</p>
+<p>(<span class="math inline">\(4. \Rightarrow 5.\)</span>) Proof by contradiction. If there exists a left eigenvector and eigenvalue pair <span class="math inline">\((x, \lambda)\)</span>, s.t. <span class="math inline">\(x^* A = \lambda x^*\)</span> while <span class="math inline">\(x^*B = 0\)</span>, then <span class="math inline">\(x^* [A - \lambda I, B] = 0\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(5. \Rightarrow 3.\)</span>) Proof by contradiction. If the controllability matrix <span class="math inline">\(\mathcal{C}\)</span> does not have full row rank, i.e., <span class="math inline">\(\text{rank}(\mathcal{C}) = k &lt; n\)</span>. Then, from Corollary <a href="app-lti-system-theory.html#cor:cayham-3">A.4</a>, there exists a similarity transformation <span class="math inline">\(T\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_{c} &amp; \bar{A}_{12} \\
+      0 &amp; \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\ 0
+   \end{bmatrix}
+\end{equation*}\]</span>
+where <span class="math inline">\(\bar{A}_c \in \mathbb{R}^{k \times k}, \bar{A}_{\bar{c}} \in \mathbb{R}^{(n-k) \times (n-k)}\)</span>. Now arbitrarily pick one of <span class="math inline">\(\bar{A}_{\bar{c}}\)</span>’s left eigenvector <span class="math inline">\(x_{\bar{c}}\)</span> and its corresponding eigenvalue <span class="math inline">\(\lambda_1\)</span>. Define the vector <span class="math inline">\(x = \begin{bmatrix}  0 \\ x_{\bar{c}} \end{bmatrix}\)</span>. Then,
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      x^* (TAT^{-1}) = \begin{bmatrix}
+         0 &amp; x_{\bar{c}}^*
+      \end{bmatrix} \begin{bmatrix}
+         \bar{A}_{c} &amp; \bar{A}_{12} \\
+         0 &amp; \bar{A}_{\bar{c}}
+      \end{bmatrix} &amp; = \begin{bmatrix}
+         0 &amp; x_{\bar{c}}^* \bar{A}_{\bar{c}}
+      \end{bmatrix} = \begin{bmatrix}
+         0 &amp; \lambda_1 x_{\bar{c}}^*
+      \end{bmatrix} = \lambda_1 x^* \\
+      x^* (TB) &amp; = \begin{bmatrix}
+         0 &amp; x_{\bar{x}}
+      \end{bmatrix} \begin{bmatrix}
+         B_{\bar{c}} \\ 0
+      \end{bmatrix} = 0
+   \end{split}
+\end{equation*}\]</span>
+which implies <span class="math inline">\((TAT^{-1}, TB)\)</span> is not controllable. However, similarity transformation does not change controllability. Contradiction!</p>
+<p>(<span class="math inline">\(6. \Rightarrow 1.\)</span>) Prove by contradiction. If <span class="math inline">\((A, B)\)</span> is not controllable, i.e., <span class="math inline">\(\text{rank}(\mathcal{C}) = k &lt; n\)</span>. Then from Corollary <a href="app-lti-system-theory.html#cor:cayham-3">A.4</a>, there exists a similarity transformation <span class="math inline">\(T\)</span> s.t.
+<span class="math display">\[\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_c &amp; \bar{A}_{12} \\
+      0 &amp; \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\
+      0
+   \end{bmatrix}
+\end{equation*}\]</span>
+Now arbitrarily pick <span class="math inline">\(F \in \mathbb{R}^{m\times n}\)</span> and define <span class="math inline">\(FT^{-1} = [F_1, F_2]\)</span>, where <span class="math inline">\(F_1 \in \mathbb{R}^{m\times k}, F_2 \in \mathbb{R}^{m\times (n-k)}\)</span>. Thus,
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      \text{det}(A+BF-\lambda I) &amp; = \text{det}\left(
+         T^{-1} \begin{bmatrix}
+            \bar{A}_c &amp; \bar{A}_{12} \\
+            0 &amp; \bar{A}_{\bar{c}}
+         \end{bmatrix} T + T^{-1} \begin{bmatrix}
+            \bar{B}_c \\ 0
+         \end{bmatrix} F - \lambda \begin{bmatrix}
+            I_1 &amp; 0 \\
+            0 &amp; I_2
+         \end{bmatrix}
+      \right) \\
+      &amp; = \text{det}\left(
+         T^{-1} \left\{
+            \begin{bmatrix}
+               \bar{A}_c &amp; \bar{A}_{12} \\
+               0 &amp; \bar{A}_{\bar{c}}
+            \end{bmatrix} + \begin{bmatrix}
+               \bar{B}_c \\ 0
+            \end{bmatrix} FT^{-1} - \lambda \begin{bmatrix}
+               I_1 &amp; 0 \\
+               0 &amp; I_2
+            \end{bmatrix}
+         \right\} T
+      \right) \\
+      &amp; = \text{det}\left(
+         \begin{bmatrix}
+            \bar{A}_c &amp; \bar{A}_{12} \\ 0 &amp; \bar{A}_{\bar{c}}
+         \end{bmatrix} + \begin{bmatrix}
+            \bar{B}_c \\ 0
+         \end{bmatrix} \begin{bmatrix}
+            F_1 &amp; F_2
+         \end{bmatrix} - \lambda \begin{bmatrix}
+            I_1 &amp; 0 \\
+            0 &amp; I_2
+         \end{bmatrix}
+      \right) \\
+      &amp; = \text{det} \begin{bmatrix}
+            \bar{A}_c + \bar{B}_c F_1 - \lambda I_1 &amp; \bar{A}_{12} + \bar{B}_c F_2 \\ 0 &amp; \bar{A}_{\bar{c}} - \lambda I_2
+         \end{bmatrix} \\
+      &amp; = \text{det}(\bar{A}_c + \bar{B}_c F_1 - \lambda I_1) \cdot \text{det}(\bar{A}_{\bar{c}} - \lambda I_2)
+   \end{split}
+\end{equation*}\]</span>
+where <span class="math inline">\(I_1\)</span> is the identity matrix of size <span class="math inline">\(k\)</span>. Similarly, <span class="math inline">\(I_2\)</span> of size <span class="math inline">\(n-k\)</span>. Thus, at least <span class="math inline">\(n-k\)</span> eigenvalues of <span class="math inline">\(A+BF\)</span> cannot be freely assigned by choosing <span class="math inline">\(F\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(1. \Rightarrow 6.\)</span>) Here we only represent the SIMO case. For the MIMO case, the proof is far more complex. Interesting readers can refer to <span class="citation">(<a href="#ref-davison1968tac-poleassign">Davison and Wonham 1968</a>)</span> (the shortest proof I can find). Since there is only one input, the matrix <span class="math inline">\(B\)</span> degenerate to vector <span class="math inline">\(b\)</span>. From Corollary <a href="app-lti-system-theory.html#cor:cayham-4">A.5</a>, there exist a similarity transformation matrix <span class="math inline">\(T\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   T A T^{-1} = A_1 := \begin{bmatrix}
+      -a_1 &amp; -a_2 &amp; \dots &amp; -a_{n-1} &amp; -a_n \\
+      1 &amp; 0 &amp; \dots &amp; 0 &amp; 0 \\
+      0 &amp; 1 &amp; \dots &amp; 0 &amp; 0 \\
+      \vdots &amp; \vdots &amp;  &amp; \vdots &amp; \vdots \\
+      0 &amp; 0 &amp; \dots &amp; 1 &amp; 0
+   \end{bmatrix}, \quad
+   T b = b_1 := \begin{bmatrix}
+      1 \\ 0 \\ 0 \\ \vdots \\ 0
+   \end{bmatrix}
+\end{equation*}\]</span>
+For any <span class="math inline">\(F \in \mathbb{C}^{1 \times n}\)</span>, denote <span class="math inline">\(FT^{-1}\)</span> as <span class="math inline">\([f_1, f_2, \dots, f_n]\)</span>. Calculating the characteristic polynomial of <span class="math inline">\(A + bF\)</span>:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      \text{det}(\lambda I - A - bF) &amp; = \text{det}(\lambda I - T^{-1}A_1 T - T^{-1} b_1 F) \\
+      &amp; = \text{det}(\lambda I - A_1 - b_1 F T^{-1}) \\
+      &amp; = \text{det} \begin{bmatrix}
+         \lambda + a_1 - f_1 &amp; \lambda + a_2 - f_2 &amp; \dots &amp; \lambda + a_{n-1} - f_{n-1} &amp; \lambda + a_n - f_n \\
+         -1 &amp; \lambda &amp; \dots &amp; 0 &amp; 0 \\
+         0 &amp; -1 &amp; \dots &amp; 0 &amp; 0 \\
+         \vdots &amp; \vdots &amp;  &amp; \vdots &amp; \vdots \\
+         0 &amp; 0 &amp; \dots &amp; -1 &amp; \lambda
+      \end{bmatrix} \\
+      &amp; = \lambda^n + (a_1 - f_1) \lambda^{n-1} + \dots + (a_n - f_n)
+   \end{split}
+\end{equation*}\]</span>
+By choosing <span class="math inline">\([f_1, f_2, \dots, f_n]\)</span>, <span class="math inline">\(A+bF\)</span>’s eigenvalues can be arbitrarily set.</p>
+<p>(<span class="math inline">\(7. \Rightarrow 1.\)</span>) Prove by contradiction. Assume that <span class="math inline">\((A, B)\)</span> is not controllable. Then from 2., there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span> and <span class="math inline">\(t_1 &gt; 0\)</span>,
+<span class="math display">\[\begin{equation*}
+   F(t) = v^* e^{At} B = 0, \quad \forall t \in [0, t_1]
+\end{equation*}\]</span>
+Now consider <span class="math inline">\(F(z) = v^* e^{Az} B, z\in \mathcal{C}\)</span>, which is a vector of analytic function in complex analysis. For a arbitrary <span class="math inline">\(t_2 \in (0, t_1)\)</span>, we have <span class="math inline">\(F^{(i)}(t_2) = 0, \forall i \in \mathbb{N}\)</span>. Then, by invoking the fact from complex analysis: “Let <span class="math inline">\(G\)</span> a connected open set and <span class="math inline">\(f: G \rightarrow \mathbb{C}\)</span> be analytic, then <span class="math inline">\(f \equiv 0\)</span> on <span class="math inline">\(G\)</span>, if and only if there is a point <span class="math inline">\(a \in G\)</span> such that <span class="math inline">\(f^{(i)}(a) = 0, \forall n \in \mathbb{N}\)</span>”, we have <span class="math inline">\(f(z) \equiv 0, \forall z \in \mathbb{C}\)</span>.</p>
+<p>On the other hand, however, <span class="math inline">\(W_c \succ 0\)</span> implies there exists <span class="math inline">\(t_3 &gt; 0\)</span>, such that for the above <span class="math inline">\(v\)</span>, we have <span class="math inline">\(v^* e^{At_3} B \ne 0\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(1. \Rightarrow 7.\)</span>) Since <span class="math inline">\((A, B)\)</span> is controllable, from 2., <span class="math inline">\(W_c(t) \succ 0, \forall t\)</span>. Therefore, <span class="math inline">\(W_c \succ 0\)</span>. The existence and uniqueness of the solution for <span class="math inline">\(AW_c + W_cA^* = -BB^*\)</span> can be obtained directly from the proof of Theorem <a href="app-lti-system-theory.html#thm:lyapunovequation">A.3</a>, by setting <span class="math inline">\(Q\)</span> there to be positive semidefinite.</p>
+</div>
+</div>
+</div>
+<div id="duality" class="section level3 hasAnchor" number="7.2.3">
+<h3><span class="header-section-number">A.2.3</span> Duality<a href="app-lti-system-theory.html#duality" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Although controllability and observability seemingly have no direct connections from their definitions <a href="app-lti-system-theory.html#def:lticontrollable">A.2</a> and <a href="app-lti-system-theory.html#def:ltiobservable">A.3</a>, the following theorem <span class="citation">(<a href="#ref-chen1984book-linear">Chen 1984</a>)</span> states their tight relations.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:lti-dual-conobs" class="theorem"><strong>Theorem A.6  (Theorem of Duality) </strong></span>The pair <span class="math inline">\((C,A)\)</span> is observable if and only if <span class="math inline">\((A^*,C^*)\)</span> is controllable.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-20" class="proof"><em>Proof</em>. </span></p>
+<ol style="list-style-type: decimal">
+<li>We first show that <span class="math inline">\((C,A)\)</span> is observable if and only if the <span class="math inline">\(n \times n\)</span> matrix <span class="math inline">\(W_o(t) = \int_{0}^{t} e^{A^*\tau} C^*C e^{A\tau}\)</span> is positive definite (nonsingular) for any <span class="math inline">\(t&gt;0\)</span>:</li>
+</ol>
+<p>“<span class="math inline">\(\Longleftarrow\)</span>”: From <a href="app-lti-system-theory.html#eq:app-lti-xy">(A.5)</a>, given initial state <span class="math inline">\(x(0)\)</span> and the inputs <span class="math inline">\(u(t)\)</span>, <span class="math inline">\(y(t)\)</span> can be expressed as
+<span class="math display">\[\begin{equation*}
+   y(t) = Ce^{At} x(0) + C \int_{0}^{t} e^{A(t-\tau)} Bu(\tau) d\tau + Du(t)
+\end{equation*}\]</span>
+Define a known function <span class="math inline">\(\bar{y}(t)\)</span> as <span class="math inline">\(y(t) - C \int_{0}^{t} e^{A(t-\tau)} Bu(\tau) d\tau - Du(t)\)</span> and we will get
+<span class="math display">\[\begin{equation*}
+   Ce^{At} x(0) = \bar{y}(t)
+\end{equation*}\]</span>
+Pre-multiply the above equation by <span class="math inline">\(e^{A^*t}C^*\)</span> and integrate it over <span class="math inline">\([0,t_1]\)</span> to yield
+<span class="math display">\[\begin{equation*}
+   (\int_{0}^{t_1} e^{A^*t} C^*C e^{At} dt) x(0) = W_o(t_1) x(0) = \int_{0}^{t_1} e^{A^*t} C^* \bar{y}(t) dt
+\end{equation*}\]</span>
+Since <span class="math inline">\(W_o(t_1) \succ 0\)</span>,
+<span class="math display">\[\begin{equation*}
+   x(0) = W_o(t_1)^{-1} \int_{0}^{t_1} e^{A^*t} C^* \bar{y}(t) dt
+\end{equation*}\]</span>
+can be observed.</p>
+<p>“<span class="math inline">\(\Longrightarrow\)</span>”: Prove by contradiction. Suppose <span class="math inline">\((C,A)\)</span> is observable but there exists <span class="math inline">\(t_1 &gt;0\)</span>, s.t. <span class="math inline">\(W_o(t_1)\)</span> is singular. This implies there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   v^* W_o(t_1) v = 0 \Longrightarrow Ce^{At} v \equiv 0, \ \forall t \in [0,t_1]
+\end{equation*}\]</span>
+Similar to the proof of Theorem <a href="app-lti-system-theory.html#thm:lticontrollable">A.5</a> (<span class="math inline">\(7. \Rightarrow 1.\)</span>), we can use conclusions from complex analysis to claim that <span class="math inline">\(Ce^{At} v \equiv 0, \forall t &gt;0\)</span>.
+On the other hand, we set <span class="math inline">\(u(t) \equiv 0\)</span>, which results in <span class="math inline">\(y(t) = Ce^{At}x(0)\)</span>. In this case <span class="math inline">\(x(0) = 0\)</span> and <span class="math inline">\(x(0) = v \ne 0\)</span> will lead to the same output responses <span class="math inline">\(y(t)\)</span> over <span class="math inline">\(t&gt;0\)</span>, which implies <span class="math inline">\((C,A)\)</span> is not observable. Contradiction!</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Next we show the duality of controllability and observability:</li>
+</ol>
+<p>From (1) we know <span class="math inline">\((C,A)\)</span> is controllable if and only of
+<span class="math display">\[\begin{equation*}
+   \int_{0}^{t} e^{A^*\tau} C^*C e^{A\tau} d\tau = \int_{0}^{t} e^{(A^*)\tau} (C^*)^* (C^*) e^{(A^*)^*\tau} d\tau
+\end{equation*}\]</span>
+is nonsingular for all <span class="math inline">\(t &gt;0\)</span>. The latter is exactly the definition of <span class="math inline">\((A^*, C^*)\)</span>’s controllability Gramian <span class="math inline">\(W_c(t)\)</span>.</p>
+</div>
+</div>
+</div>
+<div id="equivalent-statements-for-observability" class="section level3 hasAnchor" number="7.2.4">
+<h3><span class="header-section-number">A.2.4</span> Equivalent Statements for Observability<a href="app-lti-system-theory.html#equivalent-statements-for-observability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>With the Theorem of Duality <a href="app-lti-system-theory.html#thm:lti-dual-conobs">A.6</a>, we can directly write down the equivalent statements of observability without any additional proofs:</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ltiobservable" class="theorem"><strong>Theorem A.7  (Equivalent Statements for Observability) </strong></span>The following statements are equivalent <span class="citation">(<a href="#ref-chen1984book-linear">Chen 1984</a>)</span>, <span class="citation">(<a href="#ref-zhou1996book-robust">Zhou, Doyle, and Glover 1996</a>)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\((C, A)\)</span> is observable.</p></li>
+<li><p>The matrix
+<span class="math display">\[\begin{equation*}
+W_o(t) := \int_{0}^{t} e^{A^*\tau} C^* C e^{A\tau} d\tau
+\end{equation*}\]</span>
+is positive definite for any <span class="math inline">\(t&gt;0\)</span>.</p></li>
+<li><p>The observability matrix
+<span class="math display">\[\begin{equation*}
+\mathcal{O} = \begin{bmatrix}
+   C \\ CA \\ CA^2 \\ \dots \\ CA^{n-1}
+\end{bmatrix}
+\end{equation*}\]</span>
+has full column rank.</p></li>
+<li><p>The matrix <span class="math inline">\(\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}\)</span> has full column rank for all <span class="math inline">\(\lambda \in \mathbb{C}\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(y\)</span> be any eigenvalue and any corresponding right eigenvector of <span class="math inline">\(A\)</span>, i.e., <span class="math inline">\(Ay = \lambda y\)</span>, then <span class="math inline">\(Cy \ne 0\)</span>.</p></li>
+<li><p>The eigenvalues of <span class="math inline">\(A+LC\)</span> can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs) by a suitable choice of <span class="math inline">\(L\)</span>.</p></li>
+<li><p><span class="math inline">\((A^*, C^*)\)</span> is controllable.</p></li>
+<li><p>If, in addition, all eigenvalues of <span class="math inline">\(A\)</span> have negative parts, then the unique solution of
+<span class="math display">\[\begin{equation*}
+A^* W_o + W_o A = -C^* C
+\end{equation*}\]</span>
+is positive definite. The solution is called the <em>observability Gramian</em> and can be expressed as
+<span class="math display">\[\begin{equation*}
+W_o = \int_{0}^{\infty} e^{A^*\tau} C^* C e^{A\tau} d\tau
+\end{equation*}\]</span></p></li>
+</ol>
+</div>
+</div>
+<hr />
+</div>
+</div>
+<div id="stabilizability-and-detectability" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">A.3</span> Stabilizability And Detectability<a href="app-lti-system-theory.html#stabilizability-and-detectability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To define stabilizability and detectability of an LTI system, we first introduce the concept of <em>system mode</em>, which can be naturally derived from the fifth definition of controllability <a href="app-lti-system-theory.html#thm:lticontrollable">A.5</a> (observability <a href="app-lti-system-theory.html#thm:ltiobservable">A.7</a>).</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ltisystemmode" class="definition"><strong>Definition A.4  (System Mode) </strong></span><span class="math inline">\(\lambda\)</span> is a mode of an LTI system, if it is an eigenvalue of <span class="math inline">\(A\)</span>. The mode <span class="math inline">\(\lambda\)</span> is said to be:</p>
+<ul>
+<li>stable, if <span class="math inline">\(\text{Re}\lambda &lt; 0\)</span>,</li>
+<li>controllable, if <span class="math inline">\(x^* B \ne 0\)</span> for all left eigenvectors of <span class="math inline">\(A\)</span> associated with <span class="math inline">\(\lambda\)</span>,</li>
+<li>observable, if <span class="math inline">\(C x \ne 0\)</span> for all right eigenvectors of <span class="math inline">\(A\)</span> associated with <span class="math inline">\(\lambda\)</span>.</li>
+</ul>
+<p>Otherwise, the mode is said to be uncontrollable (unobservable).</p>
+</div>
+</div>
+<p>With the concept of system mode, the fifth definition of controllability <a href="app-lti-system-theory.html#thm:lticontrollable">A.5</a> (observability <a href="app-lti-system-theory.html#thm:ltiobservable">A.7</a>) can be restated as</p>
+<blockquote>
+<p>An LTI system is controllable (observable) if and only if all modes are controllable (observable).</p>
+</blockquote>
+<p>Stabilizability (detectability) is defined similarly via loosening part of controllability (observability) conditions.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ltistabilizable" class="definition"><strong>Definition A.5  (Stabilizability) </strong></span>An LTI system is said to be stabilizable if all of its unstable modes are controllable.</p>
+</div>
+</div>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ltidetectable" class="definition"><strong>Definition A.6  (Detectability) </strong></span>An LTI system is said to be detectable if all of its unstable modes are observable.</p>
+</div>
+</div>
+<p>Like in the case of controllability and observability, duality also holds in stabilizability and detectability. Moreover, similarity transformation will not influence an LTI system’s stabilizability and detectability.</p>
+<div id="equivalent-statements-for-stabilizability" class="section level3 hasAnchor" number="7.3.1">
+<h3><span class="header-section-number">A.3.1</span> Equivalent Statements for Stabilizability<a href="app-lti-system-theory.html#equivalent-statements-for-stabilizability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ltistabilizable" class="theorem"><strong>Theorem A.8  (Equivalent Statements for Stabilizability) </strong></span>The following statements are equivalent <span class="citation">(<a href="#ref-zhou1996book-robust">Zhou, Doyle, and Glover 1996</a>)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\((A,B)\)</span> is stabilizable.</p></li>
+<li><p>For all <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(x\)</span> such that <span class="math inline">\(x^* A = \lambda x^*\)</span> and <span class="math inline">\(\text{Re} \lambda \ge 0\)</span>, <span class="math inline">\(x^* B \ne 0\)</span>.</p></li>
+<li><p>The matrix <span class="math inline">\([A-\lambda I, B]\)</span> has full rank for all <span class="math inline">\(\text{Re} \lambda \ge 0\)</span>.</p></li>
+<li><p>There exists a matrix <span class="math inline">\(F\)</span> such that <span class="math inline">\(A+BF\)</span> are Hurwitz.</p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-21" class="proof"><em>Proof</em>. </span>(<span class="math inline">\(1. \Leftrightarrow 2.\)</span>) Directly from stabilizability’s definition.</p>
+<p>(<span class="math inline">\(2. \Leftrightarrow 3.\)</span>) If 2. holds but 3. not hold, then there exists <span class="math inline">\(v \ne 0 \in \mathbb{C}^n\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   v^* [A-\lambda I, B] = 0 \Leftrightarrow v^* A = \lambda v^*, v^* B = 0, \text{Re} \lambda \ge 0
+\end{equation*}\]</span>
+Contradiction! Vice versa.</p>
+<p>(<span class="math inline">\(4. \Rightarrow 2.\)</span>) Prove by contradiction. Suppose there <span class="math inline">\(x \ne 0 \in \mathbb{C}^n\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   x^* [A-\lambda I, B] = 0 \Leftrightarrow x^* A = \lambda x^*, x^* B = 0, \text{Re} \lambda \ge 0
+\end{equation*}\]</span>
+Thus, for any <span class="math inline">\(F\)</span>,
+<span class="math display">\[\begin{equation*}
+   x^* (A+BF) = \lambda x^*, \text{Re} \lambda \ge 0
+\end{equation*}\]</span>
+On the other hand, suppose <span class="math inline">\(A+BF\)</span> has <span class="math inline">\(I\)</span> Jordon blocks, with each equipped with an eigenvalue <span class="math inline">\(\eta_i, i = 1\dots I\)</span> (note that <span class="math inline">\(\eta_\alpha\)</span> may be equal to <span class="math inline">\(\eta_\beta\)</span>, i.e., they are equivalent eigenvalues with different Jordon blocks). Since <span class="math inline">\(A+BF\)</span>’s eigenvalues all have negative real parts, <span class="math inline">\(\text{Re} (\eta_i) &lt; 0, i = 1\dots I\)</span>. For each <span class="math inline">\(\eta_i,i \in \left\{1\dots i\right\}\)</span>, denote its <span class="math inline">\(K_i\)</span> generalized left eigenvectors as <span class="math inline">\(v_{i,1}, v_{i,2}, \dots v_{i,K_i}\)</span>. By definition, <span class="math inline">\(\sum_{i=1}^{I} K_i = n\)</span> and<br />
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      v_{i,1}^* (A+BF) &amp; = v_{i,1}^* \cdot \eta_i \\
+      v_{i,2}^* (A+BF) &amp; = v_{i,1}^* + v_{i,2}^* \cdot \eta_i \\
+      &amp; \vdots \\
+      v_{i,K_i}^* (A+BF) &amp; = v_{i,K_i-1}^* + v_{i,K_i}^* \cdot \eta_i
+   \end{split}
+\end{equation*}\]</span>
+for all <span class="math inline">\(i \in \left\{1\dots i\right\}\)</span>. Also, <span class="math inline">\(v_{i,k},i=1\dots I, k=1\dots K_i\)</span> are linearly independent and spans <span class="math inline">\(\mathbb{C}^n\)</span>. Therefore,
+<span class="math display">\[\begin{equation*}
+   x^* = \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^*
+\end{equation*}\]</span>
+which leads to
+<span class="math display">\[\begin{equation*}
+   \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^* (A+BF)
+   = \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot \lambda \cdot v_{i,k}^*
+\end{equation*}\]</span>
+Since <span class="math inline">\(v_{i,k}\)</span>’s are <span class="math inline">\(A+BF\)</span>’s generalized eigenvectors, we have
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      &amp; \sum_{i=1}^{I} \sum_{k=1}^{K_i} \xi_{i,k} \cdot v_{i,k}^* \cdot (A+BF) \\
+      = &amp; \sum_{i=1}^{I} \left\{
+         \xi_{i,1} \cdot \eta_i \cdot v_{i,1}^*  + \sum_{k=2}^{K_i} \xi_{i,k} (v_{i,k-1}^* + \eta_i \cdot v_{i,k}^* )
+      \right\} \\
+      = &amp; \sum_{i=1}^{I} \left\{
+         \sum_{k=1}^{K_i - 1} (\xi_{i,k}\cdot \eta_i + \xi_{i,k+1}) v_{i,k}^* + \xi_{i,K_i} \cdot \eta_i \cdot v_{i,K_i}^*
+      \right\}
+   \end{split}
+\end{equation*}\]</span>
+Combining the above two equations:
+<span class="math display">\[\begin{equation*}
+   \sum_{i=1}^{I} \left\{
+      \sum_{k=1}^{K_i - 1} \left[ \xi_{i,k}\cdot (\eta_i - \lambda) + \xi_{i,k+1} \right] v_{i,k}^*
+      + \xi_{i,K_i} \cdot (\eta_i - \lambda) \cdot v_{i,K_i}^* = 0
+   \right\}
+\end{equation*}\]</span>
+Since <span class="math inline">\(v_{i,k}\)</span>’s are linearly independent, for any <span class="math inline">\(i \in \left\{i\dots I\right\}\)</span>:
+<span class="math display">\[\begin{equation*}
+   \begin{split}
+      \xi_{i,1} \cdot (\eta_i - \lambda) + \xi_{i,2} &amp; = 0 \Rightarrow \xi_{i,2} = (-1) \cdot \xi_{i,1} \cdot (\eta_i - \lambda) \\
+      \xi_{i,2} \cdot (\eta_i - \lambda) + \xi_{i,3} &amp; = 0 \Rightarrow \xi_{i,3} = (-1)^2 \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^2 \\
+      &amp; \vdots \\
+      \xi_{i,K_i-1} \cdot (\eta_i - \lambda) + \xi_{i,K_i} &amp; = 0 \Rightarrow \xi_{i,K_i} = (-1)^{K_i-1} \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^{K_i-1} \\
+      \xi_{i,K_i} \cdot (\eta_i - \lambda) &amp; = 0
+   \end{split}
+\end{equation*}\]</span>
+Thus,
+<span class="math display">\[\begin{equation*}
+   (-1)^{K_i-1} \cdot \xi_{i,1} \cdot (\eta_i - \lambda)^{K_i} = 0
+\end{equation*}\]</span>
+Denote <span class="math inline">\(\xi_{i,1}\)</span> as <span class="math inline">\(r_1 e^{\theta_1}\)</span>, <span class="math inline">\((\eta_i - \lambda)\)</span> as <span class="math inline">\(r_2 e^{\theta_2}\)</span>. Since <span class="math inline">\(\text{Re} \lambda \ge 0, \text{Re}(\eta_i) &lt; 0\)</span>, <span class="math inline">\(r_2 &gt; 0\)</span>. On the other hand, the following equation suggests
+<span class="math display">\[\begin{equation*}
+   r_1 r_2^{K_i-1} e^{j[\theta_1 + \theta_2 (K_i-1)]} = 0
+\end{equation*}\]</span>
+Thus, <span class="math inline">\(r_1\)</span> has to be <span class="math inline">\(0\)</span>, which implies <span class="math inline">\(\xi_{i,1} = 0\)</span>. By recursion, <span class="math inline">\(\xi_{i,k} = 0, \forall k = 1\dots K_i\)</span>. Contradiction!</p>
+<p>(<span class="math inline">\(1. \Rightarrow 4.\)</span>) If <span class="math inline">\((A,B)\)</span> is controllable, then from Theorem (thm:lticontrollable)’s sixth definition, we can freely assign the poles of <span class="math inline">\(A+BF\)</span> via choosing <span class="math inline">\(F\)</span> properly.</p>
+<p>Otherwise, if <span class="math inline">\((A,B)\)</span> is uncontrollable, then from Corollary <a href="app-lti-system-theory.html#cor:cayham-3">A.4</a> and proof of Theorem <a href="app-lti-system-theory.html#thm:lticontrollable">A.5</a> (<span class="math inline">\(6. \Rightarrow 1.\)</span>), there exists a similarity transformation <span class="math inline">\(T\)</span>, s.t.
+<span class="math display">\[\begin{equation*}
+   TAT^{-1} = \begin{bmatrix}
+      \bar{A}_c &amp; \bar{A}_{12} \\
+      0 &amp; \bar{A}_{\bar{c}}
+   \end{bmatrix}, \quad TB = \begin{bmatrix}
+      \bar{B}_c \\
+      0
+   \end{bmatrix}
+\end{equation*}\]</span>
+and
+<span class="math display">\[\begin{equation*}
+   \text{det}(A+BF-\lambda I) = \underbrace{\text{det}(\bar{A}_c + \bar{B}_c F_1 - \lambda I_1)}_{\chi_c(\lambda)} \cdot
+   \underbrace{\text{det}(\bar{A}_{\bar{c}} - \lambda I_2)}_{\chi_{\bar{c}}(\lambda)}
+\end{equation*}\]</span>
+where <span class="math inline">\(\bar{A}_c \in \mathbb{C}^{k_1 \times k_1}\)</span>, <span class="math inline">\(I_1\)</span> identity matrix of size <span class="math inline">\(k_1\)</span>, <span class="math inline">\([F_1,F_2] = FT^{-1}\)</span>, and <span class="math inline">\(k_1 = \text{rank} \mathcal{C}\)</span>. Additionally, <span class="math inline">\((\bar{A}_c, \bar{B}_c)\)</span> is controllable. Thus, <span class="math inline">\(\chi_c(\lambda)\)</span>’s zeros can be freely assigned by choosing proper <span class="math inline">\(F\)</span>, i.e., system modes with <span class="math inline">\(\chi_c(\lambda)\)</span> is controllable, regardless of its stability. On the other hand, system modes with <span class="math inline">\(\chi_{\bar{c}}(\lambda)\)</span> must be stable. Otherwise, we cannot affect it by assigning <span class="math inline">\(F\)</span>, which is a contradiction to statement (1). Therefore, <span class="math inline">\((TAT^{-1}, TB)\)</span> is stabilizable. Since similarity transformation does not change stabilizability, <span class="math inline">\((A,B)\)</span> is stabilizable.</p>
+</div>
+</div>
+</div>
+<div id="equivalent-statements-for-detectability" class="section level3 hasAnchor" number="7.3.2">
+<h3><span class="header-section-number">A.3.2</span> Equivalent Statements for Detectability<a href="app-lti-system-theory.html#equivalent-statements-for-detectability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Thanks to duality, we can directly write down the equivalent statements of observability without any additional proofs:</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ltidetectable" class="theorem"><strong>Theorem A.9  (Equivalent Statements for Detectability) </strong></span>The following statements are equivalent <span class="citation">(<a href="#ref-zhou1996book-robust">Zhou, Doyle, and Glover 1996</a>)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\((C,A)\)</span> is detectable.</p></li>
+<li><p>For all <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(x\)</span> such that <span class="math inline">\(A x = \lambda x\)</span> and <span class="math inline">\(\text{Re} \lambda \ge 0\)</span>, <span class="math inline">\(C x \ne 0\)</span>.</p></li>
+<li><p>The matrix <span class="math inline">\(\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}\)</span> has full rank for all <span class="math inline">\(\text{Re} \lambda \ge 0\)</span>.</p></li>
+<li><p>There exists a matrix <span class="math inline">\(L\)</span> such that <span class="math inline">\(A+LC\)</span> are Hurwitz.</p></li>
+<li><p><span class="math inline">\((A^*, C^*)\)</span> is stabilizable.</p></li>
+</ol>
+</div>
+</div>
+<hr />
+<!-- Consider the linear time-invariant (LTI) system 
+\begin{equation}
+\dot{x} = A x + B u, \quad y = C x + D u,
+(\#eq:app-linear-system)
+\end{equation}
+where $x \in \mathbb{R}^n$ the state, $u \in \mathbb{R}^m$ the control, and $A,B,C,D$ are constant matrices with proper sizes. 
+
+::: {.theorembox}
+::: {.theorem #ltiobservable name="Observability"}
+The following are equivalent for the LTI system \@ref(eq:app-linear-system):
+
+1. $(A,C)$ is observable;
+
+2. The observability grammian
+$$
+W_o (t) = \int_{0}^t e^{A^* \tau} C^* C e^{A\tau} d\tau
+$$
+is positive definite for any $t > 0$;
+
+1. The observability matrix 
+$$
+\mathcal{O} = \begin{bmatrix} C \\ CA \\ CA^2 \\ \vdots \\ C A^{n-1} \end{bmatrix}
+$$
+has full column rank;
+
+1. The matrix $\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}$ has full column rank for all $\lambda \in \mathbb{C}$;
+
+2. For all $\lambda$ and $x$ such that $Ax = \lambda x$, $Cx \neq 0$;
+
+3. The eigenvalues of $A + LC$ can be freely assigned (with the restriction that complex eigenvalues are in conjugate pairs);
+
+4. $(A^*,C^*)$ is controllable.
+:::
+::: -->
+<!-- ::: {.theorembox}
+::: {.theorem #ltidetectable name="Detectability"}
+The following are equivalent for the LTI system \@ref(eq:app-linear-system):
+
+1. $(A,C)$ is detectable;
+
+2. The matrix $\begin{bmatrix} A - \lambda I \\ C \end{bmatrix}$ has full column rank for all $\lambda \in \mathbb{C}$ such that $\mathrm{Re}(\lambda) \geq 0$ ;
+
+3. For all $\lambda$ and $x$ such that $Ax = \lambda x$ and $\mathrm{Re}(\lambda) \geq 0$, $Cx \neq 0$;
+
+4. There exists a matrix $L$ such that $A + LC$ is Hurwitz;
+
+5. $(A^*,C^*)$ is stabilizable.
+:::
+::: -->
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chen1984book-linear" class="csl-entry">
+Chen, Chi-Tsong. 1984. <em>Linear System Theory and Design</em>. Saunders college publishing.
+</div>
+<div id="ref-davison1968tac-poleassign" class="csl-entry">
+Davison, E., and W. Wonham. 1968. <span>“On Pole Assignment in Multivariable Linear Systems.”</span> <em>IEEE Transactions on Automatic Control</em> 13 (6): 747–48. <a href="https://doi.org/10.1109/TAC.1968.1099056">https://doi.org/10.1109/TAC.1968.1099056</a>.
+</div>
+<div id="ref-zhou1996book-robust" class="csl-entry">
+Zhou, Kemin, JC Doyle, and Keither Glover. 1996. <span>“Robust and Optimal Control.”</span> <em>Control Engineering Practice</em> 4 (8): 1189–90.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="adaptivecontrol.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="appconvex.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/OptimalControlEstimation/blob/main/08-appendix.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["optimal-control-estimation.pdf", "optimal-control-estimation.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
