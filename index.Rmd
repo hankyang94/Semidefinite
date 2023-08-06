@@ -1,5 +1,5 @@
 --- 
-title: "Optimal Control and Estimation"
+title: "Semidefinite Optimization and Relaxation"
 author: "Heng Yang"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -8,25 +8,25 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: hankyang94/OptimalControlEstimation
-description: "Lecture notes for Harvard ES/AM 158 Introduction to Optimal Control and Estimation."
+github-repo: hankyang94/Semidefinite
+description: "Lecture notes for Harvard ES/AM 2XX Semidefinite Optimization and Relaxation."
 ---
 
 # Preface {-}
 
-This is the textbook for Harvard ES/AM 158: Introduction to Optimal Control and Estimation. Information about the offerings of the class is listed below.
+This is the textbook for Harvard ES/AM 2XX: Semidefinite Optimization and Relaxation. Information about the offerings of the class is listed below.
 
-#### 2023 Fall {-}
+#### 2024 Spring {-}
 
-**Time**: Mon/Wed 2:15 - 3:30pm
+**Time**: TBD
 
 **Location**: Science and Engineering Complex, Room TBD
 
 **Instructor**: [Heng Yang](https://hankyang.seas.harvard.edu/)
 
-**Teaching Fellow**: [Weiyu Li](https://scholar.harvard.edu/weiyuli/home)
+**Teaching Fellow**: TBD
 
-[**Syllabus**](https://docs.google.com/document/d/1q8_jB5dLx9jHOBi3DQ48Vv2E243ocGCGm_H0mJuOojM/edit?usp=sharing)
+**Syllabus**
 
 
 #### Acknowledgment {-}
