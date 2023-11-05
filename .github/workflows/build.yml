@@ -1,4 +1,4 @@
-name: Build and Deploy the Book
+name: Build and Deploy Book
 
 on:
   push:
