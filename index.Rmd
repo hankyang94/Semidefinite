@@ -20,7 +20,7 @@ This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Rela
 
 **Time**: Mon/Wed 2:15 - 3:30pm
 
-**Location**: Science and Engineering Complex, Room TBD
+**Location**: Science and Engineering Complex, 1.413
 
 **Instructor**: [Heng Yang](https://hankyang.seas.harvard.edu/)
 
@@ -30,3 +30,13 @@ This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Rela
 
 
 #### Acknowledgment {-}
+
+
+# Notation {-}
+
+|                   |          | 
+| :---------------- | :------  |
+| $\mathbb{R}$        |   Real number   |
+| SQL Hat           |   True   |
+| Codecademy Tee    |  False   |
+| Codecademy Hoodie |  False   |
