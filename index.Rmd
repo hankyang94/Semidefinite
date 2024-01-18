@@ -25,7 +25,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\diag}{\mathrm{diag}}
 \newcommand{\Diag}{\mathrm{Diag}}
 \newcommand{\BlkDiag}{\mathrm{BlkDiag}}
-\newcommand{\vec}{\mathrm{vec}}
+\newcommand{\vectorize}{\mathrm{vec}}
 \newcommand{\svec}{\mathrm{svec}}
 \newcommand{\mat}{\mathrm{mat}}
 \newcommand{\smat}{\mathrm{smat}}
@@ -103,7 +103,7 @@ We will use the following standard notation throughout this book.
 | $\succ 0$ and $\prec 0$ | positive / negative definite |
 | $\lambda_\max$ and $\lambda_\min$ | maximum / minimum eigenvalue |
 | $\sigma_\max$ and $\sigma_\min$ | maximum / minimum singular value |
-| $\vec(A)$ | vectorization of $A \in \Real{m \times n}$
+| $\vectorize(A)$ | vectorization of $A \in \Real{m \times n}$
 | $\svec(A)$| symmetric vectorization of $A \in \sym{n}$
 | $\Fnorm{A}$ | Frobenius norm |
 
