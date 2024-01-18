@@ -12,6 +12,38 @@ github-repo: hankyang94/Semidefinite
 description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation."
 ---
 
+\newcommand{\Real}[1]{\mathbb{R}^{#1}}
+\newcommand{\sym}[1]{\mathbb{S}^{#1}}
+\newcommand{\psd}[1]{\sym{#1}_{+}}
+\newcommand{\pd}[1]{\sym{#1}_{++}}
+\newcommand{\inprod}[2]{\langle #1, #2 \rangle}
+\newcommand{\linprod}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\trace}{\mathrm{tr}}
+\newcommand{\tran}{^\top}
+<!-- \newcommand{\det}{\mathrm{det}} -->
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\Diag}{\mathrm{Diag}}
+\newcommand{\BlkDiag}{\mathrm{BlkDiag}}
+\newcommand{\vec}{\mathrm{vec}}
+\newcommand{\svec}{\mathrm{svec}}
+\newcommand{\mat}{\mathrm{mat}}
+\newcommand{\smat}{\mathrm{smat}}
+\newcommand{\norm}[1]{\Vert #1 \Vert}
+\newcommand{\lnorm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\pnorm}[2]{\Vert #1 \Vert_{#2}}
+\newcommand{\Fnorm}[1]{\Vert #1 \Vert_\mathrm{F}}
+\newcommand{\conv}{\mathrm{conv}}
+\newcommand{\cone}{\mathrm{cone}}
+\newcommand{\int}{\mathrm{int}}
+\newcommand{\poly}[1]{\mathbb{R}[#1]}
+\newcommand{\SOd}{\mathrm{SO}(d)}
+\newcommand{\SOthree}{\mathrm{SO}(3)}
+\newcommand{\usphere}{\mathcal{S}}
+\newcommand{\bold}[1]{\boldsymbol{#1}}
+\newcommand{\deg}{\mathrm{deg}}
+
+
 # Preface {-}
 
 This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Relaxation. Information about the offerings of the class is listed below.
@@ -34,9 +66,84 @@ This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Rela
 
 # Notation {-}
 
+We will use the following standard notation throughout this book.
+
+**Basics**
+
 |                   |          | 
 | :---------------- | :------  |
-| $\mathbb{R}$        |   Real number   |
-| SQL Hat           |   True   |
-| Codecademy Tee    |  False   |
-| Codecademy Hoodie |  False   |
+| $\Real{}$        |   real numbers   |
+| $\Real{}_{+}$ | nonnegative real |
+| $\Real{}_{++}$| positive real |
+| $\mathbb{Z}$        |   integers   |
+| $\mathbb{N}$    |  nonnegative integers   |
+| $\Real{n}$ |  $n$-D column vector |
+| $\Real{n}_{+}$| nonnegative orthant |
+| $\Real{n}_{++}$| positive orthant |
+| $e_i$ | standard basic vector |
+| $\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}$ | standard simplex | 
+
+**Matrices**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\mathbb{R}^{m \times n}$ | $m \times n$ real matrices |
+| $\sym{n}$  | $n\times n$ symmetric matrices  |
+| $\psd{n}$ | $n\times n$ positive semidefinite matrices |
+| $\pd{n}$ | $n\times n$ positive definite matrices |
+| $\inprod{A}{B}$ or $\bullet$  | inner product in $\Real{m \times n}$ |
+| $\trace(A)$| trace of $A \in \Real{n \times n}$ |
+| $A\tran$ | matrix transpose |
+| $\det(A)$ | matrix determinant |
+| $\rank(A)$ | rank of a matrix |
+| $\diag(A)$ | diagonal of a matrix $A$ as a vector |
+| $\Diag(a)$ | turning a vector into a diagonal matrix |
+| $\BlkDiag(A,B,\dots)$ | block diagonal matrix with blocks $A,B,\dots$ |
+| $\succeq 0$ and $\preceq 0$ | positive / negative semidefinite |
+| $\succ 0$ and $\prec 0$ | positive / negative definite |
+| $\lambda_\max$ and $\lambda_\min$ | maximum / minimum eigenvalue |
+| $\sigma_\max$ and $\sigma_\min$ | maximum / minimum singular value |
+| $\vec(A)$ | vectorization of $A \in \Real{m \times n}$
+| $\svec(A)$| symmetric vectorization of $A \in \sym{n}$
+| $\Fnorm{A}$ | Frobenius norm |
+
+**Geometry**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\pnorm{a}{p}$ | $p$-norm |
+| $\norm{a}$ | $2$-norm |
+| $B(o,r)$ | ball with center $o$ and radius $r$ |
+| $\conv(S)$ | convex hull of set $S$ |
+| $\cone(S)$ | conical hull of set $S$ |
+| $\int(S)$ | interior of set $S$ | 
+| $\partial S$ | boundary of set $S$ |
+| $P^\circ$ | polar dual of convex body | 
+| $\SOd$ | special orthogonal group of dimension $d$ |
+| $\usphere^{d-1}$ | unit sphere in $\Real{d}$ |
+
+**Optimization**
+
+|                   |          | 
+| :---------------- | :------  |
+| KKT | Karush–Kuhn–Tucker |
+| LP | linear program |
+| QP | quadratic program |
+| SOCP | second-order cone program |
+| SDP | semidefinite program |
+
+**Algebra**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\poly{x}$ | polynomial ring in $x$ with real coefficients | 
+| $\deg$ | degree of a monomial / polynomial |
+| $\poly{x}_d$ | polynomials in $x$ of degree up to $d$ |
+| $[x]_d$ | vector of monomials of degree up to $d$ |
+| $[x]_{\bold{d}}$ | vector of monomials of degree $d$ |
+
+
+
+
+
+

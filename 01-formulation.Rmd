@@ -1,3 +1,0 @@
-# Semidefinite Programming {#sdp}
-
-## Standard Form
