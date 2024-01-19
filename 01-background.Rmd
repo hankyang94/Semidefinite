@@ -1,10 +1,5 @@
 # Mathematical Background {#background}
 
-- Convexity 
-- Convex Optimization 
-- Convex Geometry 
-- Linear Programming 
-
 ## Convexity {#background:convexity}
 
 A very important notion in modern optimization is that of _convexity_. To a large extent, an optimization problem is "easy" if it is convex, and "difficult" when convexity is lost, i.e., _nonconvex_. We give a basic review of convexity here and refer the reader to [@rockafellar70-convexanalysis], [@boyd04book-convex], and [@bertsekas03book-convex] for comprehensive treatments.
@@ -19,14 +14,30 @@ A set $S$ is convex if $x_1,x_2 \in S$ implies $\lambda x_1 + (1-\lambda) x_2 \i
 
 Conversely, a set $S$ is nonconvex if Definition \@ref(def:ConvexSet) does not hold. 
 
-A _hyperplane_ is a common convex set defined as
-$$
-P = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} = d }
-$$
-for some $c \in \Real{n}$ and scalar $d$. A _halfspace_ is a convex set defined as
-$$
-H = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} \geq d }.
-$$
+Given $x_1, x_2 \in S$, $\lambda x_1 + (1-\lambda) x_2$ is called a _convex combination_ when $\lambda \in [0,1]$. For convenience, we will use the following notation
+\begin{equation}
+\begin{split}
+(x_1,x_2) = \cbrace{\lambda x_1 + (1-\lambda) x_2 \mid \lambda \in (0,1)}, \\ [x_1,x_2] = \cbrace{\lambda x_1 + (1-\lambda) x_2 \mid \lambda \in [0,1]}.
+\end{split}
+\end{equation}
+
+A **hyperplane** is a common convex set defined as
+\begin{equation}
+H = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} = d }
+(\#eq:hyperplane)
+\end{equation}
+for some $c \in \Real{n}$ and scalar $d$. A **halfspace** is a convex set defined as
+\begin{equation}
+H^{+} = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} \geq d }.
+(\#eq:halfspace)
+\end{equation}
+
+Given two nonempty convex sets $C_1$ and $C_2$, the **distance** between $C_1$ and $C_2$ is defined as 
+\begin{equation}
+\dist (C_1,C_2) = \inf \cbrace{\norm{c_1 - c_2} \mid c_1 \in C_1, c_2 \in C_2}.
+\end{equation}
+
+For a convex set $C$, the hyperplane $H$ in \@ref(eq:hyperplane) is called a **supporting hyperplane** for $C$ if $C$ is contained in the half space $H^{+}$ and the distance between $H$ and $C$ is zero. For example, the hyperplane $x_1 = 0$ is supporting for the hyperboloid $\cbrace{(x_1,x_2) \mid x_1 x_2 \geq 1, x_1 \geq 0, x_2 \geq 0}$ in $\Real{2}$.
 
 An important property of a convex set is that we can _certify_ when a point is not in the set. This is usually done via a separation theorem.
 
@@ -46,18 +57,182 @@ Further, if $S_1$ is compact (i.e., closed and bounded) and $S_2$ is closed, the
 
 The strict separation theorem is used typically when $S_1$ is a single point (hence compact).
 
+We will see a generation of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
+
+::: {.exercisebox}
+::: {.exercise}
+Provide examples of two disjoint convex sets such that the separation in \@ref(eq:separation) is not strict in one way and both ways.
+:::
+:::
+
+::: {.exercisebox}
+::: {.exercise}
+Provide a constructive proof that the separation hyperplane exists in Theorem \@ref(thm:SeparationTheorem) when (1) both $S_1$ and $S_2$ are closed, and (2) at least one of them is bounded.
+:::
+:::
+
 The intersection of convex sets is always convex (try to prove this).
 
 ## Convex Geometry {#background:convex:geometry}
 
+### Basic Facts
 
+Given a set $S$, its **affine hull** is the set 
+$$
+\aff (S) = \lcbrace{ \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \bbN_{+} },
+$$
+where $\sum_{i=1}^{k} \lambda_i u_i$ is called an _affine combination_ of $u_1,\dots,u_k$ when $\sum_i \lambda_i = 1$. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in $\Real{3}$ is the entire space $\Real{3}$.
+
+For a convex set $C \subseteq \Real{n}$, the **interior** of $C$ is defined as
+$$
+\interior(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \succeq C },
+$$
+where $B(u,\epsilon)$ denotes a ball centered at $u$ with radius $\epsilon$ (using the usual 2-norm). Each point in $\interior(C)$ is called an _interior point_ of $C$. If $\interior(C) = C$, then $C$ is said to be an **open set**. A convex set with nonempty interior is called a **convex domain**, while a compact (i.e., closed and bounded) convex domain is called a **convex body**.
+
+The **boundary of $C$** is the subset of points that are not in the interior of $C$ and we denote it as $\partial C$.
+
+It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the **relative interior** can be defined as
+$$
+\relint(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \cap \aff(C) \subseteq C }.
+$$
+For a nonempty convex set, the relative interior always exists. If $\relint(C) = C$, then $C$ is said to be **relatively open**. For example, the relative interior of a singleton is the singleton itself, and hence a singleton is relatively open.
+
+For a convex set $C$, a point $u \in C$ is called an **extreme point** if 
+$$
+u \in (x,y), x \in C, y \in C \quad \Rightarrow u = x = y.
+$$
+For example, consider $C = \cbrace{(x,y)\mid x^2 + y^2 \leq 1}$, then all the points on the boundary $\partial C = \cbrace{(x,y) \mid x^2 + y^2 = 1}$ are extreme points.
+
+A subset $F \subseteq C$ is called a **face** if $F$ itself is convex and 
+$$
+u \in (x,y), u \in F, x,y \in C \quad \Rightarrow x,y \in F. 
+$$
+Clearly, the empty set $\emptyset$ and the entire set $C$ are faces of $C$, which are called _trivial faces_. The face $F$ is said to be _proper_ if $F \neq C$. The set of any single extreme point is also a face. A face $F$ of $C$ is called **exposed** if there exists a supporting hyperplane $H$ for $C$ such that 
+$$
+F = H \cap C.
+$$
+
+### Cones, Duality, Polarity
 
 ::: {.definitionbox}
-::: {.definition #ExtremePoint name="Extreme Point"}
-Given a convex set, a point $x \in S$ is _extreme_ if 
-$$
-\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
-$$
-In other words, any line segment that contains $x$ and lies inside $S$ must be $x$ itself.
+::: {.definition #polar name="Polar"}
+For a nonempty set $T \subseteq \Real{n}$, its polar is the set 
+\begin{equation}
+T^\circ := \cbrace{ y \in \Real{n} \mid \inprod{x}{y} \leq 1, \forall x \in T }.
+(\#eq:polar)
+\end{equation}
 :::
 :::
+
+The polar $T^\circ$ is a closed convex set and contains the origin. Note that $T$ is always contained in the polar of $T^\circ$, i.e., $T \subseteq (T^\circ)^\circ$. Indeed, they are equal under some assumptions.
+
+::: {.theorembox}
+::: {.theorem #bipolar name="Bipolar"}
+If $T \subseteq \Real{n}$ is a closed convex set containing the origin, then $(T^\circ)^\circ = T$.
+:::
+:::
+
+An important class of convex sets are those that are invariant under nonnegative scalings. A set $K \subseteq \Real{n}$ is a **cone** if $t x \in K$ for all $x \in K$ and for all $t > 0$. For example, the positive real line $\cbrace{x \in \Real{} \mid x > 0}$ is a cone. The cone $K$ is **pointed** if $K \cap -K = \{ 0 \}$. It is said to be **solid** if its interior $\interior(K) \neq \emptyset$. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin. 
+
+The analogue of extreme point for convex cones is the **extreme ray**. For a convex cone $K$ and $0 \neq u \in K$, the line segment
+$$
+u \cdot [0,\infty) := \cbrace{tu \mid t\geq 0}
+$$
+is called an extreme ray of $K$ if 
+$$
+u \in (x,y), x,y \in K \quad \Rightarrow \quad u,x,y \text{ are parallel to each other}.
+$$
+If $u \cdot [0,\infty)$ is an extreme ray, then we say $u$ generates the extreme ray. 
+
+::: {.definitionbox}
+::: {.definition #ProperCone name="Proper Cone"}
+A cone $K$ is proper if it is closed, convex, pointed, and solid.
+:::
+:::
+
+A proper cone $K$ induces a **partial order** on the vector space, via $x \succeq y$ if $x - y \in K$. We also use $x \succ y$ if $x - y$ is in $\interior(K)$. Important examples of proper cones are the nonnegative orthant, the second-order cone, the set of symmetric positive semidefinite matrices, and the set of nonnegative polynomials, which we will describe later in the book.
+
+::: {.definitionbox}
+::: {.definition #Dual name="Dual"}
+The dual of a nonempty set $S$ is 
+$$
+S^* := \cbrace{ y \in \Real{n} \mid \inprod{y}{x} \geq 0, \forall x \in S}.
+$$
+:::
+:::
+
+Given any set $S$, its dual $S^*$ is always a closed convex cone. Duality reverses inclusion, that is, 
+$$
+S_1 \subseteq S_2 \quad \Rightarrow \quad S_1^* \supseteq S_2^*.
+$$
+If $S$ is a closed convex cone, then $S^{* *}= S$. Otherwise, $S^{* *}$ is the closure of the smallest convex cone that contains $S$.
+
+For a cone $K \subseteq \Real{n}$, one can show that 
+$$
+K^\circ = \cbrace{y \in \Real{n} \mid \inprod{x}{y} \leq 0, \forall x \in K}.
+$$
+The set $K^\circ$ is called the **polar cone** of $K$. The negative of $K^\circ$ is just the **dual cone**
+$$
+K^{*} = \cbrace{y \in \Real{n} \mid \inprod{x}{y} \geq 0, \forall x \in K}.
+$$
+
+::: {.definitionbox}
+::: {.definition #selfdual name="Self-dual"}
+A cone $K$ is self-dual if $K^{*} = K$.
+:::
+:::
+
+As an easy example, the nonnegative orthant $\Real{n}_{+}$ is self-dual.
+
+::: {.examplebox}
+::: {.example #SecondOrderCone name="Second-order Cone"}
+The second-order cone, or the Lorentz cone, or the ice cream cone
+$$
+\calQ_n := \cbrace{ (x_0,x_1,\dots,x_n) \in \Real{n+1} \mid \sqrt{x_1^2 + \dots + x_n^2} \leq x_0 }
+$$
+is a proper cone of $\Real{n+1}$. We will show that it is also self-dual.
+
+**Proof**. Consider $(y_0,y_1,\dots,y_n) \in \calQ_n$, we want to show that 
+\begin{equation}
+x_0 y_0 + x_1 y_1 + \dots + x_n y_n \geq 0, \forall (x_0,x_1,\dots,x_n) \in \calQ_n.
+(\#eq:dual-cone-condition)
+\end{equation}
+This is easy to verify because 
+$$
+x_1 y_1 + \dots + x_n y_n \geq - \sqrt{x_1^2 + \dots + x_n^2} \sqrt{y_1^2 + \dots + y_n^2} \geq - x_0 y_0.
+$$
+Hence we have $\calQ_n \subseteq \calQ_n^{*}$.
+
+Conversely, if \@ref(eq:dual-cone-condition) holds, then take 
+$$
+x_1 = -y_1, \dots, x_n = - y_n, \quad x_0 = \sqrt{x_1^2 + \dots + x_n^2},
+$$
+we have 
+$$
+y_0 \geq \sqrt{y_1^2 + \dots + y_n^2},
+$$
+hence $\calQ_n^{*} \subseteq \calQ_n$. $\blacksquare$
+
+:::
+:::
+
+Not very proper cone is self-dual.
+
+::: {.exercisebox}
+::: {.exercise}
+Consider the following proper cone in $\Real{2}$
+$$
+K = \cbrace{(x_1,x_2) \mid 2x_1 - x_2 \geq 0, 2x_2 - x_1 \geq 0}.
+$$
+Show that it is not self-dual.
+:::
+:::
+
+## Convex Optimization {#background:convex:optimization}
+
+
+
+
+## Linear Optimization {#background:linear:optimization}
+
+

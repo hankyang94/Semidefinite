@@ -12,6 +12,8 @@ github-repo: hankyang94/Semidefinite
 description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation."
 ---
 
+\newcommand{\calQ}{\mathcal{Q}}
+
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
 \newcommand{\psd}[1]{\sym{#1}_{+}}
@@ -36,6 +38,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\conv}{\mathrm{conv}}
 \newcommand{\cone}{\mathrm{cone}}
 \newcommand{\interior}{\mathrm{int}}
+\newcommand{\relint}{\mathrm{ri}}
 \newcommand{\poly}[1]{\mathbb{R}[#1]}
 \newcommand{\SOd}{\mathrm{SO}(d)}
 \newcommand{\SOthree}{\mathrm{SO}(3)}
@@ -46,6 +49,9 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
+\newcommand{\aff}{\mathrm{aff}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\dist}{\mathrm{dist}}
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 
@@ -81,7 +87,8 @@ We will use the following standard notation throughout this book.
 | $\Real{}_{+}$ | nonnegative real |
 | $\Real{}_{++}$| positive real |
 | $\mathbb{Z}$        |   integers   |
-| $\mathbb{N}$    |  nonnegative integers   |
+| $\bbN$    |  nonnegative integers   |
+| $\bbN_{+}$ | positive integers |
 | $\Real{n}$ |  $n$-D column vector |
 | $\Real{n}_{+}$| nonnegative orthant |
 | $\Real{n}_{++}$| positive orthant |
@@ -119,9 +126,11 @@ We will use the following standard notation throughout this book.
 | $\pnorm{a}{p}$ | $p$-norm |
 | $\norm{a}$ | $2$-norm |
 | $B(o,r)$ | ball with center $o$ and radius $r$ |
+| $\aff (S)$ | affine hull of set $S$ |
 | $\conv(S)$ | convex hull of set $S$ |
 | $\cone(S)$ | conical hull of set $S$ |
 | $\interior(S)$ | interior of set $S$ | 
+| $\relint(S)$ | relative interior of set $S$ |
 | $\partial S$ | boundary of set $S$ |
 | $P^\circ$ | polar dual of convex body | 
 | $\SOd$ | special orthogonal group of dimension $d$ |
