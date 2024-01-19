@@ -35,13 +35,16 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\Fnorm}[1]{\Vert #1 \Vert_\mathrm{F}}
 \newcommand{\conv}{\mathrm{conv}}
 \newcommand{\cone}{\mathrm{cone}}
-\newcommand{\int}{\mathrm{int}}
+\newcommand{\interior}{\mathrm{int}}
 \newcommand{\poly}[1]{\mathbb{R}[#1]}
 \newcommand{\SOd}{\mathrm{SO}(d)}
 \newcommand{\SOthree}{\mathrm{SO}(3)}
 \newcommand{\usphere}{\mathcal{S}}
-\newcommand{\bold}[1]{\boldsymbol{#1}}
-\newcommand{\deg}{\mathrm{deg}}
+\newcommand{\bmath}[1]{\boldsymbol{#1}}
+\newcommand{\lbrkt}{[\![}
+\newcommand{\rbrkt}{]\!]}
+\newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+<!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 
 # Preface {-}
@@ -101,8 +104,8 @@ We will use the following standard notation throughout this book.
 | $\BlkDiag(A,B,\dots)$ | block diagonal matrix with blocks $A,B,\dots$ |
 | $\succeq 0$ and $\preceq 0$ | positive / negative semidefinite |
 | $\succ 0$ and $\prec 0$ | positive / negative definite |
-| $\lambda_\max$ and $\lambda_\min$ | maximum / minimum eigenvalue |
-| $\sigma_\max$ and $\sigma_\min$ | maximum / minimum singular value |
+| $\lambda_{\max}$ and $\lambda_{\min}$ | maximum / minimum eigenvalue |
+| $\sigma_{\max}$ and $\sigma_{\min}$ | maximum / minimum singular value |
 | $\vectorize(A)$ | vectorization of $A \in \Real{m \times n}$
 | $\svec(A)$| symmetric vectorization of $A \in \sym{n}$
 | $\Fnorm{A}$ | Frobenius norm |
@@ -116,7 +119,7 @@ We will use the following standard notation throughout this book.
 | $B(o,r)$ | ball with center $o$ and radius $r$ |
 | $\conv(S)$ | convex hull of set $S$ |
 | $\cone(S)$ | conical hull of set $S$ |
-| $\int(S)$ | interior of set $S$ | 
+| $\interior(S)$ | interior of set $S$ | 
 | $\partial S$ | boundary of set $S$ |
 | $P^\circ$ | polar dual of convex body | 
 | $\SOd$ | special orthogonal group of dimension $d$ |
@@ -140,7 +143,7 @@ We will use the following standard notation throughout this book.
 | $\deg$ | degree of a monomial / polynomial |
 | $\poly{x}_d$ | polynomials in $x$ of degree up to $d$ |
 | $[x]_d$ | vector of monomials of degree up to $d$ |
-| $[x]_{\bold{d}}$ | vector of monomials of degree $d$ |
+| $\brkt{x}_d$ | vector of monomials of degree $d$ |
 
 
 
