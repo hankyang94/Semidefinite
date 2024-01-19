@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-18" />
+<meta name="date" content="2024-01-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="index.html"/>
-<link rel="next" href="sdp.html"/>
+<link rel="next" href="background.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -78,10 +78,8 @@
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
-<li class="chapter" data-level="1" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>1</b> Semidefinite Programming</a>
-<ul>
-<li class="chapter" data-level="1.1" data-path="sdp.html"><a href="sdp.html#standard-form"><i class="fa fa-check"></i><b>1.1</b> Standard Form</a></li>
-</ul></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -105,23 +103,233 @@
             <section class="normal" id="section-">
 <div id="notation" class="section level1 unnumbered hasAnchor">
 <h1>Notation<a href="notation.html#notation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We will use the following standard notation throughout this book.</p>
+<p><strong>Basics</strong></p>
+<table>
+<colgroup>
+<col width="70%" />
+<col width="29%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}^{}\)</span></td>
+<td align="left">real numbers</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{R}^{}_{+}\)</span></td>
+<td align="left">nonnegative real</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}^{}_{++}\)</span></td>
+<td align="left">positive real</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{Z}\)</span></td>
+<td align="left">integers</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{N}\)</span></td>
+<td align="left">nonnegative integers</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
+<td align="left"><span class="math inline">\(n\)</span>-D column vector</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}^{n}_{+}\)</span></td>
+<td align="left">nonnegative orthant</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{R}^{n}_{++}\)</span></td>
+<td align="left">positive orthant</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(e_i\)</span></td>
+<td align="left">standard basic vector</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}\)</span></td>
+<td align="left">standard simplex</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Matrices</strong></p>
+<table>
+<colgroup>
+<col width="70%" />
+<col width="29%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}^{m \times n}\)</span></td>
+<td align="left"><span class="math inline">\(m \times n\)</span> real matrices</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{S}^{n}\)</span></td>
+<td align="left"><span class="math inline">\(n\times n\)</span> symmetric matrices</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{S}^{n}_{+}\)</span></td>
+<td align="left"><span class="math inline">\(n\times n\)</span> positive semidefinite matrices</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{S}^{n}_{++}\)</span></td>
+<td align="left"><span class="math inline">\(n\times n\)</span> positive definite matrices</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\langle A, B \rangle\)</span> or <span class="math inline">\(\bullet\)</span></td>
+<td align="left">inner product in <span class="math inline">\(\mathbb{R}^{m \times n}\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{tr}(A)\)</span></td>
+<td align="left">trace of <span class="math inline">\(A \in \mathbb{R}^{n \times n}\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(A^\top\)</span></td>
+<td align="left">matrix transpose</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\det(A)\)</span></td>
+<td align="left">matrix determinant</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathrm{rank}(A)\)</span></td>
+<td align="left">rank of a matrix</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{diag}(A)\)</span></td>
+<td align="left">diagonal of a matrix <span class="math inline">\(A\)</span> as a vector</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathrm{Diag}(a)\)</span></td>
+<td align="left">turning a vector into a diagonal matrix</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{BlkDiag}(A,B,\dots)\)</span></td>
+<td align="left">block diagonal matrix with blocks <span class="math inline">\(A,B,\dots\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\succeq 0\)</span> and <span class="math inline">\(\preceq 0\)</span></td>
+<td align="left">positive / negative semidefinite</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\succ 0\)</span> and <span class="math inline">\(\prec 0\)</span></td>
+<td align="left">positive / negative definite</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\lambda_{\max}\)</span> and <span class="math inline">\(\lambda_{\min}\)</span></td>
+<td align="left">maximum / minimum eigenvalue</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\sigma_{\max}\)</span> and <span class="math inline">\(\sigma_{\min}\)</span></td>
+<td align="left">maximum / minimum singular value</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathrm{vec}(A)\)</span></td>
+<td align="left">vectorization of <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{svec}(A)\)</span></td>
+<td align="left">symmetric vectorization of <span class="math inline">\(A \in \mathbb{S}^{n}\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\Vert A \Vert_\mathrm{F}\)</span></td>
+<td align="left">Frobenius norm</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Geometry</strong></p>
 <table>
 <tbody>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\mathbb{R}\)</span></td>
-<td align="left">Real number</td>
+<td align="left"><span class="math inline">\(\Vert a \Vert_{p}\)</span></td>
+<td align="left"><span class="math inline">\(p\)</span>-norm</td>
 </tr>
 <tr class="even">
-<td align="left">SQL Hat</td>
-<td align="left">True</td>
+<td align="left"><span class="math inline">\(\Vert a \Vert\)</span></td>
+<td align="left"><span class="math inline">\(2\)</span>-norm</td>
 </tr>
 <tr class="odd">
-<td align="left">Codecademy Tee</td>
-<td align="left">False</td>
+<td align="left"><span class="math inline">\(B(o,r)\)</span></td>
+<td align="left">ball with center <span class="math inline">\(o\)</span> and radius <span class="math inline">\(r\)</span></td>
 </tr>
 <tr class="even">
-<td align="left">Codecademy Hoodie</td>
-<td align="left">False</td>
+<td align="left"><span class="math inline">\(\mathrm{conv}(S)\)</span></td>
+<td align="left">convex hull of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathrm{cone}(S)\)</span></td>
+<td align="left">conical hull of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{int}(S)\)</span></td>
+<td align="left">interior of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\partial S\)</span></td>
+<td align="left">boundary of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(P^\circ\)</span></td>
+<td align="left">polar dual of convex body</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathrm{SO}(d)\)</span></td>
+<td align="left">special orthogonal group of dimension <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathcal{S}^{d-1}\)</span></td>
+<td align="left">unit sphere in <span class="math inline">\(\mathbb{R}^{d}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Optimization</strong></p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">KKT</td>
+<td align="left">Karush–Kuhn–Tucker</td>
+</tr>
+<tr class="even">
+<td align="left">LP</td>
+<td align="left">linear program</td>
+</tr>
+<tr class="odd">
+<td align="left">QP</td>
+<td align="left">quadratic program</td>
+</tr>
+<tr class="even">
+<td align="left">SOCP</td>
+<td align="left">second-order cone program</td>
+</tr>
+<tr class="odd">
+<td align="left">SDP</td>
+<td align="left">semidefinite program</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Algebra</strong></p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}[x]\)</span></td>
+<td align="left">polynomial ring in <span class="math inline">\(x\)</span> with real coefficients</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\deg\)</span></td>
+<td align="left">degree of a monomial / polynomial</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\mathbb{R}[x]_d\)</span></td>
+<td align="left">polynomials in <span class="math inline">\(x\)</span> of degree up to <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\([x]_d\)</span></td>
+<td align="left">vector of monomials of degree up to <span class="math inline">\(d\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\([\![x ]\!]_d\)</span></td>
+<td align="left">vector of monomials of degree <span class="math inline">\(d\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -133,7 +341,7 @@
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="sdp.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="background.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -175,7 +383,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["semidefinite-optimization-relaxation.pdf", "semidefinite-optimization-relaxation.epub"],
+"download": ["semidefinite-optimization-relaxation.pdf"],
 "search": {
 "engine": "fuse",
 "options": null

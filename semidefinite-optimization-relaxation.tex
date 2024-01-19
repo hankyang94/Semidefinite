@@ -62,7 +62,8 @@
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
 \usepackage{amsthm}
-\usepackage[pagebackref=false,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+\usepackage{amsmath}
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=true]{hyperref}
 \usepackage{tcolorbox}
 \usepackage{color}
 \usepackage{framed}
@@ -74,6 +75,17 @@
 }
 \makeatother
 
+% \newcommand{\Real}[1]{\mathbb{R}^{#1}}
+% \newcommand{\sym}[1]{\mathbb{S}^{#1}}
+% \newcommand{\psd}[1]{\sym{#1}_{+}}
+% \newcommand{\pd}[1]{\sym{#1}_{++}}
+% \newcommand{\inprod}[2]{\langle #1, #2 \rangle}
+% \newcommand{\linprod}[2]{\left\langle #1, #2 \right\rangle}
+% \newcommand{\trace}{\mathrm{tr}}
+% \newcommand{\tran}{^\top}
+% % \newcommand{\det}{\mathrm{det}}
+% \newcommand{\rank}{\mathrm{rank}}
+% \newcommand{\diag}{\mathrm{diag}}
 
 \newtcolorbox{examplebox}{
   colback=green,
@@ -111,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-18}
+\date{2024-01-19}
 
 \begin{document}
 \maketitle
@@ -120,6 +132,39 @@ arc=4pt}
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\newcommand{\Real}[1]{\mathbb{R}^{#1}}
+\newcommand{\sym}[1]{\mathbb{S}^{#1}}
+\newcommand{\psd}[1]{\sym{#1}_{+}}
+\newcommand{\pd}[1]{\sym{#1}_{++}}
+\newcommand{\inprod}[2]{\langle #1, #2 \rangle}
+\newcommand{\linprod}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\trace}{\mathrm{tr}}
+\newcommand{\tran}{^\top}
+
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\Diag}{\mathrm{Diag}}
+\newcommand{\BlkDiag}{\mathrm{BlkDiag}}
+\newcommand{\vectorize}{\mathrm{vec}}
+\newcommand{\svec}{\mathrm{svec}}
+\newcommand{\mat}{\mathrm{mat}}
+\newcommand{\smat}{\mathrm{smat}}
+\newcommand{\norm}[1]{\Vert #1 \Vert}
+\newcommand{\lnorm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\pnorm}[2]{\Vert #1 \Vert_{#2}}
+\newcommand{\Fnorm}[1]{\Vert #1 \Vert_\mathrm{F}}
+\newcommand{\conv}{\mathrm{conv}}
+\newcommand{\cone}{\mathrm{cone}}
+\newcommand{\interior}{\mathrm{int}}
+\newcommand{\poly}[1]{\mathbb{R}[#1]}
+\newcommand{\SOd}{\mathrm{SO}(d)}
+\newcommand{\SOthree}{\mathrm{SO}(3)}
+\newcommand{\usphere}{\mathcal{S}}
+\newcommand{\bmath}[1]{\boldsymbol{#1}}
+\newcommand{\lbrkt}{[\![}
+\newcommand{\rbrkt}{]\!]}
+\newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
 \addcontentsline{toc}{chapter}{Preface}
@@ -148,21 +193,106 @@ This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Rela
 \chapter*{Notation}\label{notation}}
 \addcontentsline{toc}{chapter}{Notation}
 
-\begin{longtable}[]{@{}ll@{}}
+We will use the following standard notation throughout this book.
+
+\textbf{Basics}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7083}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2917}}@{}}
 \toprule()
 \endhead
-\(\mathbb{R}\) & Real number \\
-SQL Hat & True \\
-Codecademy Tee & False \\
-Codecademy Hoodie & False \\
+\(\mathbb{R}^{}\) & real numbers \\
+\(\mathbb{R}^{}_{+}\) & nonnegative real \\
+\(\mathbb{R}^{}_{++}\) & positive real \\
+\(\mathbb{Z}\) & integers \\
+\(\mathbb{N}\) & nonnegative integers \\
+\(\mathbb{R}^{n}\) & \(n\)-D column vector \\
+\(\mathbb{R}^{n}_{+}\) & nonnegative orthant \\
+\(\mathbb{R}^{n}_{++}\) & positive orthant \\
+\(e_i\) & standard basic vector \\
+\(\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}\) & standard simplex \\
 \bottomrule()
 \end{longtable}
 
-\hypertarget{sdp}{%
-\chapter{Semidefinite Programming}\label{sdp}}
+\textbf{Matrices}
 
-\hypertarget{standard-form}{%
-\section{Standard Form}\label{standard-form}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7083}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2917}}@{}}
+\toprule()
+\endhead
+\(\mathbb{R}^{m \times n}\) & \(m \times n\) real matrices \\
+\(\mathbb{S}^{n}\) & \(n\times n\) symmetric matrices \\
+\(\mathbb{S}^{n}_{+}\) & \(n\times n\) positive semidefinite matrices \\
+\(\mathbb{S}^{n}_{++}\) & \(n\times n\) positive definite matrices \\
+\(\langle A, B \rangle\) or \(\bullet\) & inner product in \(\mathbb{R}^{m \times n}\) \\
+\(\mathrm{tr}(A)\) & trace of \(A \in \mathbb{R}^{n \times n}\) \\
+\(A^\top\) & matrix transpose \\
+\(\det(A)\) & matrix determinant \\
+\(\mathrm{rank}(A)\) & rank of a matrix \\
+\(\mathrm{diag}(A)\) & diagonal of a matrix \(A\) as a vector \\
+\(\mathrm{Diag}(a)\) & turning a vector into a diagonal matrix \\
+\(\mathrm{BlkDiag}(A,B,\dots)\) & block diagonal matrix with blocks \(A,B,\dots\) \\
+\(\succeq 0\) and \(\preceq 0\) & positive / negative semidefinite \\
+\(\succ 0\) and \(\prec 0\) & positive / negative definite \\
+\(\lambda_{\max}\) and \(\lambda_{\min}\) & maximum / minimum eigenvalue \\
+\(\sigma_{\max}\) and \(\sigma_{\min}\) & maximum / minimum singular value \\
+\(\mathrm{vec}(A)\) & vectorization of \(A \in \mathbb{R}^{m \times n}\) \\
+\(\mathrm{svec}(A)\) & symmetric vectorization of \(A \in \mathbb{S}^{n}\) \\
+\(\Vert A \Vert_\mathrm{F}\) & Frobenius norm \\
+\bottomrule()
+\end{longtable}
+
+\textbf{Geometry}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule()
+\endhead
+\(\Vert a \Vert_{p}\) & \(p\)-norm \\
+\(\Vert a \Vert\) & \(2\)-norm \\
+\(B(o,r)\) & ball with center \(o\) and radius \(r\) \\
+\(\mathrm{conv}(S)\) & convex hull of set \(S\) \\
+\(\mathrm{cone}(S)\) & conical hull of set \(S\) \\
+\(\mathrm{int}(S)\) & interior of set \(S\) \\
+\(\partial S\) & boundary of set \(S\) \\
+\(P^\circ\) & polar dual of convex body \\
+\(\mathrm{SO}(d)\) & special orthogonal group of dimension \(d\) \\
+\(\mathcal{S}^{d-1}\) & unit sphere in \(\mathbb{R}^{d}\) \\
+\bottomrule()
+\end{longtable}
+
+\textbf{Optimization}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule()
+\endhead
+KKT & Karush--Kuhn--Tucker \\
+LP & linear program \\
+QP & quadratic program \\
+SOCP & second-order cone program \\
+SDP & semidefinite program \\
+\bottomrule()
+\end{longtable}
+
+\textbf{Algebra}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule()
+\endhead
+\(\mathbb{R}[x]\) & polynomial ring in \(x\) with real coefficients \\
+\(\deg\) & degree of a monomial / polynomial \\
+\(\mathbb{R}[x]_d\) & polynomials in \(x\) of degree up to \(d\) \\
+\([x]_d\) & vector of monomials of degree up to \(d\) \\
+\([\![x ]\!]_d\) & vector of monomials of degree \(d\) \\
+\bottomrule()
+\end{longtable}
+
+\hypertarget{background}{%
+\chapter{Mathematical Background}\label{background}}
+
+\hypertarget{sdp}{%
+\chapter{Semidefinite Optimization}\label{sdp}}
 
   \bibliography{book.bib,packages.bib}
 
