@@ -44,6 +44,8 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+\newcommand{\cbrace}[1]{\{ #1 \}}
+\newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 

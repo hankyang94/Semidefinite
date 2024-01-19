@@ -1,2 +1,63 @@
 # Mathematical Background {#background}
 
+- Convexity 
+- Convex Optimization 
+- Convex Geometry 
+- Linear Programming 
+
+## Convexity {#background:convexity}
+
+A very important notion in modern optimization is that of _convexity_. To a large extent, an optimization problem is "easy" if it is convex, and "difficult" when convexity is lost, i.e., _nonconvex_. We give a basic review of convexity here and refer the reader to [@rockafellar70-convexanalysis], [@boyd04book-convex], and [@bertsekas03book-convex] for comprehensive treatments.
+
+We will work on a finite-dimensional real vector space, which we will identify with $\Real{n}$.
+
+::: {.definitionbox}
+::: {.definition #ConvexSet name="Convex Set"}
+A set $S$ is convex if $x_1,x_2 \in S$ implies $\lambda x_1 + (1-\lambda) x_2 \in S$ for any $\lambda \in [0,1]$. In other words, if $x_1,x_2 \in S$, then the line segment connecting $x_1$ and $x_2$ lies inside $S$.
+:::
+:::
+
+Conversely, a set $S$ is nonconvex if Definition \@ref(def:ConvexSet) does not hold. 
+
+A _hyperplane_ is a common convex set defined as
+$$
+P = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} = d }
+$$
+for some $c \in \Real{n}$ and scalar $d$. A _halfspace_ is a convex set defined as
+$$
+H = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} \geq d }.
+$$
+
+An important property of a convex set is that we can _certify_ when a point is not in the set. This is usually done via a separation theorem.
+
+::: {.theorembox}
+::: {.theorem #SeparationTheorem name="Separation Theorem"}
+Let $S_1,S_2$ be two convex sets in $\Real{n}$ and $S_1 \cap S_2 = \emptyset$, then there exists a hyperplane that separates $S_1$ and $S_2$, i.e., there exists $c$ and $d$ such that 
+\begin{equation}
+\begin{split}
+\inprod{c}{x} \geq d, &  \forall x \in S_1,\\
+\inprod{c}{x} \leq d, & \forall x \in S_2.
+\end{split}
+(\#eq:separation)
+\end{equation}
+Further, if $S_1$ is compact (i.e., closed and bounded) and $S_2$ is closed, then the separation is strict, i.e., the inequalities in \@ref(eq:separation) are strict.
+:::
+:::
+
+The strict separation theorem is used typically when $S_1$ is a single point (hence compact).
+
+The intersection of convex sets is always convex (try to prove this).
+
+## Convex Geometry {#background:convex:geometry}
+
+
+
+::: {.definitionbox}
+::: {.definition #ExtremePoint name="Extreme Point"}
+Given a convex set, a point $x \in S$ is _extreme_ if 
+$$
+\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
+$$
+In other words, any line segment that contains $x$ and lies inside $S$ must be $x$ itself.
+:::
+:::

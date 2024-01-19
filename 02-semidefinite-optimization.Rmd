@@ -1,1 +1,4 @@
 # Semidefinite Optimization {#sdp}
+
+- Positive Semidefinite Matrices
+- Spectrahedra
