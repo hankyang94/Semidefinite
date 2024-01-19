@@ -149,6 +149,8 @@ arc=4pt}
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\newcommand{\calQ}{\mathcal{Q}}
+
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
 \newcommand{\psd}[1]{\sym{#1}_{+}}
@@ -173,6 +175,7 @@ arc=4pt}
 \newcommand{\conv}{\mathrm{conv}}
 \newcommand{\cone}{\mathrm{cone}}
 \newcommand{\interior}{\mathrm{int}}
+\newcommand{\relint}{\mathrm{ri}}
 \newcommand{\poly}[1]{\mathbb{R}[#1]}
 \newcommand{\SOd}{\mathrm{SO}(d)}
 \newcommand{\SOthree}{\mathrm{SO}(3)}
@@ -183,6 +186,9 @@ arc=4pt}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
+\newcommand{\aff}{\mathrm{aff}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\dist}{\mathrm{dist}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -226,6 +232,7 @@ We will use the following standard notation throughout this book.
 \(\mathbb{R}^{}_{++}\) & positive real \\
 \(\mathbb{Z}\) & integers \\
 \(\mathbb{N}\) & nonnegative integers \\
+\(\mathbb{N}_{+}\) & positive integers \\
 \(\mathbb{R}^{n}\) & \(n\)-D column vector \\
 \(\mathbb{R}^{n}_{+}\) & nonnegative orthant \\
 \(\mathbb{R}^{n}_{++}\) & positive orthant \\
@@ -271,9 +278,11 @@ We will use the following standard notation throughout this book.
 \(\Vert a \Vert_{p}\) & \(p\)-norm \\
 \(\Vert a \Vert\) & \(2\)-norm \\
 \(B(o,r)\) & ball with center \(o\) and radius \(r\) \\
+\(\mathrm{aff}(S)\) & affine hull of set \(S\) \\
 \(\mathrm{conv}(S)\) & convex hull of set \(S\) \\
 \(\mathrm{cone}(S)\) & conical hull of set \(S\) \\
 \(\mathrm{int}(S)\) & interior of set \(S\) \\
+\(\mathrm{ri}(S)\) & relative interior of set \(S\) \\
 \(\partial S\) & boundary of set \(S\) \\
 \(P^\circ\) & polar dual of convex body \\
 \(\mathrm{SO}(d)\) & special orthogonal group of dimension \(d\) \\
@@ -310,18 +319,6 @@ SDP & semidefinite program \\
 \hypertarget{background}{%
 \chapter{Mathematical Background}\label{background}}
 
-\begin{itemize}
-\tightlist
-\item
-  Convexity
-\item
-  Convex Optimization
-\item
-  Convex Geometry
-\item
-  Linear Programming
-\end{itemize}
-
 \hypertarget{background:convexity}{%
 \section{Convexity}\label{background:convexity}}
 
@@ -335,14 +332,30 @@ We will work on a finite-dimensional real vector space, which we will identify w
 
 Conversely, a set \(S\) is nonconvex if Definition \ref{def:ConvexSet} does not hold.
 
-A \emph{hyperplane} is a common convex set defined as
-\[
-P = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
-\]
-for some \(c \in \mathbb{R}^{n}\) and scalar \(d\). A \emph{halfspace} is a convex set defined as
-\[
-H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
-\]
+Given \(x_1, x_2 \in S\), \(\lambda x_1 + (1-\lambda) x_2\) is called a \emph{convex combination} when \(\lambda \in [0,1]\). For convenience, we will use the following notation
+\begin{equation}
+\begin{split}
+(x_1,x_2) = \{ \lambda x_1 + (1-\lambda) x_2 \mid \lambda \in (0,1) \}, \\ [x_1,x_2] = \{ \lambda x_1 + (1-\lambda) x_2 \mid \lambda \in [0,1] \}.
+\end{split}
+\end{equation}
+
+A \textbf{hyperplane} is a common convex set defined as
+\begin{equation}
+H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
+\label{eq:hyperplane}
+\end{equation}
+for some \(c \in \mathbb{R}^{n}\) and scalar \(d\). A \textbf{halfspace} is a convex set defined as
+\begin{equation}
+H^{+} = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
+\label{eq:halfspace}
+\end{equation}
+
+Given two nonempty convex sets \(C_1\) and \(C_2\), the \textbf{distance} between \(C_1\) and \(C_2\) is defined as
+\begin{equation}
+\mathrm{dist}(C_1,C_2) = \inf \{ \Vert c_1 - c_2 \Vert \mid c_1 \in C_1, c_2 \in C_2 \}.
+\end{equation}
+
+For a convex set \(C\), the hyperplane \(H\) in \eqref{eq:hyperplane} is called a \textbf{supporting hyperplane} for \(C\) if \(C\) is contained in the half space \(H^{+}\) and the distance between \(H\) and \(C\) is zero. For example, the hyperplane \(x_1 = 0\) is supporting for the hyperboloid \(\{ (x_1,x_2) \mid x_1 x_2 \geq 1, x_1 \geq 0, x_2 \geq 0 \}\) in \(\mathbb{R}^{2}\).
 
 An important property of a convex set is that we can \emph{certify} when a point is not in the set. This is usually done via a separation theorem.
 
@@ -360,18 +373,166 @@ Further, if \(S_1\) is compact (i.e., closed and bounded) and \(S_2\) is closed,
 
 The strict separation theorem is used typically when \(S_1\) is a single point (hence compact).
 
+We will see a generation of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
+
+\begin{exercise}
+Provide examples of two disjoint convex sets such that the separation in \eqref{eq:separation} is not strict in one way and both ways.
+\end{exercise}
+
+\begin{exercise}
+Provide a constructive proof that the separation hyperplane exists in Theorem \ref{thm:SeparationTheorem} when (1) both \(S_1\) and \(S_2\) are closed, and (2) at least one of them is bounded.
+\end{exercise}
+
 The intersection of convex sets is always convex (try to prove this).
 
 \hypertarget{background:convex:geometry}{%
 \section{Convex Geometry}\label{background:convex:geometry}}
 
-\begin{definition}[Extreme Point]
-\protect\hypertarget{def:ExtremePoint}{}\label{def:ExtremePoint}Given a convex set, a point \(x \in S\) is \emph{extreme} if
+\hypertarget{basic-facts}{%
+\subsection{Basic Facts}\label{basic-facts}}
+
+Given a set \(S\), its \textbf{affine hull} is the set
 \[
-\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
+\mathrm{aff}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \mathbb{N}_{+}  \right\} ,
 \]
-In other words, any line segment that contains \(x\) and lies inside \(S\) must be \(x\) itself.
+where \(\sum_{i=1}^{k} \lambda_i u_i\) is called an \emph{affine combination} of \(u_1,\dots,u_k\) when \(\sum_i \lambda_i = 1\). The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in \(\mathbb{R}^{3}\) is the entire space \(\mathbb{R}^{3}\).
+
+For a convex set \(C \subseteq \mathbb{R}^{n}\), the \textbf{interior} of \(C\) is defined as
+\[
+\mathrm{int}(C) := \{  u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \succeq C  \},
+\]
+where \(B(u,\epsilon)\) denotes a ball centered at \(u\) with radius \(\epsilon\) (using the usual 2-norm). Each point in \(\mathrm{int}(C)\) is called an \emph{interior point} of \(C\). If \(\mathrm{int}(C) = C\), then \(C\) is said to be an \textbf{open set}. A convex set with nonempty interior is called a \textbf{convex domain}, while a compact (i.e., closed and bounded) convex domain is called a \textbf{convex body}.
+
+The \textbf{boundary of \(C\)} is the subset of points that are not in the interior of \(C\) and we denote it as \(\partial C\).
+
+It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the \textbf{relative interior} can be defined as
+\[
+\mathrm{ri}(C) := \{  u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \cap \mathrm{aff}(C) \subseteq C  \}.
+\]
+For a nonempty convex set, the relative interior always exists. If \(\mathrm{ri}(C) = C\), then \(C\) is said to be \textbf{relatively open}. For example, the relative interior of a singleton is the singleton itself, and hence a singleton is relatively open.
+
+For a convex set \(C\), a point \(u \in C\) is called an \textbf{extreme point} if
+\[
+u \in (x,y), x \in C, y \in C \quad \Rightarrow u = x = y.
+\]
+For example, consider \(C = \{ (x,y)\mid x^2 + y^2 \leq 1 \}\), then all the points on the boundary \(\partial C = \{ (x,y) \mid x^2 + y^2 = 1 \}\) are extreme points.
+
+A subset \(F \subseteq C\) is called a \textbf{face} if \(F\) itself is convex and
+\[
+u \in (x,y), u \in F, x,y \in C \quad \Rightarrow x,y \in F. 
+\]
+Clearly, the empty set \(\emptyset\) and the entire set \(C\) are faces of \(C\), which are called \emph{trivial faces}. The face \(F\) is said to be \emph{proper} if \(F \neq C\). The set of any single extreme point is also a face. A face \(F\) of \(C\) is called \textbf{exposed} if there exists a supporting hyperplane \(H\) for \(C\) such that
+\[
+F = H \cap C.
+\]
+
+\hypertarget{cones-duality-polarity}{%
+\subsection{Cones, Duality, Polarity}\label{cones-duality-polarity}}
+
+\begin{definition}[Polar]
+\protect\hypertarget{def:polar}{}\label{def:polar}For a nonempty set \(T \subseteq \mathbb{R}^{n}\), its polar is the set
+\begin{equation}
+T^\circ := \{  y \in \mathbb{R}^{n} \mid \langle x, y \rangle \leq 1, \forall x \in T  \}.
+\label{eq:polar}
+\end{equation}
 \end{definition}
+
+The polar \(T^\circ\) is a closed convex set and contains the origin. Note that \(T\) is always contained in the polar of \(T^\circ\), i.e., \(T \subseteq (T^\circ)^\circ\). Indeed, they are equal under some assumptions.
+
+\begin{theorem}[Bipolar]
+\protect\hypertarget{thm:bipolar}{}\label{thm:bipolar}If \(T \subseteq \mathbb{R}^{n}\) is a closed convex set containing the origin, then \((T^\circ)^\circ = T\).
+\end{theorem}
+
+An important class of convex sets are those that are invariant under nonnegative scalings. A set \(K \subseteq \mathbb{R}^{n}\) is a \textbf{cone} if \(t x \in K\) for all \(x \in K\) and for all \(t > 0\). For example, the positive real line \(\{ x \in \mathbb{R}^{} \mid x > 0 \}\) is a cone. The cone \(K\) is \textbf{pointed} if \(K \cap -K = \{ 0 \}\). It is said to be \textbf{solid} if its interior \(\mathrm{int}(K) \neq \emptyset\). Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.
+
+The analogue of extreme point for convex cones is the \textbf{extreme ray}. For a convex cone \(K\) and \(0 \neq u \in K\), the line segment
+\[
+u \cdot [0,\infty) := \{ tu \mid t\geq 0 \}
+\]
+is called an extreme ray of \(K\) if
+\[
+u \in (x,y), x,y \in K \quad \Rightarrow \quad u,x,y \text{ are parallel to each other}.
+\]
+If \(u \cdot [0,\infty)\) is an extreme ray, then we say \(u\) generates the extreme ray.
+
+\begin{definition}[Proper Cone]
+\protect\hypertarget{def:ProperCone}{}\label{def:ProperCone}A cone \(K\) is proper if it is closed, convex, pointed, and solid.
+\end{definition}
+
+A proper cone \(K\) induces a \textbf{partial order} on the vector space, via \(x \succeq y\) if \(x - y \in K\). We also use \(x \succ y\) if \(x - y\) is in \(\mathrm{int}(K)\). Important examples of proper cones are the nonnegative orthant, the second-order cone, the set of symmetric positive semidefinite matrices, and the set of nonnegative polynomials, which we will describe later in the book.
+
+\begin{definition}[Dual]
+\protect\hypertarget{def:Dual}{}\label{def:Dual}The dual of a nonempty set \(S\) is
+\[
+S^* := \{  y \in \mathbb{R}^{n} \mid \langle y, x \rangle \geq 0, \forall x \in S \}.
+\]
+\end{definition}
+
+Given any set \(S\), its dual \(S^*\) is always a closed convex cone. Duality reverses inclusion, that is,
+\[
+S_1 \subseteq S_2 \quad \Rightarrow \quad S_1^* \supseteq S_2^*.
+\]
+If \(S\) is a closed convex cone, then \(S^{* *}= S\). Otherwise, \(S^{* *}\) is the closure of the smallest convex cone that contains \(S\).
+
+For a cone \(K \subseteq \mathbb{R}^{n}\), one can show that
+\[
+K^\circ = \{ y \in \mathbb{R}^{n} \mid \langle x, y \rangle \leq 0, \forall x \in K \}.
+\]
+The set \(K^\circ\) is called the \textbf{polar cone} of \(K\). The negative of \(K^\circ\) is just the \textbf{dual cone}
+\[
+K^{*} = \{ y \in \mathbb{R}^{n} \mid \langle x, y \rangle \geq 0, \forall x \in K \}.
+\]
+
+\begin{definition}[Self-dual]
+\protect\hypertarget{def:selfdual}{}\label{def:selfdual}A cone \(K\) is self-dual if \(K^{*} = K\).
+\end{definition}
+
+As an easy example, the nonnegative orthant \(\mathbb{R}^{n}_{+}\) is self-dual.
+
+\begin{example}[Second-order Cone]
+\protect\hypertarget{exm:SecondOrderCone}{}\label{exm:SecondOrderCone}The second-order cone, or the Lorentz cone, or the ice cream cone
+\[
+\mathcal{Q}_n := \{  (x_0,x_1,\dots,x_n) \in \mathbb{R}^{n+1} \mid \sqrt{x_1^2 + \dots + x_n^2} \leq x_0  \}
+\]
+is a proper cone of \(\mathbb{R}^{n+1}\). We will show that it is also self-dual.
+
+\textbf{Proof}. Consider \((y_0,y_1,\dots,y_n) \in \mathcal{Q}_n\), we want to show that
+\begin{equation}
+x_0 y_0 + x_1 y_1 + \dots + x_n y_n \geq 0, \forall (x_0,x_1,\dots,x_n) \in \mathcal{Q}_n.
+\label{eq:dual-cone-condition}
+\end{equation}
+This is easy to verify because
+\[
+x_1 y_1 + \dots + x_n y_n \geq - \sqrt{x_1^2 + \dots + x_n^2} \sqrt{y_1^2 + \dots + y_n^2} \geq - x_0 y_0.
+\]
+Hence we have \(\mathcal{Q}_n \subseteq \mathcal{Q}_n^{*}\).
+
+Conversely, if \eqref{eq:dual-cone-condition} holds, then take
+\[
+x_1 = -y_1, \dots, x_n = - y_n, \quad x_0 = \sqrt{x_1^2 + \dots + x_n^2},
+\]
+we have
+\[
+y_0 \geq \sqrt{y_1^2 + \dots + y_n^2},
+\]
+hence \(\mathcal{Q}_n^{*} \subseteq \mathcal{Q}_n\). \(\blacksquare\)
+\end{example}
+
+Not very proper cone is self-dual.
+
+\begin{exercise}
+Consider the following proper cone in \(\mathbb{R}^{2}\)
+\[
+K = \{ (x_1,x_2) \mid 2x_1 - x_2 \geq 0, 2x_2 - x_1 \geq 0 \}.
+\]
+Show that it is not self-dual.
+\end{exercise}
+
+\hypertarget{background:convex:optimization}{%
+\section{Convex Optimization}\label{background:convex:optimization}}
+
+\hypertarget{background:linear:optimization}{%
+\section{Linear Optimization}\label{background:linear:optimization}}
 
 \hypertarget{sdp}{%
 \chapter{Semidefinite Optimization}\label{sdp}}

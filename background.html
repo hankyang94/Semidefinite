@@ -103,7 +103,13 @@ div.csl-indent {
 <li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
-<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -129,12 +135,6 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="background" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Mathematical Background<a href="background.html#background" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<ul>
-<li>Convexity</li>
-<li>Convex Optimization</li>
-<li>Convex Geometry</li>
-<li>Linear Programming</li>
-</ul>
 <div id="background:convexity" class="section level2 hasAnchor" number="1.1">
 <h2><span class="header-section-number">1.1</span> Convexity<a href="background.html#background:convexity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A very important notion in modern optimization is that of <em>convexity</em>. To a large extent, an optimization problem is “easy” if it is convex, and “difficult” when convexity is lost, i.e., <em>nonconvex</em>. We give a basic review of convexity here and refer the reader to <span class="citation">(<a href="#ref-rockafellar70-convexanalysis" role="doc-biblioref">Rockafellar 1970</a>)</span>, <span class="citation">(<a href="#ref-boyd04book-convex" role="doc-biblioref">Boyd and Vandenberghe 2004</a>)</span>, and <span class="citation">(<a href="#ref-bertsekas03book-convex" role="doc-biblioref">Bertsekas, Nedic, and Ozdaglar 2003</a>)</span> for comprehensive treatments.</p>
@@ -145,14 +145,27 @@ div.csl-indent {
 </div>
 </div>
 <p>Conversely, a set <span class="math inline">\(S\)</span> is nonconvex if Definition <a href="background.html#def:ConvexSet">1.1</a> does not hold.</p>
-<p>A <em>hyperplane</em> is a common convex set defined as
-<span class="math display">\[
-P = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
-\]</span>
-for some <span class="math inline">\(c \in \mathbb{R}^{n}\)</span> and scalar <span class="math inline">\(d\)</span>. A <em>halfspace</em> is a convex set defined as
-<span class="math display">\[
-H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
-\]</span></p>
+<p>Given <span class="math inline">\(x_1, x_2 \in S\)</span>, <span class="math inline">\(\lambda x_1 + (1-\lambda) x_2\)</span> is called a <em>convex combination</em> when <span class="math inline">\(\lambda \in [0,1]\)</span>. For convenience, we will use the following notation
+<span class="math display">\[\begin{equation}
+\begin{split}
+(x_1,x_2) = \{ \lambda x_1 + (1-\lambda) x_2 \mid \lambda \in (0,1) \}, \\ [x_1,x_2] = \{ \lambda x_1 + (1-\lambda) x_2 \mid \lambda \in [0,1] \}.
+\end{split}
+\end{equation}\]</span></p>
+<p>A <strong>hyperplane</strong> is a common convex set defined as
+<span class="math display" id="eq:hyperplane">\[\begin{equation}
+H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
+\tag{1.1}
+\end{equation}\]</span>
+for some <span class="math inline">\(c \in \mathbb{R}^{n}\)</span> and scalar <span class="math inline">\(d\)</span>. A <strong>halfspace</strong> is a convex set defined as
+<span class="math display" id="eq:halfspace">\[\begin{equation}
+H^{+} = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
+\tag{1.2}
+\end{equation}\]</span></p>
+<p>Given two nonempty convex sets <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>, the <strong>distance</strong> between <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> is defined as
+<span class="math display">\[\begin{equation}
+\mathrm{dist}(C_1,C_2) = \inf \{ \Vert c_1 - c_2 \Vert \mid c_1 \in C_1, c_2 \in C_2 \}.
+\end{equation}\]</span></p>
+<p>For a convex set <span class="math inline">\(C\)</span>, the hyperplane <span class="math inline">\(H\)</span> in <a href="background.html#eq:hyperplane">(1.1)</a> is called a <strong>supporting hyperplane</strong> for <span class="math inline">\(C\)</span> if <span class="math inline">\(C\)</span> is contained in the half space <span class="math inline">\(H^{+}\)</span> and the distance between <span class="math inline">\(H\)</span> and <span class="math inline">\(C\)</span> is zero. For example, the hyperplane <span class="math inline">\(x_1 = 0\)</span> is supporting for the hyperboloid <span class="math inline">\(\{ (x_1,x_2) \mid x_1 x_2 \geq 1, x_1 \geq 0, x_2 \geq 0 \}\)</span> in <span class="math inline">\(\mathbb{R}^{2}\)</span>.</p>
 <p>An important property of a convex set is that we can <em>certify</em> when a point is not in the set. This is usually done via a separation theorem.</p>
 <div class="theorembox">
 <div class="theorem">
@@ -162,25 +175,164 @@ H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
 \langle c, x \rangle \geq d, &amp;  \forall x \in S_1,\\
 \langle c, x \rangle \leq d, &amp; \forall x \in S_2.
 \end{split}
-\tag{1.1}
+\tag{1.3}
 \end{equation}\]</span>
-Further, if <span class="math inline">\(S_1\)</span> is compact (i.e., closed and bounded) and <span class="math inline">\(S_2\)</span> is closed, then the separation is strict, i.e., the inequalities in <a href="background.html#eq:separation">(1.1)</a> are strict.</p>
+Further, if <span class="math inline">\(S_1\)</span> is compact (i.e., closed and bounded) and <span class="math inline">\(S_2\)</span> is closed, then the separation is strict, i.e., the inequalities in <a href="background.html#eq:separation">(1.3)</a> are strict.</p>
 </div>
 </div>
 <p>The strict separation theorem is used typically when <span class="math inline">\(S_1\)</span> is a single point (hence compact).</p>
+<p>We will see a generation of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.</p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-1" class="exercise"><strong>Exercise 1.1  </strong></span>Provide examples of two disjoint convex sets such that the separation in <a href="background.html#eq:separation">(1.3)</a> is not strict in one way and both ways.</p>
+</div>
+</div>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-2" class="exercise"><strong>Exercise 1.2  </strong></span>Provide a constructive proof that the separation hyperplane exists in Theorem <a href="background.html#thm:SeparationTheorem">1.1</a> when (1) both <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> are closed, and (2) at least one of them is bounded.</p>
+</div>
+</div>
 <p>The intersection of convex sets is always convex (try to prove this).</p>
 </div>
 <div id="background:convex:geometry" class="section level2 hasAnchor" number="1.2">
 <h2><span class="header-section-number">1.2</span> Convex Geometry<a href="background.html#background:convex:geometry" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="basic-facts" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Basic Facts<a href="background.html#basic-facts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Given a set <span class="math inline">\(S\)</span>, its <strong>affine hull</strong> is the set
+<span class="math display">\[
+\mathrm{aff}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \mathbb{N}_{+}  \right\} ,
+\]</span>
+where <span class="math inline">\(\sum_{i=1}^{k} \lambda_i u_i\)</span> is called an <em>affine combination</em> of <span class="math inline">\(u_1,\dots,u_k\)</span> when <span class="math inline">\(\sum_i \lambda_i = 1\)</span>. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in <span class="math inline">\(\mathbb{R}^{3}\)</span> is the entire space <span class="math inline">\(\mathbb{R}^{3}\)</span>.</p>
+<p>For a convex set <span class="math inline">\(C \subseteq \mathbb{R}^{n}\)</span>, the <strong>interior</strong> of <span class="math inline">\(C\)</span> is defined as
+<span class="math display">\[
+\mathrm{int}(C) := \{  u \in C \mid \exists \epsilon &gt; 0, B(u,\epsilon) \succeq C  \},
+\]</span>
+where <span class="math inline">\(B(u,\epsilon)\)</span> denotes a ball centered at <span class="math inline">\(u\)</span> with radius <span class="math inline">\(\epsilon\)</span> (using the usual 2-norm). Each point in <span class="math inline">\(\mathrm{int}(C)\)</span> is called an <em>interior point</em> of <span class="math inline">\(C\)</span>. If <span class="math inline">\(\mathrm{int}(C) = C\)</span>, then <span class="math inline">\(C\)</span> is said to be an <strong>open set</strong>. A convex set with nonempty interior is called a <strong>convex domain</strong>, while a compact (i.e., closed and bounded) convex domain is called a <strong>convex body</strong>.</p>
+<p>The <strong>boundary of <span class="math inline">\(C\)</span></strong> is the subset of points that are not in the interior of <span class="math inline">\(C\)</span> and we denote it as <span class="math inline">\(\partial C\)</span>.</p>
+<p>It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the <strong>relative interior</strong> can be defined as
+<span class="math display">\[
+\mathrm{ri}(C) := \{  u \in C \mid \exists \epsilon &gt; 0, B(u,\epsilon) \cap \mathrm{aff}(C) \subseteq C  \}.
+\]</span>
+For a nonempty convex set, the relative interior always exists. If <span class="math inline">\(\mathrm{ri}(C) = C\)</span>, then <span class="math inline">\(C\)</span> is said to be <strong>relatively open</strong>. For example, the relative interior of a singleton is the singleton itself, and hence a singleton is relatively open.</p>
+<p>For a convex set <span class="math inline">\(C\)</span>, a point <span class="math inline">\(u \in C\)</span> is called an <strong>extreme point</strong> if
+<span class="math display">\[
+u \in (x,y), x \in C, y \in C \quad \Rightarrow u = x = y.
+\]</span>
+For example, consider <span class="math inline">\(C = \{ (x,y)\mid x^2 + y^2 \leq 1 \}\)</span>, then all the points on the boundary <span class="math inline">\(\partial C = \{ (x,y) \mid x^2 + y^2 = 1 \}\)</span> are extreme points.</p>
+<p>A subset <span class="math inline">\(F \subseteq C\)</span> is called a <strong>face</strong> if <span class="math inline">\(F\)</span> itself is convex and
+<span class="math display">\[
+u \in (x,y), u \in F, x,y \in C \quad \Rightarrow x,y \in F.
+\]</span>
+Clearly, the empty set <span class="math inline">\(\emptyset\)</span> and the entire set <span class="math inline">\(C\)</span> are faces of <span class="math inline">\(C\)</span>, which are called <em>trivial faces</em>. The face <span class="math inline">\(F\)</span> is said to be <em>proper</em> if <span class="math inline">\(F \neq C\)</span>. The set of any single extreme point is also a face. A face <span class="math inline">\(F\)</span> of <span class="math inline">\(C\)</span> is called <strong>exposed</strong> if there exists a supporting hyperplane <span class="math inline">\(H\)</span> for <span class="math inline">\(C\)</span> such that
+<span class="math display">\[
+F = H \cap C.
+\]</span></p>
+</div>
+<div id="cones-duality-polarity" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> Cones, Duality, Polarity<a href="background.html#cones-duality-polarity" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div class="definitionbox">
 <div class="definition">
-<p><span id="def:ExtremePoint" class="definition"><strong>Definition 1.2  (Extreme Point) </strong></span>Given a convex set, a point <span class="math inline">\(x \in S\)</span> is <em>extreme</em> if
+<p><span id="def:polar" class="definition"><strong>Definition 1.2  (Polar) </strong></span>For a nonempty set <span class="math inline">\(T \subseteq \mathbb{R}^{n}\)</span>, its polar is the set
+<span class="math display" id="eq:polar">\[\begin{equation}
+T^\circ := \{  y \in \mathbb{R}^{n} \mid \langle x, y \rangle \leq 1, \forall x \in T  \}.
+\tag{1.4}
+\end{equation}\]</span></p>
+</div>
+</div>
+<p>The polar <span class="math inline">\(T^\circ\)</span> is a closed convex set and contains the origin. Note that <span class="math inline">\(T\)</span> is always contained in the polar of <span class="math inline">\(T^\circ\)</span>, i.e., <span class="math inline">\(T \subseteq (T^\circ)^\circ\)</span>. Indeed, they are equal under some assumptions.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:bipolar" class="theorem"><strong>Theorem 1.2  (Bipolar) </strong></span>If <span class="math inline">\(T \subseteq \mathbb{R}^{n}\)</span> is a closed convex set containing the origin, then <span class="math inline">\((T^\circ)^\circ = T\)</span>.</p>
+</div>
+</div>
+<p>An important class of convex sets are those that are invariant under nonnegative scalings. A set <span class="math inline">\(K \subseteq \mathbb{R}^{n}\)</span> is a <strong>cone</strong> if <span class="math inline">\(t x \in K\)</span> for all <span class="math inline">\(x \in K\)</span> and for all <span class="math inline">\(t &gt; 0\)</span>. For example, the positive real line <span class="math inline">\(\{ x \in \mathbb{R}^{} \mid x &gt; 0 \}\)</span> is a cone. The cone <span class="math inline">\(K\)</span> is <strong>pointed</strong> if <span class="math inline">\(K \cap -K = \{ 0 \}\)</span>. It is said to be <strong>solid</strong> if its interior <span class="math inline">\(\mathrm{int}(K) \neq \emptyset\)</span>. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.</p>
+<p>The analogue of extreme point for convex cones is the <strong>extreme ray</strong>. For a convex cone <span class="math inline">\(K\)</span> and <span class="math inline">\(0 \neq u \in K\)</span>, the line segment
 <span class="math display">\[
-\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
+u \cdot [0,\infty) := \{ tu \mid t\geq 0 \}
 \]</span>
-In other words, any line segment that contains <span class="math inline">\(x\)</span> and lies inside <span class="math inline">\(S\)</span> must be <span class="math inline">\(x\)</span> itself.</p>
+is called an extreme ray of <span class="math inline">\(K\)</span> if
+<span class="math display">\[
+u \in (x,y), x,y \in K \quad \Rightarrow \quad u,x,y \text{ are parallel to each other}.
+\]</span>
+If <span class="math inline">\(u \cdot [0,\infty)\)</span> is an extreme ray, then we say <span class="math inline">\(u\)</span> generates the extreme ray.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ProperCone" class="definition"><strong>Definition 1.3  (Proper Cone) </strong></span>A cone <span class="math inline">\(K\)</span> is proper if it is closed, convex, pointed, and solid.</p>
 </div>
 </div>
+<p>A proper cone <span class="math inline">\(K\)</span> induces a <strong>partial order</strong> on the vector space, via <span class="math inline">\(x \succeq y\)</span> if <span class="math inline">\(x - y \in K\)</span>. We also use <span class="math inline">\(x \succ y\)</span> if <span class="math inline">\(x - y\)</span> is in <span class="math inline">\(\mathrm{int}(K)\)</span>. Important examples of proper cones are the nonnegative orthant, the second-order cone, the set of symmetric positive semidefinite matrices, and the set of nonnegative polynomials, which we will describe later in the book.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Dual" class="definition"><strong>Definition 1.4  (Dual) </strong></span>The dual of a nonempty set <span class="math inline">\(S\)</span> is
+<span class="math display">\[
+S^* := \{  y \in \mathbb{R}^{n} \mid \langle y, x \rangle \geq 0, \forall x \in S \}.
+\]</span></p>
+</div>
+</div>
+<p>Given any set <span class="math inline">\(S\)</span>, its dual <span class="math inline">\(S^*\)</span> is always a closed convex cone. Duality reverses inclusion, that is,
+<span class="math display">\[
+S_1 \subseteq S_2 \quad \Rightarrow \quad S_1^* \supseteq S_2^*.
+\]</span>
+If <span class="math inline">\(S\)</span> is a closed convex cone, then <span class="math inline">\(S^{* *}= S\)</span>. Otherwise, <span class="math inline">\(S^{* *}\)</span> is the closure of the smallest convex cone that contains <span class="math inline">\(S\)</span>.</p>
+<p>For a cone <span class="math inline">\(K \subseteq \mathbb{R}^{n}\)</span>, one can show that
+<span class="math display">\[
+K^\circ = \{ y \in \mathbb{R}^{n} \mid \langle x, y \rangle \leq 0, \forall x \in K \}.
+\]</span>
+The set <span class="math inline">\(K^\circ\)</span> is called the <strong>polar cone</strong> of <span class="math inline">\(K\)</span>. The negative of <span class="math inline">\(K^\circ\)</span> is just the <strong>dual cone</strong>
+<span class="math display">\[
+K^{*} = \{ y \in \mathbb{R}^{n} \mid \langle x, y \rangle \geq 0, \forall x \in K \}.
+\]</span></p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:selfdual" class="definition"><strong>Definition 1.5  (Self-dual) </strong></span>A cone <span class="math inline">\(K\)</span> is self-dual if <span class="math inline">\(K^{*} = K\)</span>.</p>
+</div>
+</div>
+<p>As an easy example, the nonnegative orthant <span class="math inline">\(\mathbb{R}^{n}_{+}\)</span> is self-dual.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SecondOrderCone" class="example"><strong>Example 1.1  (Second-order Cone) </strong></span>The second-order cone, or the Lorentz cone, or the ice cream cone
+<span class="math display">\[
+\mathcal{Q}_n := \{  (x_0,x_1,\dots,x_n) \in \mathbb{R}^{n+1} \mid \sqrt{x_1^2 + \dots + x_n^2} \leq x_0  \}
+\]</span>
+is a proper cone of <span class="math inline">\(\mathbb{R}^{n+1}\)</span>. We will show that it is also self-dual.</p>
+<p><strong>Proof</strong>. Consider <span class="math inline">\((y_0,y_1,\dots,y_n) \in \mathcal{Q}_n\)</span>, we want to show that
+<span class="math display" id="eq:dual-cone-condition">\[\begin{equation}
+x_0 y_0 + x_1 y_1 + \dots + x_n y_n \geq 0, \forall (x_0,x_1,\dots,x_n) \in \mathcal{Q}_n.
+\tag{1.5}
+\end{equation}\]</span>
+This is easy to verify because
+<span class="math display">\[
+x_1 y_1 + \dots + x_n y_n \geq - \sqrt{x_1^2 + \dots + x_n^2} \sqrt{y_1^2 + \dots + y_n^2} \geq - x_0 y_0.
+\]</span>
+Hence we have <span class="math inline">\(\mathcal{Q}_n \subseteq \mathcal{Q}_n^{*}\)</span>.</p>
+<p>Conversely, if <a href="background.html#eq:dual-cone-condition">(1.5)</a> holds, then take
+<span class="math display">\[
+x_1 = -y_1, \dots, x_n = - y_n, \quad x_0 = \sqrt{x_1^2 + \dots + x_n^2},
+\]</span>
+we have
+<span class="math display">\[
+y_0 \geq \sqrt{y_1^2 + \dots + y_n^2},
+\]</span>
+hence <span class="math inline">\(\mathcal{Q}_n^{*} \subseteq \mathcal{Q}_n\)</span>. <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+<p>Not very proper cone is self-dual.</p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-3" class="exercise"><strong>Exercise 1.3  </strong></span>Consider the following proper cone in <span class="math inline">\(\mathbb{R}^{2}\)</span>
+<span class="math display">\[
+K = \{ (x_1,x_2) \mid 2x_1 - x_2 \geq 0, 2x_2 - x_1 \geq 0 \}.
+\]</span>
+Show that it is not self-dual.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="background:convex:optimization" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Convex Optimization<a href="background.html#background:convex:optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="background:linear:optimization" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Linear Optimization<a href="background.html#background:linear:optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 </div>
 </div>

@@ -103,7 +103,13 @@ div.csl-indent {
 <li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
-<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -158,22 +164,26 @@ div.csl-indent {
 <td align="left">nonnegative integers</td>
 </tr>
 <tr class="even">
+<td align="left"><span class="math inline">\(\mathbb{N}_{+}\)</span></td>
+<td align="left">positive integers</td>
+</tr>
+<tr class="odd">
 <td align="left"><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td align="left"><span class="math inline">\(n\)</span>-D column vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\mathbb{R}^{n}_{+}\)</span></td>
 <td align="left">nonnegative orthant</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\mathbb{R}^{n}_{++}\)</span></td>
 <td align="left">positive orthant</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(e_i\)</span></td>
 <td align="left">standard basic vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}\)</span></td>
 <td align="left">standard simplex</td>
 </tr>
@@ -280,16 +290,24 @@ div.csl-indent {
 <td align="left">ball with center <span class="math inline">\(o\)</span> and radius <span class="math inline">\(r\)</span></td>
 </tr>
 <tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{aff}(S)\)</span></td>
+<td align="left">affine hull of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="odd">
 <td align="left"><span class="math inline">\(\mathrm{conv}(S)\)</span></td>
 <td align="left">convex hull of set <span class="math inline">\(S\)</span></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\mathrm{cone}(S)\)</span></td>
 <td align="left">conical hull of set <span class="math inline">\(S\)</span></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\mathrm{int}(S)\)</span></td>
 <td align="left">interior of set <span class="math inline">\(S\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\mathrm{ri}(S)\)</span></td>
+<td align="left">relative interior of set <span class="math inline">\(S\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left"><span class="math inline">\(\partial S\)</span></td>

@@ -46,3 +46,9 @@ pre code {
 .proofbox {
   color: rgb(128, 128, 128);
 }
+
+.exercisebox {
+  padding: 1em;
+  border: 2px solid rgb(112, 94, 232);
+  border-radius: 10px;
+}
