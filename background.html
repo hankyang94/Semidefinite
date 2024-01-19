@@ -59,6 +59,28 @@
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -78,7 +100,11 @@
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
-<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a></li>
+</ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -103,7 +129,72 @@
             <section class="normal" id="section-">
 <div id="background" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Mathematical Background<a href="background.html#background" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<ul>
+<li>Convexity</li>
+<li>Convex Optimization</li>
+<li>Convex Geometry</li>
+<li>Linear Programming</li>
+</ul>
+<div id="background:convexity" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Convexity<a href="background.html#background:convexity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A very important notion in modern optimization is that of <em>convexity</em>. To a large extent, an optimization problem is “easy” if it is convex, and “difficult” when convexity is lost, i.e., <em>nonconvex</em>. We give a basic review of convexity here and refer the reader to <span class="citation">(<a href="#ref-rockafellar70-convexanalysis" role="doc-biblioref">Rockafellar 1970</a>)</span>, <span class="citation">(<a href="#ref-boyd04book-convex" role="doc-biblioref">Boyd and Vandenberghe 2004</a>)</span>, and <span class="citation">(<a href="#ref-bertsekas03book-convex" role="doc-biblioref">Bertsekas, Nedic, and Ozdaglar 2003</a>)</span> for comprehensive treatments.</p>
+<p>We will work on a finite-dimensional real vector space, which we will identify with <span class="math inline">\(\mathbb{R}^{n}\)</span>.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ConvexSet" class="definition"><strong>Definition 1.1  (Convex Set) </strong></span>A set <span class="math inline">\(S\)</span> is convex if <span class="math inline">\(x_1,x_2 \in S\)</span> implies <span class="math inline">\(\lambda x_1 + (1-\lambda) x_2 \in S\)</span> for any <span class="math inline">\(\lambda \in [0,1]\)</span>. In other words, if <span class="math inline">\(x_1,x_2 \in S\)</span>, then the line segment connecting <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> lies inside <span class="math inline">\(S\)</span>.</p>
+</div>
+</div>
+<p>Conversely, a set <span class="math inline">\(S\)</span> is nonconvex if Definition <a href="background.html#def:ConvexSet">1.1</a> does not hold.</p>
+<p>A <em>hyperplane</em> is a common convex set defined as
+<span class="math display">\[
+P = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
+\]</span>
+for some <span class="math inline">\(c \in \mathbb{R}^{n}\)</span> and scalar <span class="math inline">\(d\)</span>. A <em>halfspace</em> is a convex set defined as
+<span class="math display">\[
+H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
+\]</span></p>
+<p>An important property of a convex set is that we can <em>certify</em> when a point is not in the set. This is usually done via a separation theorem.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SeparationTheorem" class="theorem"><strong>Theorem 1.1  (Separation Theorem) </strong></span>Let <span class="math inline">\(S_1,S_2\)</span> be two convex sets in <span class="math inline">\(\mathbb{R}^{n}\)</span> and <span class="math inline">\(S_1 \cap S_2 = \emptyset\)</span>, then there exists a hyperplane that separates <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, i.e., there exists <span class="math inline">\(c\)</span> and <span class="math inline">\(d\)</span> such that
+<span class="math display" id="eq:separation">\[\begin{equation}
+\begin{split}
+\langle c, x \rangle \geq d, &amp;  \forall x \in S_1,\\
+\langle c, x \rangle \leq d, &amp; \forall x \in S_2.
+\end{split}
+\tag{1.1}
+\end{equation}\]</span>
+Further, if <span class="math inline">\(S_1\)</span> is compact (i.e., closed and bounded) and <span class="math inline">\(S_2\)</span> is closed, then the separation is strict, i.e., the inequalities in <a href="background.html#eq:separation">(1.1)</a> are strict.</p>
+</div>
+</div>
+<p>The strict separation theorem is used typically when <span class="math inline">\(S_1\)</span> is a single point (hence compact).</p>
+<p>The intersection of convex sets is always convex (try to prove this).</p>
+</div>
+<div id="background:convex:geometry" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Convex Geometry<a href="background.html#background:convex:geometry" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ExtremePoint" class="definition"><strong>Definition 1.2  (Extreme Point) </strong></span>Given a convex set, a point <span class="math inline">\(x \in S\)</span> is <em>extreme</em> if
+<span class="math display">\[
+\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
+\]</span>
+In other words, any line segment that contains <span class="math inline">\(x\)</span> and lies inside <span class="math inline">\(S\)</span> must be <span class="math inline">\(x\)</span> itself.</p>
+</div>
+</div>
 
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bertsekas03book-convex" class="csl-entry">
+Bertsekas, Dimitri, Angelia Nedic, and Asuman Ozdaglar. 2003. <em>Convex Analysis and Optimization</em>. Vol. 1. Athena Scientific.
+</div>
+<div id="ref-boyd04book-convex" class="csl-entry">
+Boyd, Stephen P, and Lieven Vandenberghe. 2004. <em>Convex Optimization</em>. Cambridge university press.
+</div>
+<div id="ref-rockafellar70-convexanalysis" class="csl-entry">
+Rockafellar, Ralph Tyrell. 1970. <span>“Convex Analysis.”</span>
+</div>
 </div>
             </section>
 

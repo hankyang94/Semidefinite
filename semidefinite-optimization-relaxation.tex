@@ -125,6 +125,23 @@ arc=4pt}
 \author{Heng Yang}
 \date{2024-01-19}
 
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{conjecture}{Conjecture}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[chapter]
+\theoremstyle{definition}
+\newtheorem{hypothesis}{Hypothesis}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
 
@@ -164,6 +181,8 @@ arc=4pt}
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+\newcommand{\cbrace}[1]{\{ #1 \}}
+\newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -291,8 +310,79 @@ SDP & semidefinite program \\
 \hypertarget{background}{%
 \chapter{Mathematical Background}\label{background}}
 
+\begin{itemize}
+\tightlist
+\item
+  Convexity
+\item
+  Convex Optimization
+\item
+  Convex Geometry
+\item
+  Linear Programming
+\end{itemize}
+
+\hypertarget{background:convexity}{%
+\section{Convexity}\label{background:convexity}}
+
+A very important notion in modern optimization is that of \emph{convexity}. To a large extent, an optimization problem is ``easy'' if it is convex, and ``difficult'' when convexity is lost, i.e., \emph{nonconvex}. We give a basic review of convexity here and refer the reader to \citep{rockafellar70-convexanalysis}, \citep{boyd04book-convex}, and \citep{bertsekas03book-convex} for comprehensive treatments.
+
+We will work on a finite-dimensional real vector space, which we will identify with \(\mathbb{R}^{n}\).
+
+\begin{definition}[Convex Set]
+\protect\hypertarget{def:ConvexSet}{}\label{def:ConvexSet}A set \(S\) is convex if \(x_1,x_2 \in S\) implies \(\lambda x_1 + (1-\lambda) x_2 \in S\) for any \(\lambda \in [0,1]\). In other words, if \(x_1,x_2 \in S\), then the line segment connecting \(x_1\) and \(x_2\) lies inside \(S\).
+\end{definition}
+
+Conversely, a set \(S\) is nonconvex if Definition \ref{def:ConvexSet} does not hold.
+
+A \emph{hyperplane} is a common convex set defined as
+\[
+P = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle = d  \}
+\]
+for some \(c \in \mathbb{R}^{n}\) and scalar \(d\). A \emph{halfspace} is a convex set defined as
+\[
+H = \{  x \in \mathbb{R}^{n} \mid \langle c, x \rangle \geq d  \}.
+\]
+
+An important property of a convex set is that we can \emph{certify} when a point is not in the set. This is usually done via a separation theorem.
+
+\begin{theorem}[Separation Theorem]
+\protect\hypertarget{thm:SeparationTheorem}{}\label{thm:SeparationTheorem}Let \(S_1,S_2\) be two convex sets in \(\mathbb{R}^{n}\) and \(S_1 \cap S_2 = \emptyset\), then there exists a hyperplane that separates \(S_1\) and \(S_2\), i.e., there exists \(c\) and \(d\) such that
+\begin{equation}
+\begin{split}
+\langle c, x \rangle \geq d, &  \forall x \in S_1,\\
+\langle c, x \rangle \leq d, & \forall x \in S_2.
+\end{split}
+\label{eq:separation}
+\end{equation}
+Further, if \(S_1\) is compact (i.e., closed and bounded) and \(S_2\) is closed, then the separation is strict, i.e., the inequalities in \eqref{eq:separation} are strict.
+\end{theorem}
+
+The strict separation theorem is used typically when \(S_1\) is a single point (hence compact).
+
+The intersection of convex sets is always convex (try to prove this).
+
+\hypertarget{background:convex:geometry}{%
+\section{Convex Geometry}\label{background:convex:geometry}}
+
+\begin{definition}[Extreme Point]
+\protect\hypertarget{def:ExtremePoint}{}\label{def:ExtremePoint}Given a convex set, a point \(x \in S\) is \emph{extreme} if
+\[
+\forall x_1, x_2 \in S, \exists \lambda \in (0,1) \text { such that } x = \lambda x_1 + (1-\lambda) x_2 \Longrightarrow x = x_1 = x_2.
+\]
+In other words, any line segment that contains \(x\) and lies inside \(S\) must be \(x\) itself.
+\end{definition}
+
 \hypertarget{sdp}{%
 \chapter{Semidefinite Optimization}\label{sdp}}
+
+\begin{itemize}
+\tightlist
+\item
+  Positive Semidefinite Matrices
+\item
+  Spectrahedra
+\end{itemize}
 
   \bibliography{book.bib,packages.bib}
 
