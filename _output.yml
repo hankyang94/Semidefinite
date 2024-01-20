@@ -8,6 +8,8 @@ bookdown::gitbook:
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
     edit: https://github.com/hankyang94/Semidefinite/blob/main/%s
     download: ["pdf"]
+  includes:
+    after_body: disqus.html
 bookdown::pdf_book:
   includes:
     in_header: preamble.tex
