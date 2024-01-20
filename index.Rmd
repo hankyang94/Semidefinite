@@ -57,7 +57,23 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 
 # Preface {-}
 
-This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Relaxation. Information about the offerings of the class is listed below.
+This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Relaxation. 
+
+## Feedback {-}
+
+I would like to invite you to provide comments to the textbook via the following two ways:
+
+- Inline comments with Hypothesis:
+    - Go to [Hypothesis](https://hypothes.is) and create an account
+    - Install the [Chrome extension of Hypothesis](https://chrome.google.com/webstore/detail/hypothesis-web-pdf-annota/bjfhmglciegochdpefhhlphglcehbmek)
+    - Provide public comments to textbook contents and I will try to address them 
+
+- Blog-style comments with Disqus:
+
+
+## Offerings {-}
+
+Information about the offerings of the class is listed below.
 
 #### 2024 Spring {-}
 
@@ -72,7 +88,7 @@ This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Rela
 [**Syllabus**](https://docs.google.com/document/d/1H6Wqht_PVw_n8Jl0kXN3HjZfHkeZJYqYWT4ayxvqRlU/edit?usp=sharing)
 
 
-#### Acknowledgment {-}
+<!-- #### Acknowledgment {-} -->
 
 
 # Notation {-}
@@ -132,7 +148,8 @@ We will use the following standard notation throughout this book.
 | $\interior(S)$ | interior of set $S$ | 
 | $\relint(S)$ | relative interior of set $S$ |
 | $\partial S$ | boundary of set $S$ |
-| $P^\circ$ | polar dual of convex body | 
+| $P^\circ$ | polar of convex body | 
+| $P^{*}$ | dual of set $P$ |
 | $\SOd$ | special orthogonal group of dimension $d$ |
 | $\usphere^{d-1}$ | unit sphere in $\Real{d}$ |
 
