@@ -69,6 +69,9 @@ I would like to invite you to provide comments to the textbook via the following
     - Provide public comments to textbook contents and I will try to address them 
 
 - Blog-style comments with Disqus:
+    - At the end of each Chapter, there is a Disqus module where you can leave feedback
+
+I would recommend using Disqus for high-level and general feedback regarding the entire Chapter, but using Hypothesis for feedback and questions about the technical details.
 
 
 ## Offerings {-}
