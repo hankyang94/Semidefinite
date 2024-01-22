@@ -409,7 +409,7 @@ Further, if \(S_1\) is compact (i.e., closed and bounded) and \(S_2\) is closed,
 
 The strict separation theorem is used typically when \(S_1\) is a single point (hence compact).
 
-We will see a generation of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
+We will see a generalization of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
 
 \begin{exercise}
 Provide examples of two disjoint convex sets such that the separation in \eqref{eq:separation} is not strict in one way and both ways.
@@ -435,7 +435,7 @@ where \(\sum_{i=1}^{k} \lambda_i u_i\) is called an \emph{affine combination} of
 
 For a convex set \(C \subseteq \mathbb{R}^{n}\), the \textbf{interior} of \(C\) is defined as
 \[
-\mathrm{int}(C) := \{  u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \succeq C  \},
+\mathrm{int}(C) := \{  u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \subseteq C  \},
 \]
 where \(B(u,\epsilon)\) denotes a ball centered at \(u\) with radius \(\epsilon\) (using the usual 2-norm). Each point in \(\mathrm{int}(C)\) is called an \emph{interior point} of \(C\). If \(\mathrm{int}(C) = C\), then \(C\) is said to be an \textbf{open set}. A convex set with nonempty interior is called a \textbf{convex domain}, while a compact (i.e., closed and bounded) convex domain is called a \textbf{convex body}.
 
@@ -554,7 +554,7 @@ y_0 \geq \sqrt{y_1^2 + \dots + y_n^2},
 hence \(\mathcal{Q}_n^{*} \subseteq \mathcal{Q}_n\). \(\blacksquare\)
 \end{example}
 
-Not very proper cone is self-dual.
+Not every proper cone is self-dual.
 
 \begin{exercise}
 Consider the following proper cone in \(\mathbb{R}^{2}\)
