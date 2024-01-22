@@ -57,7 +57,7 @@ Further, if $S_1$ is compact (i.e., closed and bounded) and $S_2$ is closed, the
 
 The strict separation theorem is used typically when $S_1$ is a single point (hence compact).
 
-We will see a generation of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
+We will see a generalization of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
 
 ::: {.exercisebox}
 ::: {.exercise}
@@ -85,7 +85,7 @@ where $\sum_{i=1}^{k} \lambda_i u_i$ is called an _affine combination_ of $u_1,\
 
 For a convex set $C \subseteq \Real{n}$, the **interior** of $C$ is defined as
 $$
-\interior(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \succeq C },
+\interior(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \subseteq C },
 $$
 where $B(u,\epsilon)$ denotes a ball centered at $u$ with radius $\epsilon$ (using the usual 2-norm). Each point in $\interior(C)$ is called an _interior point_ of $C$. If $\interior(C) = C$, then $C$ is said to be an **open set**. A convex set with nonempty interior is called a **convex domain**, while a compact (i.e., closed and bounded) convex domain is called a **convex body**.
 
@@ -216,7 +216,7 @@ hence $\calQ_n^{*} \subseteq \calQ_n$. $\blacksquare$
 :::
 :::
 
-Not very proper cone is self-dual.
+Not every proper cone is self-dual.
 
 ::: {.exercisebox}
 ::: {.exercise}
