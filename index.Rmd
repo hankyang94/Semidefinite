@@ -52,6 +52,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\aff}{\mathrm{aff}}
 \newcommand{\bbN}{\mathbb{N}}
 \newcommand{\dist}{\mathrm{dist}}
+\newcommand{\subject}{\mathrm{s.t.}}
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 
