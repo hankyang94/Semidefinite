@@ -123,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-21}
+\date{2024-01-22}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -189,6 +189,7 @@ arc=4pt}
 \newcommand{\aff}{\mathrm{aff}}
 \newcommand{\bbN}{\mathbb{N}}
 \newcommand{\dist}{\mathrm{dist}}
+\newcommand{\subject}{\mathrm{s.t.}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -565,6 +566,176 @@ Show that it is not self-dual.
 
 \hypertarget{background:convex:optimization}{%
 \section{Convex Optimization}\label{background:convex:optimization}}
+
+\begin{definition}[Convex Function]
+\protect\hypertarget{def:ConvexFun}{}\label{def:ConvexFun}A function \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\) is a convex function if
+\[
+f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], \forall x,y \in \mathbb{R}^{n}.
+\]
+\end{definition}
+
+A function \(f\) is convex if and only if its \textbf{epigraph} \(\{ (x,t) \in \mathbb{R}^{n+1} \mid f(x) \leq t \}\) is a convex set.
+
+When a function \(f\) is differentiable, then there are several equivalent characterizations of convexity, in terms of the gradient \(\nabla f(x)\) or the Hessian \(\nabla^2 f(x)\).
+
+\begin{theorem}[Equivalent Characterizations of Convexity]
+\protect\hypertarget{thm:CharacterizeConvexity}{}\label{thm:CharacterizeConvexity}
+
+Let \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\) be a twice differentiable function. The following propositions are equivalent.
+
+\begin{enumerate}
+\def\labelenumi{\roman{enumi}.}
+\item
+  \(f\) is convex, i.e.,
+  \[
+  f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], x,y \in \mathbb{R}^{n}.
+  \]
+\item
+  The first-order convexity condition holds:
+  \[
+  f(y) \geq f(x) + \langle \nabla f(x),  y - x \rangle, \forall x, y \in \mathbb{R}^{n},
+  \]
+  i.e., the hyperplane going through \((x,f(x))\) with slope \(\nabla f(x)\) supports the epigraph of \(f\).
+\item
+  The second-order convexity condition holds:
+  \[
+  \nabla^2 f(x) \succeq 0, \forall x \in \mathbb{R}^{n},
+  \]
+  i.e., the Hessian is positive semidefinite everywhere.
+\end{enumerate}
+
+\end{theorem}
+
+Let's work on a little exercise.
+
+\begin{exercise}
+
+Which one of the following functions \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\) is not convex?
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\item
+  \(\exp(-c^\top x)\), with \(c\) constant
+\item
+  \(\exp(c^\top x)\), with \(c\) constant
+\item
+  \(\exp(x^\top x)\)
+\item
+  \(\exp(-x^\top x)\)
+\end{enumerate}
+
+\end{exercise}
+
+\hypertarget{minimax-theorem}{%
+\subsection{Minimax Theorem}\label{minimax-theorem}}
+
+Given a function \(f: X \times Y \rightarrow \mathbb{R}^{}\), the following inequality always holds
+\begin{equation}
+\max_{y \in Y} \min_{x \in X} f(x,y) \leq \min_{x \in X} \max_{y \in Y} f(x,y).
+\label{eq:weak-minimax}
+\end{equation}
+If the maximum or minimum is not attained, then \eqref{eq:weak-minimax} holds with \(\max\) / \(\min\) replaced by \(\sup\) and \(\inf\), respectively.
+
+\begin{exercise}
+Provide examples of \(f\) such that the inequality in \eqref{eq:weak-minimax} is strict.
+\end{exercise}
+
+It is of interest to understand when equality holds in \eqref{eq:weak-minimax}.
+
+\begin{theorem}[Minimax Theorem]
+\protect\hypertarget{thm:minimax}{}\label{thm:minimax}Let \(X \subset \mathbb{R}^{n}\) and \(Y \subset \mathbb{R}^{n}\) be compact convex sets, and \(f: X \times Y \rightarrow \mathbb{R}^{}\) be a continuous function that is convex in its first argument and concave in the second. Then
+\[
+\max_{y \in Y} \min_{x \in X} f(x,y) = \min_{x \in X} \max_{y \in Y} f(x,y).
+\]
+\end{theorem}
+
+A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when \(X\) and \(Y\) are standard unit simplicies and the function \(f(x,y)\) is bilinear. In a research from our group \citep{tang23arxiv-uncertainty}, we used the minimax theorem to convex a minimax problem into a single-level minimization problem.
+
+\hypertarget{lagrangian-duality}{%
+\subsection{Lagrangian Duality}\label{lagrangian-duality}}
+
+Consider a nonlinear optimization problem
+\begin{equation}
+\begin{split}
+u^\star = \min_{x \in \mathbb{R}^{n}} & \quad f(x) \\
+\mathrm{s.t.}& \quad g_i(x) \leq 0, i=1,\dots,m, \\
+& \quad h_j(x) = 0, j = 1,\dots,p.
+\end{split}
+\label{eq:background-nlp}
+\end{equation}
+Define the \textbf{Lagrangian} associated with the optimization problem \eqref{eq:background-nlp} as
+\begin{equation}
+\begin{split}
+L: \mathbb{R}^{n} \times \mathbb{R}^{m}_{+} \times \mathbb{R}^{p} \quad & \rightarrow \quad \mathbb{R}^{}, \\
+(x,\lambda,\mu) \quad & \mapsto \quad f(x) + \sum_{i=1}^m \lambda_i g_i(x) + \sum_{j=1}^p \mu_j h_j(x).
+\end{split}
+\label{eq:background-Lagrangian}
+\end{equation}
+The \textbf{Lagrangian dual function} is defined as
+\begin{equation}
+\phi(\lambda,\mu) := \min_{x \in \mathbb{R}^{n}} L(x,\lambda,\mu).
+\label{eq:background-Lagrangian-dual}
+\end{equation}
+Maximizing this function over the dual variables \((\lambda,\mu)\) yields
+\begin{equation}
+v^\star := \max_{\lambda \geq 0, \mu \in \mathbb{R}^{p}} \phi(\lambda,\mu)
+\label{eq:background-Lagrangian-dual-problem}
+\end{equation}
+Applying the minimax Theorem \ref{thm:minimax}, we can see that
+\[
+v^\star = \max_{(\lambda,\mu)} \min_{x} L(x,\lambda,\mu) \leq \min_{x} \max_{(\lambda,\mu)} L(x,\lambda,\mu) = u^\star.
+\]
+That is to say solving the dual problem \eqref{eq:background-Lagrangian-dual-problem} always provides a lower bound to the primal problem \eqref{eq:background-nlp}.
+
+If the functions \(f,g_i\) are convex and \(h_i\) are affine, the Lagrangian is convex in \(x\) and convex in \((\lambda,\mu)\). To ensure strong duality (i.e., \(u^\star = v^\star\)), compactness or other \textbf{constraint qualifications} are needed. An often used condition is the Slater constraint qualification.
+
+\begin{definition}[Slater Constraint Qualification]
+\protect\hypertarget{def:SlaterCQ}{}\label{def:SlaterCQ}There exists a strictly feasible point for \eqref{eq:background-nlp}, i.e., a point \(z \in \mathbb{R}^{n}\) such that \(h_j(z) = 0,j=1,\dots,p\) and \(g_i(z) < 0,i=1,\dots,m\).
+\end{definition}
+
+Under these conditions, we have strong duality.
+
+\begin{theorem}[Strong Duality]
+\protect\hypertarget{thm:StrongDuality}{}\label{thm:StrongDuality}Consider the optimization \eqref{eq:background-nlp} and assume \(f,g_i\) are convex and \(h_j\) are affine. If Slater's constraint qualification holds, then the optimal value of the primal problem \eqref{eq:background-nlp} is the same as the optimal value of the dual problem \eqref{eq:background-Lagrangian-dual-problem}.
+\end{theorem}
+
+\hypertarget{kkt-optimality-conditions}{%
+\subsection{KKT Optimality Conditions}\label{kkt-optimality-conditions}}
+
+Consider the nonlinear optimization problem \eqref{eq:background-nlp}. A pair of primal and dual variables \((x^\star,\lambda^\star,\mu^\star)\) is said to satisfy the Karush-Kuhn-Tucker (KKT) optimality conditions if
+
+\begin{equation}
+\begin{split}
+\text{primal feasibility}:\ \  & g_i(x^\star) \leq 0,\forall i=1,\dots,m; h_j(x^\star) = 0, \forall j=1,\dots,p \\
+\text{dual feasibility}:\ \  & \lambda_i^\star \geq 0, \forall i=1,\dots,m \\
+\text{stationarity}:\ \  & \nabla_x L(x^\star,\lambda^\star,\mu^\star) = 0 \\
+\text{complementarity}:\ \  & \lambda_i^\star \cdot g_i(x^\star) = 0, \forall i=1,\dots,m.
+\end{split}
+\label{eq:KKT-conditions}
+\end{equation}
+
+Under certain constraint qualifications, the KKT conditions are necessary for local optimality.
+
+\begin{theorem}[Necessary Optimality Conditions]
+\protect\hypertarget{thm:KKTNecessary}{}\label{thm:KKTNecessary}Assume any of the following constraint qualifications hold:
+
+\begin{itemize}
+\item
+  The gradients of the constraints \(\{ \nabla g_i(x^\star) \}_{i=1}^m\), \(\{ \nabla h_j(x^\star) \}_{j=1}^p\) are linearly independent.
+\item
+  Slater's constraint qualification (cf.~Definition \ref{def:SlaterCQ}).
+\item
+  All constraints \(g_i(x)\) and \(h_j(x)\) are affine functions.
+\end{itemize}
+
+Then, at every local minimum \(x^\star\) of \eqref{eq:background-nlp}, the KKT conditions \eqref{eq:KKT-conditions} hold.
+\end{theorem}
+
+On the other hand, for convex optimization problems, the KKT conditions are sufficient for global optimality.
+
+\begin{theorem}[Sufficient Optimality Conditions]
+\protect\hypertarget{thm:KKTSufficient}{}\label{thm:KKTSufficient}Assume optimization \eqref{eq:background-nlp} is convex, i.e., \(f,g_i\) are convex and \(h_j\) are affine. Every point \(x^\star\) that satisfies the KKT conditions \eqref{eq:KKT-conditions} is a global minimizer.
+\end{theorem}
 
 \hypertarget{background:linear:optimization}{%
 \section{Linear Optimization}\label{background:linear:optimization}}

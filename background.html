@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-21" />
+<meta name="date" content="2024-01-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -112,7 +112,12 @@ div.csl-indent {
 <li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
 <li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#lagrangian-duality"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
+</ul></li>
 <li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
@@ -335,6 +340,151 @@ Show that it is not self-dual.</p>
 </div>
 <div id="background:convex:optimization" class="section level2 hasAnchor" number="1.3">
 <h2><span class="header-section-number">1.3</span> Convex Optimization<a href="background.html#background:convex:optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ConvexFun" class="definition"><strong>Definition 1.6  (Convex Function) </strong></span>A function <span class="math inline">\(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\)</span> is a convex function if
+<span class="math display">\[
+f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], \forall x,y \in \mathbb{R}^{n}.
+\]</span></p>
+</div>
+</div>
+<p>A function <span class="math inline">\(f\)</span> is convex if and only if its <strong>epigraph</strong> <span class="math inline">\(\{ (x,t) \in \mathbb{R}^{n+1} \mid f(x) \leq t \}\)</span> is a convex set.</p>
+<p>When a function <span class="math inline">\(f\)</span> is differentiable, then there are several equivalent characterizations of convexity, in terms of the gradient <span class="math inline">\(\nabla f(x)\)</span> or the Hessian <span class="math inline">\(\nabla^2 f(x)\)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:CharacterizeConvexity" class="theorem"><strong>Theorem 1.3  (Equivalent Characterizations of Convexity) </strong></span>Let <span class="math inline">\(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\)</span> be a twice differentiable function. The following propositions are equivalent.</p>
+<ol style="list-style-type: lower-roman">
+<li><p><span class="math inline">\(f\)</span> is convex, i.e.,
+<span class="math display">\[
+f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], x,y \in \mathbb{R}^{n}.
+\]</span></p></li>
+<li><p>The first-order convexity condition holds:
+<span class="math display">\[
+f(y) \geq f(x) + \langle \nabla f(x),  y - x \rangle, \forall x, y \in \mathbb{R}^{n},
+\]</span>
+i.e., the hyperplane going through <span class="math inline">\((x,f(x))\)</span> with slope <span class="math inline">\(\nabla f(x)\)</span> supports the epigraph of <span class="math inline">\(f\)</span>.</p></li>
+<li><p>The second-order convexity condition holds:
+<span class="math display">\[
+\nabla^2 f(x) \succeq 0, \forall x \in \mathbb{R}^{n},
+\]</span>
+i.e., the Hessian is positive semidefinite everywhere.</p></li>
+</ol>
+</div>
+</div>
+<p>Let’s work on a little exercise.</p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-4" class="exercise"><strong>Exercise 1.4  </strong></span>Which one of the following functions <span class="math inline">\(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\)</span> is not convex?</p>
+<ol style="list-style-type: lower-alpha">
+<li><p><span class="math inline">\(\exp(-c^\top x)\)</span>, with <span class="math inline">\(c\)</span> constant</p></li>
+<li><p><span class="math inline">\(\exp(c^\top x)\)</span>, with <span class="math inline">\(c\)</span> constant</p></li>
+<li><p><span class="math inline">\(\exp(x^\top x)\)</span></p></li>
+<li><p><span class="math inline">\(\exp(-x^\top x)\)</span></p></li>
+</ol>
+</div>
+</div>
+<div id="minimax-theorem" class="section level3 hasAnchor" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Minimax Theorem<a href="background.html#minimax-theorem" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Given a function <span class="math inline">\(f: X \times Y \rightarrow \mathbb{R}^{}\)</span>, the following inequality always holds
+<span class="math display" id="eq:weak-minimax">\[\begin{equation}
+\max_{y \in Y} \min_{x \in X} f(x,y) \leq \min_{x \in X} \max_{y \in Y} f(x,y).
+\tag{1.6}
+\end{equation}\]</span>
+If the maximum or minimum is not attained, then <a href="background.html#eq:weak-minimax">(1.6)</a> holds with <span class="math inline">\(\max\)</span> / <span class="math inline">\(\min\)</span> replaced by <span class="math inline">\(\sup\)</span> and <span class="math inline">\(\inf\)</span>, respectively.</p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-5" class="exercise"><strong>Exercise 1.5  </strong></span>Provide examples of <span class="math inline">\(f\)</span> such that the inequality in <a href="background.html#eq:weak-minimax">(1.6)</a> is strict.</p>
+</div>
+</div>
+<p>It is of interest to understand when equality holds in <a href="background.html#eq:weak-minimax">(1.6)</a>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:minimax" class="theorem"><strong>Theorem 1.4  (Minimax Theorem) </strong></span>Let <span class="math inline">\(X \subset \mathbb{R}^{n}\)</span> and <span class="math inline">\(Y \subset \mathbb{R}^{n}\)</span> be compact convex sets, and <span class="math inline">\(f: X \times Y \rightarrow \mathbb{R}^{}\)</span> be a continuous function that is convex in its first argument and concave in the second. Then
+<span class="math display">\[
+\max_{y \in Y} \min_{x \in X} f(x,y) = \min_{x \in X} \max_{y \in Y} f(x,y).
+\]</span></p>
+</div>
+</div>
+<p>A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are standard unit simplicies and the function <span class="math inline">\(f(x,y)\)</span> is bilinear. In a research from our group <span class="citation">(<a href="#ref-tang23arxiv-uncertainty" role="doc-biblioref">Tang, Lasserre, and Yang 2023</a>)</span>, we used the minimax theorem to convex a minimax problem into a single-level minimization problem.</p>
+</div>
+<div id="lagrangian-duality" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Lagrangian Duality<a href="background.html#lagrangian-duality" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a nonlinear optimization problem
+<span class="math display" id="eq:background-nlp">\[\begin{equation}
+\begin{split}
+u^\star = \min_{x \in \mathbb{R}^{n}} &amp; \quad f(x) \\
+\mathrm{s.t.}&amp; \quad g_i(x) \leq 0, i=1,\dots,m, \\
+&amp; \quad h_j(x) = 0, j = 1,\dots,p.
+\end{split}
+\tag{1.7}
+\end{equation}\]</span>
+Define the <strong>Lagrangian</strong> associated with the optimization problem <a href="background.html#eq:background-nlp">(1.7)</a> as
+<span class="math display" id="eq:background-Lagrangian">\[\begin{equation}
+\begin{split}
+L: \mathbb{R}^{n} \times \mathbb{R}^{m}_{+} \times \mathbb{R}^{p} \quad &amp; \rightarrow \quad \mathbb{R}^{}, \\
+(x,\lambda,\mu) \quad &amp; \mapsto \quad f(x) + \sum_{i=1}^m \lambda_i g_i(x) + \sum_{j=1}^p \mu_j h_j(x).
+\end{split}
+\tag{1.8}
+\end{equation}\]</span>
+The <strong>Lagrangian dual function</strong> is defined as
+<span class="math display" id="eq:background-Lagrangian-dual">\[\begin{equation}
+\phi(\lambda,\mu) := \min_{x \in \mathbb{R}^{n}} L(x,\lambda,\mu).
+\tag{1.9}
+\end{equation}\]</span>
+Maximizing this function over the dual variables <span class="math inline">\((\lambda,\mu)\)</span> yields
+<span class="math display" id="eq:background-Lagrangian-dual-problem">\[\begin{equation}
+v^\star := \max_{\lambda \geq 0, \mu \in \mathbb{R}^{p}} \phi(\lambda,\mu)
+\tag{1.10}
+\end{equation}\]</span>
+Applying the minimax Theorem <a href="background.html#thm:minimax">1.4</a>, we can see that
+<span class="math display">\[
+v^\star = \max_{(\lambda,\mu)} \min_{x} L(x,\lambda,\mu) \leq \min_{x} \max_{(\lambda,\mu)} L(x,\lambda,\mu) = u^\star.
+\]</span>
+That is to say solving the dual problem <a href="background.html#eq:background-Lagrangian-dual-problem">(1.10)</a> always provides a lower bound to the primal problem <a href="background.html#eq:background-nlp">(1.7)</a>.</p>
+<p>If the functions <span class="math inline">\(f,g_i\)</span> are convex and <span class="math inline">\(h_i\)</span> are affine, the Lagrangian is convex in <span class="math inline">\(x\)</span> and convex in <span class="math inline">\((\lambda,\mu)\)</span>. To ensure strong duality (i.e., <span class="math inline">\(u^\star = v^\star\)</span>), compactness or other <strong>constraint qualifications</strong> are needed. An often used condition is the Slater constraint qualification.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:SlaterCQ" class="definition"><strong>Definition 1.7  (Slater Constraint Qualification) </strong></span>There exists a strictly feasible point for <a href="background.html#eq:background-nlp">(1.7)</a>, i.e., a point <span class="math inline">\(z \in \mathbb{R}^{n}\)</span> such that <span class="math inline">\(h_j(z) = 0,j=1,\dots,p\)</span> and <span class="math inline">\(g_i(z) &lt; 0,i=1,\dots,m\)</span>.</p>
+</div>
+</div>
+<p>Under these conditions, we have strong duality.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:StrongDuality" class="theorem"><strong>Theorem 1.5  (Strong Duality) </strong></span>Consider the optimization <a href="background.html#eq:background-nlp">(1.7)</a> and assume <span class="math inline">\(f,g_i\)</span> are convex and <span class="math inline">\(h_j\)</span> are affine. If Slater’s constraint qualification holds, then the optimal value of the primal problem <a href="background.html#eq:background-nlp">(1.7)</a> is the same as the optimal value of the dual problem <a href="background.html#eq:background-Lagrangian-dual-problem">(1.10)</a>.</p>
+</div>
+</div>
+</div>
+<div id="kkt-optimality-conditions" class="section level3 hasAnchor" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> KKT Optimality Conditions<a href="background.html#kkt-optimality-conditions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider the nonlinear optimization problem <a href="background.html#eq:background-nlp">(1.7)</a>. A pair of primal and dual variables <span class="math inline">\((x^\star,\lambda^\star,\mu^\star)\)</span> is said to satisfy the Karush-Kuhn-Tucker (KKT) optimality conditions if</p>
+<p><span class="math display" id="eq:KKT-conditions">\[\begin{equation}
+\begin{split}
+\text{primal feasibility}:\ \  &amp; g_i(x^\star) \leq 0,\forall i=1,\dots,m; h_j(x^\star) = 0, \forall j=1,\dots,p \\
+\text{dual feasibility}:\ \  &amp; \lambda_i^\star \geq 0, \forall i=1,\dots,m \\
+\text{stationarity}:\ \  &amp; \nabla_x L(x^\star,\lambda^\star,\mu^\star) = 0 \\
+\text{complementarity}:\ \  &amp; \lambda_i^\star \cdot g_i(x^\star) = 0, \forall i=1,\dots,m.
+\end{split}
+\tag{1.11}
+\end{equation}\]</span></p>
+<p>Under certain constraint qualifications, the KKT conditions are necessary for local optimality.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:KKTNecessary" class="theorem"><strong>Theorem 1.6  (Necessary Optimality Conditions) </strong></span>Assume any of the following constraint qualifications hold:</p>
+<ul>
+<li><p>The gradients of the constraints <span class="math inline">\(\{ \nabla g_i(x^\star) \}_{i=1}^m\)</span>, <span class="math inline">\(\{ \nabla h_j(x^\star) \}_{j=1}^p\)</span> are linearly independent.</p></li>
+<li><p>Slater’s constraint qualification (cf. Definition <a href="background.html#def:SlaterCQ">1.7</a>).</p></li>
+<li><p>All constraints <span class="math inline">\(g_i(x)\)</span> and <span class="math inline">\(h_j(x)\)</span> are affine functions.</p></li>
+</ul>
+<p>Then, at every local minimum <span class="math inline">\(x^\star\)</span> of <a href="background.html#eq:background-nlp">(1.7)</a>, the KKT conditions <a href="background.html#eq:KKT-conditions">(1.11)</a> hold.</p>
+</div>
+</div>
+<p>On the other hand, for convex optimization problems, the KKT conditions are sufficient for global optimality.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:KKTSufficient" class="theorem"><strong>Theorem 1.7  (Sufficient Optimality Conditions) </strong></span>Assume optimization <a href="background.html#eq:background-nlp">(1.7)</a> is convex, i.e., <span class="math inline">\(f,g_i\)</span> are convex and <span class="math inline">\(h_j\)</span> are affine. Every point <span class="math inline">\(x^\star\)</span> that satisfies the KKT conditions <a href="background.html#eq:KKT-conditions">(1.11)</a> is a global minimizer.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="background:linear:optimization" class="section level2 hasAnchor" number="1.4">
 <h2><span class="header-section-number">1.4</span> Linear Optimization<a href="background.html#background:linear:optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -351,6 +501,9 @@ Boyd, Stephen P, and Lieven Vandenberghe. 2004. <em>Convex Optimization</em>. Ca
 </div>
 <div id="ref-rockafellar70-convexanalysis" class="csl-entry">
 Rockafellar, Ralph Tyrell. 1970. <span>“Convex Analysis.”</span>
+</div>
+<div id="ref-tang23arxiv-uncertainty" class="csl-entry">
+Tang, Yukai, Jean-Bernard Lasserre, and Heng Yang. 2023. <span>“Uncertainty Quantification of Set-Membership Estimation in Control and Perception: Revisiting the Minimum Enclosing Ellipsoid.”</span> <em>arXiv Preprint arXiv:2311.15962</em>.
 </div>
 </div>
 <div id="disqus_thread"></div>
