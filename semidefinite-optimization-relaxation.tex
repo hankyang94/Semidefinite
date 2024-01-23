@@ -190,6 +190,7 @@ arc=4pt}
 \newcommand{\bbN}{\mathbb{N}}
 \newcommand{\dist}{\mathrm{dist}}
 \newcommand{\subject}{\mathrm{s.t.}}
+\newcommand{\cl}{\mathrm{cl}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -439,7 +440,7 @@ For a convex set \(C \subseteq \mathbb{R}^{n}\), the \textbf{interior} of \(C\) 
 \]
 where \(B(u,\epsilon)\) denotes a ball centered at \(u\) with radius \(\epsilon\) (using the usual 2-norm). Each point in \(\mathrm{int}(C)\) is called an \emph{interior point} of \(C\). If \(\mathrm{int}(C) = C\), then \(C\) is said to be an \textbf{open set}. A convex set with nonempty interior is called a \textbf{convex domain}, while a compact (i.e., closed and bounded) convex domain is called a \textbf{convex body}.
 
-The \textbf{boundary of \(C\)} is the subset of points that are not in the interior of \(C\) and we denote it as \(\partial C\).
+The \textbf{boundary of \(C\)} is the subset of points that are in the \textbf{closure}\footnote{The closure of a subset \(C\) of points, denoted \(\mathrm{cl}(C)\), consists of all points in \(C\) together with all limit points of \(C\). The closure of \(C\) may equivalently be defined as the intersection of all closed sets containing \(C\). Intuitively, the closure can be thought of as all the points that are either in \(C\) or ``very near'' \(C\). For example, the closure of the open line segment \(C= (0,1)\) is the closed line segment \(C=[0,1]\).} of \(C\) but are not in the interior of \(C\), and we denote it as \(\partial C\). For example, the closed line segment \(C = [0,1]\) has two points on the boundary: \(0\) and \(1\); the open line segment \(C = (0,1)\) has the same two points as its boundary.
 
 It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the \textbf{relative interior} can be defined as
 \[

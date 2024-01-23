@@ -218,7 +218,7 @@ where <span class="math inline">\(\sum_{i=1}^{k} \lambda_i u_i\)</span> is calle
 \mathrm{int}(C) := \{  u \in C \mid \exists \epsilon &gt; 0, B(u,\epsilon) \subseteq C  \},
 \]</span>
 where <span class="math inline">\(B(u,\epsilon)\)</span> denotes a ball centered at <span class="math inline">\(u\)</span> with radius <span class="math inline">\(\epsilon\)</span> (using the usual 2-norm). Each point in <span class="math inline">\(\mathrm{int}(C)\)</span> is called an <em>interior point</em> of <span class="math inline">\(C\)</span>. If <span class="math inline">\(\mathrm{int}(C) = C\)</span>, then <span class="math inline">\(C\)</span> is said to be an <strong>open set</strong>. A convex set with nonempty interior is called a <strong>convex domain</strong>, while a compact (i.e., closed and bounded) convex domain is called a <strong>convex body</strong>.</p>
-<p>The <strong>boundary of <span class="math inline">\(C\)</span></strong> is the subset of points that are not in the interior of <span class="math inline">\(C\)</span> and we denote it as <span class="math inline">\(\partial C\)</span>.</p>
+<p>The <strong>boundary of <span class="math inline">\(C\)</span></strong> is the subset of points that are in the <strong>closure</strong><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> of <span class="math inline">\(C\)</span> but are not in the interior of <span class="math inline">\(C\)</span>, and we denote it as <span class="math inline">\(\partial C\)</span>. For example, the closed line segment <span class="math inline">\(C = [0,1]\)</span> has two points on the boundary: <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>; the open line segment <span class="math inline">\(C = (0,1)\)</span> has the same two points as its boundary.</p>
 <p>It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the <strong>relative interior</strong> can be defined as
 <span class="math display">\[
 \mathrm{ri}(C) := \{  u \in C \mid \exists \epsilon &gt; 0, B(u,\epsilon) \cap \mathrm{aff}(C) \subseteq C  \}.
@@ -505,6 +505,12 @@ Rockafellar, Ralph Tyrell. 1970. <span>“Convex Analysis.”</span>
 <div id="ref-tang23arxiv-uncertainty" class="csl-entry">
 Tang, Yukai, Jean-Bernard Lasserre, and Heng Yang. 2023. <span>“Uncertainty Quantification of Set-Membership Estimation in Control and Perception: Revisiting the Minimum Enclosing Ellipsoid.”</span> <em>arXiv Preprint arXiv:2311.15962</em>.
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>The closure of a subset <span class="math inline">\(C\)</span> of points, denoted <span class="math inline">\(\mathrm{cl}(C)\)</span>, consists of all points in <span class="math inline">\(C\)</span> together with all limit points of <span class="math inline">\(C\)</span>. The closure of <span class="math inline">\(C\)</span> may equivalently be defined as the intersection of all closed sets containing <span class="math inline">\(C\)</span>. Intuitively, the closure can be thought of as all the points that are either in <span class="math inline">\(C\)</span> or “very near” <span class="math inline">\(C\)</span>. For example, the closure of the open line segment <span class="math inline">\(C= (0,1)\)</span> is the closed line segment <span class="math inline">\(C=[0,1]\)</span>.<a href="background.html#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 <div id="disqus_thread"></div>
 <script>
