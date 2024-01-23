@@ -53,6 +53,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\bbN}{\mathbb{N}}
 \newcommand{\dist}{\mathrm{dist}}
 \newcommand{\subject}{\mathrm{s.t.}}
+\newcommand{\cl}{\mathrm{cl}}
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 
