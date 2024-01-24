@@ -81,7 +81,7 @@ Given a set $S$, its **affine hull** is the set
 $$
 \aff (S) = \lcbrace{ \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \bbN_{+} },
 $$
-where $\sum_{i=1}^{k} \lambda_i u_i$ is called an _affine combination_ of $u_1,\dots,u_k$ when $\sum_i \lambda_i = 1$. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in $\Real{3}$ is the entire space $\Real{3}$.
+where $\sum_{i=1}^{k} \lambda_i u_i$ is called an _affine combination_ of $u_1,\dots,u_k$ when $\sum_i \lambda_i = 1$. The affine hull of a set is the smallest affine subspace that contains $S$, and the **dimension** of $S$ is the dimension of its affine hull. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in $\Real{3}$ is the entire space $\Real{3}$.
 
 For a convex set $C \subseteq \Real{n}$, the **interior** of $C$ is defined as
 $$
@@ -132,7 +132,7 @@ If $T \subseteq \Real{n}$ is a closed convex set containing the origin, then $(T
 :::
 :::
 
-An important class of convex sets are those that are invariant under nonnegative scalings. A set $K \subseteq \Real{n}$ is a **cone** if $t x \in K$ for all $x \in K$ and for all $t > 0$. For example, the positive real line $\cbrace{x \in \Real{} \mid x > 0}$ is a cone. The cone $K$ is **pointed** if $K \cap -K = \{ 0 \}$. It is said to be **solid** if its interior $\interior(K) \neq \emptyset$. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin. 
+An important class of convex sets are those that are invariant under positive scalings.^[Some authors define a cone using nonnegative scalings.] A set $K \subseteq \Real{n}$ is a **cone** if $t x \in K$ for all $x \in K$ and for all $t > 0$. For example, the positive real line $\cbrace{x \in \Real{} \mid x > 0}$ is a cone. The cone $K$ is **pointed** if $K \cap -K = \{ 0 \}$. It is said to be **solid** if its interior $\interior(K) \neq \emptyset$. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin. 
 
 The analogue of extreme point for convex cones is the **extreme ray**. For a convex cone $K$ and $0 \neq u \in K$, the line segment
 $$
@@ -308,7 +308,7 @@ $$
 :::
 :::
 
-A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when $X$ and $Y$ are standard unit simplicies and the function $f(x,y)$ is bilinear. In a research from our group [@tang23arxiv-uncertainty], we used the minimax theorem to convex a minimax problem into a single-level minimization problem.
+A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when $X$ and $Y$ are standard unit simplicies and the function $f(x,y)$ is bilinear. In a research from our group [@tang23arxiv-uncertainty], we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
 
 ### Lagrangian Duality 
 
@@ -402,4 +402,84 @@ Assume optimization \@ref(eq:background-nlp) is convex, i.e., $f,g_i$ are convex
 
 ## Linear Optimization {#background:linear:optimization}
 
+### Polyhedra 
 
+In $\Real{n}$, a **polyhedron** is a set defined by finitely many linear inequalities, i.e.,
+\begin{equation}
+P = \cbrace{x \in \Real{n} \mid A x \geq b},
+(\#eq:polyhedron)
+\end{equation}
+for some matrix $A \in \Real{m \times n}$ and $b \in \Real{m}$. In \@ref(eq:polyhedron), the inequality should be interpreted as $A x - b \in \Real{m}_{+}$, i.e., every entry of $Ax$ is no smaller than the corresponding entry of $b$. 
+
+The convex hull of finitely many points in $\Real{n}$ is called a **polytope**, where the convex hull of a set $S$ is defined as 
+\begin{equation}
+\hspace{-10mm} \conv(S) = \lcbrace{\sum_{i=1}^k \lambda_i u_i \mid k \in \bbN_{+}, \sum_{i=1}^k \lambda_i = 1, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k},
+(\#eq:convex-hull)
+\end{equation}
+i.e., all possible convex combinations of points in $S$. Clearly, a polytope is bounded. 
+
+The conic hull of finitely many points in $\Real{n}$ is called a **polyhedral cone**, where the conic hull of a set $S$ is defined as 
+\begin{equation}
+\hspace{-10mm} \cone(S) = \lcbrace{ \sum_{i=1}^k \lambda_i u_i \mid k \in \bbN_{+}, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k  }.
+(\#eq:conic-hull)
+\end{equation}
+The only difference between \@ref(eq:conic-hull) and \@ref(eq:convex-hull) is the removal of $\sum_{i} \lambda_i = 1$. Clearly, the origin belongs to the conic hull of any nonempty set, and the conic hull of any nonempty set is unbounded.
+
+The next theorem characterizes a polyhedron.
+
+::: {.theorembox}
+::: {.theorem #DecomposePolyhedron name="Polyhedron Decomposition"}
+Every polyhedron $P$ is finitely generated, i.e., it can be written as the Minkowski sum of a polytope and a polyhedral cone:
+$$
+P = \conv(u_1,\dots,u_r) + \cone(v_1,\dots,v_s),
+$$
+where the Minkowski sum of two sets is defined as $X + Y := \cbrace{x+y \mid x \in X, y \in Y}$.
+
+Further, a bounded polyhedron is a polytope.
+:::
+:::
+
+An extreme point of a polytope is called a **vertex**. A $1$-dimensional face of a polytope is called an **edge**. A $d-1$-dimensional face of a $d$-dimensional polytope is called a **facet**.
+
+### Linear Program
+
+We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
+
+A standard form linear program (LP) reads
+\begin{equation}
+\begin{split}
+\min_{x \in \Real{n}} & \quad \inprod{c}{x}  \\
+\subject & \quad Ax = b \\
+& \quad x \geq 0
+\end{split},
+(\#eq:primal-lp)
+\end{equation}
+for given $A \in \Real{m\times n}$, $b \in \Real{m}$, and $c \in \Real{n}$. Often the tuple $(A,b,c)$ is called the _problem data_ because the LP \@ref(eq:primal-lp) is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple $(A,b,c)$ as input). Clearly, the feasible set of the LP \@ref(eq:primal-lp) is a polyhedron. The LP \@ref(eq:primal-lp) is often referred to as the **primal** LP. Associated with \@ref(eq:primal-lp) is the following **dual** LP 
+\begin{equation}
+\begin{split}
+\max_{y \in \Real{m}} & \quad \inprod{b}{y} \\
+\subject & \quad c - A\tran y \geq 0
+\end{split}.
+(\#eq:dual-lp)
+\end{equation}
+It is worth noting that the dimension of the dual variable $y$ is exactly the number of constraints in the primal LP. 
+
+**Weak duality**. For the pair of primal-dual LPs, it is easy to verify that, for any $x$ that is feasible for the primal \@ref(eq:primal-lp) and $y$ that is feasible for the dual \@ref(eq:dual-lp), we have
+$$
+\inprod{c}{x} - \inprod{b}{y} = \inprod{c}{x} - \inprod{Ax}{y} = \inprod{c}{x} - \inprod{A\tran y}{x} = \inprod{c - A\tran y}{x} \geq 0.
+$$
+Therefore, denoting $p^\star$ as the optimum of \@ref(eq:primal-lp) and $d^\star$ as the optimum of \@ref(eq:dual-lp), we have the weak duality 
+$$
+p^\star \geq d^\star.
+$$
+
+If $p^\star = d^\star$, then we say **strong duality** holds. The LP \@ref(eq:primal-lp) is said to be **feasible** if its feasible set is nonempty. It is said to be **unbounded below** if there exists a sequence $\cbrace{u_i}_{i=1}^{\infty} \subseteq \Real{n}_{+}$ such that $\inprod{c}{u_i} \rightarrow -\infty$ and $A u_i = b$. If the primal \@ref(eq:primal-lp) is infeasible (resp. unbounded below), we set $p^\star = + \infty$ (resp. $p^\star = - \infty$). Similar characteristics are defined for the dual LP \@ref(eq:dual-lp). In particular, if the dual \@ref(eq:dual-lp) is unbounded, then we set $d^\star = + \infty$. If the dual is infeasible, then we set $d^\star = - \infty$.
+
+We have the following strong duality result.
+
+::: {.theorembox}
+::: {.theorem #LPStrongDuality name="LP Strong Duality"}
+For the LP primal-dual pair \@ref(eq:primal-lp) and \@ref(eq:dual-lp), we have 
+
+:::
+:::

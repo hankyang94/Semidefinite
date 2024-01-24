@@ -7,9 +7,3 @@ Test
 :::
 
 &nbsp;
-
-::: {.exercisebox}
-::: {.exercise #test name="Test"}
-Test
-:::
-:::
