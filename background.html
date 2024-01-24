@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-23" />
+<meta name="date" content="2024-01-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -118,7 +118,11 @@ div.csl-indent {
 <li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#lagrangian-duality"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
 <li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
 </ul></li>
-<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
+<li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
 <li class="chapter" data-level="3" data-path="psets.html"><a href="psets.html"><i class="fa fa-check"></i><b>3</b> Problem Sets</a></li>
@@ -212,7 +216,7 @@ Further, if <span class="math inline">\(S_1\)</span> is compact (i.e., closed an
 <span class="math display">\[
 \mathrm{aff}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \mathbb{N}_{+}  \right\} ,
 \]</span>
-where <span class="math inline">\(\sum_{i=1}^{k} \lambda_i u_i\)</span> is called an <em>affine combination</em> of <span class="math inline">\(u_1,\dots,u_k\)</span> when <span class="math inline">\(\sum_i \lambda_i = 1\)</span>. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in <span class="math inline">\(\mathbb{R}^{3}\)</span> is the entire space <span class="math inline">\(\mathbb{R}^{3}\)</span>.</p>
+where <span class="math inline">\(\sum_{i=1}^{k} \lambda_i u_i\)</span> is called an <em>affine combination</em> of <span class="math inline">\(u_1,\dots,u_k\)</span> when <span class="math inline">\(\sum_i \lambda_i = 1\)</span>. The affine hull of a set is the smallest affine subspace that contains <span class="math inline">\(S\)</span>, and the <strong>dimension</strong> of <span class="math inline">\(S\)</span> is the dimension of its affine hull. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in <span class="math inline">\(\mathbb{R}^{3}\)</span> is the entire space <span class="math inline">\(\mathbb{R}^{3}\)</span>.</p>
 <p>For a convex set <span class="math inline">\(C \subseteq \mathbb{R}^{n}\)</span>, the <strong>interior</strong> of <span class="math inline">\(C\)</span> is defined as
 <span class="math display">\[
 \mathrm{int}(C) := \{  u \in C \mid \exists \epsilon &gt; 0, B(u,\epsilon) \subseteq C  \},
@@ -255,7 +259,7 @@ T^\circ := \{  y \in \mathbb{R}^{n} \mid \langle x, y \rangle \leq 1, \forall x 
 <p><span id="thm:bipolar" class="theorem"><strong>Theorem 1.2  (Bipolar) </strong></span>If <span class="math inline">\(T \subseteq \mathbb{R}^{n}\)</span> is a closed convex set containing the origin, then <span class="math inline">\((T^\circ)^\circ = T\)</span>.</p>
 </div>
 </div>
-<p>An important class of convex sets are those that are invariant under nonnegative scalings. A set <span class="math inline">\(K \subseteq \mathbb{R}^{n}\)</span> is a <strong>cone</strong> if <span class="math inline">\(t x \in K\)</span> for all <span class="math inline">\(x \in K\)</span> and for all <span class="math inline">\(t &gt; 0\)</span>. For example, the positive real line <span class="math inline">\(\{ x \in \mathbb{R}^{} \mid x &gt; 0 \}\)</span> is a cone. The cone <span class="math inline">\(K\)</span> is <strong>pointed</strong> if <span class="math inline">\(K \cap -K = \{ 0 \}\)</span>. It is said to be <strong>solid</strong> if its interior <span class="math inline">\(\mathrm{int}(K) \neq \emptyset\)</span>. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.</p>
+<p>An important class of convex sets are those that are invariant under positive scalings.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> A set <span class="math inline">\(K \subseteq \mathbb{R}^{n}\)</span> is a <strong>cone</strong> if <span class="math inline">\(t x \in K\)</span> for all <span class="math inline">\(x \in K\)</span> and for all <span class="math inline">\(t &gt; 0\)</span>. For example, the positive real line <span class="math inline">\(\{ x \in \mathbb{R}^{} \mid x &gt; 0 \}\)</span> is a cone. The cone <span class="math inline">\(K\)</span> is <strong>pointed</strong> if <span class="math inline">\(K \cap -K = \{ 0 \}\)</span>. It is said to be <strong>solid</strong> if its interior <span class="math inline">\(\mathrm{int}(K) \neq \emptyset\)</span>. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.</p>
 <p>The analogue of extreme point for convex cones is the <strong>extreme ray</strong>. For a convex cone <span class="math inline">\(K\)</span> and <span class="math inline">\(0 \neq u \in K\)</span>, the line segment
 <span class="math display">\[
 u \cdot [0,\infty) := \{ tu \mid t\geq 0 \}
@@ -405,7 +409,7 @@ If the maximum or minimum is not attained, then <a href="background.html#eq:weak
 \]</span></p>
 </div>
 </div>
-<p>A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are standard unit simplicies and the function <span class="math inline">\(f(x,y)\)</span> is bilinear. In a research from our group <span class="citation">(<a href="#ref-tang23arxiv-uncertainty" role="doc-biblioref">Tang, Lasserre, and Yang 2023</a>)</span>, we used the minimax theorem to convex a minimax problem into a single-level minimization problem.</p>
+<p>A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are standard unit simplicies and the function <span class="math inline">\(f(x,y)\)</span> is bilinear. In a research from our group <span class="citation">(<a href="#ref-tang23arxiv-uncertainty" role="doc-biblioref">Tang, Lasserre, and Yang 2023</a>)</span>, we used the minimax theorem to convert a minimax problem into a single-level minimization problem.</p>
 </div>
 <div id="lagrangian-duality" class="section level3 hasAnchor" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Lagrangian Duality<a href="background.html#lagrangian-duality" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -488,7 +492,77 @@ That is to say solving the dual problem <a href="background.html#eq:background-L
 </div>
 <div id="background:linear:optimization" class="section level2 hasAnchor" number="1.4">
 <h2><span class="header-section-number">1.4</span> Linear Optimization<a href="background.html#background:linear:optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="polyhedra" class="section level3 hasAnchor" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Polyhedra<a href="background.html#polyhedra" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In <span class="math inline">\(\mathbb{R}^{n}\)</span>, a <strong>polyhedron</strong> is a set defined by finitely many linear inequalities, i.e.,
+<span class="math display" id="eq:polyhedron">\[\begin{equation}
+P = \{ x \in \mathbb{R}^{n} \mid A x \geq b \},
+\tag{1.12}
+\end{equation}\]</span>
+for some matrix <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span> and <span class="math inline">\(b \in \mathbb{R}^{m}\)</span>. In <a href="background.html#eq:polyhedron">(1.12)</a>, the inequality should be interpreted as <span class="math inline">\(A x - b \in \mathbb{R}^{m}_{+}\)</span>, i.e., every entry of <span class="math inline">\(Ax\)</span> is no smaller than the corresponding entry of <span class="math inline">\(b\)</span>.</p>
+<p>The convex hull of finitely many points in <span class="math inline">\(\mathbb{R}^{n}\)</span> is called a <strong>polytope</strong>, where the convex hull of a set <span class="math inline">\(S\)</span> is defined as
+<span class="math display" id="eq:convex-hull">\[\begin{equation}
+\hspace{-10mm} \mathrm{conv}(S) =  \left\{ \sum_{i=1}^k \lambda_i u_i \mid k \in \mathbb{N}_{+}, \sum_{i=1}^k \lambda_i = 1, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k \right\} ,
+\tag{1.13}
+\end{equation}\]</span>
+i.e., all possible convex combinations of points in <span class="math inline">\(S\)</span>. Clearly, a polytope is bounded.</p>
+<p>The conic hull of finitely many points in <span class="math inline">\(\mathbb{R}^{n}\)</span> is called a <strong>polyhedral cone</strong>, where the conic hull of a set <span class="math inline">\(S\)</span> is defined as
+<span class="math display" id="eq:conic-hull">\[\begin{equation}
+\hspace{-10mm} \mathrm{cone}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid k \in \mathbb{N}_{+}, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k   \right\} .
+\tag{1.14}
+\end{equation}\]</span>
+The only difference between <a href="background.html#eq:conic-hull">(1.14)</a> and <a href="background.html#eq:convex-hull">(1.13)</a> is the removal of <span class="math inline">\(\sum_{i} \lambda_i = 1\)</span>. Clearly, the origin belongs to the conic hull of any nonempty set, and the conic hull of any nonempty set is unbounded.</p>
+<p>The next theorem characterizes a polyhedron.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DecomposePolyhedron" class="theorem"><strong>Theorem 1.8  (Polyhedron Decomposition) </strong></span>Every polyhedron <span class="math inline">\(P\)</span> is finitely generated, i.e., it can be written as the Minkowski sum of a polytope and a polyhedral cone:
+<span class="math display">\[
+P = \mathrm{conv}(u_1,\dots,u_r) + \mathrm{cone}(v_1,\dots,v_s),
+\]</span>
+where the Minkowski sum of two sets is defined as <span class="math inline">\(X + Y := \{ x+y \mid x \in X, y \in Y \}\)</span>.</p>
+<p>Further, a bounded polyhedron is a polytope.</p>
+</div>
+</div>
+<p>An extreme point of a polytope is called a <strong>vertex</strong>. A <span class="math inline">\(1\)</span>-dimensional face of a polytope is called an <strong>edge</strong>. A <span class="math inline">\(d-1\)</span>-dimensional face of a <span class="math inline">\(d\)</span>-dimensional polytope is called a <strong>facet</strong>.</p>
+</div>
+<div id="linear-program" class="section level3 hasAnchor" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Linear Program<a href="background.html#linear-program" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.</p>
+<p>A standard form linear program (LP) reads
+<span class="math display" id="eq:primal-lp">\[\begin{equation}
+\begin{split}
+\min_{x \in \mathbb{R}^{n}} &amp; \quad \langle c, x \rangle  \\
+\mathrm{s.t.}&amp; \quad Ax = b \\
+&amp; \quad x \geq 0
+\end{split},
+\tag{1.15}
+\end{equation}\]</span>
+for given <span class="math inline">\(A \in \mathbb{R}^{m\times n}\)</span>, <span class="math inline">\(b \in \mathbb{R}^{m}\)</span>, and <span class="math inline">\(c \in \mathbb{R}^{n}\)</span>. Often the tuple <span class="math inline">\((A,b,c)\)</span> is called the <em>problem data</em> because the LP <a href="background.html#eq:primal-lp">(1.15)</a> is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple <span class="math inline">\((A,b,c)\)</span> as input). Clearly, the feasible set of the LP <a href="background.html#eq:primal-lp">(1.15)</a> is a polyhedron. The LP <a href="background.html#eq:primal-lp">(1.15)</a> is often referred to as the <strong>primal</strong> LP. Associated with <a href="background.html#eq:primal-lp">(1.15)</a> is the following <strong>dual</strong> LP
+<span class="math display" id="eq:dual-lp">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{m}} &amp; \quad \langle b, y \rangle \\
+\mathrm{s.t.}&amp; \quad c - A^\top y \geq 0
+\end{split}.
+\tag{1.16}
+\end{equation}\]</span>
+It is worth noting that the dimension of the dual variable <span class="math inline">\(y\)</span> is exactly the number of constraints in the primal LP.</p>
+<p><strong>Weak duality</strong>. For the pair of primal-dual LPs, it is easy to verify that, for any <span class="math inline">\(x\)</span> that is feasible for the primal <a href="background.html#eq:primal-lp">(1.15)</a> and <span class="math inline">\(y\)</span> that is feasible for the dual <a href="background.html#eq:dual-lp">(1.16)</a>, we have
+<span class="math display">\[
+\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\]</span>
+Therefore, denoting <span class="math inline">\(p^\star\)</span> as the optimum of <a href="background.html#eq:primal-lp">(1.15)</a> and <span class="math inline">\(d^\star\)</span> as the optimum of <a href="background.html#eq:dual-lp">(1.16)</a>, we have the weak duality
+<span class="math display">\[
+p^\star \geq d^\star.
+\]</span></p>
+<p>If <span class="math inline">\(p^\star = d^\star\)</span>, then we say <strong>strong duality</strong> holds. The LP <a href="background.html#eq:primal-lp">(1.15)</a> is said to be <strong>feasible</strong> if its feasible set is nonempty. It is said to be <strong>unbounded below</strong> if there exists a sequence <span class="math inline">\(\{ u_i \}_{i=1}^{\infty} \subseteq \mathbb{R}^{n}_{+}\)</span> such that <span class="math inline">\(\langle c, u_i \rangle \rightarrow -\infty\)</span> and <span class="math inline">\(A u_i = b\)</span>. If the primal <a href="background.html#eq:primal-lp">(1.15)</a> is infeasible (resp. unbounded below), we set <span class="math inline">\(p^\star = + \infty\)</span> (resp. <span class="math inline">\(p^\star = - \infty\)</span>). Similar characteristics are defined for the dual LP <a href="background.html#eq:dual-lp">(1.16)</a>. In particular, if the dual <a href="background.html#eq:dual-lp">(1.16)</a> is unbounded, then we set <span class="math inline">\(d^\star = + \infty\)</span>. If the dual is infeasible, then we set <span class="math inline">\(d^\star = - \infty\)</span>.</p>
+<p>We have the following strong duality result.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:LPStrongDuality" class="theorem"><strong>Theorem 1.9  (LP Strong Duality) </strong></span>For the LP primal-dual pair <a href="background.html#eq:primal-lp">(1.15)</a> and <a href="background.html#eq:dual-lp">(1.16)</a>, we have</p>
+</div>
+</div>
 
+</div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -510,6 +584,7 @@ Tang, Yukai, Jean-Bernard Lasserre, and Heng Yang. 2023. <span>“Uncertainty Qu
 <hr />
 <ol start="1">
 <li id="fn1"><p>The closure of a subset <span class="math inline">\(C\)</span> of points, denoted <span class="math inline">\(\mathrm{cl}(C)\)</span>, consists of all points in <span class="math inline">\(C\)</span> together with all limit points of <span class="math inline">\(C\)</span>. The closure of <span class="math inline">\(C\)</span> may equivalently be defined as the intersection of all closed sets containing <span class="math inline">\(C\)</span>. Intuitively, the closure can be thought of as all the points that are either in <span class="math inline">\(C\)</span> or “very near” <span class="math inline">\(C\)</span>. For example, the closure of the open line segment <span class="math inline">\(C= (0,1)\)</span> is the closed line segment <span class="math inline">\(C=[0,1]\)</span>.<a href="background.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Some authors define a cone using nonnegative scalings.<a href="background.html#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 <div id="disqus_thread"></div>

@@ -123,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-23}
+\date{2024-01-24}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -432,7 +432,7 @@ Given a set \(S\), its \textbf{affine hull} is the set
 \[
 \mathrm{aff}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \mathbb{N}_{+}  \right\} ,
 \]
-where \(\sum_{i=1}^{k} \lambda_i u_i\) is called an \emph{affine combination} of \(u_1,\dots,u_k\) when \(\sum_i \lambda_i = 1\). The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in \(\mathbb{R}^{3}\) is the entire space \(\mathbb{R}^{3}\).
+where \(\sum_{i=1}^{k} \lambda_i u_i\) is called an \emph{affine combination} of \(u_1,\dots,u_k\) when \(\sum_i \lambda_i = 1\). The affine hull of a set is the smallest affine subspace that contains \(S\), and the \textbf{dimension} of \(S\) is the dimension of its affine hull. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in \(\mathbb{R}^{3}\) is the entire space \(\mathbb{R}^{3}\).
 
 For a convex set \(C \subseteq \mathbb{R}^{n}\), the \textbf{interior} of \(C\) is defined as
 \[
@@ -480,7 +480,7 @@ The polar \(T^\circ\) is a closed convex set and contains the origin. Note that 
 \protect\hypertarget{thm:bipolar}{}\label{thm:bipolar}If \(T \subseteq \mathbb{R}^{n}\) is a closed convex set containing the origin, then \((T^\circ)^\circ = T\).
 \end{theorem}
 
-An important class of convex sets are those that are invariant under nonnegative scalings. A set \(K \subseteq \mathbb{R}^{n}\) is a \textbf{cone} if \(t x \in K\) for all \(x \in K\) and for all \(t > 0\). For example, the positive real line \(\{ x \in \mathbb{R}^{} \mid x > 0 \}\) is a cone. The cone \(K\) is \textbf{pointed} if \(K \cap -K = \{ 0 \}\). It is said to be \textbf{solid} if its interior \(\mathrm{int}(K) \neq \emptyset\). Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.
+An important class of convex sets are those that are invariant under positive scalings.\footnote{Some authors define a cone using nonnegative scalings.} A set \(K \subseteq \mathbb{R}^{n}\) is a \textbf{cone} if \(t x \in K\) for all \(x \in K\) and for all \(t > 0\). For example, the positive real line \(\{ x \in \mathbb{R}^{} \mid x > 0 \}\) is a cone. The cone \(K\) is \textbf{pointed} if \(K \cap -K = \{ 0 \}\). It is said to be \textbf{solid} if its interior \(\mathrm{int}(K) \neq \emptyset\). Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin.
 
 The analogue of extreme point for convex cones is the \textbf{extreme ray}. For a convex cone \(K\) and \(0 \neq u \in K\), the line segment
 \[
@@ -650,7 +650,7 @@ It is of interest to understand when equality holds in \eqref{eq:weak-minimax}.
 \]
 \end{theorem}
 
-A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when \(X\) and \(Y\) are standard unit simplicies and the function \(f(x,y)\) is bilinear. In a research from our group \citep{tang23arxiv-uncertainty}, we used the minimax theorem to convex a minimax problem into a single-level minimization problem.
+A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when \(X\) and \(Y\) are standard unit simplicies and the function \(f(x,y)\) is bilinear. In a research from our group \citep{tang23arxiv-uncertainty}, we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
 
 \hypertarget{lagrangian-duality}{%
 \subsection{Lagrangian Duality}\label{lagrangian-duality}}
@@ -741,6 +741,85 @@ On the other hand, for convex optimization problems, the KKT conditions are suff
 \hypertarget{background:linear:optimization}{%
 \section{Linear Optimization}\label{background:linear:optimization}}
 
+\hypertarget{polyhedra}{%
+\subsection{Polyhedra}\label{polyhedra}}
+
+In \(\mathbb{R}^{n}\), a \textbf{polyhedron} is a set defined by finitely many linear inequalities, i.e.,
+\begin{equation}
+P = \{ x \in \mathbb{R}^{n} \mid A x \geq b \},
+\label{eq:polyhedron}
+\end{equation}
+for some matrix \(A \in \mathbb{R}^{m \times n}\) and \(b \in \mathbb{R}^{m}\). In \eqref{eq:polyhedron}, the inequality should be interpreted as \(A x - b \in \mathbb{R}^{m}_{+}\), i.e., every entry of \(Ax\) is no smaller than the corresponding entry of \(b\).
+
+The convex hull of finitely many points in \(\mathbb{R}^{n}\) is called a \textbf{polytope}, where the convex hull of a set \(S\) is defined as
+\begin{equation}
+\hspace{-10mm} \mathrm{conv}(S) =  \left\{ \sum_{i=1}^k \lambda_i u_i \mid k \in \mathbb{N}_{+}, \sum_{i=1}^k \lambda_i = 1, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k \right\} ,
+\label{eq:convex-hull}
+\end{equation}
+i.e., all possible convex combinations of points in \(S\). Clearly, a polytope is bounded.
+
+The conic hull of finitely many points in \(\mathbb{R}^{n}\) is called a \textbf{polyhedral cone}, where the conic hull of a set \(S\) is defined as
+\begin{equation}
+\hspace{-10mm} \mathrm{cone}(S) =  \left\{  \sum_{i=1}^k \lambda_i u_i \mid k \in \mathbb{N}_{+}, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k   \right\} .
+\label{eq:conic-hull}
+\end{equation}
+The only difference between \eqref{eq:conic-hull} and \eqref{eq:convex-hull} is the removal of \(\sum_{i} \lambda_i = 1\). Clearly, the origin belongs to the conic hull of any nonempty set, and the conic hull of any nonempty set is unbounded.
+
+The next theorem characterizes a polyhedron.
+
+\begin{theorem}[Polyhedron Decomposition]
+\protect\hypertarget{thm:DecomposePolyhedron}{}\label{thm:DecomposePolyhedron}Every polyhedron \(P\) is finitely generated, i.e., it can be written as the Minkowski sum of a polytope and a polyhedral cone:
+\[
+P = \mathrm{conv}(u_1,\dots,u_r) + \mathrm{cone}(v_1,\dots,v_s),
+\]
+where the Minkowski sum of two sets is defined as \(X + Y := \{ x+y \mid x \in X, y \in Y \}\).
+
+Further, a bounded polyhedron is a polytope.
+\end{theorem}
+
+An extreme point of a polytope is called a \textbf{vertex}. A \(1\)-dimensional face of a polytope is called an \textbf{edge}. A \(d-1\)-dimensional face of a \(d\)-dimensional polytope is called a \textbf{facet}.
+
+\hypertarget{linear-program}{%
+\subsection{Linear Program}\label{linear-program}}
+
+We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
+
+A standard form linear program (LP) reads
+\begin{equation}
+\begin{split}
+\min_{x \in \mathbb{R}^{n}} & \quad \langle c, x \rangle  \\
+\mathrm{s.t.}& \quad Ax = b \\
+& \quad x \geq 0
+\end{split},
+\label{eq:primal-lp}
+\end{equation}
+for given \(A \in \mathbb{R}^{m\times n}\), \(b \in \mathbb{R}^{m}\), and \(c \in \mathbb{R}^{n}\). Often the tuple \((A,b,c)\) is called the \emph{problem data} because the LP \eqref{eq:primal-lp} is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple \((A,b,c)\) as input). Clearly, the feasible set of the LP \eqref{eq:primal-lp} is a polyhedron. The LP \eqref{eq:primal-lp} is often referred to as the \textbf{primal} LP. Associated with \eqref{eq:primal-lp} is the following \textbf{dual} LP
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{m}} & \quad \langle b, y \rangle \\
+\mathrm{s.t.}& \quad c - A^\top y \geq 0
+\end{split}.
+\label{eq:dual-lp}
+\end{equation}
+It is worth noting that the dimension of the dual variable \(y\) is exactly the number of constraints in the primal LP.
+
+\textbf{Weak duality}. For the pair of primal-dual LPs, it is easy to verify that, for any \(x\) that is feasible for the primal \eqref{eq:primal-lp} and \(y\) that is feasible for the dual \eqref{eq:dual-lp}, we have
+\[
+\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\]
+Therefore, denoting \(p^\star\) as the optimum of \eqref{eq:primal-lp} and \(d^\star\) as the optimum of \eqref{eq:dual-lp}, we have the weak duality
+\[
+p^\star \geq d^\star.
+\]
+
+If \(p^\star = d^\star\), then we say \textbf{strong duality} holds. The LP \eqref{eq:primal-lp} is said to be \textbf{feasible} if its feasible set is nonempty. It is said to be \textbf{unbounded below} if there exists a sequence \(\{ u_i \}_{i=1}^{\infty} \subseteq \mathbb{R}^{n}_{+}\) such that \(\langle c, u_i \rangle \rightarrow -\infty\) and \(A u_i = b\). If the primal \eqref{eq:primal-lp} is infeasible (resp. unbounded below), we set \(p^\star = + \infty\) (resp. \(p^\star = - \infty\)). Similar characteristics are defined for the dual LP \eqref{eq:dual-lp}. In particular, if the dual \eqref{eq:dual-lp} is unbounded, then we set \(d^\star = + \infty\). If the dual is infeasible, then we set \(d^\star = - \infty\).
+
+We have the following strong duality result.
+
+\begin{theorem}[LP Strong Duality]
+\protect\hypertarget{thm:LPStrongDuality}{}\label{thm:LPStrongDuality}For the LP primal-dual pair \eqref{eq:primal-lp} and \eqref{eq:dual-lp}, we have
+\end{theorem}
+
 \hypertarget{sdp}{%
 \chapter{Semidefinite Optimization}\label{sdp}}
 
@@ -760,10 +839,6 @@ On the other hand, for convex optimization problems, the KKT conditions are suff
 \end{exercise}
 
 ~
-
-\begin{exercise}[Test]
-\protect\hypertarget{exr:test}{}\label{exr:test}Test
-\end{exercise}
 
   \bibliography{book.bib,packages.bib}
 
