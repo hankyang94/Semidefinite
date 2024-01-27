@@ -1,5 +1,37 @@
 # Problem Sets {#psets}
 
+Consider the SDP 
+$$
+\min_{X \in \sym{n}} \cbrace{\inprod{C}{X} \mid \calA(X) = b, X \succeq 0}
+$$
+The ALM of the SDP reads
+$$
+L_{\sigma}(X,\mu) = \inprod{C}{X} - \inprod{\mu}{\calA(X)-b} + \frac{\sigma}{2} \norm{\calA(X) - b}^2.
+$$
+Let $x : = \svec(X)$, $c:= \svec(C)$, and 
+$$
+A = \begin{bmatrix} \svec(A_1) & \dots & \svec(A_m) \end{bmatrix},
+$$
+The ALM is equivalent to 
+$$
+L_{\sigma}(x,\mu) = c\tran x - \mu\tran(A\tran x - b) + \frac{\sigma}{2}\norm{A\tran x - b}^2.
+$$
+If instead, we use B-M factorization, then we have $X = YY\tran$ with $Y \in \Real{n \times r}$. Let $y = \vectorize(Y)$, then it is clear we have
+$$
+x = \svec(X) = \svec(YY\tran) = \svec(\mat(y)\mat(y)\tran) := g_r(y),
+$$
+with $g$ a quadratic function depending on $r$. Let 
+$$
+J(y) = \frac{\partial x}{\partial y} = \frac{\partial g_r(y)}{\partial y}.
+$$
+To get the gradient of $L_{\sigma}(x,\mu)$ w.r.t. $y$, we have 
+$$
+\nabla_y L_{\sigma}  = \nabla_x L_{\sigma} \frac{\partial x}{\partial y} = J(y)\tran (c - A \mu + \sigma A (A\tran x - b)).
+$$
+
+
+
+
 ::: {.exercisebox}
 ::: {.exercise #test name="Test"}
 Test

@@ -13,6 +13,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 ---
 
 \newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calA}{\mathcal{A}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
@@ -55,6 +56,11 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\subject}{\mathrm{s.t.}}
 \newcommand{\cl}{\mathrm{cl}}
 \newcommand{\eye}{\mathrm{I}}
+\newcommand{\inv}{^{-1}}
+\newcommand{\Range}{\mathrm{Range}}
+\renewcommand{\ker}{\mathrm{ker}}
+\newcommand{\face}{\mathrm{face}}
+
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
 
@@ -140,6 +146,8 @@ We will use the following standard notation throughout this book.
 | $\vectorize(A)$ | vectorization of $A \in \Real{m \times n}$
 | $\svec(A)$| symmetric vectorization of $A \in \sym{n}$
 | $\Fnorm{A}$ | Frobenius norm |
+| $\Range(A)$ | span of the column vectors |
+| $\ker(A)$ | right null space | 
 
 **Geometry**
 

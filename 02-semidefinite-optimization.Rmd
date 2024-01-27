@@ -1,4 +1,170 @@
 # Semidefinite Optimization {#sdp}
 
-- Positive Semidefinite Matrices
-- Spectrahedra
+## Positive Semidefinite Matrices 
+
+A real matrix $A = (A_{ij}) \in \Real{n \times n}$ is symmetric if $A = A\tran$, i.e., $A_{ij} = A_{ji}$ for all $i,j$. Let $\sym{n}$ be the space of all real symmetric matrices.
+
+Any symmetric matrix $A$ defines a **quadratic form** $x\tran A x$. A matrix $A$ is said to be **positive semidefinite** (PSD) if and only if its associated quadratic form is nonnegative, i.e., 
+$$
+x\tran A x \geq 0, \quad \forall x \in \Real{n}.
+$$
+We use $\psd{n}$ to denote the set of $n\times n$ PSD matrices. We also write $A \succeq 0$ to denote positive semidefiniteness when the dimension is clear.
+
+There are several equivalent characterizations of positive semidefiniteness.
+
+::: {.theorembox}
+::: {.lemma #PositiveSemidefinite name="Positive Semidefinite Matrices"}
+Let $A \in \sym{n}$ be a symmetric matrix, the following statements are equivalent:
+
+1. A is positive semidefinite.
+
+2. $x\tran A x \geq 0, \forall x \in \Real{n}$.
+
+3. All eigenvalues of $A$ are nonnegative.
+
+4. All $2^n-1$ principal minors of $A$ are nonnegative.
+
+5. The coefficients of $p_A(\lambda)$ weakly alternate in sign, i.e., $(-1)^{n-k} p_k \geq 0$ for $k=0,\dots,n-1$, where $p_A(\lambda) = \det (A - \lambda \eye_n)$ is the characteristics polynomial of $A$.
+
+6. There exists a factorization $A = BB\tran$, where $B \in \Real{n \times r}$ with $r$ the rank of $A$.
+:::
+:::
+
+Similarly, we say a matrix $A \in \sym{n}$ is **positive definite** (PD) is its associated quadratic form is always positive, i.e., 
+$$
+x\tran A x > 0, \quad \forall x \in \Real{n}.
+$$
+We use $\pd{n}$ to denote the set of $n \times n$ PD matrices, and also write $A \succ 0$ when the dimension is clear.
+
+Below is set of equivalent characterizations of positive definite matrices.
+
+::: {.theorembox}
+::: {.lemma #PositiveDefinite name="Positive Definite Matrices"}
+Let $A \in \sym{n}$ be a symmetric matrix, the following statements are equivalent:
+
+1. A is positive definite. 
+
+2. $x\tran A x > 0, \forall x \in \Real{n}$.
+
+3. All eigenvalues of $A$ are strictly positive.
+
+4. All $n$ leading principal minors of $A$ are strictly positive.
+
+5. The coefficients of $p_A(\lambda)$ strictly alternate in sign, i.e., $(-1)^{n-k} p_k > 0$ for $k=0,\dots,n-1$, where $p_A(\lambda) = \det (A - \lambda \eye_n)$ is the characteristics polynomial of $A$.
+
+6. There exists a factorization $A = BB\tran$ with $B$ square and nonsingular (full-rank).
+:::
+:::
+
+**Schur Complements**. A useful technique to check whether a matrix is positive (semi-)definite is to use the Schur Complements. Consider a block-partitioned matrix 
+\begin{equation}
+M = \begin{bmatrix} A & B \\ B\tran & C \end{bmatrix},
+(\#eq:block-mat-M)
+\end{equation}
+where $A$ and $C$ are symmetric matrices.
+If $A$ is invertible, then the Schur complement of $A$ is
+$$
+M / A = C - B\tran A\inv B.
+$$
+Similarly, if $C$ is invertible, then the Schur complement of $C$ is 
+$$
+M / C = A - B C\inv B\tran.
+$$
+
+We have the following result relating the Schur Complements to positive (semi-)definiteness.
+
+::: {.theorembox}
+::: {.proposition #SchurPSD name="Schur Complements and PSD"}
+Consider the block-partitioned matrix $M$ in \@ref(eq:block-mat-M),
+
+- $M$ is positive definite if and only if both $A$ and $M/A$ are positive definite:
+$$
+M \succ 0 \Leftrightarrow A \succ 0, M/A = C - B\tran A\inv B \succ 0.
+$$
+
+- $M$ is positive definite if and only if both $C$ and $M/C$ are positive definite:
+$$
+M \succ 0 \Leftrightarrow C \succ 0, M/C = A - B C\inv B\tran \succ 0.
+$$
+
+- If $A$ is positive definite, then $M$ is positive semidefinite if and only if $M/A$ is positive semidefinite:
+$$
+\text{If } A \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / A \succeq 0.
+$$
+
+- If $C$ is positive definite, then $M$ is positive semidefinite if and only if $M/C$ is positive semidefinite:
+$$
+\text{If } C \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / C \succeq 0.
+$$
+:::
+:::
+
+### Geometric Properties 
+
+The set $\psd{n}$ is a proper cone (cf. Definition \@ref(def:ProperCone)). Its interior is $\pd{n}$. Under the inner product 
+$$
+\inprod{A}{B} = \trace(AB\tran), \quad A,B \in \Real{n \times n},
+$$
+the PSD cone $\psd{n}$ is self-dual.
+
+Next we want to characterize the face of the PSD cone. We first present the following lemma which will turn out to be useful afterwards.
+
+::: {.theorembox}
+::: {.lemma #PSDRange name="Range of PSD Matrices"}
+Let $A,B \in \psd{n}$, then we have
+\begin{equation}
+\Range(A) \subseteq \Range(A + B),
+(\#eq:Range-PSD)
+\end{equation}
+where $\Range(A)$ denotes the span of the column vectors of $A$.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+For any symmetric matrix $S$, we know
+$$
+\Range(S) = \ker(S)^{\perp}.
+$$
+Therefore, to prove \@ref(eq:Range-PSD), it is equivalent to prove 
+$$
+\ker(A) \supseteq \ker(A + B).
+$$
+Pick any $u \in \ker(A + B)$, we have 
+$$
+(A + B) u = 0 \Rightarrow u \tran (A + B) u = 0 \Rightarrow u\tran A u + u\tran B u = 0 \Rightarrow u\tran A u = u\tran B u = 0,
+$$
+where the last derivation is due to $A, B \succeq 0$. Now that we have $u\tran A u = 0$, we claim that $Au = 0$ must hold, i.e., $u \in \ker(A)$. To see this, write 
+$$
+u = \sum_{i=1}^n a_i v_i,
+$$
+where $a_i = \inprod{u}{v_i}$ and $v_i,i=1,\dots,n$ are the eigenvectors of $A$ corresponding to eigenvalues $\lambda_i,i=1,\dots,n$. Then we have 
+$$
+Au = \sum_{i=1}^n a_i A v_i = \sum_{i=1}^n a_i \lambda_i v_i,
+$$
+and 
+$$
+u\tran A u = \sum_{i=1}^n \lambda_i a_i^2 = 0.
+$$
+Since $\lambda_i \geq 0, a_i^2 \geq 0$, we have 
+$$
+\lambda_i a_i^2 = 0, \forall i = 1,\dots,n.
+$$
+This indicates that if $\lambda_i > 0$, then $a_i = 0$. Therefore, $a_i$ can only be nonzero for $\lambda_i = 0$, which leads to 
+$$
+Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
+$$
+Therefore, $u \in \ker(A)$, proving the result.
+:::
+:::
+
+Lemma \@ref(lem:PSDRange) indicates that if $A \succeq B$, then $\Range(B) \subseteq \Range(A)$. 
+
+For a subset $T \subseteq \psd{n}$, we use $\face(T,\psd{n})$ to denote the smallest face of $\psd{n}$ that contains $T$. We first characterize the smallest face that contains a given PSD matrix, i.e., $\face(A,\psd{n})$ for $A\succeq 0$. Clearly, if $A$ is PD, then $\face(A, \sym{n}) = \psd{n}$ is the entire cone. 
+
+## Semidefinite Programming
+
+
+### Geometric Properties 
+
+
+## Interior Point Algorithm
