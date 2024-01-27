@@ -125,7 +125,18 @@ div.csl-indent {
 <li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="sdp.html"><a href="sdp.html#positive-semidefinite-matrices"><i class="fa fa-check"></i><b>2.1</b> Positive Semidefinite Matrices</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="sdp.html"><a href="sdp.html#geometric-properties"><i class="fa fa-check"></i><b>2.1.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="sdp.html"><a href="sdp.html#semidefinite-programming"><i class="fa fa-check"></i><b>2.2</b> Semidefinite Programming</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.3</b> Interior Point Algorithm</a></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="psets.html"><a href="psets.html"><i class="fa fa-check"></i><b>3</b> Problem Sets</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -150,11 +161,154 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="sdp" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Semidefinite Optimization<a href="sdp.html#sdp" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="positive-semidefinite-matrices" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Positive Semidefinite Matrices<a href="sdp.html#positive-semidefinite-matrices" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A real matrix <span class="math inline">\(A = (A_{ij}) \in \mathbb{R}^{n \times n}\)</span> is symmetric if <span class="math inline">\(A = A^\top\)</span>, i.e., <span class="math inline">\(A_{ij} = A_{ji}\)</span> for all <span class="math inline">\(i,j\)</span>. Let <span class="math inline">\(\mathbb{S}^{n}\)</span> be the space of all real symmetric matrices.</p>
+<p>Any symmetric matrix <span class="math inline">\(A\)</span> defines a <strong>quadratic form</strong> <span class="math inline">\(x^\top A x\)</span>. A matrix <span class="math inline">\(A\)</span> is said to be <strong>positive semidefinite</strong> (PSD) if and only if its associated quadratic form is nonnegative, i.e.,
+<span class="math display">\[
+x^\top A x \geq 0, \quad \forall x \in \mathbb{R}^{n}.
+\]</span>
+We use <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> to denote the set of <span class="math inline">\(n\times n\)</span> PSD matrices. We also write <span class="math inline">\(A \succeq 0\)</span> to denote positive semidefiniteness when the dimension is clear.</p>
+<p>There are several equivalent characterizations of positive semidefiniteness.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:PositiveSemidefinite" class="lemma"><strong>Lemma 2.1  (Positive Semidefinite Matrices) </strong></span>Let <span class="math inline">\(A \in \mathbb{S}^{n}\)</span> be a symmetric matrix, the following statements are equivalent:</p>
+<ol style="list-style-type: decimal">
+<li><p>A is positive semidefinite.</p></li>
+<li><p><span class="math inline">\(x^\top A x \geq 0, \forall x \in \mathbb{R}^{n}\)</span>.</p></li>
+<li><p>All eigenvalues of <span class="math inline">\(A\)</span> are nonnegative.</p></li>
+<li><p>All <span class="math inline">\(2^n-1\)</span> principal minors of <span class="math inline">\(A\)</span> are nonnegative.</p></li>
+<li><p>The coefficients of <span class="math inline">\(p_A(\lambda)\)</span> weakly alternate in sign, i.e., <span class="math inline">\((-1)^{n-k} p_k \geq 0\)</span> for <span class="math inline">\(k=0,\dots,n-1\)</span>, where <span class="math inline">\(p_A(\lambda) = \det (A - \lambda \mathrm{I}_n)\)</span> is the characteristics polynomial of <span class="math inline">\(A\)</span>.</p></li>
+<li><p>There exists a factorization <span class="math inline">\(A = BB^\top\)</span>, where <span class="math inline">\(B \in \mathbb{R}^{n \times r}\)</span> with <span class="math inline">\(r\)</span> the rank of <span class="math inline">\(A\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>Similarly, we say a matrix <span class="math inline">\(A \in \mathbb{S}^{n}\)</span> is <strong>positive definite</strong> (PD) is its associated quadratic form is always positive, i.e.,
+<span class="math display">\[
+x^\top A x &gt; 0, \quad \forall x \in \mathbb{R}^{n}.
+\]</span>
+We use <span class="math inline">\(\mathbb{S}^{n}_{++}\)</span> to denote the set of <span class="math inline">\(n \times n\)</span> PD matrices, and also write <span class="math inline">\(A \succ 0\)</span> when the dimension is clear.</p>
+<p>Below is set of equivalent characterizations of positive definite matrices.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:PositiveDefinite" class="lemma"><strong>Lemma 2.2  (Positive Definite Matrices) </strong></span>Let <span class="math inline">\(A \in \mathbb{S}^{n}\)</span> be a symmetric matrix, the following statements are equivalent:</p>
+<ol style="list-style-type: decimal">
+<li><p>A is positive definite.</p></li>
+<li><p><span class="math inline">\(x^\top A x &gt; 0, \forall x \in \mathbb{R}^{n}\)</span>.</p></li>
+<li><p>All eigenvalues of <span class="math inline">\(A\)</span> are strictly positive.</p></li>
+<li><p>All <span class="math inline">\(n\)</span> leading principal minors of <span class="math inline">\(A\)</span> are strictly positive.</p></li>
+<li><p>The coefficients of <span class="math inline">\(p_A(\lambda)\)</span> strictly alternate in sign, i.e., <span class="math inline">\((-1)^{n-k} p_k &gt; 0\)</span> for <span class="math inline">\(k=0,\dots,n-1\)</span>, where <span class="math inline">\(p_A(\lambda) = \det (A - \lambda \mathrm{I}_n)\)</span> is the characteristics polynomial of <span class="math inline">\(A\)</span>.</p></li>
+<li><p>There exists a factorization <span class="math inline">\(A = BB^\top\)</span> with <span class="math inline">\(B\)</span> square and nonsingular (full-rank).</p></li>
+</ol>
+</div>
+</div>
+<p><strong>Schur Complements</strong>. A useful technique to check whether a matrix is positive (semi-)definite is to use the Schur Complements. Consider a block-partitioned matrix
+<span class="math display" id="eq:block-mat-M">\[\begin{equation}
+M = \begin{bmatrix} A &amp; B \\ B^\top&amp; C \end{bmatrix},
+\tag{2.1}
+\end{equation}\]</span>
+where <span class="math inline">\(A\)</span> and <span class="math inline">\(C\)</span> are symmetric matrices.
+If <span class="math inline">\(A\)</span> is invertible, then the Schur complement of <span class="math inline">\(A\)</span> is
+<span class="math display">\[
+M / A = C - B^\top A^{-1}B.
+\]</span>
+Similarly, if <span class="math inline">\(C\)</span> is invertible, then the Schur complement of <span class="math inline">\(C\)</span> is
+<span class="math display">\[
+M / C = A - B C^{-1}B^\top.
+\]</span></p>
+<p>We have the following result relating the Schur Complements to positive (semi-)definiteness.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:SchurPSD" class="proposition"><strong>Proposition 2.1  (Schur Complements and PSD) </strong></span>Consider the block-partitioned matrix <span class="math inline">\(M\)</span> in <a href="sdp.html#eq:block-mat-M">(2.1)</a>,</p>
 <ul>
-<li>Positive Semidefinite Matrices</li>
-<li>Spectrahedra</li>
+<li><p><span class="math inline">\(M\)</span> is positive definite if and only if both <span class="math inline">\(A\)</span> and <span class="math inline">\(M/A\)</span> are positive definite:
+<span class="math display">\[
+M \succ 0 \Leftrightarrow A \succ 0, M/A = C - B^\top A^{-1}B \succ 0.
+\]</span></p></li>
+<li><p><span class="math inline">\(M\)</span> is positive definite if and only if both <span class="math inline">\(C\)</span> and <span class="math inline">\(M/C\)</span> are positive definite:
+<span class="math display">\[
+M \succ 0 \Leftrightarrow C \succ 0, M/C = A - B C^{-1}B^\top\succ 0.
+\]</span></p></li>
+<li><p>If <span class="math inline">\(A\)</span> is positive definite, then <span class="math inline">\(M\)</span> is positive semidefinite if and only if <span class="math inline">\(M/A\)</span> is positive semidefinite:
+<span class="math display">\[
+\text{If } A \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / A \succeq 0.
+\]</span></p></li>
+<li><p>If <span class="math inline">\(C\)</span> is positive definite, then <span class="math inline">\(M\)</span> is positive semidefinite if and only if <span class="math inline">\(M/C\)</span> is positive semidefinite:
+<span class="math display">\[
+\text{If } C \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / C \succeq 0.
+\]</span></p></li>
 </ul>
+</div>
+</div>
+<div id="geometric-properties" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Geometric Properties<a href="sdp.html#geometric-properties" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The set <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> is a proper cone (cf. Definition <a href="background.html#def:ProperCone">1.3</a>). Its interior is <span class="math inline">\(\mathbb{S}^{n}_{++}\)</span>. Under the inner product
+<span class="math display">\[
+\langle A, B \rangle = \mathrm{tr}(AB^\top), \quad A,B \in \mathbb{R}^{n \times n},
+\]</span>
+the PSD cone <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> is self-dual.</p>
+<p>Next we want to characterize the face of the PSD cone. We first present the following lemma which will turn out to be useful afterwards.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:PSDRange" class="lemma"><strong>Lemma 2.3  (Range of PSD Matrices) </strong></span>Let <span class="math inline">\(A,B \in \mathbb{S}^{n}_{+}\)</span>, then we have
+<span class="math display" id="eq:Range-PSD">\[\begin{equation}
+\mathrm{Range}(A) \subseteq \mathrm{Range}(A + B),
+\tag{2.2}
+\end{equation}\]</span>
+where <span class="math inline">\(\mathrm{Range}(A)\)</span> denotes the span of the column vectors of <span class="math inline">\(A\)</span>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-6" class="proof"><em>Proof</em>. </span>For any symmetric matrix <span class="math inline">\(S\)</span>, we know
+<span class="math display">\[
+\mathrm{Range}(S) = \mathrm{ker}(S)^{\perp}.
+\]</span>
+Therefore, to prove <a href="sdp.html#eq:Range-PSD">(2.2)</a>, it is equivalent to prove
+<span class="math display">\[
+\mathrm{ker}(A) \supseteq \mathrm{ker}(A + B).
+\]</span>
+Pick any <span class="math inline">\(u \in \mathrm{ker}(A + B)\)</span>, we have
+<span class="math display">\[
+(A + B) u = 0 \Rightarrow u ^\top(A + B) u = 0 \Rightarrow u^\top A u + u^\top B u = 0 \Rightarrow u^\top A u = u^\top B u = 0,
+\]</span>
+where the last derivation is due to <span class="math inline">\(A, B \succeq 0\)</span>. Now that we have <span class="math inline">\(u^\top A u = 0\)</span>, we claim that <span class="math inline">\(Au = 0\)</span> must hold, i.e., <span class="math inline">\(u \in \mathrm{ker}(A)\)</span>. To see this, write
+<span class="math display">\[
+u = \sum_{i=1}^n a_i v_i,
+\]</span>
+where <span class="math inline">\(a_i = \langle u, v_i \rangle\)</span> and <span class="math inline">\(v_i,i=1,\dots,n\)</span> are the eigenvectors of <span class="math inline">\(A\)</span> corresponding to eigenvalues <span class="math inline">\(\lambda_i,i=1,\dots,n\)</span>. Then we have
+<span class="math display">\[
+Au = \sum_{i=1}^n a_i A v_i = \sum_{i=1}^n a_i \lambda_i v_i,
+\]</span>
+and
+<span class="math display">\[
+u^\top A u = \sum_{i=1}^n \lambda_i a_i^2 = 0.
+\]</span>
+Since <span class="math inline">\(\lambda_i \geq 0, a_i^2 \geq 0\)</span>, we have
+<span class="math display">\[
+\lambda_i a_i^2 = 0, \forall i = 1,\dots,n.
+\]</span>
+This indicates that if <span class="math inline">\(\lambda_i &gt; 0\)</span>, then <span class="math inline">\(a_i = 0\)</span>. Therefore, <span class="math inline">\(a_i\)</span> can only be nonzero for <span class="math inline">\(\lambda_i = 0\)</span>, which leads to
+<span class="math display">\[
+Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
+\]</span>
+Therefore, <span class="math inline">\(u \in \mathrm{ker}(A)\)</span>, proving the result.</p>
+</div>
+</div>
+<p>Lemma <a href="sdp.html#lem:PSDRange">2.3</a> indicates that if <span class="math inline">\(A \succeq B\)</span>, then <span class="math inline">\(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\)</span>.</p>
+<p>For a subset <span class="math inline">\(T \subseteq \mathbb{S}^{n}_{+}\)</span>, we use <span class="math inline">\(\mathrm{face}(T,\mathbb{S}^{n}_{+})\)</span> to denote the smallest face of <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> that contains <span class="math inline">\(T\)</span>. We first characterize the smallest face that contains a given PSD matrix, i.e., <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+})\)</span> for <span class="math inline">\(A\succeq 0\)</span>. Clearly, if <span class="math inline">\(A\)</span> is PD, then <span class="math inline">\(\mathrm{face}(A, \mathbb{S}^{n}) = \mathbb{S}^{n}_{+}\)</span> is the entire cone.</p>
+</div>
+</div>
+<div id="semidefinite-programming" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Semidefinite Programming<a href="sdp.html#semidefinite-programming" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="geometric-properties-1" class="section level3 hasAnchor" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Geometric Properties<a href="sdp.html#geometric-properties-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+</div>
+<div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
+</div>
 </div>
 <div id="disqus_thread"></div>
 <script>

@@ -150,6 +150,7 @@ arc=4pt}
 \tableofcontents
 }
 \newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calA}{\mathcal{A}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
@@ -192,6 +193,10 @@ arc=4pt}
 \newcommand{\subject}{\mathrm{s.t.}}
 \newcommand{\cl}{\mathrm{cl}}
 \newcommand{\eye}{\mathrm{I}}
+\newcommand{\inv}{^{-1}}
+\newcommand{\Range}{\mathrm{Range}}
+\renewcommand{\ker}{\mathrm{ker}}
+\newcommand{\face}{\mathrm{face}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -304,6 +309,8 @@ We will use the following standard notation throughout this book.
 \(\mathrm{vec}(A)\) & vectorization of \(A \in \mathbb{R}^{m \times n}\) \\
 \(\mathrm{svec}(A)\) & symmetric vectorization of \(A \in \mathbb{S}^{n}\) \\
 \(\Vert A \Vert_\mathrm{F}\) & Frobenius norm \\
+\(\mathrm{Range}(A)\) & span of the column vectors \\
+\(\mathrm{ker}(A)\) & right null space \\
 \bottomrule()
 \end{longtable}
 
@@ -971,16 +978,220 @@ is nonempty, with \(e\) being the vector of all ones.
 \hypertarget{sdp}{%
 \chapter{Semidefinite Optimization}\label{sdp}}
 
+\hypertarget{positive-semidefinite-matrices}{%
+\section{Positive Semidefinite Matrices}\label{positive-semidefinite-matrices}}
+
+A real matrix \(A = (A_{ij}) \in \mathbb{R}^{n \times n}\) is symmetric if \(A = A^\top\), i.e., \(A_{ij} = A_{ji}\) for all \(i,j\). Let \(\mathbb{S}^{n}\) be the space of all real symmetric matrices.
+
+Any symmetric matrix \(A\) defines a \textbf{quadratic form} \(x^\top A x\). A matrix \(A\) is said to be \textbf{positive semidefinite} (PSD) if and only if its associated quadratic form is nonnegative, i.e.,
+\[
+x^\top A x \geq 0, \quad \forall x \in \mathbb{R}^{n}.
+\]
+We use \(\mathbb{S}^{n}_{+}\) to denote the set of \(n\times n\) PSD matrices. We also write \(A \succeq 0\) to denote positive semidefiniteness when the dimension is clear.
+
+There are several equivalent characterizations of positive semidefiniteness.
+
+\begin{lemma}[Positive Semidefinite Matrices]
+\protect\hypertarget{lem:PositiveSemidefinite}{}\label{lem:PositiveSemidefinite}
+
+Let \(A \in \mathbb{S}^{n}\) be a symmetric matrix, the following statements are equivalent:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  A is positive semidefinite.
+\item
+  \(x^\top A x \geq 0, \forall x \in \mathbb{R}^{n}\).
+\item
+  All eigenvalues of \(A\) are nonnegative.
+\item
+  All \(2^n-1\) principal minors of \(A\) are nonnegative.
+\item
+  The coefficients of \(p_A(\lambda)\) weakly alternate in sign, i.e., \((-1)^{n-k} p_k \geq 0\) for \(k=0,\dots,n-1\), where \(p_A(\lambda) = \det (A - \lambda \mathrm{I}_n)\) is the characteristics polynomial of \(A\).
+\item
+  There exists a factorization \(A = BB^\top\), where \(B \in \mathbb{R}^{n \times r}\) with \(r\) the rank of \(A\).
+\end{enumerate}
+
+\end{lemma}
+
+Similarly, we say a matrix \(A \in \mathbb{S}^{n}\) is \textbf{positive definite} (PD) is its associated quadratic form is always positive, i.e.,
+\[
+x^\top A x > 0, \quad \forall x \in \mathbb{R}^{n}.
+\]
+We use \(\mathbb{S}^{n}_{++}\) to denote the set of \(n \times n\) PD matrices, and also write \(A \succ 0\) when the dimension is clear.
+
+Below is set of equivalent characterizations of positive definite matrices.
+
+\begin{lemma}[Positive Definite Matrices]
+\protect\hypertarget{lem:PositiveDefinite}{}\label{lem:PositiveDefinite}
+
+Let \(A \in \mathbb{S}^{n}\) be a symmetric matrix, the following statements are equivalent:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  A is positive definite.
+\item
+  \(x^\top A x > 0, \forall x \in \mathbb{R}^{n}\).
+\item
+  All eigenvalues of \(A\) are strictly positive.
+\item
+  All \(n\) leading principal minors of \(A\) are strictly positive.
+\item
+  The coefficients of \(p_A(\lambda)\) strictly alternate in sign, i.e., \((-1)^{n-k} p_k > 0\) for \(k=0,\dots,n-1\), where \(p_A(\lambda) = \det (A - \lambda \mathrm{I}_n)\) is the characteristics polynomial of \(A\).
+\item
+  There exists a factorization \(A = BB^\top\) with \(B\) square and nonsingular (full-rank).
+\end{enumerate}
+
+\end{lemma}
+
+\textbf{Schur Complements}. A useful technique to check whether a matrix is positive (semi-)definite is to use the Schur Complements. Consider a block-partitioned matrix
+\begin{equation}
+M = \begin{bmatrix} A & B \\ B^\top& C \end{bmatrix},
+\label{eq:block-mat-M}
+\end{equation}
+where \(A\) and \(C\) are symmetric matrices.
+If \(A\) is invertible, then the Schur complement of \(A\) is
+\[
+M / A = C - B^\top A^{-1}B.
+\]
+Similarly, if \(C\) is invertible, then the Schur complement of \(C\) is
+\[
+M / C = A - B C^{-1}B^\top.
+\]
+
+We have the following result relating the Schur Complements to positive (semi-)definiteness.
+
+\begin{proposition}[Schur Complements and PSD]
+\protect\hypertarget{prp:SchurPSD}{}\label{prp:SchurPSD}
+
+Consider the block-partitioned matrix \(M\) in \eqref{eq:block-mat-M},
+
 \begin{itemize}
-\tightlist
 \item
-  Positive Semidefinite Matrices
+  \(M\) is positive definite if and only if both \(A\) and \(M/A\) are positive definite:
+  \[
+  M \succ 0 \Leftrightarrow A \succ 0, M/A = C - B^\top A^{-1}B \succ 0.
+  \]
 \item
-  Spectrahedra
+  \(M\) is positive definite if and only if both \(C\) and \(M/C\) are positive definite:
+  \[
+  M \succ 0 \Leftrightarrow C \succ 0, M/C = A - B C^{-1}B^\top\succ 0.
+  \]
+\item
+  If \(A\) is positive definite, then \(M\) is positive semidefinite if and only if \(M/A\) is positive semidefinite:
+  \[
+  \text{If } A \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / A \succeq 0.
+  \]
+\item
+  If \(C\) is positive definite, then \(M\) is positive semidefinite if and only if \(M/C\) is positive semidefinite:
+  \[
+  \text{If } C \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / C \succeq 0.
+  \]
 \end{itemize}
+
+\end{proposition}
+
+\hypertarget{geometric-properties}{%
+\subsection{Geometric Properties}\label{geometric-properties}}
+
+The set \(\mathbb{S}^{n}_{+}\) is a proper cone (cf.~Definition \ref{def:ProperCone}). Its interior is \(\mathbb{S}^{n}_{++}\). Under the inner product
+\[
+\langle A, B \rangle = \mathrm{tr}(AB^\top), \quad A,B \in \mathbb{R}^{n \times n},
+\]
+the PSD cone \(\mathbb{S}^{n}_{+}\) is self-dual.
+
+Next we want to characterize the face of the PSD cone. We first present the following lemma which will turn out to be useful afterwards.
+
+\begin{lemma}[Range of PSD Matrices]
+\protect\hypertarget{lem:PSDRange}{}\label{lem:PSDRange}Let \(A,B \in \mathbb{S}^{n}_{+}\), then we have
+\begin{equation}
+\mathrm{Range}(A) \subseteq \mathrm{Range}(A + B),
+\label{eq:Range-PSD}
+\end{equation}
+where \(\mathrm{Range}(A)\) denotes the span of the column vectors of \(A\).
+\end{lemma}
+
+\begin{proof}
+For any symmetric matrix \(S\), we know
+\[
+\mathrm{Range}(S) = \mathrm{ker}(S)^{\perp}.
+\]
+Therefore, to prove \eqref{eq:Range-PSD}, it is equivalent to prove
+\[
+\mathrm{ker}(A) \supseteq \mathrm{ker}(A + B).
+\]
+Pick any \(u \in \mathrm{ker}(A + B)\), we have
+\[
+(A + B) u = 0 \Rightarrow u ^\top(A + B) u = 0 \Rightarrow u^\top A u + u^\top B u = 0 \Rightarrow u^\top A u = u^\top B u = 0,
+\]
+where the last derivation is due to \(A, B \succeq 0\). Now that we have \(u^\top A u = 0\), we claim that \(Au = 0\) must hold, i.e., \(u \in \mathrm{ker}(A)\). To see this, write
+\[
+u = \sum_{i=1}^n a_i v_i,
+\]
+where \(a_i = \langle u, v_i \rangle\) and \(v_i,i=1,\dots,n\) are the eigenvectors of \(A\) corresponding to eigenvalues \(\lambda_i,i=1,\dots,n\). Then we have
+\[
+Au = \sum_{i=1}^n a_i A v_i = \sum_{i=1}^n a_i \lambda_i v_i,
+\]
+and
+\[
+u^\top A u = \sum_{i=1}^n \lambda_i a_i^2 = 0.
+\]
+Since \(\lambda_i \geq 0, a_i^2 \geq 0\), we have
+\[
+\lambda_i a_i^2 = 0, \forall i = 1,\dots,n.
+\]
+This indicates that if \(\lambda_i > 0\), then \(a_i = 0\). Therefore, \(a_i\) can only be nonzero for \(\lambda_i = 0\), which leads to
+\[
+Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
+\]
+Therefore, \(u \in \mathrm{ker}(A)\), proving the result.
+\end{proof}
+
+Lemma \ref{lem:PSDRange} indicates that if \(A \succeq B\), then \(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\).
+
+For a subset \(T \subseteq \mathbb{S}^{n}_{+}\), we use \(\mathrm{face}(T,\mathbb{S}^{n}_{+})\) to denote the smallest face of \(\mathbb{S}^{n}_{+}\) that contains \(T\). We first characterize the smallest face that contains a given PSD matrix, i.e., \(\mathrm{face}(A,\mathbb{S}^{n}_{+})\) for \(A\succeq 0\). Clearly, if \(A\) is PD, then \(\mathrm{face}(A, \mathbb{S}^{n}) = \mathbb{S}^{n}_{+}\) is the entire cone.
+
+\hypertarget{semidefinite-programming}{%
+\section{Semidefinite Programming}\label{semidefinite-programming}}
+
+\hypertarget{geometric-properties-1}{%
+\subsection{Geometric Properties}\label{geometric-properties-1}}
+
+\hypertarget{interior-point-algorithm}{%
+\section{Interior Point Algorithm}\label{interior-point-algorithm}}
 
 \hypertarget{psets}{%
 \chapter{Problem Sets}\label{psets}}
+
+Consider the SDP
+\[
+\min_{X \in \mathbb{S}^{n}} \{ \langle C, X \rangle \mid \mathcal{A}(X) = b, X \succeq 0 \}
+\]
+The ALM of the SDP reads
+\[
+L_{\sigma}(X,\mu) = \langle C, X \rangle - \langle \mu, \mathcal{A}(X)-b \rangle + \frac{\sigma}{2} \Vert \mathcal{A}(X) - b \Vert^2.
+\]
+Let \(x : = \mathrm{svec}(X)\), \(c:= \mathrm{svec}(C)\), and
+\[
+A = \begin{bmatrix} \mathrm{svec}(A_1) & \dots & \mathrm{svec}(A_m) \end{bmatrix},
+\]
+The ALM is equivalent to
+\[
+L_{\sigma}(x,\mu) = c^\top x - \mu^\top(A^\top x - b) + \frac{\sigma}{2}\Vert A^\top x - b \Vert^2.
+\]
+If instead, we use B-M factorization, then we have \(X = YY^\top\) with \(Y \in \mathbb{R}^{n \times r}\). Let \(y = \mathrm{vec}(Y)\), then it is clear we have
+\[
+x = \mathrm{svec}(X) = \mathrm{svec}(YY^\top) = \mathrm{svec}(\mathrm{mat}(y)\mathrm{mat}(y)^\top) := g_r(y),
+\]
+with \(g\) a quadratic function depending on \(r\). Let
+\[
+J(y) = \frac{\partial x}{\partial y} = \frac{\partial g_r(y)}{\partial y}.
+\]
+To get the gradient of \(L_{\sigma}(x,\mu)\) w.r.t. \(y\), we have
+\[
+\nabla_y L_{\sigma}  = \nabla_x L_{\sigma} \frac{\partial x}{\partial y} = J(y)^\top(c - A \mu + \sigma A (A^\top x - b)).
+\]
 
 \begin{exercise}[Test]
 \protect\hypertarget{exr:test}{}\label{exr:test}Test
