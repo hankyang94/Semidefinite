@@ -310,7 +310,7 @@ $$
 
 A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when $X$ and $Y$ are standard unit simplicies and the function $f(x,y)$ is bilinear. In a research from our group [@tang23arxiv-uncertainty], we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
 
-### Lagrangian Duality 
+### Lagrangian Duality {#background:convex:optimization:Lagrangian}
 
 Consider a nonlinear optimization problem 
 \begin{equation}
@@ -443,7 +443,7 @@ An extreme point of a polytope is called a **vertex**. A $1$-dimensional face of
 
 ### Linear Program
 
-We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
+We will now give a brief review of important results in linear programming (LP). The standard reference for linear programming is [@bertsimas97book-lp]. In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite. 
 
 A standard form linear program (LP) reads
 \begin{equation}
@@ -451,7 +451,7 @@ A standard form linear program (LP) reads
 \min_{x \in \Real{n}} & \quad \inprod{c}{x}  \\
 \subject & \quad Ax = b \\
 & \quad x \geq 0
-\end{split},
+\end{split}
 (\#eq:primal-lp)
 \end{equation}
 for given $A \in \Real{m\times n}$, $b \in \Real{m}$, and $c \in \Real{n}$. Often the tuple $(A,b,c)$ is called the _problem data_ because the LP \@ref(eq:primal-lp) is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple $(A,b,c)$ as input). Clearly, the feasible set of the LP \@ref(eq:primal-lp) is a polyhedron. The LP \@ref(eq:primal-lp) is often referred to as the **primal** LP. Associated with \@ref(eq:primal-lp) is the following **dual** LP 
@@ -459,27 +459,177 @@ for given $A \in \Real{m\times n}$, $b \in \Real{m}$, and $c \in \Real{n}$. Ofte
 \begin{split}
 \max_{y \in \Real{m}} & \quad \inprod{b}{y} \\
 \subject & \quad c - A\tran y \geq 0
-\end{split}.
+\end{split}
 (\#eq:dual-lp)
 \end{equation}
 It is worth noting that the dimension of the dual variable $y$ is exactly the number of constraints in the primal LP. 
 
+**Lagrangian duality**. Let us use the idea of Lagrangian duality introduced in Section \@ref(background:convex:optimization:Lagrangian) to verify that \@ref(eq:dual-lp) is indeed the Lagrangian dual problem of \@ref(eq:primal-lp). The Lagrangian associated with \@ref(eq:primal-lp) is 
+\begin{equation}
+\begin{split}
+L(x,\lambda,\mu) & = \inprod{c}{x} + \inprod{\mu}{Ax - b} + \inprod{\lambda}{-x}, \quad \mu \in \Real{m}, \lambda \in \Real{n}_{+}\\
+& = \inprod{c + A\tran \mu - \lambda}{x} - \inprod{\mu}{b}, \quad \mu \in \Real{m}, \lambda \in \Real{n}_{+}.
+\end{split}
+\end{equation}
+The Lagrangian dual function is therefore 
+$$
+\phi(\lambda,\mu) = \min_{x} L(x,\lambda,\mu) = \begin{cases}
+- \inprod{\mu}{b} & \text{if } c + A\tran \mu - \lambda = 0 \\
+- \infty & \text{Otherwise}
+\end{cases}, \mu \in \Real{m}, \lambda \in \Real{n}_{+}.
+$$
+The Lagrangian dual problem seeks to maximize the dual function $\phi(\lambda,\mu)$, and hence it must set $c + A\tran \mu - \lambda = 0$ (otherwise it leads to $-\infty$). As a result, the dual problem is
+\begin{equation}
+\begin{split}
+\max_{\mu \in \Real{m}} & \quad \inprod{b}{-\mu} \\
+\subject & \quad c + A\tran \mu = \lambda \geq 0
+\end{split}
+(\#eq:lp-Lagrangian-dual)
+\end{equation}
+With a change of variable $y := -\mu$, we observe that problem \@ref(eq:lp-Lagrangian-dual) is precisely problem \@ref(eq:dual-lp).
+
 **Weak duality**. For the pair of primal-dual LPs, it is easy to verify that, for any $x$ that is feasible for the primal \@ref(eq:primal-lp) and $y$ that is feasible for the dual \@ref(eq:dual-lp), we have
-$$
+\begin{equation}
 \inprod{c}{x} - \inprod{b}{y} = \inprod{c}{x} - \inprod{Ax}{y} = \inprod{c}{x} - \inprod{A\tran y}{x} = \inprod{c - A\tran y}{x} \geq 0.
-$$
+(\#eq:weak-duality-lp)
+\end{equation}
 Therefore, denoting $p^\star$ as the optimum of \@ref(eq:primal-lp) and $d^\star$ as the optimum of \@ref(eq:dual-lp), we have the weak duality 
 $$
 p^\star \geq d^\star.
 $$
+Note that such weak duality can also be directly obtained since \@ref(eq:lp-Lagrangian-dual) is the Lagrangian dual of \@ref(eq:primal-lp).
 
 If $p^\star = d^\star$, then we say **strong duality** holds. The LP \@ref(eq:primal-lp) is said to be **feasible** if its feasible set is nonempty. It is said to be **unbounded below** if there exists a sequence $\cbrace{u_i}_{i=1}^{\infty} \subseteq \Real{n}_{+}$ such that $\inprod{c}{u_i} \rightarrow -\infty$ and $A u_i = b$. If the primal \@ref(eq:primal-lp) is infeasible (resp. unbounded below), we set $p^\star = + \infty$ (resp. $p^\star = - \infty$). Similar characteristics are defined for the dual LP \@ref(eq:dual-lp). In particular, if the dual \@ref(eq:dual-lp) is unbounded, then we set $d^\star = + \infty$. If the dual is infeasible, then we set $d^\star = - \infty$.
 
-We have the following strong duality result.
+Strong duality is well understood in linear programming.
 
 ::: {.theorembox}
 ::: {.theorem #LPStrongDuality name="LP Strong Duality"}
 For the LP primal-dual pair \@ref(eq:primal-lp) and \@ref(eq:dual-lp), we have 
 
+- If one of \@ref(eq:primal-lp) and \@ref(eq:dual-lp) is feasible, then $p^\star = d^\star$ (i.e., finite, $+\infty$, or $-\infty$).
+
+- If one of $p^\star$ or $d^\star$ is finite, then $p^\star = d^\star$ is finite, and both \@ref(eq:primal-lp) and \@ref(eq:dual-lp) achieve the same optimal value (i.e., they botb have optimizers).
+
+- A primal feasible point $x^\star$ of \@ref(eq:primal-lp) is a minimizer if and only if there exists a dual feasible point $y^\star$ such that $\inprod{c}{x^\star} = \inprod{b}{y^\star}$.
+
 :::
 :::
+
+For example, consider the following primal-dual LP pair
+\begin{equation}
+\begin{cases}
+\min_{x \in \Real{3}_{+}} & x_1 + x_2 + 2 x_3 \\
+\subject & \begin{bmatrix} -1 & 1 & 1 \\ 1 & 1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & y_2 \\
+\subject & \begin{bmatrix} 1 \\ 1 \\ 2 \end{bmatrix} - \begin{bmatrix} -1 & 1 \\ 1 & 1 \\ 1 & 2 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \geq 0
+\end{cases}.
+\end{equation}
+$x^\star = [1/2,1/2,0]\tran$ is feasible for the primal and attains $p^\star = 1$. $y^\star = [0,1]\tran$ is feasible for the dual and attains $d^\star = 1$. Therefore, both $x^\star$ and $y^\star$ are optimizers for the primal and dual, respectively.
+
+**Complementary slackness**. Strong duality, when combined with \@ref(eq:weak-duality-lp), implies that 
+$$
+x_i^\star (c - A\tran y^\star)_i = 0, \forall i = 1,\dots,n,
+$$
+where $(\cdot)_i$ denotes the $i$-th entry of a vector. This is known as complementary slackness, which states that whenever a primal optimal solution has a nonzero entry, the corresponding dual inequality must be tight.
+
+An important property of LP is that if the primal problem is feasible and bounded below, then it must have an optimizer that is a **basic feasible point**, i.e., a feasible point has at most $m$ nonzero entries. The simplex method [@bertsimas97book-lp] for solving LPs searches for optimizers among the basic feasible points.
+
+We also introduce how to detect infeasibility and unboundedness of LPs.
+
+::: {.theorembox}
+::: {.theorem #LPInfeasUnbound name="LP Infeasibility and Unboundedness"}
+Infeasibility and Unboundedness of LP can be certified by existence of an improving/decreasing ray for the primal and dual:
+
+- When the primal \@ref(eq:primal-lp) is feasible, it is unbounded below if and only if it has a decreasing ray, i.e., there exists $u \in \Real{n}$ such that 
+$$
+A u = 0, \quad u \geq 0, \quad \inprod{c}{u} < 0.
+$$
+
+- When the dual \@ref(eq:dual-lp) is feasible, it is unbounded above if and only if it has an improving ray, i.e., there exists $u \in \Real{m}$ such that 
+$$
+A\tran u \leq 0, \quad \inprod{b}{u} > 0. 
+$$
+
+- The primal problem \@ref(eq:primal-lp) is infeasible if and only if the dual problem \@ref(eq:dual-lp) has an improving ray, i.e., there exists $u \in \Real{m}$ such that 
+$$
+A\tran u \leq 0, \quad \inprod{b}{u} > 0.
+$$
+
+- The dual problem \@ref(eq:dual-lp) is infeasible if and only if the primal problem \@ref(eq:primal-lp) has a decreasing ray, i.e., there exists $u \in \Real{n}$ such that 
+$$
+A u = 0, \quad u \geq 0, \quad \inprod{c}{u} < 0.
+$$
+:::
+:::
+
+It is important to note that both the primal and dual can be infeasible, as in the following example.
+\begin{equation}
+\begin{cases}
+\min_{x \in \Real{2}_{+}} & - x_1 - x_2 \\
+\subject & \begin{bmatrix} -1 & 1 \\ -1 & 1 \end{bmatrix} x = \begin{bmatrix} 2 \\ 3 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & 2 y_1 + 3 y_2 \\
+\subject & \begin{bmatrix} -1 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 & -1 \\ 1 & 1 \end{bmatrix} y \geq 0
+\end{cases}.
+\end{equation}
+
+### Farkas Lemma
+
+A foundational result in linear programming is the Farkas Lemma.
+
+::: {.theorembox}
+::: {.theorem #FarkasLemma name="Farkas Lemma"}
+For a given $A \in \Real{m \times n}$ and $c \in \Real{n}$, if $\inprod{c}{x} \geq 0$ for all $x$ satisfying $Ax \geq 0$, then there exists $\lambda \in \Real{m}$ such that 
+$$
+c = A\tran \lambda, \quad \lambda \geq 0.
+$$
+:::
+:::
+
+As a simple example, take $A = \eye_n$ as the identity matrix, then Farkas Lemma says if $\inprod{c}{x} \geq 0$ for all $x \geq 0$, then $c$ must be that $c \geq 0$ -- this is exactly the fact that the nonnegative orthant $\Real{n}_{+}$ is self-dual. 
+
+In general, the Farkas Lemma states if the linear function $\inprod{c}{x}$ is nonnegative on the space $\{ Ax \geq 0 \}$, then there exists $\lambda \in \Real{m}_{+}$ such that 
+\begin{equation}
+\inprod{c}{x} = \inprod{\lambda}{ Ax} = \sum_{i=1}^m \lambda_i (a_i\tran x),
+(\#eq:farkas-lemma-imply)
+\end{equation}
+where $a_i\tran$ is the $i$-th row of $A$. Note that \@ref(eq:farkas-lemma-imply) is a polynomial identity. As we will see later in the course, the idea of sums of squares (SOS), to some extent, is to generalize Farkas Lemma to the case where the function is a polynomial and the set is a basic semialgebraic set (i.e., defined by polynomial equalities and inequalities).
+
+A generalization of Farkas Lemma to inhomogeneous affine functions is stated below.
+
+::: {.theorembox}
+::: {.theorem #InhomogeneousFarkasLemma name="Inhomogeneous Farkas Lemma"}
+Suppose the set $P = \cbrace{x \in \Real{n} \mid A x \geq b}$ with $A \in \Real{m \times n}, b \in \Real{m}$ is nonempty. If a linear function $\inprod{c}{x} - d$ is nonnegative on $P$, then there exists $\lambda \in \Real{m}$ and $\nu \in \Real{}$ such that
+$$
+\inprod{c}{x} - d = \nu + \inprod{\lambda}{A x - b}, \quad \lambda \geq 0, \nu \geq 0. 
+$$
+:::
+:::
+
+A more general result is called the Theorem of Alternatives, which states that a polyhedral set is empty if and only if another polyhedral set is nonempty.
+
+::: {.theorembox}
+::: {.theorem #Alternative name="Theorem of Alternatives"}
+Given $A_1 \in \Real{m_1 \times n}, A_2 \in \Real{m_2 \times n}$, $b_1 \in \Real{m_1}$, and $b_2 \in \Real{m_2}$, the set 
+$$
+\cbrace{x \in \Real{n} \mid A_1 x > b_1, A_2 x \geq b_2}
+$$
+is empty if and only if the following set
+$$
+\lcbrace{(\lambda_1,\lambda_2) \in \Real{m_1} \times \Real{m_2}\ \middle\vert\ \begin{array}{r} \lambda_1 \geq 0, \lambda_2 \geq 0, \\ b_1\tran \lambda_1 + b_2\tran \lambda_2 \geq 0, \\ A_1\tran \lambda_1 + A_2\tran \lambda_2 = 0, \\ (e + b_1)\tran \lambda_1 + b_2\tran \lambda_2 = 1 \end{array} }
+$$
+is nonempty, with $e$ being the vector of all ones.
+:::
+:::
+
+
+
+
+
+
+
+
