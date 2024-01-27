@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-25" />
+<meta name="date" content="2024-01-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -115,13 +115,14 @@ div.csl-indent {
 <li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
 <ul>
 <li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
-<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#lagrangian-duality"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#background:convex:optimization:Lagrangian"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
 <li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
 </ul></li>
 <li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
 <ul>
 <li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
 <li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+<li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a></li>
@@ -411,8 +412,8 @@ If the maximum or minimum is not attained, then <a href="background.html#eq:weak
 </div>
 <p>A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are standard unit simplicies and the function <span class="math inline">\(f(x,y)\)</span> is bilinear. In a research from our group <span class="citation">(<a href="#ref-tang23arxiv-uncertainty" role="doc-biblioref">Tang, Lasserre, and Yang 2023</a>)</span>, we used the minimax theorem to convert a minimax problem into a single-level minimization problem.</p>
 </div>
-<div id="lagrangian-duality" class="section level3 hasAnchor" number="1.3.2">
-<h3><span class="header-section-number">1.3.2</span> Lagrangian Duality<a href="background.html#lagrangian-duality" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="background:convex:optimization:Lagrangian" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Lagrangian Duality<a href="background.html#background:convex:optimization:Lagrangian" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Consider a nonlinear optimization problem
 <span class="math display" id="eq:background-nlp">\[\begin{equation}
 \begin{split}
@@ -527,14 +528,14 @@ where the Minkowski sum of two sets is defined as <span class="math inline">\(X 
 </div>
 <div id="linear-program" class="section level3 hasAnchor" number="1.4.2">
 <h3><span class="header-section-number">1.4.2</span> Linear Program<a href="background.html#linear-program" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.</p>
+<p>We will now give a brief review of important results in linear programming (LP). The standard reference for linear programming is <span class="citation">(<a href="#ref-bertsimas97book-lp" role="doc-biblioref">Bertsimas and Tsitsiklis 1997</a>)</span>. In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.</p>
 <p>A standard form linear program (LP) reads
 <span class="math display" id="eq:primal-lp">\[\begin{equation}
 \begin{split}
 \min_{x \in \mathbb{R}^{n}} &amp; \quad \langle c, x \rangle  \\
 \mathrm{s.t.}&amp; \quad Ax = b \\
 &amp; \quad x \geq 0
-\end{split},
+\end{split}
 \tag{1.15}
 \end{equation}\]</span>
 for given <span class="math inline">\(A \in \mathbb{R}^{m\times n}\)</span>, <span class="math inline">\(b \in \mathbb{R}^{m}\)</span>, and <span class="math inline">\(c \in \mathbb{R}^{n}\)</span>. Often the tuple <span class="math inline">\((A,b,c)\)</span> is called the <em>problem data</em> because the LP <a href="background.html#eq:primal-lp">(1.15)</a> is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple <span class="math inline">\((A,b,c)\)</span> as input). Clearly, the feasible set of the LP <a href="background.html#eq:primal-lp">(1.15)</a> is a polyhedron. The LP <a href="background.html#eq:primal-lp">(1.15)</a> is often referred to as the <strong>primal</strong> LP. Associated with <a href="background.html#eq:primal-lp">(1.15)</a> is the following <strong>dual</strong> LP
@@ -542,23 +543,148 @@ for given <span class="math inline">\(A \in \mathbb{R}^{m\times n}\)</span>, <sp
 \begin{split}
 \max_{y \in \mathbb{R}^{m}} &amp; \quad \langle b, y \rangle \\
 \mathrm{s.t.}&amp; \quad c - A^\top y \geq 0
-\end{split}.
+\end{split}
 \tag{1.16}
 \end{equation}\]</span>
 It is worth noting that the dimension of the dual variable <span class="math inline">\(y\)</span> is exactly the number of constraints in the primal LP.</p>
-<p><strong>Weak duality</strong>. For the pair of primal-dual LPs, it is easy to verify that, for any <span class="math inline">\(x\)</span> that is feasible for the primal <a href="background.html#eq:primal-lp">(1.15)</a> and <span class="math inline">\(y\)</span> that is feasible for the dual <a href="background.html#eq:dual-lp">(1.16)</a>, we have
+<p><strong>Lagrangian duality</strong>. Let us use the idea of Lagrangian duality introduced in Section <a href="background.html#background:convex:optimization:Lagrangian">1.3.2</a> to verify that <a href="background.html#eq:dual-lp">(1.16)</a> is indeed the Lagrangian dual problem of <a href="background.html#eq:primal-lp">(1.15)</a>. The Lagrangian associated with <a href="background.html#eq:primal-lp">(1.15)</a> is
+<span class="math display">\[\begin{equation}
+\begin{split}
+L(x,\lambda,\mu) &amp; = \langle c, x \rangle + \langle \mu, Ax - b \rangle + \langle \lambda, -x \rangle, \quad \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}\\
+&amp; = \langle c + A^\top\mu - \lambda, x \rangle - \langle \mu, b \rangle, \quad \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}.
+\end{split}
+\end{equation}\]</span>
+The Lagrangian dual function is therefore
 <span class="math display">\[
-\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\phi(\lambda,\mu) = \min_{x} L(x,\lambda,\mu) = \begin{cases}
+- \langle \mu, b \rangle &amp; \text{if } c + A^\top\mu - \lambda = 0 \\
+- \infty &amp; \text{Otherwise}
+\end{cases}, \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}.
 \]</span>
+The Lagrangian dual problem seeks to maximize the dual function <span class="math inline">\(\phi(\lambda,\mu)\)</span>, and hence it must set <span class="math inline">\(c + A^\top\mu - \lambda = 0\)</span> (otherwise it leads to <span class="math inline">\(-\infty\)</span>). As a result, the dual problem is
+<span class="math display" id="eq:lp-Lagrangian-dual">\[\begin{equation}
+\begin{split}
+\max_{\mu \in \mathbb{R}^{m}} &amp; \quad \langle b, -\mu \rangle \\
+\mathrm{s.t.}&amp; \quad c + A^\top\mu = \lambda \geq 0
+\end{split}
+\tag{1.17}
+\end{equation}\]</span>
+With a change of variable <span class="math inline">\(y := -\mu\)</span>, we observe that problem <a href="background.html#eq:lp-Lagrangian-dual">(1.17)</a> is precisely problem <a href="background.html#eq:dual-lp">(1.16)</a>.</p>
+<p><strong>Weak duality</strong>. For the pair of primal-dual LPs, it is easy to verify that, for any <span class="math inline">\(x\)</span> that is feasible for the primal <a href="background.html#eq:primal-lp">(1.15)</a> and <span class="math inline">\(y\)</span> that is feasible for the dual <a href="background.html#eq:dual-lp">(1.16)</a>, we have
+<span class="math display" id="eq:weak-duality-lp">\[\begin{equation}
+\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\tag{1.18}
+\end{equation}\]</span>
 Therefore, denoting <span class="math inline">\(p^\star\)</span> as the optimum of <a href="background.html#eq:primal-lp">(1.15)</a> and <span class="math inline">\(d^\star\)</span> as the optimum of <a href="background.html#eq:dual-lp">(1.16)</a>, we have the weak duality
 <span class="math display">\[
 p^\star \geq d^\star.
-\]</span></p>
+\]</span>
+Note that such weak duality can also be directly obtained since <a href="background.html#eq:lp-Lagrangian-dual">(1.17)</a> is the Lagrangian dual of <a href="background.html#eq:primal-lp">(1.15)</a>.</p>
 <p>If <span class="math inline">\(p^\star = d^\star\)</span>, then we say <strong>strong duality</strong> holds. The LP <a href="background.html#eq:primal-lp">(1.15)</a> is said to be <strong>feasible</strong> if its feasible set is nonempty. It is said to be <strong>unbounded below</strong> if there exists a sequence <span class="math inline">\(\{ u_i \}_{i=1}^{\infty} \subseteq \mathbb{R}^{n}_{+}\)</span> such that <span class="math inline">\(\langle c, u_i \rangle \rightarrow -\infty\)</span> and <span class="math inline">\(A u_i = b\)</span>. If the primal <a href="background.html#eq:primal-lp">(1.15)</a> is infeasible (resp. unbounded below), we set <span class="math inline">\(p^\star = + \infty\)</span> (resp. <span class="math inline">\(p^\star = - \infty\)</span>). Similar characteristics are defined for the dual LP <a href="background.html#eq:dual-lp">(1.16)</a>. In particular, if the dual <a href="background.html#eq:dual-lp">(1.16)</a> is unbounded, then we set <span class="math inline">\(d^\star = + \infty\)</span>. If the dual is infeasible, then we set <span class="math inline">\(d^\star = - \infty\)</span>.</p>
-<p>We have the following strong duality result.</p>
+<p>Strong duality is well understood in linear programming.</p>
 <div class="theorembox">
 <div class="theorem">
 <p><span id="thm:LPStrongDuality" class="theorem"><strong>Theorem 1.9  (LP Strong Duality) </strong></span>For the LP primal-dual pair <a href="background.html#eq:primal-lp">(1.15)</a> and <a href="background.html#eq:dual-lp">(1.16)</a>, we have</p>
+<ul>
+<li><p>If one of <a href="background.html#eq:primal-lp">(1.15)</a> and <a href="background.html#eq:dual-lp">(1.16)</a> is feasible, then <span class="math inline">\(p^\star = d^\star\)</span> (i.e., finite, <span class="math inline">\(+\infty\)</span>, or <span class="math inline">\(-\infty\)</span>).</p></li>
+<li><p>If one of <span class="math inline">\(p^\star\)</span> or <span class="math inline">\(d^\star\)</span> is finite, then <span class="math inline">\(p^\star = d^\star\)</span> is finite, and both <a href="background.html#eq:primal-lp">(1.15)</a> and <a href="background.html#eq:dual-lp">(1.16)</a> achieve the same optimal value (i.e., they botb have optimizers).</p></li>
+<li><p>A primal feasible point <span class="math inline">\(x^\star\)</span> of <a href="background.html#eq:primal-lp">(1.15)</a> is a minimizer if and only if there exists a dual feasible point <span class="math inline">\(y^\star\)</span> such that <span class="math inline">\(\langle c, x^\star \rangle = \langle b, y^\star \rangle\)</span>.</p></li>
+</ul>
+</div>
+</div>
+<p>For example, consider the following primal-dual LP pair
+<span class="math display">\[\begin{equation}
+\begin{cases}
+\min_{x \in \mathbb{R}^{3}_{+}} &amp; x_1 + x_2 + 2 x_3 \\
+\mathrm{s.t.}&amp; \begin{bmatrix} -1 &amp; 1 &amp; 1 \\ 1 &amp; 1 &amp; 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} &amp; y_2 \\
+\mathrm{s.t.}&amp; \begin{bmatrix} 1 \\ 1 \\ 2 \end{bmatrix} - \begin{bmatrix} -1 &amp; 1 \\ 1 &amp; 1 \\ 1 &amp; 2 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \geq 0
+\end{cases}.
+\end{equation}\]</span>
+<span class="math inline">\(x^\star = [1/2,1/2,0]^\top\)</span> is feasible for the primal and attains <span class="math inline">\(p^\star = 1\)</span>. <span class="math inline">\(y^\star = [0,1]^\top\)</span> is feasible for the dual and attains <span class="math inline">\(d^\star = 1\)</span>. Therefore, both <span class="math inline">\(x^\star\)</span> and <span class="math inline">\(y^\star\)</span> are optimizers for the primal and dual, respectively.</p>
+<p><strong>Complementary slackness</strong>. Strong duality, when combined with <a href="background.html#eq:weak-duality-lp">(1.18)</a>, implies that
+<span class="math display">\[
+x_i^\star (c - A^\top y^\star)_i = 0, \forall i = 1,\dots,n,
+\]</span>
+where <span class="math inline">\((\cdot)_i\)</span> denotes the <span class="math inline">\(i\)</span>-th entry of a vector. This is known as complementary slackness, which states that whenever a primal optimal solution has a nonzero entry, the corresponding dual inequality must be tight.</p>
+<p>An important property of LP is that if the primal problem is feasible and bounded below, then it must have an optimizer that is a <strong>basic feasible point</strong>, i.e., a feasible point has at most <span class="math inline">\(m\)</span> nonzero entries. The simplex method <span class="citation">(<a href="#ref-bertsimas97book-lp" role="doc-biblioref">Bertsimas and Tsitsiklis 1997</a>)</span> for solving LPs searches for optimizers among the basic feasible points.</p>
+<p>We also introduce how to detect infeasibility and unboundedness of LPs.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:LPInfeasUnbound" class="theorem"><strong>Theorem 1.10  (LP Infeasibility and Unboundedness) </strong></span>Infeasibility and Unboundedness of LP can be certified by existence of an improving/decreasing ray for the primal and dual:</p>
+<ul>
+<li><p>When the primal <a href="background.html#eq:primal-lp">(1.15)</a> is feasible, it is unbounded below if and only if it has a decreasing ray, i.e., there exists <span class="math inline">\(u \in \mathbb{R}^{n}\)</span> such that
+<span class="math display">\[
+A u = 0, \quad u \geq 0, \quad \langle c, u \rangle &lt; 0.
+\]</span></p></li>
+<li><p>When the dual <a href="background.html#eq:dual-lp">(1.16)</a> is feasible, it is unbounded above if and only if it has an improving ray, i.e., there exists <span class="math inline">\(u \in \mathbb{R}^{m}\)</span> such that
+<span class="math display">\[
+A^\top u \leq 0, \quad \langle b, u \rangle &gt; 0.
+\]</span></p></li>
+<li><p>The primal problem <a href="background.html#eq:primal-lp">(1.15)</a> is infeasible if and only if the dual problem <a href="background.html#eq:dual-lp">(1.16)</a> has an improving ray, i.e., there exists <span class="math inline">\(u \in \mathbb{R}^{m}\)</span> such that
+<span class="math display">\[
+A^\top u \leq 0, \quad \langle b, u \rangle &gt; 0.
+\]</span></p></li>
+<li><p>The dual problem <a href="background.html#eq:dual-lp">(1.16)</a> is infeasible if and only if the primal problem <a href="background.html#eq:primal-lp">(1.15)</a> has a decreasing ray, i.e., there exists <span class="math inline">\(u \in \mathbb{R}^{n}\)</span> such that
+<span class="math display">\[
+A u = 0, \quad u \geq 0, \quad \langle c, u \rangle &lt; 0.
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<p>It is important to note that both the primal and dual can be infeasible, as in the following example.
+<span class="math display">\[\begin{equation}
+\begin{cases}
+\min_{x \in \mathbb{R}^{2}_{+}} &amp; - x_1 - x_2 \\
+\mathrm{s.t.}&amp; \begin{bmatrix} -1 &amp; 1 \\ -1 &amp; 1 \end{bmatrix} x = \begin{bmatrix} 2 \\ 3 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} &amp; 2 y_1 + 3 y_2 \\
+\mathrm{s.t.}&amp; \begin{bmatrix} -1 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 &amp; -1 \\ 1 &amp; 1 \end{bmatrix} y \geq 0
+\end{cases}.
+\end{equation}\]</span></p>
+</div>
+<div id="farkas-lemma" class="section level3 hasAnchor" number="1.4.3">
+<h3><span class="header-section-number">1.4.3</span> Farkas Lemma<a href="background.html#farkas-lemma" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A foundational result in linear programming is the Farkas Lemma.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:FarkasLemma" class="theorem"><strong>Theorem 1.11  (Farkas Lemma) </strong></span>For a given <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span> and <span class="math inline">\(c \in \mathbb{R}^{n}\)</span>, if <span class="math inline">\(\langle c, x \rangle \geq 0\)</span> for all <span class="math inline">\(x\)</span> satisfying <span class="math inline">\(Ax \geq 0\)</span>, then there exists <span class="math inline">\(\lambda \in \mathbb{R}^{m}\)</span> such that
+<span class="math display">\[
+c = A^\top\lambda, \quad \lambda \geq 0.
+\]</span></p>
+</div>
+</div>
+<p>As a simple example, take <span class="math inline">\(A = \mathrm{I}_n\)</span> as the identity matrix, then Farkas Lemma says if <span class="math inline">\(\langle c, x \rangle \geq 0\)</span> for all <span class="math inline">\(x \geq 0\)</span>, then <span class="math inline">\(c\)</span> must be that <span class="math inline">\(c \geq 0\)</span> – this is exactly the fact that the nonnegative orthant <span class="math inline">\(\mathbb{R}^{n}_{+}\)</span> is self-dual.</p>
+<p>In general, the Farkas Lemma states if the linear function <span class="math inline">\(\langle c, x \rangle\)</span> is nonnegative on the space <span class="math inline">\(\{ Ax \geq 0 \}\)</span>, then there exists <span class="math inline">\(\lambda \in \mathbb{R}^{m}_{+}\)</span> such that
+<span class="math display" id="eq:farkas-lemma-imply">\[\begin{equation}
+\langle c, x \rangle = \langle \lambda,  Ax \rangle = \sum_{i=1}^m \lambda_i (a_i^\top x),
+\tag{1.19}
+\end{equation}\]</span>
+where <span class="math inline">\(a_i^\top\)</span> is the <span class="math inline">\(i\)</span>-th row of <span class="math inline">\(A\)</span>. Note that <a href="background.html#eq:farkas-lemma-imply">(1.19)</a> is a polynomial identity. As we will see later in the course, the idea of sums of squares (SOS), to some extent, is to generalize Farkas Lemma to the case where the function is a polynomial and the set is a basic semialgebraic set (i.e., defined by polynomial equalities and inequalities).</p>
+<p>A generalization of Farkas Lemma to inhomogeneous affine functions is stated below.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:InhomogeneousFarkasLemma" class="theorem"><strong>Theorem 1.12  (Inhomogeneous Farkas Lemma) </strong></span>Suppose the set <span class="math inline">\(P = \{ x \in \mathbb{R}^{n} \mid A x \geq b \}\)</span> with <span class="math inline">\(A \in \mathbb{R}^{m \times n}, b \in \mathbb{R}^{m}\)</span> is nonempty. If a linear function <span class="math inline">\(\langle c, x \rangle - d\)</span> is nonnegative on <span class="math inline">\(P\)</span>, then there exists <span class="math inline">\(\lambda \in \mathbb{R}^{m}\)</span> and <span class="math inline">\(\nu \in \mathbb{R}^{}\)</span> such that
+<span class="math display">\[
+\langle c, x \rangle - d = \nu + \langle \lambda, A x - b \rangle, \quad \lambda \geq 0, \nu \geq 0.
+\]</span></p>
+</div>
+</div>
+<p>A more general result is called the Theorem of Alternatives, which states that a polyhedral set is empty if and only if another polyhedral set is nonempty.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:Alternative" class="theorem"><strong>Theorem 1.13  (Theorem of Alternatives) </strong></span>Given <span class="math inline">\(A_1 \in \mathbb{R}^{m_1 \times n}, A_2 \in \mathbb{R}^{m_2 \times n}\)</span>, <span class="math inline">\(b_1 \in \mathbb{R}^{m_1}\)</span>, and <span class="math inline">\(b_2 \in \mathbb{R}^{m_2}\)</span>, the set
+<span class="math display">\[
+\{ x \in \mathbb{R}^{n} \mid A_1 x &gt; b_1, A_2 x \geq b_2 \}
+\]</span>
+is empty if and only if the following set
+<span class="math display">\[
+\left\{ (\lambda_1,\lambda_2) \in \mathbb{R}^{m_1} \times \mathbb{R}^{m_2}\ \middle\vert\ \begin{array}{r} \lambda_1 \geq 0, \lambda_2 \geq 0, \\ b_1^\top\lambda_1 + b_2^\top\lambda_2 \geq 0, \\ A_1^\top\lambda_1 + A_2^\top\lambda_2 = 0, \\ (e + b_1)^\top\lambda_1 + b_2^\top\lambda_2 = 1 \end{array}  \right\}
+\]</span>
+is nonempty, with <span class="math inline">\(e\)</span> being the vector of all ones.</p>
 </div>
 </div>
 
@@ -569,6 +695,9 @@ p^\star \geq d^\star.
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-bertsekas03book-convex" class="csl-entry">
 Bertsekas, Dimitri, Angelia Nedic, and Asuman Ozdaglar. 2003. <em>Convex Analysis and Optimization</em>. Vol. 1. Athena Scientific.
+</div>
+<div id="ref-bertsimas97book-lp" class="csl-entry">
+Bertsimas, Dimitris, and John N Tsitsiklis. 1997. <em>Introduction to Linear Optimization</em>. Vol. 6. Athena scientific Belmont, MA.
 </div>
 <div id="ref-boyd04book-convex" class="csl-entry">
 Boyd, Stephen P, and Lieven Vandenberghe. 2004. <em>Convex Optimization</em>. Cambridge university press.

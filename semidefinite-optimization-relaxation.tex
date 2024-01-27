@@ -123,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-25}
+\date{2024-01-27}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -191,6 +191,7 @@ arc=4pt}
 \newcommand{\dist}{\mathrm{dist}}
 \newcommand{\subject}{\mathrm{s.t.}}
 \newcommand{\cl}{\mathrm{cl}}
+\newcommand{\eye}{\mathrm{I}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -652,8 +653,8 @@ It is of interest to understand when equality holds in \eqref{eq:weak-minimax}.
 
 A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when \(X\) and \(Y\) are standard unit simplicies and the function \(f(x,y)\) is bilinear. In a research from our group \citep{tang23arxiv-uncertainty}, we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
 
-\hypertarget{lagrangian-duality}{%
-\subsection{Lagrangian Duality}\label{lagrangian-duality}}
+\hypertarget{background:convex:optimization:Lagrangian}{%
+\subsection{Lagrangian Duality}\label{background:convex:optimization:Lagrangian}}
 
 Consider a nonlinear optimization problem
 \begin{equation}
@@ -782,7 +783,7 @@ An extreme point of a polytope is called a \textbf{vertex}. A \(1\)-dimensional 
 \hypertarget{linear-program}{%
 \subsection{Linear Program}\label{linear-program}}
 
-We will now give a brief review of important results in linear programming (LP). In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
+We will now give a brief review of important results in linear programming (LP). The standard reference for linear programming is \citep{bertsimas97book-lp}. In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
 
 A standard form linear program (LP) reads
 \begin{equation}
@@ -790,7 +791,7 @@ A standard form linear program (LP) reads
 \min_{x \in \mathbb{R}^{n}} & \quad \langle c, x \rangle  \\
 \mathrm{s.t.}& \quad Ax = b \\
 & \quad x \geq 0
-\end{split},
+\end{split}
 \label{eq:primal-lp}
 \end{equation}
 for given \(A \in \mathbb{R}^{m\times n}\), \(b \in \mathbb{R}^{m}\), and \(c \in \mathbb{R}^{n}\). Often the tuple \((A,b,c)\) is called the \emph{problem data} because the LP \eqref{eq:primal-lp} is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple \((A,b,c)\) as input). Clearly, the feasible set of the LP \eqref{eq:primal-lp} is a polyhedron. The LP \eqref{eq:primal-lp} is often referred to as the \textbf{primal} LP. Associated with \eqref{eq:primal-lp} is the following \textbf{dual} LP
@@ -798,26 +799,173 @@ for given \(A \in \mathbb{R}^{m\times n}\), \(b \in \mathbb{R}^{m}\), and \(c \i
 \begin{split}
 \max_{y \in \mathbb{R}^{m}} & \quad \langle b, y \rangle \\
 \mathrm{s.t.}& \quad c - A^\top y \geq 0
-\end{split}.
+\end{split}
 \label{eq:dual-lp}
 \end{equation}
 It is worth noting that the dimension of the dual variable \(y\) is exactly the number of constraints in the primal LP.
 
-\textbf{Weak duality}. For the pair of primal-dual LPs, it is easy to verify that, for any \(x\) that is feasible for the primal \eqref{eq:primal-lp} and \(y\) that is feasible for the dual \eqref{eq:dual-lp}, we have
+\textbf{Lagrangian duality}. Let us use the idea of Lagrangian duality introduced in Section \ref{background:convex:optimization:Lagrangian} to verify that \eqref{eq:dual-lp} is indeed the Lagrangian dual problem of \eqref{eq:primal-lp}. The Lagrangian associated with \eqref{eq:primal-lp} is
+\begin{equation}
+\begin{split}
+L(x,\lambda,\mu) & = \langle c, x \rangle + \langle \mu, Ax - b \rangle + \langle \lambda, -x \rangle, \quad \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}\\
+& = \langle c + A^\top\mu - \lambda, x \rangle - \langle \mu, b \rangle, \quad \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}.
+\end{split}
+\end{equation}
+The Lagrangian dual function is therefore
 \[
-\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\phi(\lambda,\mu) = \min_{x} L(x,\lambda,\mu) = \begin{cases}
+- \langle \mu, b \rangle & \text{if } c + A^\top\mu - \lambda = 0 \\
+- \infty & \text{Otherwise}
+\end{cases}, \mu \in \mathbb{R}^{m}, \lambda \in \mathbb{R}^{n}_{+}.
 \]
+The Lagrangian dual problem seeks to maximize the dual function \(\phi(\lambda,\mu)\), and hence it must set \(c + A^\top\mu - \lambda = 0\) (otherwise it leads to \(-\infty\)). As a result, the dual problem is
+\begin{equation}
+\begin{split}
+\max_{\mu \in \mathbb{R}^{m}} & \quad \langle b, -\mu \rangle \\
+\mathrm{s.t.}& \quad c + A^\top\mu = \lambda \geq 0
+\end{split}
+\label{eq:lp-Lagrangian-dual}
+\end{equation}
+With a change of variable \(y := -\mu\), we observe that problem \eqref{eq:lp-Lagrangian-dual} is precisely problem \eqref{eq:dual-lp}.
+
+\textbf{Weak duality}. For the pair of primal-dual LPs, it is easy to verify that, for any \(x\) that is feasible for the primal \eqref{eq:primal-lp} and \(y\) that is feasible for the dual \eqref{eq:dual-lp}, we have
+\begin{equation}
+\langle c, x \rangle - \langle b, y \rangle = \langle c, x \rangle - \langle Ax, y \rangle = \langle c, x \rangle - \langle A^\top y, x \rangle = \langle c - A^\top y, x \rangle \geq 0.
+\label{eq:weak-duality-lp}
+\end{equation}
 Therefore, denoting \(p^\star\) as the optimum of \eqref{eq:primal-lp} and \(d^\star\) as the optimum of \eqref{eq:dual-lp}, we have the weak duality
 \[
 p^\star \geq d^\star.
 \]
+Note that such weak duality can also be directly obtained since \eqref{eq:lp-Lagrangian-dual} is the Lagrangian dual of \eqref{eq:primal-lp}.
 
 If \(p^\star = d^\star\), then we say \textbf{strong duality} holds. The LP \eqref{eq:primal-lp} is said to be \textbf{feasible} if its feasible set is nonempty. It is said to be \textbf{unbounded below} if there exists a sequence \(\{ u_i \}_{i=1}^{\infty} \subseteq \mathbb{R}^{n}_{+}\) such that \(\langle c, u_i \rangle \rightarrow -\infty\) and \(A u_i = b\). If the primal \eqref{eq:primal-lp} is infeasible (resp. unbounded below), we set \(p^\star = + \infty\) (resp. \(p^\star = - \infty\)). Similar characteristics are defined for the dual LP \eqref{eq:dual-lp}. In particular, if the dual \eqref{eq:dual-lp} is unbounded, then we set \(d^\star = + \infty\). If the dual is infeasible, then we set \(d^\star = - \infty\).
 
-We have the following strong duality result.
+Strong duality is well understood in linear programming.
 
 \begin{theorem}[LP Strong Duality]
-\protect\hypertarget{thm:LPStrongDuality}{}\label{thm:LPStrongDuality}For the LP primal-dual pair \eqref{eq:primal-lp} and \eqref{eq:dual-lp}, we have
+\protect\hypertarget{thm:LPStrongDuality}{}\label{thm:LPStrongDuality}
+
+For the LP primal-dual pair \eqref{eq:primal-lp} and \eqref{eq:dual-lp}, we have
+
+\begin{itemize}
+\item
+  If one of \eqref{eq:primal-lp} and \eqref{eq:dual-lp} is feasible, then \(p^\star = d^\star\) (i.e., finite, \(+\infty\), or \(-\infty\)).
+\item
+  If one of \(p^\star\) or \(d^\star\) is finite, then \(p^\star = d^\star\) is finite, and both \eqref{eq:primal-lp} and \eqref{eq:dual-lp} achieve the same optimal value (i.e., they botb have optimizers).
+\item
+  A primal feasible point \(x^\star\) of \eqref{eq:primal-lp} is a minimizer if and only if there exists a dual feasible point \(y^\star\) such that \(\langle c, x^\star \rangle = \langle b, y^\star \rangle\).
+\end{itemize}
+
+\end{theorem}
+
+For example, consider the following primal-dual LP pair
+\begin{equation}
+\begin{cases}
+\min_{x \in \mathbb{R}^{3}_{+}} & x_1 + x_2 + 2 x_3 \\
+\mathrm{s.t.}& \begin{bmatrix} -1 & 1 & 1 \\ 1 & 1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} & y_2 \\
+\mathrm{s.t.}& \begin{bmatrix} 1 \\ 1 \\ 2 \end{bmatrix} - \begin{bmatrix} -1 & 1 \\ 1 & 1 \\ 1 & 2 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \geq 0
+\end{cases}.
+\end{equation}
+\(x^\star = [1/2,1/2,0]^\top\) is feasible for the primal and attains \(p^\star = 1\). \(y^\star = [0,1]^\top\) is feasible for the dual and attains \(d^\star = 1\). Therefore, both \(x^\star\) and \(y^\star\) are optimizers for the primal and dual, respectively.
+
+\textbf{Complementary slackness}. Strong duality, when combined with \eqref{eq:weak-duality-lp}, implies that
+\[
+x_i^\star (c - A^\top y^\star)_i = 0, \forall i = 1,\dots,n,
+\]
+where \((\cdot)_i\) denotes the \(i\)-th entry of a vector. This is known as complementary slackness, which states that whenever a primal optimal solution has a nonzero entry, the corresponding dual inequality must be tight.
+
+An important property of LP is that if the primal problem is feasible and bounded below, then it must have an optimizer that is a \textbf{basic feasible point}, i.e., a feasible point has at most \(m\) nonzero entries. The simplex method \citep{bertsimas97book-lp} for solving LPs searches for optimizers among the basic feasible points.
+
+We also introduce how to detect infeasibility and unboundedness of LPs.
+
+\begin{theorem}[LP Infeasibility and Unboundedness]
+\protect\hypertarget{thm:LPInfeasUnbound}{}\label{thm:LPInfeasUnbound}
+
+Infeasibility and Unboundedness of LP can be certified by existence of an improving/decreasing ray for the primal and dual:
+
+\begin{itemize}
+\item
+  When the primal \eqref{eq:primal-lp} is feasible, it is unbounded below if and only if it has a decreasing ray, i.e., there exists \(u \in \mathbb{R}^{n}\) such that
+  \[
+  A u = 0, \quad u \geq 0, \quad \langle c, u \rangle < 0.
+  \]
+\item
+  When the dual \eqref{eq:dual-lp} is feasible, it is unbounded above if and only if it has an improving ray, i.e., there exists \(u \in \mathbb{R}^{m}\) such that
+  \[
+  A^\top u \leq 0, \quad \langle b, u \rangle > 0. 
+  \]
+\item
+  The primal problem \eqref{eq:primal-lp} is infeasible if and only if the dual problem \eqref{eq:dual-lp} has an improving ray, i.e., there exists \(u \in \mathbb{R}^{m}\) such that
+  \[
+  A^\top u \leq 0, \quad \langle b, u \rangle > 0.
+  \]
+\item
+  The dual problem \eqref{eq:dual-lp} is infeasible if and only if the primal problem \eqref{eq:primal-lp} has a decreasing ray, i.e., there exists \(u \in \mathbb{R}^{n}\) such that
+  \[
+  A u = 0, \quad u \geq 0, \quad \langle c, u \rangle < 0.
+  \]
+\end{itemize}
+
+\end{theorem}
+
+It is important to note that both the primal and dual can be infeasible, as in the following example.
+\begin{equation}
+\begin{cases}
+\min_{x \in \mathbb{R}^{2}_{+}} & - x_1 - x_2 \\
+\mathrm{s.t.}& \begin{bmatrix} -1 & 1 \\ -1 & 1 \end{bmatrix} x = \begin{bmatrix} 2 \\ 3 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} & 2 y_1 + 3 y_2 \\
+\mathrm{s.t.}& \begin{bmatrix} -1 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 & -1 \\ 1 & 1 \end{bmatrix} y \geq 0
+\end{cases}.
+\end{equation}
+
+\hypertarget{farkas-lemma}{%
+\subsection{Farkas Lemma}\label{farkas-lemma}}
+
+A foundational result in linear programming is the Farkas Lemma.
+
+\begin{theorem}[Farkas Lemma]
+\protect\hypertarget{thm:FarkasLemma}{}\label{thm:FarkasLemma}For a given \(A \in \mathbb{R}^{m \times n}\) and \(c \in \mathbb{R}^{n}\), if \(\langle c, x \rangle \geq 0\) for all \(x\) satisfying \(Ax \geq 0\), then there exists \(\lambda \in \mathbb{R}^{m}\) such that
+\[
+c = A^\top\lambda, \quad \lambda \geq 0.
+\]
+\end{theorem}
+
+As a simple example, take \(A = \mathrm{I}_n\) as the identity matrix, then Farkas Lemma says if \(\langle c, x \rangle \geq 0\) for all \(x \geq 0\), then \(c\) must be that \(c \geq 0\) -- this is exactly the fact that the nonnegative orthant \(\mathbb{R}^{n}_{+}\) is self-dual.
+
+In general, the Farkas Lemma states if the linear function \(\langle c, x \rangle\) is nonnegative on the space \(\{ Ax \geq 0 \}\), then there exists \(\lambda \in \mathbb{R}^{m}_{+}\) such that
+\begin{equation}
+\langle c, x \rangle = \langle \lambda,  Ax \rangle = \sum_{i=1}^m \lambda_i (a_i^\top x),
+\label{eq:farkas-lemma-imply}
+\end{equation}
+where \(a_i^\top\) is the \(i\)-th row of \(A\). Note that \eqref{eq:farkas-lemma-imply} is a polynomial identity. As we will see later in the course, the idea of sums of squares (SOS), to some extent, is to generalize Farkas Lemma to the case where the function is a polynomial and the set is a basic semialgebraic set (i.e., defined by polynomial equalities and inequalities).
+
+A generalization of Farkas Lemma to inhomogeneous affine functions is stated below.
+
+\begin{theorem}[Inhomogeneous Farkas Lemma]
+\protect\hypertarget{thm:InhomogeneousFarkasLemma}{}\label{thm:InhomogeneousFarkasLemma}Suppose the set \(P = \{ x \in \mathbb{R}^{n} \mid A x \geq b \}\) with \(A \in \mathbb{R}^{m \times n}, b \in \mathbb{R}^{m}\) is nonempty. If a linear function \(\langle c, x \rangle - d\) is nonnegative on \(P\), then there exists \(\lambda \in \mathbb{R}^{m}\) and \(\nu \in \mathbb{R}^{}\) such that
+\[
+\langle c, x \rangle - d = \nu + \langle \lambda, A x - b \rangle, \quad \lambda \geq 0, \nu \geq 0. 
+\]
+\end{theorem}
+
+A more general result is called the Theorem of Alternatives, which states that a polyhedral set is empty if and only if another polyhedral set is nonempty.
+
+\begin{theorem}[Theorem of Alternatives]
+\protect\hypertarget{thm:Alternative}{}\label{thm:Alternative}Given \(A_1 \in \mathbb{R}^{m_1 \times n}, A_2 \in \mathbb{R}^{m_2 \times n}\), \(b_1 \in \mathbb{R}^{m_1}\), and \(b_2 \in \mathbb{R}^{m_2}\), the set
+\[
+\{ x \in \mathbb{R}^{n} \mid A_1 x > b_1, A_2 x \geq b_2 \}
+\]
+is empty if and only if the following set
+\[
+ \left\{ (\lambda_1,\lambda_2) \in \mathbb{R}^{m_1} \times \mathbb{R}^{m_2}\ \middle\vert\ \begin{array}{r} \lambda_1 \geq 0, \lambda_2 \geq 0, \\ b_1^\top\lambda_1 + b_2^\top\lambda_2 \geq 0, \\ A_1^\top\lambda_1 + A_2^\top\lambda_2 = 0, \\ (e + b_1)^\top\lambda_1 + b_2^\top\lambda_2 = 1 \end{array}  \right\} 
+\]
+is nonempty, with \(e\) being the vector of all ones.
 \end{theorem}
 
 \hypertarget{sdp}{%
