@@ -157,9 +157,147 @@ Therefore, $u \in \ker(A)$, proving the result.
 :::
 :::
 
-Lemma \@ref(lem:PSDRange) indicates that if $A \succeq B$, then $\Range(B) \subseteq \Range(A)$. 
+Lemma \@ref(lem:PSDRange) indicates that if $A \succeq B$, then $\Range(B) \subseteq \Range(A)$. What about the reverse? 
 
-For a subset $T \subseteq \psd{n}$, we use $\face(T,\psd{n})$ to denote the smallest face of $\psd{n}$ that contains $T$. We first characterize the smallest face that contains a given PSD matrix, i.e., $\face(A,\psd{n})$ for $A\succeq 0$. Clearly, if $A$ is PD, then $\face(A, \sym{n}) = \psd{n}$ is the entire cone. 
+::: {.theorembox}
+::: {.lemma #Extension name="Extend Line Segment"}
+Let $A,B \in \psd{n}$, if $\Range(B) \subseteq \Range(A)$, then there must exist $C \in \psd{n}$ such that 
+$$
+A \in (B,C),
+$$
+i.e., the line segment from $B$ to $A$ can be extended past $A$ within $\psd{n}$.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+Since $\Range(B) \subseteq \Range(A)$, we have 
+$$
+\ker(A) \subseteq \ker(B).
+$$
+Now consider extending the line segment past $A$ to 
+$$
+C_{\alpha} = A + \alpha(A - B) = (1+\alpha) A - \alpha B,
+$$
+with some $\alpha > 0$. We want to show that there exists $\alpha > 0$ such that $C_{\alpha} \succeq 0$.
+
+Pick $u \in \Real{n}$, then either $u \in \ker(B)$ or $u \not\in \ker(B)$. If $u \in \ker(B)$, then
+$$
+u\tran C_{\alpha} u = (1+\alpha) u\tran A u - \alpha u\tran B u = (1+\alpha) u\tran A u \geq 0.
+$$
+If $u \not\in \ker(B)$, then due to $\ker(A) \subseteq \ker(B)$, we have $u \not\in \ker(A)$ as well. As a result, we have
+\begin{equation}
+u\tran C_{\alpha} u = (1+\alpha) u\tran A u - \alpha u\tran B u = (1+\alpha) u\tran A u \lparen{ 1- \frac{\alpha}{1+\alpha} \frac{u\tran B u}{u\tran A u} }.
+(\#eq:prove-extension-1)
+\end{equation}
+Since 
+$$
+\max_{u: u \not\in \ker(A)} \frac{u\tran B u}{u\tran A u} \leq \frac{\lambda_{\max}(B)}{\lambda_{\min,>0}(A)},
+$$
+where $\lambda_{\min,>0}(A)$ denotes the minimum positive eigenvalue of $A$, we can always choose $\alpha$ sufficiently small to make \@ref(eq:prove-extension-1) nonnegative. Therefore, there exists $\alpha > 0$ such that $C_{\alpha} \succeq 0$.
+:::
+:::
+
+In fact, from Lemma \@ref(lem:PSDRange) we can induce a corollary.
+
+::: {.theorembox}
+::: {.corollary #PSDRange name="Range of PSD Matrices"}
+Let $A, B \in \psd{n}$, then we have 
+$$
+\Range(A + B) = \Range(A) + \Range(B),
+$$
+with "$+$" the Minkowski sum.
+:::
+:::
+
+::: {.exercisebox}
+::: {.exercise}
+Let $A,B \in \psd{n}$, show that $\inprod{A}{B} = 0$ if and only if $\Range(A) \perp \Range(B)$.
+:::
+:::
+
+
+
+For a subset $T \subseteq \psd{n}$, we use $\face(T,\psd{n})$ to denote the smallest face of $\psd{n}$ that contains $T$. We first characterize the smallest face that contains a given PSD matrix, i.e., $\face(A,\psd{n})$ for $A\succeq 0$. Clearly, if $A$ is PD, then $\face(A, \psd{n}) = \psd{n}$ is the entire cone. If $A$ is PSD but singular with rank $r < n$, then $A$ has the following spectral decomposition 
+$$
+Q\tran A Q = \begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix},
+$$
+where $\Lambda \in \pd{r}$ is a diagonal matrix with the $r$ nonzero eigenvalues of $A$, and $Q \in \Ogroup(n)$ is orthogonal. If 
+$$
+A = \lambda B + (1-\lambda)C, \quad B,C \in \psd{n},\lambda \in (0,1),
+$$
+then multiplying both sides by $Q\tran$ and $Q$ we have
+$$
+\begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix} = Q\tran A Q = \lambda Q\tran B Q + (1-\lambda) Q\tran C Q.
+$$
+Therefore, it must hold that
+$$
+Q\tran B Q = \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad Q\tran C Q = \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad B_1 \in \psd{r}, C_1 \in \psd{r},
+$$
+which is equivalent to 
+$$
+B = Q \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix} Q\tran, C = Q \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix} Q\tran, \quad B_1 \in \psd{r}, C_1 \in \psd{r}.
+$$
+We conclude that $\face(A,\psd{n})$ must contain the set 
+\begin{equation}
+G:= \lcbrace{Q \begin{bmatrix} X & 0 \\ 0 & 0 \end{bmatrix} Q\tran  \lmid  X \in \psd{r}}.
+(\#eq:face-of-A-psd)
+\end{equation}
+
+::: {.exercisebox}
+::: {.exercise}
+Show that $G$ in \@ref(eq:face-of-A-psd) is a face of $\psd{n}$, i.e., (i) $G$ is convex; (ii) $u \in (x,y), u \in G, x,y \in \psd{n} \Rightarrow x,y \in G$. 
+:::
+:::
+
+As a result, we have $\face(A,\psd{n}) = G$.
+
+More general faces of the PSD cone $\psd{n}$ can be characterized as follows (Theorem 3.7.1 in [@wolkowicz12book-sdp]).
+
+::: {.theorembox}
+::: {.theorem #FacePSD name="Faces of the PSD Cone"}
+A set $F \subseteq \psd{n}$ is a face if and only if there exists a subspace $L \subseteq \Real{n}$ such that 
+$$
+F = \cbrace{X \in \psd{n} \mid \Range(X) \subseteq L}.
+$$
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+It is easy to prove the "**If**" direction using Lemma \@ref(lem:PSDRange). 
+
+First we show $F$ is convex. Pick $A,B \in F$. We have $\Range(A) \subseteq L$ and $\Range(B) \subseteq L$. Let $v_1,\dots,v_m$ be a set of basis spanning $L$. We have that, for any $u \in \Real{n}$,
+\begin{equation}
+\begin{split}
+A u \in L & \Rightarrow Au = \sum_{i=1}^m a_i v_i, \\
+B u \in L & \Rightarrow Bu = \sum_{i=1}^m b_i v_i. 
+\end{split}
+\end{equation}
+So for any $\lambda \in [0,1]$, we have 
+$$
+(\lambda A + (1-\lambda) B) u = \lambda Au + (1-\lambda) Bu = \sum_{i=1}^m (\lambda a_i + (1-\lambda) b_i ) v_i \in L,
+$$
+implying $\lambda A + (1-\lambda) B \in F$ for any $\lambda \in [0,1]$.
+
+Now we show that:
+$$
+X \in (A,B), X \in F, A,B \in \psd{n} \Rightarrow A, B \in F.
+$$
+From $X = \lambda A + (1-\lambda) B$ for some $\lambda \in (0,1)$, and invoking Lemma \@ref(lem:PSDRange), we have 
+\begin{equation}
+\begin{split}
+\Range(X) & = \Range(\lambda A + (1-\lambda) B) \supseteq \Range(\lambda A) = \Range(A) \\
+\Range(X) & = \Range(\lambda A + (1-\lambda) B) \supseteq \Range((1-\lambda) B) = \Range(B).
+\end{split}
+\end{equation}
+Since $\Range(X) \subseteq L$ due to $X \in F$, we have
+$$
+\Range(A) \subseteq L, \quad \Range(B) \subseteq L,
+$$
+leading to $A,B \in F$.
+
+The proof for the "**Only If**" direction can be found in Theorem 3.7.1 of [@wolkowicz12book-sdp].
+:::
+:::
 
 ## Semidefinite Programming
 

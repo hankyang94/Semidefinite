@@ -43,11 +43,15 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\poly}[1]{\mathbb{R}[#1]}
 \newcommand{\SOd}{\mathrm{SO}(d)}
 \newcommand{\SOthree}{\mathrm{SO}(3)}
+\newcommand{\Od}{\mathrm{O}(d)}
+\newcommand{\Ogroup}{\mathrm{O}}
 \newcommand{\usphere}{\mathcal{S}}
 \newcommand{\bmath}[1]{\boldsymbol{#1}}
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+\newcommand{\paren}[1]{(#1)}
+\renewcommand{\lparen}[1]{\left( #1 \right)}
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 \newcommand{\aff}{\mathrm{aff}}
@@ -60,6 +64,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\Range}{\mathrm{Range}}
 \renewcommand{\ker}{\mathrm{ker}}
 \newcommand{\face}{\mathrm{face}}
+\newcommand{\lmid}{\ \middle\vert\ }
 
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
@@ -164,6 +169,7 @@ We will use the following standard notation throughout this book.
 | $\partial S$ | boundary of set $S$ |
 | $P^\circ$ | polar of convex body | 
 | $P^{*}$ | dual of set $P$ |
+| $\Od$ | orthogonal group of dimension $d$ |
 | $\SOd$ | special orthogonal group of dimension $d$ |
 | $\usphere^{d-1}$ | unit sphere in $\Real{d}$ |
 
