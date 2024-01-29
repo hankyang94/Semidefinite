@@ -123,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-27}
+\date{2024-01-29}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -180,11 +180,15 @@ arc=4pt}
 \newcommand{\poly}[1]{\mathbb{R}[#1]}
 \newcommand{\SOd}{\mathrm{SO}(d)}
 \newcommand{\SOthree}{\mathrm{SO}(3)}
+\newcommand{\Od}{\mathrm{O}(d)}
+\newcommand{\Ogroup}{\mathrm{O}}
 \newcommand{\usphere}{\mathcal{S}}
 \newcommand{\bmath}[1]{\boldsymbol{#1}}
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+\newcommand{\paren}[1]{(#1)}
+\renewcommand{\lparen}[1]{\left( #1 \right)}
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 \newcommand{\aff}{\mathrm{aff}}
@@ -197,6 +201,7 @@ arc=4pt}
 \newcommand{\Range}{\mathrm{Range}}
 \renewcommand{\ker}{\mathrm{ker}}
 \newcommand{\face}{\mathrm{face}}
+\newcommand{\lmid}{\ \middle\vert\ }
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -330,6 +335,7 @@ We will use the following standard notation throughout this book.
 \(\partial S\) & boundary of set \(S\) \\
 \(P^\circ\) & polar of convex body \\
 \(P^{*}\) & dual of set \(P\) \\
+\(\mathrm{O}(d)\) & orthogonal group of dimension \(d\) \\
 \(\mathrm{SO}(d)\) & special orthogonal group of dimension \(d\) \\
 \(\mathcal{S}^{d-1}\) & unit sphere in \(\mathbb{R}^{d}\) \\
 \bottomrule()
@@ -1148,9 +1154,133 @@ Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
 Therefore, \(u \in \mathrm{ker}(A)\), proving the result.
 \end{proof}
 
-Lemma \ref{lem:PSDRange} indicates that if \(A \succeq B\), then \(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\).
+Lemma \ref{lem:PSDRange} indicates that if \(A \succeq B\), then \(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\). What about the reverse?
 
-For a subset \(T \subseteq \mathbb{S}^{n}_{+}\), we use \(\mathrm{face}(T,\mathbb{S}^{n}_{+})\) to denote the smallest face of \(\mathbb{S}^{n}_{+}\) that contains \(T\). We first characterize the smallest face that contains a given PSD matrix, i.e., \(\mathrm{face}(A,\mathbb{S}^{n}_{+})\) for \(A\succeq 0\). Clearly, if \(A\) is PD, then \(\mathrm{face}(A, \mathbb{S}^{n}) = \mathbb{S}^{n}_{+}\) is the entire cone.
+\begin{lemma}[Extend Line Segment]
+\protect\hypertarget{lem:Extension}{}\label{lem:Extension}Let \(A,B \in \mathbb{S}^{n}_{+}\), if \(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\), then there must exist \(C \in \mathbb{S}^{n}_{+}\) such that
+\[
+A \in (B,C),
+\]
+i.e., the line segment from \(B\) to \(A\) can be extended past \(A\) within \(\mathbb{S}^{n}_{+}\).
+\end{lemma}
+
+\begin{proof}
+Since \(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\), we have
+\[
+\mathrm{ker}(A) \subseteq \mathrm{ker}(B).
+\]
+Now consider extending the line segment past \(A\) to
+\[
+C_{\alpha} = A + \alpha(A - B) = (1+\alpha) A - \alpha B,
+\]
+with some \(\alpha > 0\). We want to show that there exists \(\alpha > 0\) such that \(C_{\alpha} \succeq 0\).
+
+Pick \(u \in \mathbb{R}^{n}\), then either \(u \in \mathrm{ker}(B)\) or \(u \not\in \mathrm{ker}(B)\). If \(u \in \mathrm{ker}(B)\), then
+\[
+u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \geq 0.
+\]
+If \(u \not\in \mathrm{ker}(B)\), then due to \(\mathrm{ker}(A) \subseteq \mathrm{ker}(B)\), we have \(u \not\in \mathrm{ker}(A)\) as well. As a result, we have
+\begin{equation}
+u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \left(  1- \frac{\alpha}{1+\alpha} \frac{u^\top B u}{u^\top A u}  \right).
+\label{eq:prove-extension-1}
+\end{equation}
+Since
+\[
+\max_{u: u \not\in \mathrm{ker}(A)} \frac{u^\top B u}{u^\top A u} \leq \frac{\lambda_{\max}(B)}{\lambda_{\min,>0}(A)},
+\]
+where \(\lambda_{\min,>0}(A)\) denotes the minimum positive eigenvalue of \(A\), we can always choose \(\alpha\) sufficiently small to make \eqref{eq:prove-extension-1} nonnegative. Therefore, there exists \(\alpha > 0\) such that \(C_{\alpha} \succeq 0\).
+\end{proof}
+
+In fact, from Lemma \ref{lem:PSDRange} we can induce a corollary.
+
+\begin{corollary}[Range of PSD Matrices]
+\protect\hypertarget{cor:PSDRange}{}\label{cor:PSDRange}Let \(A, B \in \mathbb{S}^{n}_{+}\), then we have
+\[
+\mathrm{Range}(A + B) = \mathrm{Range}(A) + \mathrm{Range}(B),
+\]
+with ``\(+\)'' the Minkowski sum.
+\end{corollary}
+
+\begin{exercise}
+Let \(A,B \in \mathbb{S}^{n}_{+}\), show that \(\langle A, B \rangle = 0\) if and only if \(\mathrm{Range}(A) \perp \mathrm{Range}(B)\).
+\end{exercise}
+
+For a subset \(T \subseteq \mathbb{S}^{n}_{+}\), we use \(\mathrm{face}(T,\mathbb{S}^{n}_{+})\) to denote the smallest face of \(\mathbb{S}^{n}_{+}\) that contains \(T\). We first characterize the smallest face that contains a given PSD matrix, i.e., \(\mathrm{face}(A,\mathbb{S}^{n}_{+})\) for \(A\succeq 0\). Clearly, if \(A\) is PD, then \(\mathrm{face}(A, \mathbb{S}^{n}_{+}) = \mathbb{S}^{n}_{+}\) is the entire cone. If \(A\) is PSD but singular with rank \(r < n\), then \(A\) has the following spectral decomposition
+\[
+Q^\top A Q = \begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix},
+\]
+where \(\Lambda \in \mathbb{S}^{r}_{++}\) is a diagonal matrix with the \(r\) nonzero eigenvalues of \(A\), and \(Q \in \mathrm{O}(n)\) is orthogonal. If
+\[
+A = \lambda B + (1-\lambda)C, \quad B,C \in \mathbb{S}^{n}_{+},\lambda \in (0,1),
+\]
+then multiplying both sides by \(Q^\top\) and \(Q\) we have
+\[
+\begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix} = Q^\top A Q = \lambda Q^\top B Q + (1-\lambda) Q^\top C Q.
+\]
+Therefore, it must hold that
+\[
+Q^\top B Q = \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad Q^\top C Q = \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad B_1 \in \mathbb{S}^{r}_{+}, C_1 \in \mathbb{S}^{r}_{+},
+\]
+which is equivalent to
+\[
+B = Q \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix} Q^\top, C = Q \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix} Q^\top, \quad B_1 \in \mathbb{S}^{r}_{+}, C_1 \in \mathbb{S}^{r}_{+}.
+\]
+We conclude that \(\mathrm{face}(A,\mathbb{S}^{n}_{+})\) must contain the set
+\begin{equation}
+G:=  \left\{ Q \begin{bmatrix} X & 0 \\ 0 & 0 \end{bmatrix} Q^\top\ \middle\vert\ X \in \mathbb{S}^{r}_{+} \right\} .
+\label{eq:face-of-A-psd}
+\end{equation}
+
+\begin{exercise}
+Show that \(G\) in \eqref{eq:face-of-A-psd} is a face of \(\mathbb{S}^{n}_{+}\), i.e., (i) \(G\) is convex; (ii) \(u \in (x,y), u \in G, x,y \in \mathbb{S}^{n}_{+} \Rightarrow x,y \in G\).
+\end{exercise}
+
+As a result, we have \(\mathrm{face}(A,\mathbb{S}^{n}_{+}) = G\).
+
+More general faces of the PSD cone \(\mathbb{S}^{n}_{+}\) can be characterized as follows (Theorem 3.7.1 in \citep{wolkowicz12book-sdp}).
+
+\begin{theorem}[Faces of the PSD Cone]
+\protect\hypertarget{thm:FacePSD}{}\label{thm:FacePSD}A set \(F \subseteq \mathbb{S}^{n}_{+}\) is a face if and only if there exists a subspace \(L \subseteq \mathbb{R}^{n}\) such that
+\[
+F = \{ X \in \mathbb{S}^{n}_{+} \mid \mathrm{Range}(X) \subseteq L \}.
+\]
+\end{theorem}
+
+\begin{proof}
+It is easy to prove the ``\textbf{If}'' direction using Lemma \ref{lem:PSDRange}.
+
+First we show \(F\) is convex. Pick \(A,B \in F\). We have \(\mathrm{Range}(A) \subseteq L\) and \(\mathrm{Range}(B) \subseteq L\). Let \(v_1,\dots,v_m\) be a set of basis spanning \(L\). We have that, for any \(u \in \mathbb{R}^{n}\),
+\begin{equation}
+\begin{split}
+A u \in L & \Rightarrow Au = \sum_{i=1}^m a_i v_i, \\
+B u \in L & \Rightarrow Bu = \sum_{i=1}^m b_i v_i. 
+\end{split}
+\end{equation}
+So for any \(\lambda \in [0,1]\), we have
+\[
+(\lambda A + (1-\lambda) B) u = \lambda Au + (1-\lambda) Bu = \sum_{i=1}^m (\lambda a_i + (1-\lambda) b_i ) v_i \in L,
+\]
+implying \(\lambda A + (1-\lambda) B \in F\) for any \(\lambda \in [0,1]\).
+
+Now we show that:
+\[
+X \in (A,B), X \in F, A,B \in \mathbb{S}^{n}_{+} \Rightarrow A, B \in F.
+\]
+From \(X = \lambda A + (1-\lambda) B\) for some \(\lambda \in (0,1)\), and invoking Lemma \ref{lem:PSDRange}, we have
+\begin{equation}
+\begin{split}
+\mathrm{Range}(X) & = \mathrm{Range}(\lambda A + (1-\lambda) B) \supseteq \mathrm{Range}(\lambda A) = \mathrm{Range}(A) \\
+\mathrm{Range}(X) & = \mathrm{Range}(\lambda A + (1-\lambda) B) \supseteq \mathrm{Range}((1-\lambda) B) = \mathrm{Range}(B).
+\end{split}
+\end{equation}
+Since \(\mathrm{Range}(X) \subseteq L\) due to \(X \in F\), we have
+\[
+\mathrm{Range}(A) \subseteq L, \quad \mathrm{Range}(B) \subseteq L,
+\]
+leading to \(A,B \in F\).
+
+The proof for the ``\textbf{Only If}'' direction can be found in Theorem 3.7.1 of \citep{wolkowicz12book-sdp}.
+\end{proof}
 
 \hypertarget{semidefinite-programming}{%
 \section{Semidefinite Programming}\label{semidefinite-programming}}

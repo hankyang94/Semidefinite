@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-27" />
+<meta name="date" content="2024-01-29" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -295,8 +295,132 @@ Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
 Therefore, <span class="math inline">\(u \in \mathrm{ker}(A)\)</span>, proving the result.</p>
 </div>
 </div>
-<p>Lemma <a href="sdp.html#lem:PSDRange">2.3</a> indicates that if <span class="math inline">\(A \succeq B\)</span>, then <span class="math inline">\(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\)</span>.</p>
-<p>For a subset <span class="math inline">\(T \subseteq \mathbb{S}^{n}_{+}\)</span>, we use <span class="math inline">\(\mathrm{face}(T,\mathbb{S}^{n}_{+})\)</span> to denote the smallest face of <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> that contains <span class="math inline">\(T\)</span>. We first characterize the smallest face that contains a given PSD matrix, i.e., <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+})\)</span> for <span class="math inline">\(A\succeq 0\)</span>. Clearly, if <span class="math inline">\(A\)</span> is PD, then <span class="math inline">\(\mathrm{face}(A, \mathbb{S}^{n}) = \mathbb{S}^{n}_{+}\)</span> is the entire cone.</p>
+<p>Lemma <a href="sdp.html#lem:PSDRange">2.3</a> indicates that if <span class="math inline">\(A \succeq B\)</span>, then <span class="math inline">\(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\)</span>. What about the reverse?</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:Extension" class="lemma"><strong>Lemma 2.4  (Extend Line Segment) </strong></span>Let <span class="math inline">\(A,B \in \mathbb{S}^{n}_{+}\)</span>, if <span class="math inline">\(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\)</span>, then there must exist <span class="math inline">\(C \in \mathbb{S}^{n}_{+}\)</span> such that
+<span class="math display">\[
+A \in (B,C),
+\]</span>
+i.e., the line segment from <span class="math inline">\(B\)</span> to <span class="math inline">\(A\)</span> can be extended past <span class="math inline">\(A\)</span> within <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-7" class="proof"><em>Proof</em>. </span>Since <span class="math inline">\(\mathrm{Range}(B) \subseteq \mathrm{Range}(A)\)</span>, we have
+<span class="math display">\[
+\mathrm{ker}(A) \subseteq \mathrm{ker}(B).
+\]</span>
+Now consider extending the line segment past <span class="math inline">\(A\)</span> to
+<span class="math display">\[
+C_{\alpha} = A + \alpha(A - B) = (1+\alpha) A - \alpha B,
+\]</span>
+with some <span class="math inline">\(\alpha &gt; 0\)</span>. We want to show that there exists <span class="math inline">\(\alpha &gt; 0\)</span> such that <span class="math inline">\(C_{\alpha} \succeq 0\)</span>.</p>
+<p>Pick <span class="math inline">\(u \in \mathbb{R}^{n}\)</span>, then either <span class="math inline">\(u \in \mathrm{ker}(B)\)</span> or <span class="math inline">\(u \not\in \mathrm{ker}(B)\)</span>. If <span class="math inline">\(u \in \mathrm{ker}(B)\)</span>, then
+<span class="math display">\[
+u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \geq 0.
+\]</span>
+If <span class="math inline">\(u \not\in \mathrm{ker}(B)\)</span>, then due to <span class="math inline">\(\mathrm{ker}(A) \subseteq \mathrm{ker}(B)\)</span>, we have <span class="math inline">\(u \not\in \mathrm{ker}(A)\)</span> as well. As a result, we have
+<span class="math display" id="eq:prove-extension-1">\[\begin{equation}
+u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \left(  1- \frac{\alpha}{1+\alpha} \frac{u^\top B u}{u^\top A u}  \right).
+\tag{2.3}
+\end{equation}\]</span>
+Since
+<span class="math display">\[
+\max_{u: u \not\in \mathrm{ker}(A)} \frac{u^\top B u}{u^\top A u} \leq \frac{\lambda_{\max}(B)}{\lambda_{\min,&gt;0}(A)},
+\]</span>
+where <span class="math inline">\(\lambda_{\min,&gt;0}(A)\)</span> denotes the minimum positive eigenvalue of <span class="math inline">\(A\)</span>, we can always choose <span class="math inline">\(\alpha\)</span> sufficiently small to make <a href="sdp.html#eq:prove-extension-1">(2.3)</a> nonnegative. Therefore, there exists <span class="math inline">\(\alpha &gt; 0\)</span> such that <span class="math inline">\(C_{\alpha} \succeq 0\)</span>.</p>
+</div>
+</div>
+<p>In fact, from Lemma <a href="sdp.html#lem:PSDRange">2.3</a> we can induce a corollary.</p>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:PSDRange" class="corollary"><strong>Corollary 2.1  (Range of PSD Matrices) </strong></span>Let <span class="math inline">\(A, B \in \mathbb{S}^{n}_{+}\)</span>, then we have
+<span class="math display">\[
+\mathrm{Range}(A + B) = \mathrm{Range}(A) + \mathrm{Range}(B),
+\]</span>
+with “<span class="math inline">\(+\)</span>” the Minkowski sum.</p>
+</div>
+</div>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-8" class="exercise"><strong>Exercise 2.1  </strong></span>Let <span class="math inline">\(A,B \in \mathbb{S}^{n}_{+}\)</span>, show that <span class="math inline">\(\langle A, B \rangle = 0\)</span> if and only if <span class="math inline">\(\mathrm{Range}(A) \perp \mathrm{Range}(B)\)</span>.</p>
+</div>
+</div>
+<p>For a subset <span class="math inline">\(T \subseteq \mathbb{S}^{n}_{+}\)</span>, we use <span class="math inline">\(\mathrm{face}(T,\mathbb{S}^{n}_{+})\)</span> to denote the smallest face of <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> that contains <span class="math inline">\(T\)</span>. We first characterize the smallest face that contains a given PSD matrix, i.e., <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+})\)</span> for <span class="math inline">\(A\succeq 0\)</span>. Clearly, if <span class="math inline">\(A\)</span> is PD, then <span class="math inline">\(\mathrm{face}(A, \mathbb{S}^{n}_{+}) = \mathbb{S}^{n}_{+}\)</span> is the entire cone. If <span class="math inline">\(A\)</span> is PSD but singular with rank <span class="math inline">\(r &lt; n\)</span>, then <span class="math inline">\(A\)</span> has the following spectral decomposition
+<span class="math display">\[
+Q^\top A Q = \begin{bmatrix} \Lambda &amp; 0 \\ 0 &amp; 0 \end{bmatrix},
+\]</span>
+where <span class="math inline">\(\Lambda \in \mathbb{S}^{r}_{++}\)</span> is a diagonal matrix with the <span class="math inline">\(r\)</span> nonzero eigenvalues of <span class="math inline">\(A\)</span>, and <span class="math inline">\(Q \in \mathrm{O}(n)\)</span> is orthogonal. If
+<span class="math display">\[
+A = \lambda B + (1-\lambda)C, \quad B,C \in \mathbb{S}^{n}_{+},\lambda \in (0,1),
+\]</span>
+then multiplying both sides by <span class="math inline">\(Q^\top\)</span> and <span class="math inline">\(Q\)</span> we have
+<span class="math display">\[
+\begin{bmatrix} \Lambda &amp; 0 \\ 0 &amp; 0 \end{bmatrix} = Q^\top A Q = \lambda Q^\top B Q + (1-\lambda) Q^\top C Q.
+\]</span>
+Therefore, it must hold that
+<span class="math display">\[
+Q^\top B Q = \begin{bmatrix} B_1 &amp; 0 \\ 0 &amp; 0 \end{bmatrix}, \quad Q^\top C Q = \begin{bmatrix} C_1 &amp; 0 \\ 0 &amp; 0 \end{bmatrix}, \quad B_1 \in \mathbb{S}^{r}_{+}, C_1 \in \mathbb{S}^{r}_{+},
+\]</span>
+which is equivalent to
+<span class="math display">\[
+B = Q \begin{bmatrix} B_1 &amp; 0 \\ 0 &amp; 0 \end{bmatrix} Q^\top, C = Q \begin{bmatrix} C_1 &amp; 0 \\ 0 &amp; 0 \end{bmatrix} Q^\top, \quad B_1 \in \mathbb{S}^{r}_{+}, C_1 \in \mathbb{S}^{r}_{+}.
+\]</span>
+We conclude that <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+})\)</span> must contain the set
+<span class="math display" id="eq:face-of-A-psd">\[\begin{equation}
+G:=  \left\{ Q \begin{bmatrix} X &amp; 0 \\ 0 &amp; 0 \end{bmatrix} Q^\top\ \middle\vert\ X \in \mathbb{S}^{r}_{+} \right\} .
+\tag{2.4}
+\end{equation}\]</span></p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-9" class="exercise"><strong>Exercise 2.2  </strong></span>Show that <span class="math inline">\(G\)</span> in <a href="sdp.html#eq:face-of-A-psd">(2.4)</a> is a face of <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span>, i.e., (i) <span class="math inline">\(G\)</span> is convex; (ii) <span class="math inline">\(u \in (x,y), u \in G, x,y \in \mathbb{S}^{n}_{+} \Rightarrow x,y \in G\)</span>.</p>
+</div>
+</div>
+<p>As a result, we have <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+}) = G\)</span>.</p>
+<p>More general faces of the PSD cone <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> can be characterized as follows (Theorem 3.7.1 in <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>).</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:FacePSD" class="theorem"><strong>Theorem 2.1  (Faces of the PSD Cone) </strong></span>A set <span class="math inline">\(F \subseteq \mathbb{S}^{n}_{+}\)</span> is a face if and only if there exists a subspace <span class="math inline">\(L \subseteq \mathbb{R}^{n}\)</span> such that
+<span class="math display">\[
+F = \{ X \in \mathbb{S}^{n}_{+} \mid \mathrm{Range}(X) \subseteq L \}.
+\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-10" class="proof"><em>Proof</em>. </span>It is easy to prove the “<strong>If</strong>” direction using Lemma <a href="sdp.html#lem:PSDRange">2.3</a>.</p>
+<p>First we show <span class="math inline">\(F\)</span> is convex. Pick <span class="math inline">\(A,B \in F\)</span>. We have <span class="math inline">\(\mathrm{Range}(A) \subseteq L\)</span> and <span class="math inline">\(\mathrm{Range}(B) \subseteq L\)</span>. Let <span class="math inline">\(v_1,\dots,v_m\)</span> be a set of basis spanning <span class="math inline">\(L\)</span>. We have that, for any <span class="math inline">\(u \in \mathbb{R}^{n}\)</span>,
+<span class="math display">\[\begin{equation}
+\begin{split}
+A u \in L &amp; \Rightarrow Au = \sum_{i=1}^m a_i v_i, \\
+B u \in L &amp; \Rightarrow Bu = \sum_{i=1}^m b_i v_i.
+\end{split}
+\end{equation}\]</span>
+So for any <span class="math inline">\(\lambda \in [0,1]\)</span>, we have
+<span class="math display">\[
+(\lambda A + (1-\lambda) B) u = \lambda Au + (1-\lambda) Bu = \sum_{i=1}^m (\lambda a_i + (1-\lambda) b_i ) v_i \in L,
+\]</span>
+implying <span class="math inline">\(\lambda A + (1-\lambda) B \in F\)</span> for any <span class="math inline">\(\lambda \in [0,1]\)</span>.</p>
+<p>Now we show that:
+<span class="math display">\[
+X \in (A,B), X \in F, A,B \in \mathbb{S}^{n}_{+} \Rightarrow A, B \in F.
+\]</span>
+From <span class="math inline">\(X = \lambda A + (1-\lambda) B\)</span> for some <span class="math inline">\(\lambda \in (0,1)\)</span>, and invoking Lemma <a href="sdp.html#lem:PSDRange">2.3</a>, we have
+<span class="math display">\[\begin{equation}
+\begin{split}
+\mathrm{Range}(X) &amp; = \mathrm{Range}(\lambda A + (1-\lambda) B) \supseteq \mathrm{Range}(\lambda A) = \mathrm{Range}(A) \\
+\mathrm{Range}(X) &amp; = \mathrm{Range}(\lambda A + (1-\lambda) B) \supseteq \mathrm{Range}((1-\lambda) B) = \mathrm{Range}(B).
+\end{split}
+\end{equation}\]</span>
+Since <span class="math inline">\(\mathrm{Range}(X) \subseteq L\)</span> due to <span class="math inline">\(X \in F\)</span>, we have
+<span class="math display">\[
+\mathrm{Range}(A) \subseteq L, \quad \mathrm{Range}(B) \subseteq L,
+\]</span>
+leading to <span class="math inline">\(A,B \in F\)</span>.</p>
+<p>The proof for the “<strong>Only If</strong>” direction can be found in Theorem 3.7.1 of <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>.</p>
+</div>
+</div>
 </div>
 </div>
 <div id="semidefinite-programming" class="section level2 hasAnchor" number="2.2">
@@ -308,6 +432,12 @@ Therefore, <span class="math inline">\(u \in \mathrm{ker}(A)\)</span>, proving t
 <div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.3">
 <h2><span class="header-section-number">2.3</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-wolkowicz12book-sdp" class="csl-entry">
+Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of Semidefinite Programming: Theory, Algorithms, and Applications</em>. Vol. 27.
 </div>
 </div>
 <div id="disqus_thread"></div>
