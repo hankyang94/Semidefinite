@@ -34,9 +34,9 @@ Among the equivalent characterizations of PSD matrices, (5) is less well-known, 
 $$
 \lcbrace{z \in \Real{3} \lmid X(z) = \begin{bmatrix} 1 & z_1 & z_2 \\ z_1 & z_2 & z_3 \\ z_2 & z_3 & 5 z_2 - 4  \end{bmatrix} \succeq 0 }.
 $$
-We can first form the characteristic polynomial of $X(z)$ --whose coefficients will be functions of $z$-- and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure.
+We can first form the characteristic polynomial of $X(z)$ --whose coefficients will be functions of $z$-- and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure [@yang22mp-inexact].
 
-```{r spectrahedron-stride, out.width='50%', fig.show='hold', fig.cap='An example spectrahedron.', fig.align='center', echo=FALSE}
+```{r SpectrahedronStride, out.width='50%', fig.show='hold', fig.cap='An example spectrahedron.', fig.align='center', echo=FALSE}
 knitr::include_graphics("images/spectrahedron-stride.png")
 ```
 
