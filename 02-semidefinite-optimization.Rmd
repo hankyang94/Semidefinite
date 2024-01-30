@@ -560,5 +560,135 @@ and both $X^\star$ and $y^\star$ are optimal.
 
 ### Geometric Properties 
 
+## Software for Conic Optimization
+
+Linear optimization over the nonnegative orthant ($\Real{n}_{+}$), the second-order cone ($\calQ_{n}$), and the positive semidefinite cone ($\psd{n}$) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+. 
+
+In this section, we introduce how we should "talk to" the numerical solvers for conic optimization, i.e., how should we pass a mathematically written conic optimization to a numerical solver. Note that in many cases, this "transcription" can be done by programming packages such as CVX, CVXPY, YALMIP etc., but I think it is important to understand the standard interface of numerical solvers because (i) it reinforces our understanding of the mathematical basics, (ii) it gets us closer to designing custom numerical solvers for specific problems, (iii) if you are a heavy convex optimization user you will realize that many of the programming packages are not "efficient" in transcribing the original optimization problem (but they are indeed very general). I have had cases where solving the conic optimization takes a few minutes but transcribing the problem to the solver takes half an hour.
+
+We will use the SeDuMi format as an example. Consider the following general linear convex optimization problem
+\begin{equation}
+\begin{split}
+\max_{y \in \Real{m}} & \quad b\tran y \\
+\subject & \quad Fy = g \\
+& \quad f \geq Gy \\
+& \quad h_i\tran y + \tau_i \geq \norm{H_i y + p_i}_2, i=1,\dots,r \\
+& \quad B_{j,0} + \sum_{k=1}^m y_k B_{j,k} \succeq 0, j=1,\dots,s,
+\end{split}
+(\#eq:general-convex-sedumi)
+\end{equation}
+for given matrices and vectors 
+$$
+F \in \Real{\ell_1 \times m},G \in \Real{\ell_2 \times m},H_i \in \Real{l_i \times m}, B_{j,k} \in \sym{n_j}, h_i \in \Real{m}, p_i \in \Real{l_i}, \tau_i \in \Real{}, g \in \Real{\ell_1},f \in \Real{\ell_2}.
+$$
+Define the linear function 
+$$
+\phi(y):= \left(Fy, Gy, \begin{bmatrix} - h_1\tran y \\ - H_1 y \end{bmatrix}, \dots, \begin{bmatrix} - h_r\tran y \\ - H_r y \end{bmatrix}, - \sum_{k=1}^m y_k B_{1,k}, \dots,- \sum_{k=1}^m y_k B_{s,k} \right),
+$$
+which is a linear map from $\Real{m}$ to the vector space of Cartesian products
+$$
+V:= \Real{\ell_1} \times \Real{\ell_2} \times \Real{l_1+1} \times \dots \times \Real{l_r + 1} \times \sym{n_1}\times \dots \times \sym{n_s}.
+$$
+A vector $X \in V$ can be written as a tuple
+$$
+X = (x_1,x_2,\mathx_1,\dots,\mathx_r,X_1,\dots,X_s).
+$$
+Given another vector $Y \in V$
+$$
+X = (y_1,y_2,\mathy_1,\dots,\mathy_r,Y_1,\dots,Y_s),
+$$
+the inner product between $X$ and $Y$ is defined as 
+$$
+\inprod{X}{Y} = \inprod{x_1}{y_2} + \inprod{x_2}{y_2} + \sum_{i=1}^r \inprod{\mathx_i}{\mathy_i} + \sum_{j=1}^s \inprod{X_j}{Y_j}.
+$$
+
+Let $\calK$ be the Cartesian product of the free cone, the nonnegative orthant, the second-order cone, and the PSD cone 
+$$
+\calK := \Real{\ell_1} \times \Real{\ell_2}_{+} \times \calQ_{l_1} \times \dots \times \calQ_{l_r} \times \psd{n_1} \times \dots \times \psd{n_s}.
+$$
+Its dual cone is 
+$$
+\calK^* = \{0\}^{\ell_1} \times \times \Real{\ell_2}_{+} \times \calQ_{l_1} \times \dots \times \calQ_{l_r} \times \psd{n_1} \times \dots \times \psd{n_s}.
+$$
+Note that all the cones there are self-dual except the free cone whose dual is the zero point. Then denote 
+$$
+C := \left( g,f,\begin{bmatrix} \tau_1 \\ p_1 \end{bmatrix},\dots,\begin{bmatrix} \tau_r \\ p_r \end{bmatrix},B_{1,0},\dots,B_{s,0} \right) \in V,
+$$
+we have that the original optimization \@ref(eq:general-convex-sedumi) is simply the following dual conic problem
+\begin{equation}
+\max_{y \in \Real{m}} \cbrace{b\tran y \mid C - \phi(y) \in \calK^*}.
+(\#eq:dual-conic)
+\end{equation}
+The linear map $\phi(y)$ can be written as
+$$
+\phi(y) = y_1 A_1 + \dots, y_m A_m
+$$
+for vectors $A_1,\dots,A_m$ in the space $V$. Therefore, the primal problem to \@ref(eq:dual-conic) is
+\begin{equation}
+\min_{X \in V} \cbrace{\inprod{C}{X} \mid \inprod{A_i}{X}=b_i,i=1,\dots,m,X \in \calK }.
+(\#eq:primal-conic)
+\end{equation}
+
+Let us practice an example from [@nie23book-moment].
+
+::: {.examplebox}
+::: {.example #SeDuMiExample name="SeDuMi Example"}
+Consider the following optimization problem as an instance of \@ref(eq:general-convex-sedumi):
+\begin{equation}
+\begin{split}
+\max_{y \in \Real{3}} & \quad y_3 - y_1 \\
+\subject & \quad y_1 + y_2 + y_3 = 3\\
+& \quad -1 \geq -y_1 - y_2 \\
+& \quad -1 \geq -y_2 - y_3 \\
+& \quad y_1 + y_3 \geq \sqrt{(y_1-1)^2 + y_2^2 + (y_3 -1)^2} \\
+& \quad \begin{bmatrix} 1 & y_1 & y_2 \\ y_1 & 2 & y_3 \\ y_2 & y_3 & 3 \end{bmatrix} \succeq 0
+\end{split}
+(\#eq:sedumi-example)
+\end{equation}
+Clearly we have $b = (-1,0,1)$. The linear map $\phi(y)$ is 
+$$
+\phi(y) = \left( y_1+y_2+y_3,\begin{bmatrix} -y_1 - y_2 \\ - y_2 - y_3 \end{bmatrix}, \begin{bmatrix} - y_1 - y_3 \\ -y_1 \\ -y_2 \\ -y_3 \end{bmatrix}, \begin{bmatrix} 0 & -y_1 & -y_2 \\ -y_1 & 0 & -y_3 \\ -y_2 & -y_3 & 0 \end{bmatrix} \right).
+$$
+The vector space $V=\Real{} \times \Real{2} \times \Real{4} \times \sym{3}$, and the cone $\calK$ is 
+$$
+\calK = \Real{} \times \Real{2}_{+} \times \calQ_3 \times \psd{3}.
+$$
+The vectors $A_1,A_2,A_3$ are
+\begin{equation}
+\begin{split}
+A_1 &= \left( 1,\begin{bmatrix}-1\\0\end{bmatrix}, \begin{bmatrix}-1\\-1\\0\\0\end{bmatrix},\begin{bmatrix}0&-1&0\\-1&0&0\\0&0&0\end{bmatrix} \right)\\
+A_2 &= \left( 1,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\0\\-1\\0\end{bmatrix},\begin{bmatrix}0&0&-1\\0&0&0\\-1&0&0\end{bmatrix} \right)\\
+A_3 &= \left( 1,\begin{bmatrix}0\\-1\end{bmatrix}, \begin{bmatrix}-1\\0\\0\\-1\end{bmatrix},\begin{bmatrix}0&0&0\\0&0&-1\\0&-1&0\end{bmatrix} \right).
+\end{split}
+\end{equation}
+The vector $C$ is 
+$$
+C = \left( 3,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\-1\\0\\-1\end{bmatrix},\begin{bmatrix}1&0&0\\0&2&0\\0&0&3\end{bmatrix} \right).
+$$
+
+To input this problem to SeDuMi, we only need to provide the data $(A,b,C)$ together with the description of the cones $\calK$.
+
+```matlab 
+% describe dimensions of the cones
+K.f = 1; % free cone
+K.l = 2; % nonnegative orthant
+K.q = 4; % second order cone
+K.s = 3; % psd cone
+
+% provide A,b,c
+c = [3,-1,-1,0,-1,0,-1,1,0,0,0,2,0,0,0,3];
+b = [-1,0,1];
+A = [
+    1,-1,0,-1,-1,0,0,0,-1,0,-1,0,0,0,0,0;
+    1,-1,-1,0,0,-1,0,0,0,-1,0,0,0,-1,0,0;
+    1,0,-1,-1,0,0,-1,0,0,0,0,0,-1,0,-1,0
+    ];
+
+% solve using sedumi
+[xopt,yopt,info] = sedumi(A,b,c,K);
+```
+
+:::
+:::
 
 ## Interior Point Algorithm

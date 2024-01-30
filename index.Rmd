@@ -14,6 +14,9 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
+\newcommand{\calK}{\mathcal{K}}
+\newcommand{\mathx}{\mathrm{x}}
+\newcommand{\mathy}{\mathrm{y}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
@@ -65,6 +68,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \renewcommand{\ker}{\mathrm{ker}}
 \newcommand{\face}{\mathrm{face}}
 \newcommand{\lmid}{\ \middle\vert\ }
+
 
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
 
