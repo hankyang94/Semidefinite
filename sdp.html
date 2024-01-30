@@ -201,7 +201,8 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
 <li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.3</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -730,8 +731,129 @@ and both <span class="math inline">\(X^\star\)</span> and <span class="math inli
 <h3><span class="header-section-number">2.2.3</span> Geometric Properties<a href="sdp.html#geometric-properties-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 </div>
 </div>
-<div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.3">
-<h2><span class="header-section-number">2.3</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="software-for-conic-optimization" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Software for Conic Optimization<a href="sdp.html#software-for-conic-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Linear optimization over the nonnegative orthant (<span class="math inline">\(\mathbb{R}^{n}_{+}\)</span>), the second-order cone (<span class="math inline">\(\mathcal{Q}_{n}\)</span>), and the positive semidefinite cone (<span class="math inline">\(\mathbb{S}^{n}_{+}\)</span>) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+.</p>
+<p>In this section, we introduce how we should “talk to” the numerical solvers for conic optimization, i.e., how should we pass a mathematically written conic optimization to a numerical solver. Note that in many cases, this “transcription” can be done by programming packages such as CVX, CVXPY, YALMIP etc., but I think it is important to understand the standard interface of numerical solvers because (i) it reinforces our understanding of the mathematical basics, (ii) it gets us closer to designing custom numerical solvers for specific problems, (iii) if you are a heavy convex optimization user you will realize that many of the programming packages are not “efficient” in transcribing the original optimization problem (but they are indeed very general). I have had cases where solving the conic optimization takes a few minutes but transcribing the problem to the solver takes half an hour.</p>
+<p>We will use the SeDuMi format as an example. Consider the following general linear convex optimization problem
+<span class="math display" id="eq:general-convex-sedumi">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{m}} &amp; \quad b^\top y \\
+\mathrm{s.t.}&amp; \quad Fy = g \\
+&amp; \quad f \geq Gy \\
+&amp; \quad h_i^\top y + \tau_i \geq \Vert H_i y + p_i \Vert_2, i=1,\dots,r \\
+&amp; \quad B_{j,0} + \sum_{k=1}^m y_k B_{j,k} \succeq 0, j=1,\dots,s,
+\end{split}
+\tag{2.7}
+\end{equation}\]</span>
+for given matrices and vectors
+<span class="math display">\[
+F \in \mathbb{R}^{\ell_1 \times m},G \in \mathbb{R}^{\ell_2 \times m},H_i \in \mathbb{R}^{l_i \times m}, B_{j,k} \in \mathbb{S}^{n_j}, h_i \in \mathbb{R}^{m}, p_i \in \mathbb{R}^{l_i}, \tau_i \in \mathbb{R}^{}, g \in \mathbb{R}^{\ell_1},f \in \mathbb{R}^{\ell_2}.
+\]</span>
+Define the linear function
+<span class="math display">\[
+\phi(y):= \left(Fy, Gy, \begin{bmatrix} - h_1^\top y \\ - H_1 y \end{bmatrix}, \dots, \begin{bmatrix} - h_r^\top y \\ - H_r y \end{bmatrix}, - \sum_{k=1}^m y_k B_{1,k}, \dots,- \sum_{k=1}^m y_k B_{s,k} \right),
+\]</span>
+which is a linear map from <span class="math inline">\(\mathbb{R}^{m}\)</span> to the vector space of Cartesian products
+<span class="math display">\[
+V:= \mathbb{R}^{\ell_1} \times \mathbb{R}^{\ell_2} \times \mathbb{R}^{l_1+1} \times \dots \times \mathbb{R}^{l_r + 1} \times \mathbb{S}^{n_1}\times \dots \times \mathbb{S}^{n_s}.
+\]</span>
+A vector <span class="math inline">\(X \in V\)</span> can be written as a tuple
+<span class="math display">\[
+X = (x_1,x_2,\mathrm{x}_1,\dots,\mathrm{x}_r,X_1,\dots,X_s).
+\]</span>
+Given another vector <span class="math inline">\(Y \in V\)</span>
+<span class="math display">\[
+X = (y_1,y_2,\mathrm{y}_1,\dots,\mathrm{y}_r,Y_1,\dots,Y_s),
+\]</span>
+the inner product between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is defined as
+<span class="math display">\[
+\langle X, Y \rangle = \langle x_1, y_2 \rangle + \langle x_2, y_2 \rangle + \sum_{i=1}^r \langle \mathrm{x}_i, \mathrm{y}_i \rangle + \sum_{j=1}^s \langle X_j, Y_j \rangle.
+\]</span></p>
+<p>Let <span class="math inline">\(\mathcal{K}\)</span> be the Cartesian product of the free cone, the nonnegative orthant, the second-order cone, and the PSD cone
+<span class="math display">\[
+\mathcal{K}:= \mathbb{R}^{\ell_1} \times \mathbb{R}^{\ell_2}_{+} \times \mathcal{Q}_{l_1} \times \dots \times \mathcal{Q}_{l_r} \times \mathbb{S}^{n_1}_{+} \times \dots \times \mathbb{S}^{n_s}_{+}.
+\]</span>
+Its dual cone is
+<span class="math display">\[
+\mathcal{K}^* = \{0\}^{\ell_1} \times \times \mathbb{R}^{\ell_2}_{+} \times \mathcal{Q}_{l_1} \times \dots \times \mathcal{Q}_{l_r} \times \mathbb{S}^{n_1}_{+} \times \dots \times \mathbb{S}^{n_s}_{+}.
+\]</span>
+Note that all the cones there are self-dual except the free cone whose dual is the zero point. Then denote
+<span class="math display">\[
+C := \left( g,f,\begin{bmatrix} \tau_1 \\ p_1 \end{bmatrix},\dots,\begin{bmatrix} \tau_r \\ p_r \end{bmatrix},B_{1,0},\dots,B_{s,0} \right) \in V,
+\]</span>
+we have that the original optimization <a href="sdp.html#eq:general-convex-sedumi">(2.7)</a> is simply the following dual conic problem
+<span class="math display" id="eq:dual-conic">\[\begin{equation}
+\max_{y \in \mathbb{R}^{m}} \{ b^\top y \mid C - \phi(y) \in \mathcal{K}^* \}.
+\tag{2.8}
+\end{equation}\]</span>
+The linear map <span class="math inline">\(\phi(y)\)</span> can be written as
+<span class="math display">\[
+\phi(y) = y_1 A_1 + \dots, y_m A_m
+\]</span>
+for vectors <span class="math inline">\(A_1,\dots,A_m\)</span> in the space <span class="math inline">\(V\)</span>. Therefore, the primal problem to <a href="sdp.html#eq:dual-conic">(2.8)</a> is
+<span class="math display" id="eq:primal-conic">\[\begin{equation}
+\min_{X \in V} \{ \langle C, X \rangle \mid \langle A_i, X \rangle=b_i,i=1,\dots,m,X \in \mathcal{K} \}.
+\tag{2.9}
+\end{equation}\]</span></p>
+<p>Let us practice an example from <span class="citation">(<a href="#ref-nie23book-moment" role="doc-biblioref">Nie 2023</a>)</span>.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SeDuMiExample" class="example"><strong>Example 2.4  (SeDuMi Example) </strong></span>Consider the following optimization problem as an instance of <a href="sdp.html#eq:general-convex-sedumi">(2.7)</a>:
+<span class="math display" id="eq:sedumi-example">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{3}} &amp; \quad y_3 - y_1 \\
+\mathrm{s.t.}&amp; \quad y_1 + y_2 + y_3 = 3\\
+&amp; \quad -1 \geq -y_1 - y_2 \\
+&amp; \quad -1 \geq -y_2 - y_3 \\
+&amp; \quad y_1 + y_3 \geq \sqrt{(y_1-1)^2 + y_2^2 + (y_3 -1)^2} \\
+&amp; \quad \begin{bmatrix} 1 &amp; y_1 &amp; y_2 \\ y_1 &amp; 2 &amp; y_3 \\ y_2 &amp; y_3 &amp; 3 \end{bmatrix} \succeq 0
+\end{split}
+\tag{2.10}
+\end{equation}\]</span>
+Clearly we have <span class="math inline">\(b = (-1,0,1)\)</span>. The linear map <span class="math inline">\(\phi(y)\)</span> is
+<span class="math display">\[
+\phi(y) = \left( y_1+y_2+y_3,\begin{bmatrix} -y_1 - y_2 \\ - y_2 - y_3 \end{bmatrix}, \begin{bmatrix} - y_1 - y_3 \\ -y_1 \\ -y_2 \\ -y_3 \end{bmatrix}, \begin{bmatrix} 0 &amp; -y_1 &amp; -y_2 \\ -y_1 &amp; 0 &amp; -y_3 \\ -y_2 &amp; -y_3 &amp; 0 \end{bmatrix} \right).
+\]</span>
+The vector space <span class="math inline">\(V=\mathbb{R}^{} \times \mathbb{R}^{2} \times \mathbb{R}^{4} \times \mathbb{S}^{3}\)</span>, and the cone <span class="math inline">\(\mathcal{K}\)</span> is
+<span class="math display">\[
+\mathcal{K}= \mathbb{R}^{} \times \mathbb{R}^{2}_{+} \times \mathcal{Q}_3 \times \mathbb{S}^{3}_{+}.
+\]</span>
+The vectors <span class="math inline">\(A_1,A_2,A_3\)</span> are
+<span class="math display">\[\begin{equation}
+\begin{split}
+A_1 &amp;= \left( 1,\begin{bmatrix}-1\\0\end{bmatrix}, \begin{bmatrix}-1\\-1\\0\\0\end{bmatrix},\begin{bmatrix}0&amp;-1&amp;0\\-1&amp;0&amp;0\\0&amp;0&amp;0\end{bmatrix} \right)\\
+A_2 &amp;= \left( 1,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\0\\-1\\0\end{bmatrix},\begin{bmatrix}0&amp;0&amp;-1\\0&amp;0&amp;0\\-1&amp;0&amp;0\end{bmatrix} \right)\\
+A_3 &amp;= \left( 1,\begin{bmatrix}0\\-1\end{bmatrix}, \begin{bmatrix}-1\\0\\0\\-1\end{bmatrix},\begin{bmatrix}0&amp;0&amp;0\\0&amp;0&amp;-1\\0&amp;-1&amp;0\end{bmatrix} \right).
+\end{split}
+\end{equation}\]</span>
+The vector <span class="math inline">\(C\)</span> is
+<span class="math display">\[
+C = \left( 3,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\-1\\0\\-1\end{bmatrix},\begin{bmatrix}1&amp;0&amp;0\\0&amp;2&amp;0\\0&amp;0&amp;3\end{bmatrix} \right).
+\]</span></p>
+<p>To input this problem to SeDuMi, we only need to provide the data <span class="math inline">\((A,b,C)\)</span> together with the description of the cones <span class="math inline">\(\mathcal{K}\)</span>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="sdp.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">% describe dimensions of the cones</span></span>
+<span id="cb2-2"><a href="sdp.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">f</span> <span class="op">=</span> <span class="fl">1</span><span class="op">;</span> <span class="co">% free cone</span></span>
+<span id="cb2-3"><a href="sdp.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">l</span> <span class="op">=</span> <span class="fl">2</span><span class="op">;</span> <span class="co">% nonnegative orthant</span></span>
+<span id="cb2-4"><a href="sdp.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">q</span> <span class="op">=</span> <span class="fl">4</span><span class="op">;</span> <span class="co">% second order cone</span></span>
+<span id="cb2-5"><a href="sdp.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">s</span> <span class="op">=</span> <span class="fl">3</span><span class="op">;</span> <span class="co">% psd cone</span></span>
+<span id="cb2-6"><a href="sdp.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="sdp.html#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">% provide A,b,c</span></span>
+<span id="cb2-8"><a href="sdp.html#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="va">c</span> <span class="op">=</span> [<span class="fl">3</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">2</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">3</span>]<span class="op">;</span></span>
+<span id="cb2-9"><a href="sdp.html#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="va">b</span> <span class="op">=</span> [<span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb2-10"><a href="sdp.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> [</span>
+<span id="cb2-11"><a href="sdp.html#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-12"><a href="sdp.html#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="sdp.html#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span></span>
+<span id="cb2-14"><a href="sdp.html#cb2-14" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">;</span></span>
+<span id="cb2-15"><a href="sdp.html#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="sdp.html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">% solve using sedumi</span></span>
+<span id="cb2-17"><a href="sdp.html#cb2-17" aria-hidden="true" tabindex="-1"></a>[<span class="va">xopt</span><span class="op">,</span><span class="va">yopt</span><span class="op">,</span><span class="va">info</span>] <span class="op">=</span> <span class="va">sedumi</span>(<span class="va">A</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">K</span>)<span class="op">;</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 </div>
 </div>

@@ -191,6 +191,9 @@ arc=4pt}
 }
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
+\newcommand{\calK}{\mathcal{K}}
+\newcommand{\mathx}{\mathrm{x}}
+\newcommand{\mathy}{\mathrm{y}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
@@ -1589,6 +1592,140 @@ and both \(X^\star\) and \(y^\star\) are optimal.
 
 \hypertarget{geometric-properties-1}{%
 \subsection{Geometric Properties}\label{geometric-properties-1}}
+
+\hypertarget{software-for-conic-optimization}{%
+\section{Software for Conic Optimization}\label{software-for-conic-optimization}}
+
+Linear optimization over the nonnegative orthant (\(\mathbb{R}^{n}_{+}\)), the second-order cone (\(\mathcal{Q}_{n}\)), and the positive semidefinite cone (\(\mathbb{S}^{n}_{+}\)) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+.
+
+In this section, we introduce how we should ``talk to'' the numerical solvers for conic optimization, i.e., how should we pass a mathematically written conic optimization to a numerical solver. Note that in many cases, this ``transcription'' can be done by programming packages such as CVX, CVXPY, YALMIP etc., but I think it is important to understand the standard interface of numerical solvers because (i) it reinforces our understanding of the mathematical basics, (ii) it gets us closer to designing custom numerical solvers for specific problems, (iii) if you are a heavy convex optimization user you will realize that many of the programming packages are not ``efficient'' in transcribing the original optimization problem (but they are indeed very general). I have had cases where solving the conic optimization takes a few minutes but transcribing the problem to the solver takes half an hour.
+
+We will use the SeDuMi format as an example. Consider the following general linear convex optimization problem
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{m}} & \quad b^\top y \\
+\mathrm{s.t.}& \quad Fy = g \\
+& \quad f \geq Gy \\
+& \quad h_i^\top y + \tau_i \geq \Vert H_i y + p_i \Vert_2, i=1,\dots,r \\
+& \quad B_{j,0} + \sum_{k=1}^m y_k B_{j,k} \succeq 0, j=1,\dots,s,
+\end{split}
+\label{eq:general-convex-sedumi}
+\end{equation}
+for given matrices and vectors
+\[
+F \in \mathbb{R}^{\ell_1 \times m},G \in \mathbb{R}^{\ell_2 \times m},H_i \in \mathbb{R}^{l_i \times m}, B_{j,k} \in \mathbb{S}^{n_j}, h_i \in \mathbb{R}^{m}, p_i \in \mathbb{R}^{l_i}, \tau_i \in \mathbb{R}^{}, g \in \mathbb{R}^{\ell_1},f \in \mathbb{R}^{\ell_2}.
+\]
+Define the linear function
+\[
+\phi(y):= \left(Fy, Gy, \begin{bmatrix} - h_1^\top y \\ - H_1 y \end{bmatrix}, \dots, \begin{bmatrix} - h_r^\top y \\ - H_r y \end{bmatrix}, - \sum_{k=1}^m y_k B_{1,k}, \dots,- \sum_{k=1}^m y_k B_{s,k} \right),
+\]
+which is a linear map from \(\mathbb{R}^{m}\) to the vector space of Cartesian products
+\[
+V:= \mathbb{R}^{\ell_1} \times \mathbb{R}^{\ell_2} \times \mathbb{R}^{l_1+1} \times \dots \times \mathbb{R}^{l_r + 1} \times \mathbb{S}^{n_1}\times \dots \times \mathbb{S}^{n_s}.
+\]
+A vector \(X \in V\) can be written as a tuple
+\[
+X = (x_1,x_2,\mathrm{x}_1,\dots,\mathrm{x}_r,X_1,\dots,X_s).
+\]
+Given another vector \(Y \in V\)
+\[
+X = (y_1,y_2,\mathrm{y}_1,\dots,\mathrm{y}_r,Y_1,\dots,Y_s),
+\]
+the inner product between \(X\) and \(Y\) is defined as
+\[
+\langle X, Y \rangle = \langle x_1, y_2 \rangle + \langle x_2, y_2 \rangle + \sum_{i=1}^r \langle \mathrm{x}_i, \mathrm{y}_i \rangle + \sum_{j=1}^s \langle X_j, Y_j \rangle.
+\]
+
+Let \(\mathcal{K}\) be the Cartesian product of the free cone, the nonnegative orthant, the second-order cone, and the PSD cone
+\[
+\mathcal{K}:= \mathbb{R}^{\ell_1} \times \mathbb{R}^{\ell_2}_{+} \times \mathcal{Q}_{l_1} \times \dots \times \mathcal{Q}_{l_r} \times \mathbb{S}^{n_1}_{+} \times \dots \times \mathbb{S}^{n_s}_{+}.
+\]
+Its dual cone is
+\[
+\mathcal{K}^* = \{0\}^{\ell_1} \times \times \mathbb{R}^{\ell_2}_{+} \times \mathcal{Q}_{l_1} \times \dots \times \mathcal{Q}_{l_r} \times \mathbb{S}^{n_1}_{+} \times \dots \times \mathbb{S}^{n_s}_{+}.
+\]
+Note that all the cones there are self-dual except the free cone whose dual is the zero point. Then denote
+\[
+C := \left( g,f,\begin{bmatrix} \tau_1 \\ p_1 \end{bmatrix},\dots,\begin{bmatrix} \tau_r \\ p_r \end{bmatrix},B_{1,0},\dots,B_{s,0} \right) \in V,
+\]
+we have that the original optimization \eqref{eq:general-convex-sedumi} is simply the following dual conic problem
+\begin{equation}
+\max_{y \in \mathbb{R}^{m}} \{ b^\top y \mid C - \phi(y) \in \mathcal{K}^* \}.
+\label{eq:dual-conic}
+\end{equation}
+The linear map \(\phi(y)\) can be written as
+\[
+\phi(y) = y_1 A_1 + \dots, y_m A_m
+\]
+for vectors \(A_1,\dots,A_m\) in the space \(V\). Therefore, the primal problem to \eqref{eq:dual-conic} is
+\begin{equation}
+\min_{X \in V} \{ \langle C, X \rangle \mid \langle A_i, X \rangle=b_i,i=1,\dots,m,X \in \mathcal{K} \}.
+\label{eq:primal-conic}
+\end{equation}
+
+Let us practice an example from \citep{nie23book-moment}.
+
+\begin{example}[SeDuMi Example]
+\protect\hypertarget{exm:SeDuMiExample}{}\label{exm:SeDuMiExample}
+
+Consider the following optimization problem as an instance of \eqref{eq:general-convex-sedumi}:
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{3}} & \quad y_3 - y_1 \\
+\mathrm{s.t.}& \quad y_1 + y_2 + y_3 = 3\\
+& \quad -1 \geq -y_1 - y_2 \\
+& \quad -1 \geq -y_2 - y_3 \\
+& \quad y_1 + y_3 \geq \sqrt{(y_1-1)^2 + y_2^2 + (y_3 -1)^2} \\
+& \quad \begin{bmatrix} 1 & y_1 & y_2 \\ y_1 & 2 & y_3 \\ y_2 & y_3 & 3 \end{bmatrix} \succeq 0
+\end{split}
+\label{eq:sedumi-example}
+\end{equation}
+Clearly we have \(b = (-1,0,1)\). The linear map \(\phi(y)\) is
+\[
+\phi(y) = \left( y_1+y_2+y_3,\begin{bmatrix} -y_1 - y_2 \\ - y_2 - y_3 \end{bmatrix}, \begin{bmatrix} - y_1 - y_3 \\ -y_1 \\ -y_2 \\ -y_3 \end{bmatrix}, \begin{bmatrix} 0 & -y_1 & -y_2 \\ -y_1 & 0 & -y_3 \\ -y_2 & -y_3 & 0 \end{bmatrix} \right).
+\]
+The vector space \(V=\mathbb{R}^{} \times \mathbb{R}^{2} \times \mathbb{R}^{4} \times \mathbb{S}^{3}\), and the cone \(\mathcal{K}\) is
+\[
+\mathcal{K}= \mathbb{R}^{} \times \mathbb{R}^{2}_{+} \times \mathcal{Q}_3 \times \mathbb{S}^{3}_{+}.
+\]
+The vectors \(A_1,A_2,A_3\) are
+\begin{equation}
+\begin{split}
+A_1 &= \left( 1,\begin{bmatrix}-1\\0\end{bmatrix}, \begin{bmatrix}-1\\-1\\0\\0\end{bmatrix},\begin{bmatrix}0&-1&0\\-1&0&0\\0&0&0\end{bmatrix} \right)\\
+A_2 &= \left( 1,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\0\\-1\\0\end{bmatrix},\begin{bmatrix}0&0&-1\\0&0&0\\-1&0&0\end{bmatrix} \right)\\
+A_3 &= \left( 1,\begin{bmatrix}0\\-1\end{bmatrix}, \begin{bmatrix}-1\\0\\0\\-1\end{bmatrix},\begin{bmatrix}0&0&0\\0&0&-1\\0&-1&0\end{bmatrix} \right).
+\end{split}
+\end{equation}
+The vector \(C\) is
+\[
+C = \left( 3,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\-1\\0\\-1\end{bmatrix},\begin{bmatrix}1&0&0\\0&2&0\\0&0&3\end{bmatrix} \right).
+\]
+
+To input this problem to SeDuMi, we only need to provide the data \((A,b,C)\) together with the description of the cones \(\mathcal{K}\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% describe dimensions of the cones}
+\VariableTok{K}\NormalTok{.}\VariableTok{f} \OperatorTok{=} \FloatTok{1}\OperatorTok{;} \CommentTok{\% free cone}
+\VariableTok{K}\NormalTok{.}\VariableTok{l} \OperatorTok{=} \FloatTok{2}\OperatorTok{;} \CommentTok{\% nonnegative orthant}
+\VariableTok{K}\NormalTok{.}\VariableTok{q} \OperatorTok{=} \FloatTok{4}\OperatorTok{;} \CommentTok{\% second order cone}
+\VariableTok{K}\NormalTok{.}\VariableTok{s} \OperatorTok{=} \FloatTok{3}\OperatorTok{;} \CommentTok{\% psd cone}
+
+\CommentTok{\% provide A,b,c}
+\VariableTok{c} \OperatorTok{=}\NormalTok{ [}\FloatTok{3}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{2}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{3}\NormalTok{]}\OperatorTok{;}
+\VariableTok{b} \OperatorTok{=}\NormalTok{ [}\OperatorTok{{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{1}\NormalTok{]}\OperatorTok{;}
+\VariableTok{A} \OperatorTok{=}\NormalTok{ [}
+    \FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{;}
+    \FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{;}
+    \FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}\OperatorTok{,{-}}\FloatTok{1}\OperatorTok{,}\FloatTok{0}
+\NormalTok{    ]}\OperatorTok{;}
+
+\CommentTok{\% solve using sedumi}
+\NormalTok{[}\VariableTok{xopt}\OperatorTok{,}\VariableTok{yopt}\OperatorTok{,}\VariableTok{info}\NormalTok{] }\OperatorTok{=} \VariableTok{sedumi}\NormalTok{(}\VariableTok{A}\OperatorTok{,}\VariableTok{b}\OperatorTok{,}\VariableTok{c}\OperatorTok{,}\VariableTok{K}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+\end{example}
 
 \hypertarget{interior-point-algorithm}{%
 \section{Interior Point Algorithm}\label{interior-point-algorithm}}
