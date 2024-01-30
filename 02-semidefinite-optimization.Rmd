@@ -30,6 +30,16 @@ Let $A \in \sym{n}$ be a symmetric matrix, the following statements are equivale
 :::
 :::
 
+Among the equivalent characterizations of PSD matrices, (5) is less well-known, but it can be very useful when we want to convert a PSD constraint into multiple scalar constraints. For example, consider the following subset of $\Real{3}$:
+$$
+\lcbrace{z \in \Real{3} \lmid X(z) = \begin{bmatrix} 1 & z_1 & z_2 \\ z_1 & z_2 & z_3 \\ z_2 & z_3 & 5 z_2 - 4  \end{bmatrix} \succeq 0 }.
+$$
+We can first form the characteristic polynomial of $X(z)$ --whose coefficients will be functions of $z$-- and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure.
+
+```{r spectrahedron-stride, out.width='50%', fig.show='hold', fig.cap='An example spectrahedron.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/spectrahedron-stride.png")
+```
+
 Similarly, we say a matrix $A \in \sym{n}$ is **positive definite** (PD) is its associated quadratic form is always positive, i.e., 
 $$
 x\tran A x > 0, \quad \forall x \in \Real{n}.
