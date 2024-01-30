@@ -50,8 +50,8 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
-\newcommand{\paren}[1]{(#1)}
-\renewcommand{\lparen}[1]{\left( #1 \right)}
+<!-- \newcommand{\paren}[1]{(#1)}
+\renewcommand{\lparen}[1]{\left( #1 \right)} -->
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 \newcommand{\aff}{\mathrm{aff}}

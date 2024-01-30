@@ -311,6 +311,252 @@ The proof for the "**Only If**" direction can be found in Theorem 3.7.1 of [@wol
 
 ## Semidefinite Programming
 
+### Spectrahedra 
+
+Recall the definition of a polyhedron in \@ref(eq:polyhedron), i.e., a vector $x$ constrained by finitely many linear inequalities. The feasible set of a Linear Program is a polyhedron.
+
+Similarly, we define a **spectrahedron** as a set defined by finitely many **linear matrix inequalities** (LMIs). Spectrahedra are the feasible sets of Semidefinite Programs (SDPs). 
+
+A linear matrix inequality has the form
+$$
+A_0 + \sum_{i=1}^m A_i x_i \succeq 0,
+$$
+where $A_i \in \sym{n},i=0,\dots,m$ are given symmetric matrices. Correspondingly, a spectrahedron is defined by finitely many LMIs.
+
+::: {.definitionbox}
+::: {.definition #Spectrahedron name="Spectrahedron"}
+A set $S \subseteq \Real{m}$ is a spectrahedron if it has the form
+$$
+S = \lcbrace{x \in \Real{m} \lmid A_0 + \sum_{i=1}^m x_i A_i \succeq 0},
+$$
+for given symmetric matrices $A_0,A_1,\dots,A_m \in \sym{n}$.
+:::
+:::
+Note that there is no less of generality in defining a spectrahedron using a single LMI. For example, in the case of a set defined by two LMIs:
+$$
+S = \lcbrace{x \in \Real{m} \lmid A_0 + \sum_{i=1}^m x_i A_i \succeq 0, B_0 + \sum_{i=1}^m x_i B_i \succeq 0 }, A_i \in \sym{n}, B_i \in \sym{d},
+$$
+we can compress the two LMIs into a single LMI by putting $A_i$ and $B_i$ along the diagonal: 
+$$
+S = \lcbrace{x \in \Real{m} \lmid \begin{bmatrix} A_0 & \\ & B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i & \\ & B_i \end{bmatrix} \succeq 0 }.
+$$
+
+Leveraging (5) of Lemma \@ref(lem:PositiveSemidefinite), we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) **basic semialgebraic set**, as seen in the following example [@blekherman12book-semidefinite]. Another example is provided in Fig. \@ref(fig:SpectrahedronStride).
+
+::: {.examplebox}
+::: {.example #EllipticCurve name="Elliptic Curve"}
+Consider the spectrahedron in $\Real{2}$ defined by 
+$$
+\lcbrace{(x,y) \in \Real{2} \lmid A(x,y) = \begin{bmatrix} x+1 & 0 & y \\ 0 & 2 & -x-1 \\ y & -x-1 & 2 \end{bmatrix} \succeq 0 }.
+$$
+To obtain scalar inequalities defining the set, let
+$$
+p_A(\lambda) = \det (\lambda I - A(x,y)) = \lambda^3 + p_2 \lambda^2 + p_1 \lambda + p_0
+$$
+be the characteristic polynomial of $A(x,y)$. $A(x,y) \succeq 0$ is then equivalent to the coefficients weakly alternating in sign:
+\begin{equation}
+\begin{split}
+p_2 & = -(x+5) \leq 0, \\
+p_1 & = -x^2 + 2x - y^2 + 7 \geq 0, \\
+p_0 & = -(3+ x -x^3 -3x^2 - 2y^2) \leq 0.
+\end{split}
+\end{equation}
+We can use the following Matlab script to plot the set shown in Fig. \@ref(fig:EllipticCurve). (The code is also available at [here](https://github.com/ComputationalRobotics/Semidefinite-Examples).) As we can see, the spectrahedron is convex, but it is not a polyhedron.
+
+```matlab 
+x = -2:0.01:2; 
+y = -2:0.01:2; 
+[X,Y] = meshgrid(x,y);
+
+ineq = (-X - 5 <= 0) & ...
+    (-X.^2 + 2*X - Y.^2 + 7 >=0) & ...
+    (3 + X - X.^3 - 3*X.^2 - 2*Y.^2 >= 0);
+
+h = pcolor(X,Y,double(ineq)) ;
+h.EdgeColor = 'none' ;
+```
+
+```{r EllipticCurve, out.width='60%', fig.show='hold', fig.cap='Elliptic Curve.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/elliptic_curve.png")
+```
+:::
+:::
+
+### Formulation and Duality
+
+Semidefinite programs (SDPs) are linear optimization problems over spectrahedra. A standard SDP in **primal** form is written as
+\begin{equation}
+\boxed{
+\begin{split}
+p^\star = \min_{X \in \sym{n}} & \quad \inprod{C}{X} \\
+\subject & \quad \calA(X) = b, \\
+& \quad X \succeq 0
+\end{split}
+}
+(\#eq:SDP-P)
+\end{equation}
+where $C \in \sym{n}$, $b \in \Real{m}$, and the linear map $\calA: \sym{n} \rightarrow \Real{m}$ is defined as 
+$$
+\calA(X) := \begin{bmatrix} \inprod{A_1}{X} \\
+\vdots \\ \inprod{A_i}{X} \\ \inprod{A_m}{X} \end{bmatrix}.
+$$
+Recall that $\inprod{C}{X} = \trace(CX)$. The feasible set of \@ref(eq:SDP-P) is the intersection of the PSD cone ($\psd{n}$) and the affine subspace defined by $\calA(X) = b$. 
+
+Closely related to the primal SDP \@ref(eq:SDP-P) is the **dual** problem
+\begin{equation}
+\boxed{
+\begin{split}
+d^\star = \max_{y \in \Real{m}} & \quad \inprod{b}{y} \\
+\subject & \quad C - \calA^* (y) \succeq 0
+\end{split}
+}
+(\#eq:SDP-D)
+\end{equation}
+where $\calA^{*}: \Real{m} \rightarrow \sym{n}$ is the **adjoint** map defined as
+$$
+\calA^*(y) := \sum_{i=1}^m y_i A_i.
+$$
+Observe how the primal-dual SDP pair \@ref(eq:SDP-P)-\@ref(eq:SDP-D) parallels the primal-dual LP pair \@ref(eq:primal-lp)-\@ref(eq:dual-lp).
+
+**Weak duality**. We have a similar weak duality between the primal and dual. Pick any $X$ that is feasible for the primal \@ref(eq:SDP-P) and $y$ that is feasible for the dual \@ref(eq:SDP-D), we have 
+$$
+\boxed{\inprod{C}{X} - \inprod{b}{y} = \inprod{C}{X} - \inprod{\calA(X)}{y} = \inprod{C - \calA^* (y)}{X} \geq 0,}
+$$
+where the last inequality holds because both $C - \calA^*(y)$ and $X$ are positive semidefinite. As a result, we have the weak duality
+$$
+d^\star \leq p^\star.
+$$
+
+Similar to the LP case, we will denote $p^\star = +\infty$ if the primal is infeasible, $p^\star = - \infty$ if the primal is unbounded below. We will denote $d^\star = +\infty$ if the dual is unbounded above, and $d^\star = -\infty$ if the dual is infeasible. We say the primal (or the dual) is **solvable** if it admits optimizers. We denote $p^\star - d^\star$ as the **duality gap**. 
+
+Recall Theorem \@ref(thm:LPStrongDuality) states that in LP, if at least one of the primal and dual is feasible, then strong duality holds (i.e., $p^\star = d^\star = \{\pm \infty, \text{finite} \}$). Unfortunately, this does not carry over to SDPs. Let us provide several examples.
+
+::: {.examplebox}
+::: {.example #FailureSDPDuality name="Failure of SDP Strong Duality"}
+
+The first example, from [@ramana97mp-exact], shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some $\alpha \geq 0$
+$$
+\begin{cases}
+\min_{X \in \sym{3}} & \alpha X_{11} \\
+\subject & X_{22} = 0 \\
+& X_{11} + 2 X_{23} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} & X_{13} \\
+* & X_{22} & X_{23} \\
+* & * & X_{33} \end{bmatrix} \succeq 0 
+\end{cases}, 
+\begin{cases}
+\max_{y \in \Real{2}} & y_2 \\
+\subject & \begin{bmatrix} \alpha & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \succeq \begin{bmatrix} y_2 & 0 & 0 \\ 0 & y_1 & y_2 \\ 0 & y_2 & 0 \end{bmatrix}
+\end{cases}
+$$
+To examine the primal feasible set, let us pick the bottom-right $2\times 2$ submatrix of $X$. The determinant of this submatrix needs to be nonnegative (due to (4) of Lemma \@ref(lem:PositiveSemidefinite)):
+$$
+X_{22} X_{33} - X_{23}^2 \geq 0.
+$$
+Because $X_{22} = 0$, we have $X_{23} = 0$ and hence $X_{11} = 1$. Therefore, $p^\star = \alpha$ is attained.
+
+To examine the dual feasible set, pick the bottom-right $2 \times 2$ submatrix of 
+$$
+\begin{bmatrix} \alpha - y_2 & 0 & 0 \\ 0 & - y_1 & -y_2 \\ 0 & -y_2 & 0 \end{bmatrix} \succeq 0,
+$$
+we have $y_2 = 0$. As a result, $d^\star = 0$, and strong duality fails. 
+
+
+The second example, from [@todd01an-semidefinite], shows that the duality gap can even be infinite. Consider the primal-dual SDP 
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 0 \\
+\subject & X_{11} = 0 \\
+& X_{12} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & 2 y_2 \\
+\subject & \begin{bmatrix} - y_1 & - y_2 \\ - y_2 & 0 \end{bmatrix} \succeq 0 
+\end{cases}
+$$
+Clearly, the primal is infeasible because
+$$
+\begin{bmatrix} 0 & 1 \\ 1 & X_{22} \end{bmatrix}
+$$
+can never be PSD. So $p^\star = + \infty$. The dual problem, however, is feasible. From the PSD constraint we have $y_2 = 0$ and $d^\star = 0$. Therefore, the duality gap is infinite.
+
+The third example, from [@todd01an-semidefinite], shows that even when the duality gap is zero, the primal or dual problem may not admit optimizers. Consider the primal-dual SDP
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 2 X_{12} \\
+\subject & - X_{11} = -1 \\
+& - X_{22} = 0 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & - y_1 \\
+\subject & \begin{bmatrix} y_1 & 1 \\ 1 & y_2 \end{bmatrix} \succeq 0
+\end{cases}
+$$
+To examine the primal feasible set, we have
+$$
+\begin{bmatrix} 1 & X_{12} \\ X_{12} & 0 \end{bmatrix} \succeq 0
+$$
+implies $X_{12} = 0$. Hence the primal feasible set only has one point and $p^\star = 0$. The dual feasible set reads
+$$
+y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
+$$
+and we want to minimize $y_1$. Clearly, $d^\star = 0$ but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.
+:::
+:::
+
+The examples above are somewhat "pathological" and they show that SDPs in general can be more complicated that LPs. It turns out, with the addition of **Slater's condition**, i.e., **strict feasibility** of the primal and dual, we can recover nice results parallel to those of LP.
+
+::: {.theorembox}
+::: {.theorem #SDPStrongDuality name="SDP Strong Duality"}
+Assume both the primal SDP \@ref(eq:SDP-P) and the dual SDP \@ref(eq:SDP-D) are _strictly feasible_, i.e., there exists $X \succ 0$ such that $\calA(X)=b$ for the primal and there exists $y \in \Real{m}$ such that $C - \calA^* (y) \succ 0$ for the dual, then strong duality holds, i.e., both problems are solvable and admit optimizers, and $p^\star = d^\star$ equals to some finite number. 
+
+Further, a pair of primal-dual feasible points $(X,y)$ is optimal if and only if 
+$$
+\inprod{C}{X} = \inprod{b}{y} \Leftrightarrow \inprod{C - \calA^* (y)}{X} = 0 \Leftrightarrow (C - \calA^* (y)) X = 0.
+$$
+:::
+:::
+
+One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then $p^\star = d^\star$ and the dual is solvable. If the dual is bounded above and strictly feasible, then $p^\star = d^\star$ and the primal is solvable [@nie23book-moment]. 
+
+::: {.examplebox}
+::: {.example #SuccessSDPDuality name="SDP Strong Duality"}
+Consider the following primal-dual SDP pair
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 2 X_{11} + 2 X_{12} \\
+\subject & X_{11} + X_{22} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{}} & y \\
+\subject & \begin{bmatrix} 2 - y & 1 \\ 1 & - y \end{bmatrix} \succeq 0
+\end{cases}
+$$
+Choose
+$$
+X = \begin{bmatrix} 0.5 & 0 \\ 0 & 0.5 \end{bmatrix} \succ 0
+$$
+we see the primal is strictly feasible.
+Choose $y = -1$, we have 
+$$
+\begin{bmatrix} 3 & 1 \\ 1 & 1 \end{bmatrix} \succ 0
+$$
+and the dual is strictly feasible. Therefore, strong duality holds. 
+
+In this case, pick the pair of primal-dual feasible points
+$$
+X^\star = \begin{bmatrix} \frac{2 - \sqrt{2}}{4} & - \frac{1}{2 \sqrt{2}} \\ - \frac{1}{2 \sqrt{2}} & \frac{2 + \sqrt{2}}{4} \end{bmatrix}, \quad y^\star = 1 - \sqrt{2},
+$$
+we have 
+$$
+\inprod{C}{X^\star} = 1-\sqrt{2} = \inprod{b}{y^\star},
+$$
+and both $X^\star$ and $y^\star$ are optimal. 
+:::
+:::
 
 ### Geometric Properties 
 

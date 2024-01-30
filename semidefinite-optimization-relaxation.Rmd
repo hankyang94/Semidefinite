@@ -1,0 +1,1414 @@
+--- 
+title: "Semidefinite Optimization and Relaxation"
+author: "Heng Yang"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: hankyang94/Semidefinite
+description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation."
+---
+
+\newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calA}{\mathcal{A}}
+
+\newcommand{\Real}[1]{\mathbb{R}^{#1}}
+\newcommand{\sym}[1]{\mathbb{S}^{#1}}
+\newcommand{\psd}[1]{\sym{#1}_{+}}
+\newcommand{\pd}[1]{\sym{#1}_{++}}
+\newcommand{\inprod}[2]{\langle #1, #2 \rangle}
+\newcommand{\linprod}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\trace}{\mathrm{tr}}
+\newcommand{\tran}{^\top}
+<!-- \newcommand{\det}{\mathrm{det}} -->
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\Diag}{\mathrm{Diag}}
+\newcommand{\BlkDiag}{\mathrm{BlkDiag}}
+\newcommand{\vectorize}{\mathrm{vec}}
+\newcommand{\svec}{\mathrm{svec}}
+\newcommand{\mat}{\mathrm{mat}}
+\newcommand{\smat}{\mathrm{smat}}
+\newcommand{\norm}[1]{\Vert #1 \Vert}
+\newcommand{\lnorm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\pnorm}[2]{\Vert #1 \Vert_{#2}}
+\newcommand{\Fnorm}[1]{\Vert #1 \Vert_\mathrm{F}}
+\newcommand{\conv}{\mathrm{conv}}
+\newcommand{\cone}{\mathrm{cone}}
+\newcommand{\interior}{\mathrm{int}}
+\newcommand{\relint}{\mathrm{ri}}
+\newcommand{\poly}[1]{\mathbb{R}[#1]}
+\newcommand{\SOd}{\mathrm{SO}(d)}
+\newcommand{\SOthree}{\mathrm{SO}(3)}
+\newcommand{\Od}{\mathrm{O}(d)}
+\newcommand{\Ogroup}{\mathrm{O}}
+\newcommand{\usphere}{\mathcal{S}}
+\newcommand{\bmath}[1]{\boldsymbol{#1}}
+\newcommand{\lbrkt}{[\![}
+\newcommand{\rbrkt}{]\!]}
+\newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
+<!-- \newcommand{\paren}[1]{(#1)}
+\renewcommand{\lparen}[1]{\left( #1 \right)} -->
+\newcommand{\cbrace}[1]{\{ #1 \}}
+\newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
+\newcommand{\aff}{\mathrm{aff}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\dist}{\mathrm{dist}}
+\newcommand{\subject}{\mathrm{s.t.}}
+\newcommand{\cl}{\mathrm{cl}}
+\newcommand{\eye}{\mathrm{I}}
+\newcommand{\inv}{^{-1}}
+\newcommand{\Range}{\mathrm{Range}}
+\renewcommand{\ker}{\mathrm{ker}}
+\newcommand{\face}{\mathrm{face}}
+\newcommand{\lmid}{\ \middle\vert\ }
+
+<!-- \newcommand{\deg}{\mathrm{deg}} -->
+
+
+# Preface {-}
+
+This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Relaxation. 
+
+## Feedback {-}
+
+I would like to invite you to provide comments to the textbook via the following two ways:
+
+- Inline comments with Hypothesis:
+    - Go to [Hypothesis](https://hypothes.is) and create an account
+    - Install the [Chrome extension of Hypothesis](https://chrome.google.com/webstore/detail/hypothesis-web-pdf-annota/bjfhmglciegochdpefhhlphglcehbmek)
+    - Provide public comments to textbook contents and I will try to address them 
+
+- Blog-style comments with Disqus:
+    - At the end of each Chapter, there is a Disqus module where you can leave feedback
+
+I would recommend using Disqus for high-level and general feedback regarding the entire Chapter, but using Hypothesis for feedback and questions about the technical details.
+
+
+## Offerings {-}
+
+Information about the offerings of the class is listed below.
+
+#### 2024 Spring {-}
+
+**Time**: Mon/Wed 2:15 - 3:30pm
+
+**Location**: Science and Engineering Complex, 1.413
+
+**Instructor**: [Heng Yang](https://hankyang.seas.harvard.edu/)
+
+**Teaching Fellow**: [Safwan Hossain](https://safwanhossain.github.io/)
+
+[**Syllabus**](https://docs.google.com/document/d/1H6Wqht_PVw_n8Jl0kXN3HjZfHkeZJYqYWT4ayxvqRlU/edit?usp=sharing)
+
+
+<!-- #### Acknowledgment {-} -->
+
+
+# Notation {-}
+
+We will use the following standard notation throughout this book.
+
+**Basics**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\Real{}$        |   real numbers   |
+| $\Real{}_{+}$ | nonnegative real |
+| $\Real{}_{++}$| positive real |
+| $\mathbb{Z}$        |   integers   |
+| $\bbN$    |  nonnegative integers   |
+| $\bbN_{+}$ | positive integers |
+| $\Real{n}$ |  $n$-D column vector |
+| $\Real{n}_{+}$| nonnegative orthant |
+| $\Real{n}_{++}$| positive orthant |
+| $e_i$ | standard basic vector |
+| $\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}$ | standard simplex | 
+
+**Matrices**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\mathbb{R}^{m \times n}$ | $m \times n$ real matrices |
+| $\sym{n}$  | $n\times n$ symmetric matrices  |
+| $\psd{n}$ | $n\times n$ positive semidefinite matrices |
+| $\pd{n}$ | $n\times n$ positive definite matrices |
+| $\inprod{A}{B}$ or $\bullet$  | inner product in $\Real{m \times n}$ |
+| $\trace(A)$| trace of $A \in \Real{n \times n}$ |
+| $A\tran$ | matrix transpose |
+| $\det(A)$ | matrix determinant |
+| $\rank(A)$ | rank of a matrix |
+| $\diag(A)$ | diagonal of a matrix $A$ as a vector |
+| $\Diag(a)$ | turning a vector into a diagonal matrix |
+| $\BlkDiag(A,B,\dots)$ | block diagonal matrix with blocks $A,B,\dots$ |
+| $\succeq 0$ and $\preceq 0$ | positive / negative semidefinite |
+| $\succ 0$ and $\prec 0$ | positive / negative definite |
+| $\lambda_{\max}$ and $\lambda_{\min}$ | maximum / minimum eigenvalue |
+| $\sigma_{\max}$ and $\sigma_{\min}$ | maximum / minimum singular value |
+| $\vectorize(A)$ | vectorization of $A \in \Real{m \times n}$
+| $\svec(A)$| symmetric vectorization of $A \in \sym{n}$
+| $\Fnorm{A}$ | Frobenius norm |
+| $\Range(A)$ | span of the column vectors |
+| $\ker(A)$ | right null space | 
+
+**Geometry**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\pnorm{a}{p}$ | $p$-norm |
+| $\norm{a}$ | $2$-norm |
+| $B(o,r)$ | ball with center $o$ and radius $r$ |
+| $\aff (S)$ | affine hull of set $S$ |
+| $\conv(S)$ | convex hull of set $S$ |
+| $\cone(S)$ | conical hull of set $S$ |
+| $\interior(S)$ | interior of set $S$ | 
+| $\relint(S)$ | relative interior of set $S$ |
+| $\partial S$ | boundary of set $S$ |
+| $P^\circ$ | polar of convex body | 
+| $P^{*}$ | dual of set $P$ |
+| $\Od$ | orthogonal group of dimension $d$ |
+| $\SOd$ | special orthogonal group of dimension $d$ |
+| $\usphere^{d-1}$ | unit sphere in $\Real{d}$ |
+
+**Optimization**
+
+|                   |          | 
+| :---------------- | :------  |
+| KKT | Karush–Kuhn–Tucker |
+| LP | linear program |
+| QP | quadratic program |
+| SOCP | second-order cone program |
+| SDP | semidefinite program |
+
+**Algebra**
+
+|                   |          | 
+| :---------------- | :------  |
+| $\poly{x}$ | polynomial ring in $x$ with real coefficients | 
+| $\deg$ | degree of a monomial / polynomial |
+| $\poly{x}_d$ | polynomials in $x$ of degree up to $d$ |
+| $[x]_d$ | vector of monomials of degree up to $d$ |
+| $\brkt{x}_d$ | vector of monomials of degree $d$ |
+
+
+
+
+
+
+
+<!--chapter:end:index.Rmd-->
+
+# Mathematical Background {#background}
+
+## Convexity {#background:convexity}
+
+A very important notion in modern optimization is that of _convexity_. To a large extent, an optimization problem is "easy" if it is convex, and "difficult" when convexity is lost, i.e., _nonconvex_. We give a basic review of convexity here and refer the reader to [@rockafellar70-convexanalysis], [@boyd04book-convex], and [@bertsekas03book-convex] for comprehensive treatments.
+
+We will work on a finite-dimensional real vector space, which we will identify with $\Real{n}$.
+
+::: {.definitionbox}
+::: {.definition #ConvexSet name="Convex Set"}
+A set $S$ is convex if $x_1,x_2 \in S$ implies $\lambda x_1 + (1-\lambda) x_2 \in S$ for any $\lambda \in [0,1]$. In other words, if $x_1,x_2 \in S$, then the line segment connecting $x_1$ and $x_2$ lies inside $S$.
+:::
+:::
+
+Conversely, a set $S$ is nonconvex if Definition \@ref(def:ConvexSet) does not hold. 
+
+Given $x_1, x_2 \in S$, $\lambda x_1 + (1-\lambda) x_2$ is called a _convex combination_ when $\lambda \in [0,1]$. For convenience, we will use the following notation
+\begin{equation}
+\begin{split}
+(x_1,x_2) = \cbrace{\lambda x_1 + (1-\lambda) x_2 \mid \lambda \in (0,1)}, \\ [x_1,x_2] = \cbrace{\lambda x_1 + (1-\lambda) x_2 \mid \lambda \in [0,1]}.
+\end{split}
+\end{equation}
+
+A **hyperplane** is a common convex set defined as
+\begin{equation}
+H = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} = d }
+(\#eq:hyperplane)
+\end{equation}
+for some $c \in \Real{n}$ and scalar $d$. A **halfspace** is a convex set defined as
+\begin{equation}
+H^{+} = \cbrace{ x \in \Real{n} \mid \inprod{c}{x} \geq d }.
+(\#eq:halfspace)
+\end{equation}
+
+Given two nonempty convex sets $C_1$ and $C_2$, the **distance** between $C_1$ and $C_2$ is defined as 
+\begin{equation}
+\dist (C_1,C_2) = \inf \cbrace{\norm{c_1 - c_2} \mid c_1 \in C_1, c_2 \in C_2}.
+\end{equation}
+
+For a convex set $C$, the hyperplane $H$ in \@ref(eq:hyperplane) is called a **supporting hyperplane** for $C$ if $C$ is contained in the half space $H^{+}$ and the distance between $H$ and $C$ is zero. For example, the hyperplane $x_1 = 0$ is supporting for the hyperboloid $\cbrace{(x_1,x_2) \mid x_1 x_2 \geq 1, x_1 \geq 0, x_2 \geq 0}$ in $\Real{2}$.
+
+An important property of a convex set is that we can _certify_ when a point is not in the set. This is usually done via a separation theorem.
+
+::: {.theorembox}
+::: {.theorem #SeparationTheorem name="Separation Theorem"}
+Let $S_1,S_2$ be two convex sets in $\Real{n}$ and $S_1 \cap S_2 = \emptyset$, then there exists a hyperplane that separates $S_1$ and $S_2$, i.e., there exists $c$ and $d$ such that 
+\begin{equation}
+\begin{split}
+\inprod{c}{x} \geq d, &  \forall x \in S_1,\\
+\inprod{c}{x} \leq d, & \forall x \in S_2.
+\end{split}
+(\#eq:separation)
+\end{equation}
+Further, if $S_1$ is compact (i.e., closed and bounded) and $S_2$ is closed, then the separation is strict, i.e., the inequalities in \@ref(eq:separation) are strict.
+:::
+:::
+
+The strict separation theorem is used typically when $S_1$ is a single point (hence compact).
+
+We will see a generalization of the separation theorem for nonconvex sets later after we introduce the idea of sums of squares.
+
+::: {.exercisebox}
+::: {.exercise}
+Provide examples of two disjoint convex sets such that the separation in \@ref(eq:separation) is not strict in one way and both ways.
+:::
+:::
+
+::: {.exercisebox}
+::: {.exercise}
+Provide a constructive proof that the separation hyperplane exists in Theorem \@ref(thm:SeparationTheorem) when (1) both $S_1$ and $S_2$ are closed, and (2) at least one of them is bounded.
+:::
+:::
+
+The intersection of convex sets is always convex (try to prove this).
+
+## Convex Geometry {#background:convex:geometry}
+
+### Basic Facts
+
+Given a set $S$, its **affine hull** is the set 
+$$
+\aff (S) = \lcbrace{ \sum_{i=1}^k \lambda_i u_i \mid \lambda_1 + \dots + \lambda_k = 1, u_i \in S, k \in \bbN_{+} },
+$$
+where $\sum_{i=1}^{k} \lambda_i u_i$ is called an _affine combination_ of $u_1,\dots,u_k$ when $\sum_i \lambda_i = 1$. The affine hull of a set is the smallest affine subspace that contains $S$, and the **dimension** of $S$ is the dimension of its affine hull. The affine hull of the emptyset is the emptyset, of a singleton is the singleton itself. The affine hull of a set of two different points is the line going through them. The affine hull of a set of three points not on one line is the plane going through them. The affine hull of a set of four points not in a plane in $\Real{3}$ is the entire space $\Real{3}$.
+
+For a convex set $C \subseteq \Real{n}$, the **interior** of $C$ is defined as
+$$
+\interior(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \subseteq C },
+$$
+where $B(u,\epsilon)$ denotes a ball centered at $u$ with radius $\epsilon$ (using the usual 2-norm). Each point in $\interior(C)$ is called an _interior point_ of $C$. If $\interior(C) = C$, then $C$ is said to be an **open set**. A convex set with nonempty interior is called a **convex domain**, while a compact (i.e., closed and bounded) convex domain is called a **convex body**.
+
+The **boundary of $C$** is the subset of points that are in the **closure**^[The closure of a subset $C$ of points, denoted $\cl(C)$, consists of all points in $C$ together with all limit points of $C$. The closure of $C$ may equivalently be defined as the intersection of all closed sets containing $C$. Intuitively, the closure can be thought of as all the points that are either in $C$ or "very near" $C$. For example, the closure of the open line segment $C= (0,1)$ is the closed line segment $C=[0,1]$.] of $C$ but are not in the interior of $C$, and we denote it as $\partial C$. For example, the closed line segment $C = [0,1]$ has two points on the boundary: $0$ and $1$; the open line segment $C = (0,1)$ has the same two points as its boundary.
+
+It is possible that a convex set has empty interior. For example, a hyperplane has no interior, and neither does a singleton. In such cases, the **relative interior** can be defined as
+$$
+\relint(C) := \cbrace{ u \in C \mid \exists \epsilon > 0, B(u,\epsilon) \cap \aff(C) \subseteq C }.
+$$
+For a nonempty convex set, the relative interior always exists. If $\relint(C) = C$, then $C$ is said to be **relatively open**. For example, the relative interior of a singleton is the singleton itself, and hence a singleton is relatively open.
+
+For a convex set $C$, a point $u \in C$ is called an **extreme point** if 
+$$
+u \in (x,y), x \in C, y \in C \quad \Rightarrow u = x = y.
+$$
+For example, consider $C = \cbrace{(x,y)\mid x^2 + y^2 \leq 1}$, then all the points on the boundary $\partial C = \cbrace{(x,y) \mid x^2 + y^2 = 1}$ are extreme points.
+
+A subset $F \subseteq C$ is called a **face** if $F$ itself is convex and 
+$$
+u \in (x,y), u \in F, x,y \in C \quad \Rightarrow x,y \in F. 
+$$
+Clearly, the empty set $\emptyset$ and the entire set $C$ are faces of $C$, which are called _trivial faces_. The face $F$ is said to be _proper_ if $F \neq C$. The set of any single extreme point is also a face. A face $F$ of $C$ is called **exposed** if there exists a supporting hyperplane $H$ for $C$ such that 
+$$
+F = H \cap C.
+$$
+
+### Cones, Duality, Polarity
+
+::: {.definitionbox}
+::: {.definition #polar name="Polar"}
+For a nonempty set $T \subseteq \Real{n}$, its polar is the set 
+\begin{equation}
+T^\circ := \cbrace{ y \in \Real{n} \mid \inprod{x}{y} \leq 1, \forall x \in T }.
+(\#eq:polar)
+\end{equation}
+:::
+:::
+
+The polar $T^\circ$ is a closed convex set and contains the origin. Note that $T$ is always contained in the polar of $T^\circ$, i.e., $T \subseteq (T^\circ)^\circ$. Indeed, they are equal under some assumptions.
+
+::: {.theorembox}
+::: {.theorem #bipolar name="Bipolar"}
+If $T \subseteq \Real{n}$ is a closed convex set containing the origin, then $(T^\circ)^\circ = T$.
+:::
+:::
+
+An important class of convex sets are those that are invariant under positive scalings.^[Some authors define a cone using nonnegative scalings.] A set $K \subseteq \Real{n}$ is a **cone** if $t x \in K$ for all $x \in K$ and for all $t > 0$. For example, the positive real line $\cbrace{x \in \Real{} \mid x > 0}$ is a cone. The cone $K$ is **pointed** if $K \cap -K = \{ 0 \}$. It is said to be **solid** if its interior $\interior(K) \neq \emptyset$. Any nonzero point of a cone cannot be extreme. If a cone is pointed, the only extreme point is the origin. 
+
+The analogue of extreme point for convex cones is the **extreme ray**. For a convex cone $K$ and $0 \neq u \in K$, the line segment
+$$
+u \cdot [0,\infty) := \cbrace{tu \mid t\geq 0}
+$$
+is called an extreme ray of $K$ if 
+$$
+u \in (x,y), x,y \in K \quad \Rightarrow \quad u,x,y \text{ are parallel to each other}.
+$$
+If $u \cdot [0,\infty)$ is an extreme ray, then we say $u$ generates the extreme ray. 
+
+::: {.definitionbox}
+::: {.definition #ProperCone name="Proper Cone"}
+A cone $K$ is proper if it is closed, convex, pointed, and solid.
+:::
+:::
+
+A proper cone $K$ induces a **partial order** on the vector space, via $x \succeq y$ if $x - y \in K$. We also use $x \succ y$ if $x - y$ is in $\interior(K)$. Important examples of proper cones are the nonnegative orthant, the second-order cone, the set of symmetric positive semidefinite matrices, and the set of nonnegative polynomials, which we will describe later in the book.
+
+::: {.definitionbox}
+::: {.definition #Dual name="Dual"}
+The dual of a nonempty set $S$ is 
+$$
+S^* := \cbrace{ y \in \Real{n} \mid \inprod{y}{x} \geq 0, \forall x \in S}.
+$$
+:::
+:::
+
+Given any set $S$, its dual $S^*$ is always a closed convex cone. Duality reverses inclusion, that is, 
+$$
+S_1 \subseteq S_2 \quad \Rightarrow \quad S_1^* \supseteq S_2^*.
+$$
+If $S$ is a closed convex cone, then $S^{* *}= S$. Otherwise, $S^{* *}$ is the closure of the smallest convex cone that contains $S$.
+
+For a cone $K \subseteq \Real{n}$, one can show that 
+$$
+K^\circ = \cbrace{y \in \Real{n} \mid \inprod{x}{y} \leq 0, \forall x \in K}.
+$$
+The set $K^\circ$ is called the **polar cone** of $K$. The negative of $K^\circ$ is just the **dual cone**
+$$
+K^{*} = \cbrace{y \in \Real{n} \mid \inprod{x}{y} \geq 0, \forall x \in K}.
+$$
+
+::: {.definitionbox}
+::: {.definition #selfdual name="Self-dual"}
+A cone $K$ is self-dual if $K^{*} = K$.
+:::
+:::
+
+As an easy example, the nonnegative orthant $\Real{n}_{+}$ is self-dual.
+
+::: {.examplebox}
+::: {.example #SecondOrderCone name="Second-order Cone"}
+The second-order cone, or the Lorentz cone, or the ice cream cone
+$$
+\calQ_n := \cbrace{ (x_0,x_1,\dots,x_n) \in \Real{n+1} \mid \sqrt{x_1^2 + \dots + x_n^2} \leq x_0 }
+$$
+is a proper cone of $\Real{n+1}$. We will show that it is also self-dual.
+
+**Proof**. Consider $(y_0,y_1,\dots,y_n) \in \calQ_n$, we want to show that 
+\begin{equation}
+x_0 y_0 + x_1 y_1 + \dots + x_n y_n \geq 0, \forall (x_0,x_1,\dots,x_n) \in \calQ_n.
+(\#eq:dual-cone-condition)
+\end{equation}
+This is easy to verify because 
+$$
+x_1 y_1 + \dots + x_n y_n \geq - \sqrt{x_1^2 + \dots + x_n^2} \sqrt{y_1^2 + \dots + y_n^2} \geq - x_0 y_0.
+$$
+Hence we have $\calQ_n \subseteq \calQ_n^{*}$.
+
+Conversely, if \@ref(eq:dual-cone-condition) holds, then take 
+$$
+x_1 = -y_1, \dots, x_n = - y_n, \quad x_0 = \sqrt{x_1^2 + \dots + x_n^2},
+$$
+we have 
+$$
+y_0 \geq \sqrt{y_1^2 + \dots + y_n^2},
+$$
+hence $\calQ_n^{*} \subseteq \calQ_n$. $\blacksquare$
+
+:::
+:::
+
+Not every proper cone is self-dual.
+
+::: {.exercisebox}
+::: {.exercise}
+Consider the following proper cone in $\Real{2}$
+$$
+K = \cbrace{(x_1,x_2) \mid 2x_1 - x_2 \geq 0, 2x_2 - x_1 \geq 0}.
+$$
+Show that it is not self-dual.
+:::
+:::
+
+## Convex Optimization {#background:convex:optimization}
+
+::: {.definitionbox}
+::: {.definition #ConvexFun name="Convex Function"}
+A function $f: \Real{n} \rightarrow \Real{}$ is a convex function if 
+$$
+f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], \forall x,y \in \Real{n}.
+$$
+:::
+:::
+
+A function $f$ is convex if and only if its **epigraph** $\cbrace{(x,t) \in \Real{n+1} \mid f(x) \leq t}$ is a convex set.
+
+When a function $f$ is differentiable, then there are several equivalent characterizations of convexity, in terms of the gradient $\nabla f(x)$ or the Hessian $\nabla^2 f(x)$.
+
+::: {.theorembox}
+::: {.theorem #CharacterizeConvexity name="Equivalent Characterizations of Convexity"}
+Let $f: \Real{n} \rightarrow \Real{}$ be a twice differentiable function. The following propositions are equivalent.
+
+i. $f$ is convex, i.e.,
+$$
+f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y), \forall \lambda \in [0,1], x,y \in \Real{n}.
+$$
+
+ii. The first-order convexity condition holds:
+$$
+f(y) \geq f(x) + \inprod{\nabla f(x)}{ y - x}, \forall x, y \in \Real{n},
+$$
+i.e., the hyperplane going through $(x,f(x))$ with slope $\nabla f(x)$ supports the epigraph of $f$.
+
+iii. The second-order convexity condition holds:
+$$
+\nabla^2 f(x) \succeq 0, \forall x \in \Real{n},
+$$
+i.e., the Hessian is positive semidefinite everywhere.
+:::
+:::
+
+Let's work on a little exercise.
+
+::: {.exercisebox}
+::: {.exercise}
+Which one of the following functions $f: \Real{n} \rightarrow \Real{}$ is not convex?
+
+a. $\exp(-c\tran x)$, with $c$ constant 
+
+b. $\exp(c\tran x)$, with $c$ constant 
+
+c. $\exp(x\tran x)$
+
+d. $\exp(-x\tran x)$
+:::
+:::
+
+### Minimax Theorem
+
+Given a function $f: X \times Y \rightarrow \Real{}$, the following inequality always holds 
+\begin{equation}
+\max_{y \in Y} \min_{x \in X} f(x,y) \leq \min_{x \in X} \max_{y \in Y} f(x,y).
+(\#eq:weak-minimax)
+\end{equation}
+If the maximum or minimum is not attained, then \@ref(eq:weak-minimax) holds with $\max$ / $\min$ replaced by $\sup$ and $\inf$, respectively.
+
+::: {.exercisebox}
+::: {.exercise}
+Provide examples of $f$ such that the inequality in \@ref(eq:weak-minimax) is strict.
+:::
+:::
+
+It is of interest to understand when equality holds in \@ref(eq:weak-minimax).
+
+::: {.theorembox}
+::: {.theorem #minimax name="Minimax Theorem"}
+Let $X \subset \Real{n}$ and $Y \subset \Real{n}$ be compact convex sets, and $f: X \times Y \rightarrow \Real{}$ be a continuous function that is convex in its first argument and concave in the second. Then
+$$
+\max_{y \in Y} \min_{x \in X} f(x,y) = \min_{x \in X} \max_{y \in Y} f(x,y).
+$$
+:::
+:::
+
+A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when $X$ and $Y$ are standard unit simplicies and the function $f(x,y)$ is bilinear. In a research from our group [@tang23arxiv-uncertainty], we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
+
+### Lagrangian Duality {#background:convex:optimization:Lagrangian}
+
+Consider a nonlinear optimization problem 
+\begin{equation}
+\begin{split}
+u^\star = \min_{x \in \Real{n}} & \quad f(x) \\
+\subject & \quad g_i(x) \leq 0, i=1,\dots,m, \\
+& \quad h_j(x) = 0, j = 1,\dots,p.
+\end{split}
+(\#eq:background-nlp)
+\end{equation}
+Define the **Lagrangian** associated with the optimization problem \@ref(eq:background-nlp) as 
+\begin{equation}
+\begin{split}
+L: \Real{n} \times \Real{m}_{+} \times \Real{p} \quad & \rightarrow \quad \Real{}, \\
+(x,\lambda,\mu) \quad & \mapsto \quad f(x) + \sum_{i=1}^m \lambda_i g_i(x) + \sum_{j=1}^p \mu_j h_j(x).
+\end{split}
+(\#eq:background-Lagrangian)
+\end{equation}
+The **Lagrangian dual function** is defined as 
+\begin{equation}
+\phi(\lambda,\mu) := \min_{x \in \Real{n}} L(x,\lambda,\mu).
+(\#eq:background-Lagrangian-dual)
+\end{equation}
+Maximizing this function over the dual variables $(\lambda,\mu)$ yields 
+\begin{equation}
+v^\star := \max_{\lambda \geq 0, \mu \in \Real{p}} \phi(\lambda,\mu)
+(\#eq:background-Lagrangian-dual-problem)
+\end{equation}
+Applying the minimax Theorem \@ref(thm:minimax), we can see that 
+$$
+v^\star = \max_{(\lambda,\mu)} \min_{x} L(x,\lambda,\mu) \leq \min_{x} \max_{(\lambda,\mu)} L(x,\lambda,\mu) = u^\star.
+$$
+That is to say solving the dual problem \@ref(eq:background-Lagrangian-dual-problem) always provides a lower bound to the primal problem \@ref(eq:background-nlp).
+
+If the functions $f,g_i$ are convex and $h_i$ are affine, the Lagrangian is convex in $x$ and convex in $(\lambda,\mu)$. To ensure strong duality (i.e., $u^\star = v^\star$), compactness or other **constraint qualifications** are needed. An often used condition is the Slater constraint qualification. 
+
+::: {.definitionbox}
+::: {.definition #SlaterCQ name="Slater Constraint Qualification"}
+There exists a strictly feasible point for \@ref(eq:background-nlp), i.e., a point $z \in \Real{n}$ such that $h_j(z) = 0,j=1,\dots,p$ and $g_i(z) < 0,i=1,\dots,m$.
+:::
+:::
+
+Under these conditions, we have strong duality.
+
+::: {.theorembox}
+::: {.theorem #StrongDuality name="Strong Duality"}
+Consider the optimization \@ref(eq:background-nlp) and assume $f,g_i$ are convex and $h_j$ are affine. If Slater's constraint qualification holds, then the optimal value of the primal problem \@ref(eq:background-nlp) is the same as the optimal value of the dual problem \@ref(eq:background-Lagrangian-dual-problem).
+:::
+:::
+
+### KKT Optimality Conditions
+
+Consider the nonlinear optimization problem \@ref(eq:background-nlp). A pair of primal and dual variables $(x^\star,\lambda^\star,\mu^\star)$ is said to satisfy the Karush-Kuhn-Tucker (KKT) optimality conditions if 
+
+\begin{equation}
+\begin{split}
+\text{primal feasibility}:\ \  & g_i(x^\star) \leq 0,\forall i=1,\dots,m; h_j(x^\star) = 0, \forall j=1,\dots,p \\
+\text{dual feasibility}:\ \  & \lambda_i^\star \geq 0, \forall i=1,\dots,m \\
+\text{stationarity}:\ \  & \nabla_x L(x^\star,\lambda^\star,\mu^\star) = 0 \\
+\text{complementarity}:\ \  & \lambda_i^\star \cdot g_i(x^\star) = 0, \forall i=1,\dots,m.
+\end{split}
+(\#eq:KKT-conditions)
+\end{equation}
+
+Under certain constraint qualifications, the KKT conditions are necessary for local optimality.
+
+::: {.theorembox}
+::: {.theorem #KKTNecessary name="Necessary Optimality Conditions"}
+Assume any of the following constraint qualifications hold:
+
+- The gradients of the constraints $\cbrace{\nabla g_i(x^\star)}_{i=1}^m$, $\cbrace{\nabla h_j(x^\star)}_{j=1}^p$ are linearly independent. 
+
+- Slater's constraint qualification (cf. Definition \@ref(def:SlaterCQ)). 
+
+- All constraints $g_i(x)$ and $h_j(x)$ are affine functions.
+
+Then, at every local minimum $x^\star$ of \@ref(eq:background-nlp), the KKT conditions \@ref(eq:KKT-conditions) hold.
+:::
+:::
+
+On the other hand, for convex optimization problems, the KKT conditions are sufficient for global optimality.
+
+::: {.theorembox}
+::: {.theorem #KKTSufficient name="Sufficient Optimality Conditions"}
+Assume optimization \@ref(eq:background-nlp) is convex, i.e., $f,g_i$ are convex and $h_j$ are affine. Every point $x^\star$ that satisfies the KKT conditions \@ref(eq:KKT-conditions) is a global minimizer.
+:::
+:::
+
+
+## Linear Optimization {#background:linear:optimization}
+
+### Polyhedra 
+
+In $\Real{n}$, a **polyhedron** is a set defined by finitely many linear inequalities, i.e.,
+\begin{equation}
+P = \cbrace{x \in \Real{n} \mid A x \geq b},
+(\#eq:polyhedron)
+\end{equation}
+for some matrix $A \in \Real{m \times n}$ and $b \in \Real{m}$. In \@ref(eq:polyhedron), the inequality should be interpreted as $A x - b \in \Real{m}_{+}$, i.e., every entry of $Ax$ is no smaller than the corresponding entry of $b$. 
+
+The convex hull of finitely many points in $\Real{n}$ is called a **polytope**, where the convex hull of a set $S$ is defined as 
+\begin{equation}
+\hspace{-10mm} \conv(S) = \lcbrace{\sum_{i=1}^k \lambda_i u_i \mid k \in \bbN_{+}, \sum_{i=1}^k \lambda_i = 1, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k},
+(\#eq:convex-hull)
+\end{equation}
+i.e., all possible convex combinations of points in $S$. Clearly, a polytope is bounded. 
+
+The conic hull of finitely many points in $\Real{n}$ is called a **polyhedral cone**, where the conic hull of a set $S$ is defined as 
+\begin{equation}
+\hspace{-10mm} \cone(S) = \lcbrace{ \sum_{i=1}^k \lambda_i u_i \mid k \in \bbN_{+}, \lambda_i \geq 0,i=1,\dots,k, u_i \in S, \forall i =1,\dots,k  }.
+(\#eq:conic-hull)
+\end{equation}
+The only difference between \@ref(eq:conic-hull) and \@ref(eq:convex-hull) is the removal of $\sum_{i} \lambda_i = 1$. Clearly, the origin belongs to the conic hull of any nonempty set, and the conic hull of any nonempty set is unbounded.
+
+The next theorem characterizes a polyhedron.
+
+::: {.theorembox}
+::: {.theorem #DecomposePolyhedron name="Polyhedron Decomposition"}
+Every polyhedron $P$ is finitely generated, i.e., it can be written as the Minkowski sum of a polytope and a polyhedral cone:
+$$
+P = \conv(u_1,\dots,u_r) + \cone(v_1,\dots,v_s),
+$$
+where the Minkowski sum of two sets is defined as $X + Y := \cbrace{x+y \mid x \in X, y \in Y}$.
+
+Further, a bounded polyhedron is a polytope.
+:::
+:::
+
+An extreme point of a polytope is called a **vertex**. A $1$-dimensional face of a polytope is called an **edge**. A $d-1$-dimensional face of a $d$-dimensional polytope is called a **facet**.
+
+### Linear Program
+
+We will now give a brief review of important results in linear programming (LP). The standard reference for linear programming is [@bertsimas97book-lp]. In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite. 
+
+A standard form linear program (LP) reads
+\begin{equation}
+\begin{split}
+\min_{x \in \Real{n}} & \quad \inprod{c}{x}  \\
+\subject & \quad Ax = b \\
+& \quad x \geq 0
+\end{split}
+(\#eq:primal-lp)
+\end{equation}
+for given $A \in \Real{m\times n}$, $b \in \Real{m}$, and $c \in \Real{n}$. Often the tuple $(A,b,c)$ is called the _problem data_ because the LP \@ref(eq:primal-lp) is fully defined once the tuple is given (indeed many LP numerical solvers take the tuple $(A,b,c)$ as input). Clearly, the feasible set of the LP \@ref(eq:primal-lp) is a polyhedron. The LP \@ref(eq:primal-lp) is often referred to as the **primal** LP. Associated with \@ref(eq:primal-lp) is the following **dual** LP 
+\begin{equation}
+\begin{split}
+\max_{y \in \Real{m}} & \quad \inprod{b}{y} \\
+\subject & \quad c - A\tran y \geq 0
+\end{split}
+(\#eq:dual-lp)
+\end{equation}
+It is worth noting that the dimension of the dual variable $y$ is exactly the number of constraints in the primal LP. 
+
+**Lagrangian duality**. Let us use the idea of Lagrangian duality introduced in Section \@ref(background:convex:optimization:Lagrangian) to verify that \@ref(eq:dual-lp) is indeed the Lagrangian dual problem of \@ref(eq:primal-lp). The Lagrangian associated with \@ref(eq:primal-lp) is 
+\begin{equation}
+\begin{split}
+L(x,\lambda,\mu) & = \inprod{c}{x} + \inprod{\mu}{Ax - b} + \inprod{\lambda}{-x}, \quad \mu \in \Real{m}, \lambda \in \Real{n}_{+}\\
+& = \inprod{c + A\tran \mu - \lambda}{x} - \inprod{\mu}{b}, \quad \mu \in \Real{m}, \lambda \in \Real{n}_{+}.
+\end{split}
+\end{equation}
+The Lagrangian dual function is therefore 
+$$
+\phi(\lambda,\mu) = \min_{x} L(x,\lambda,\mu) = \begin{cases}
+- \inprod{\mu}{b} & \text{if } c + A\tran \mu - \lambda = 0 \\
+- \infty & \text{Otherwise}
+\end{cases}, \mu \in \Real{m}, \lambda \in \Real{n}_{+}.
+$$
+The Lagrangian dual problem seeks to maximize the dual function $\phi(\lambda,\mu)$, and hence it must set $c + A\tran \mu - \lambda = 0$ (otherwise it leads to $-\infty$). As a result, the dual problem is
+\begin{equation}
+\begin{split}
+\max_{\mu \in \Real{m}} & \quad \inprod{b}{-\mu} \\
+\subject & \quad c + A\tran \mu = \lambda \geq 0
+\end{split}
+(\#eq:lp-Lagrangian-dual)
+\end{equation}
+With a change of variable $y := -\mu$, we observe that problem \@ref(eq:lp-Lagrangian-dual) is precisely problem \@ref(eq:dual-lp).
+
+**Weak duality**. For the pair of primal-dual LPs, it is easy to verify that, for any $x$ that is feasible for the primal \@ref(eq:primal-lp) and $y$ that is feasible for the dual \@ref(eq:dual-lp), we have
+\begin{equation}
+\inprod{c}{x} - \inprod{b}{y} = \inprod{c}{x} - \inprod{Ax}{y} = \inprod{c}{x} - \inprod{A\tran y}{x} = \inprod{c - A\tran y}{x} \geq 0.
+(\#eq:weak-duality-lp)
+\end{equation}
+Therefore, denoting $p^\star$ as the optimum of \@ref(eq:primal-lp) and $d^\star$ as the optimum of \@ref(eq:dual-lp), we have the weak duality 
+$$
+p^\star \geq d^\star.
+$$
+Note that such weak duality can also be directly obtained since \@ref(eq:lp-Lagrangian-dual) is the Lagrangian dual of \@ref(eq:primal-lp).
+
+If $p^\star = d^\star$, then we say **strong duality** holds. The LP \@ref(eq:primal-lp) is said to be **feasible** if its feasible set is nonempty. It is said to be **unbounded below** if there exists a sequence $\cbrace{u_i}_{i=1}^{\infty} \subseteq \Real{n}_{+}$ such that $\inprod{c}{u_i} \rightarrow -\infty$ and $A u_i = b$. If the primal \@ref(eq:primal-lp) is infeasible (resp. unbounded below), we set $p^\star = + \infty$ (resp. $p^\star = - \infty$). Similar characteristics are defined for the dual LP \@ref(eq:dual-lp). In particular, if the dual \@ref(eq:dual-lp) is unbounded, then we set $d^\star = + \infty$. If the dual is infeasible, then we set $d^\star = - \infty$.
+
+Strong duality is well understood in linear programming.
+
+::: {.theorembox}
+::: {.theorem #LPStrongDuality name="LP Strong Duality"}
+For the LP primal-dual pair \@ref(eq:primal-lp) and \@ref(eq:dual-lp), we have 
+
+- If one of \@ref(eq:primal-lp) and \@ref(eq:dual-lp) is feasible, then $p^\star = d^\star$ (i.e., finite, $+\infty$, or $-\infty$).
+
+- If one of $p^\star$ or $d^\star$ is finite, then $p^\star = d^\star$ is finite, and both \@ref(eq:primal-lp) and \@ref(eq:dual-lp) achieve the same optimal value (i.e., they botb have optimizers).
+
+- A primal feasible point $x^\star$ of \@ref(eq:primal-lp) is a minimizer if and only if there exists a dual feasible point $y^\star$ such that $\inprod{c}{x^\star} = \inprod{b}{y^\star}$.
+
+:::
+:::
+
+For example, consider the following primal-dual LP pair
+\begin{equation}
+\begin{cases}
+\min_{x \in \Real{3}_{+}} & x_1 + x_2 + 2 x_3 \\
+\subject & \begin{bmatrix} -1 & 1 & 1 \\ 1 & 1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & y_2 \\
+\subject & \begin{bmatrix} 1 \\ 1 \\ 2 \end{bmatrix} - \begin{bmatrix} -1 & 1 \\ 1 & 1 \\ 1 & 2 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \geq 0
+\end{cases}.
+\end{equation}
+$x^\star = [1/2,1/2,0]\tran$ is feasible for the primal and attains $p^\star = 1$. $y^\star = [0,1]\tran$ is feasible for the dual and attains $d^\star = 1$. Therefore, both $x^\star$ and $y^\star$ are optimizers for the primal and dual, respectively.
+
+**Complementary slackness**. Strong duality, when combined with \@ref(eq:weak-duality-lp), implies that 
+$$
+x_i^\star (c - A\tran y^\star)_i = 0, \forall i = 1,\dots,n,
+$$
+where $(\cdot)_i$ denotes the $i$-th entry of a vector. This is known as complementary slackness, which states that whenever a primal optimal solution has a nonzero entry, the corresponding dual inequality must be tight.
+
+An important property of LP is that if the primal problem is feasible and bounded below, then it must have an optimizer that is a **basic feasible point**, i.e., a feasible point has at most $m$ nonzero entries. The simplex method [@bertsimas97book-lp] for solving LPs searches for optimizers among the basic feasible points.
+
+We also introduce how to detect infeasibility and unboundedness of LPs.
+
+::: {.theorembox}
+::: {.theorem #LPInfeasUnbound name="LP Infeasibility and Unboundedness"}
+Infeasibility and Unboundedness of LP can be certified by existence of an improving/decreasing ray for the primal and dual:
+
+- When the primal \@ref(eq:primal-lp) is feasible, it is unbounded below if and only if it has a decreasing ray, i.e., there exists $u \in \Real{n}$ such that 
+$$
+A u = 0, \quad u \geq 0, \quad \inprod{c}{u} < 0.
+$$
+
+- When the dual \@ref(eq:dual-lp) is feasible, it is unbounded above if and only if it has an improving ray, i.e., there exists $u \in \Real{m}$ such that 
+$$
+A\tran u \leq 0, \quad \inprod{b}{u} > 0. 
+$$
+
+- The primal problem \@ref(eq:primal-lp) is infeasible if and only if the dual problem \@ref(eq:dual-lp) has an improving ray, i.e., there exists $u \in \Real{m}$ such that 
+$$
+A\tran u \leq 0, \quad \inprod{b}{u} > 0.
+$$
+
+- The dual problem \@ref(eq:dual-lp) is infeasible if and only if the primal problem \@ref(eq:primal-lp) has a decreasing ray, i.e., there exists $u \in \Real{n}$ such that 
+$$
+A u = 0, \quad u \geq 0, \quad \inprod{c}{u} < 0.
+$$
+:::
+:::
+
+It is important to note that both the primal and dual can be infeasible, as in the following example.
+\begin{equation}
+\begin{cases}
+\min_{x \in \Real{2}_{+}} & - x_1 - x_2 \\
+\subject & \begin{bmatrix} -1 & 1 \\ -1 & 1 \end{bmatrix} x = \begin{bmatrix} 2 \\ 3 \end{bmatrix}
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & 2 y_1 + 3 y_2 \\
+\subject & \begin{bmatrix} -1 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 & -1 \\ 1 & 1 \end{bmatrix} y \geq 0
+\end{cases}.
+\end{equation}
+
+### Farkas Lemma
+
+A foundational result in linear programming is the Farkas Lemma.
+
+::: {.theorembox}
+::: {.theorem #FarkasLemma name="Farkas Lemma"}
+For a given $A \in \Real{m \times n}$ and $c \in \Real{n}$, if $\inprod{c}{x} \geq 0$ for all $x$ satisfying $Ax \geq 0$, then there exists $\lambda \in \Real{m}$ such that 
+$$
+c = A\tran \lambda, \quad \lambda \geq 0.
+$$
+:::
+:::
+
+As a simple example, take $A = \eye_n$ as the identity matrix, then Farkas Lemma says if $\inprod{c}{x} \geq 0$ for all $x \geq 0$, then $c$ must be that $c \geq 0$ -- this is exactly the fact that the nonnegative orthant $\Real{n}_{+}$ is self-dual. 
+
+In general, the Farkas Lemma states if the linear function $\inprod{c}{x}$ is nonnegative on the space $\{ Ax \geq 0 \}$, then there exists $\lambda \in \Real{m}_{+}$ such that 
+\begin{equation}
+\inprod{c}{x} = \inprod{\lambda}{ Ax} = \sum_{i=1}^m \lambda_i (a_i\tran x),
+(\#eq:farkas-lemma-imply)
+\end{equation}
+where $a_i\tran$ is the $i$-th row of $A$. Note that \@ref(eq:farkas-lemma-imply) is a polynomial identity. As we will see later in the course, the idea of sums of squares (SOS), to some extent, is to generalize Farkas Lemma to the case where the function is a polynomial and the set is a basic semialgebraic set (i.e., defined by polynomial equalities and inequalities).
+
+A generalization of Farkas Lemma to inhomogeneous affine functions is stated below.
+
+::: {.theorembox}
+::: {.theorem #InhomogeneousFarkasLemma name="Inhomogeneous Farkas Lemma"}
+Suppose the set $P = \cbrace{x \in \Real{n} \mid A x \geq b}$ with $A \in \Real{m \times n}, b \in \Real{m}$ is nonempty. If a linear function $\inprod{c}{x} - d$ is nonnegative on $P$, then there exists $\lambda \in \Real{m}$ and $\nu \in \Real{}$ such that
+$$
+\inprod{c}{x} - d = \nu + \inprod{\lambda}{A x - b}, \quad \lambda \geq 0, \nu \geq 0. 
+$$
+:::
+:::
+
+A more general result is called the Theorem of Alternatives, which states that a polyhedral set is empty if and only if another polyhedral set is nonempty.
+
+::: {.theorembox}
+::: {.theorem #Alternative name="Theorem of Alternatives"}
+Given $A_1 \in \Real{m_1 \times n}, A_2 \in \Real{m_2 \times n}$, $b_1 \in \Real{m_1}$, and $b_2 \in \Real{m_2}$, the set 
+$$
+\cbrace{x \in \Real{n} \mid A_1 x > b_1, A_2 x \geq b_2}
+$$
+is empty if and only if the following set
+$$
+\lcbrace{(\lambda_1,\lambda_2) \in \Real{m_1} \times \Real{m_2}\ \middle\vert\ \begin{array}{r} \lambda_1 \geq 0, \lambda_2 \geq 0, \\ b_1\tran \lambda_1 + b_2\tran \lambda_2 \geq 0, \\ A_1\tran \lambda_1 + A_2\tran \lambda_2 = 0, \\ (e + b_1)\tran \lambda_1 + b_2\tran \lambda_2 = 1 \end{array} }
+$$
+is nonempty, with $e$ being the vector of all ones.
+:::
+:::
+
+
+
+
+
+
+
+
+
+<!--chapter:end:01-background.Rmd-->
+
+# Semidefinite Optimization {#sdp}
+
+## Positive Semidefinite Matrices 
+
+A real matrix $A = (A_{ij}) \in \Real{n \times n}$ is symmetric if $A = A\tran$, i.e., $A_{ij} = A_{ji}$ for all $i,j$. Let $\sym{n}$ be the space of all real symmetric matrices.
+
+Any symmetric matrix $A$ defines a **quadratic form** $x\tran A x$. A matrix $A$ is said to be **positive semidefinite** (PSD) if and only if its associated quadratic form is nonnegative, i.e., 
+$$
+x\tran A x \geq 0, \quad \forall x \in \Real{n}.
+$$
+We use $\psd{n}$ to denote the set of $n\times n$ PSD matrices. We also write $A \succeq 0$ to denote positive semidefiniteness when the dimension is clear.
+
+There are several equivalent characterizations of positive semidefiniteness.
+
+::: {.theorembox}
+::: {.lemma #PositiveSemidefinite name="Positive Semidefinite Matrices"}
+Let $A \in \sym{n}$ be a symmetric matrix, the following statements are equivalent:
+
+1. A is positive semidefinite.
+
+2. $x\tran A x \geq 0, \forall x \in \Real{n}$.
+
+3. All eigenvalues of $A$ are nonnegative.
+
+4. All $2^n-1$ principal minors of $A$ are nonnegative.
+
+5. The coefficients of $p_A(\lambda)$ weakly alternate in sign, i.e., $(-1)^{n-k} p_k \geq 0$ for $k=0,\dots,n-1$, where $p_A(\lambda) = \det (A - \lambda \eye_n)$ is the characteristics polynomial of $A$.
+
+6. There exists a factorization $A = BB\tran$, where $B \in \Real{n \times r}$ with $r$ the rank of $A$.
+:::
+:::
+
+Among the equivalent characterizations of PSD matrices, (5) is less well-known, but it can be very useful when we want to convert a PSD constraint into multiple scalar constraints. For example, consider the following subset of $\Real{3}$:
+$$
+\lcbrace{z \in \Real{3} \lmid X(z) = \begin{bmatrix} 1 & z_1 & z_2 \\ z_1 & z_2 & z_3 \\ z_2 & z_3 & 5 z_2 - 4  \end{bmatrix} \succeq 0 }.
+$$
+We can first form the characteristic polynomial of $X(z)$ --whose coefficients will be functions of $z$-- and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure [@yang22mp-inexact].
+
+```{r SpectrahedronStride, out.width='50%', fig.show='hold', fig.cap='An example spectrahedron.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/spectrahedron-stride.png")
+```
+
+Similarly, we say a matrix $A \in \sym{n}$ is **positive definite** (PD) is its associated quadratic form is always positive, i.e., 
+$$
+x\tran A x > 0, \quad \forall x \in \Real{n}.
+$$
+We use $\pd{n}$ to denote the set of $n \times n$ PD matrices, and also write $A \succ 0$ when the dimension is clear.
+
+Below is set of equivalent characterizations of positive definite matrices.
+
+::: {.theorembox}
+::: {.lemma #PositiveDefinite name="Positive Definite Matrices"}
+Let $A \in \sym{n}$ be a symmetric matrix, the following statements are equivalent:
+
+1. A is positive definite. 
+
+2. $x\tran A x > 0, \forall x \in \Real{n}$.
+
+3. All eigenvalues of $A$ are strictly positive.
+
+4. All $n$ leading principal minors of $A$ are strictly positive.
+
+5. The coefficients of $p_A(\lambda)$ strictly alternate in sign, i.e., $(-1)^{n-k} p_k > 0$ for $k=0,\dots,n-1$, where $p_A(\lambda) = \det (A - \lambda \eye_n)$ is the characteristics polynomial of $A$.
+
+6. There exists a factorization $A = BB\tran$ with $B$ square and nonsingular (full-rank).
+:::
+:::
+
+**Schur Complements**. A useful technique to check whether a matrix is positive (semi-)definite is to use the Schur Complements. Consider a block-partitioned matrix 
+\begin{equation}
+M = \begin{bmatrix} A & B \\ B\tran & C \end{bmatrix},
+(\#eq:block-mat-M)
+\end{equation}
+where $A$ and $C$ are symmetric matrices.
+If $A$ is invertible, then the Schur complement of $A$ is
+$$
+M / A = C - B\tran A\inv B.
+$$
+Similarly, if $C$ is invertible, then the Schur complement of $C$ is 
+$$
+M / C = A - B C\inv B\tran.
+$$
+
+We have the following result relating the Schur Complements to positive (semi-)definiteness.
+
+::: {.theorembox}
+::: {.proposition #SchurPSD name="Schur Complements and PSD"}
+Consider the block-partitioned matrix $M$ in \@ref(eq:block-mat-M),
+
+- $M$ is positive definite if and only if both $A$ and $M/A$ are positive definite:
+$$
+M \succ 0 \Leftrightarrow A \succ 0, M/A = C - B\tran A\inv B \succ 0.
+$$
+
+- $M$ is positive definite if and only if both $C$ and $M/C$ are positive definite:
+$$
+M \succ 0 \Leftrightarrow C \succ 0, M/C = A - B C\inv B\tran \succ 0.
+$$
+
+- If $A$ is positive definite, then $M$ is positive semidefinite if and only if $M/A$ is positive semidefinite:
+$$
+\text{If } A \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / A \succeq 0.
+$$
+
+- If $C$ is positive definite, then $M$ is positive semidefinite if and only if $M/C$ is positive semidefinite:
+$$
+\text{If } C \succ 0, \text{ then } M \succeq 0 \Leftrightarrow M / C \succeq 0.
+$$
+:::
+:::
+
+### Geometric Properties 
+
+The set $\psd{n}$ is a proper cone (cf. Definition \@ref(def:ProperCone)). Its interior is $\pd{n}$. Under the inner product 
+$$
+\inprod{A}{B} = \trace(AB\tran), \quad A,B \in \Real{n \times n},
+$$
+the PSD cone $\psd{n}$ is self-dual.
+
+Next we want to characterize the face of the PSD cone. We first present the following lemma which will turn out to be useful afterwards.
+
+::: {.theorembox}
+::: {.lemma #PSDRange name="Range of PSD Matrices"}
+Let $A,B \in \psd{n}$, then we have
+\begin{equation}
+\Range(A) \subseteq \Range(A + B),
+(\#eq:Range-PSD)
+\end{equation}
+where $\Range(A)$ denotes the span of the column vectors of $A$.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+For any symmetric matrix $S$, we know
+$$
+\Range(S) = \ker(S)^{\perp}.
+$$
+Therefore, to prove \@ref(eq:Range-PSD), it is equivalent to prove 
+$$
+\ker(A) \supseteq \ker(A + B).
+$$
+Pick any $u \in \ker(A + B)$, we have 
+$$
+(A + B) u = 0 \Rightarrow u \tran (A + B) u = 0 \Rightarrow u\tran A u + u\tran B u = 0 \Rightarrow u\tran A u = u\tran B u = 0,
+$$
+where the last derivation is due to $A, B \succeq 0$. Now that we have $u\tran A u = 0$, we claim that $Au = 0$ must hold, i.e., $u \in \ker(A)$. To see this, write 
+$$
+u = \sum_{i=1}^n a_i v_i,
+$$
+where $a_i = \inprod{u}{v_i}$ and $v_i,i=1,\dots,n$ are the eigenvectors of $A$ corresponding to eigenvalues $\lambda_i,i=1,\dots,n$. Then we have 
+$$
+Au = \sum_{i=1}^n a_i A v_i = \sum_{i=1}^n a_i \lambda_i v_i,
+$$
+and 
+$$
+u\tran A u = \sum_{i=1}^n \lambda_i a_i^2 = 0.
+$$
+Since $\lambda_i \geq 0, a_i^2 \geq 0$, we have 
+$$
+\lambda_i a_i^2 = 0, \forall i = 1,\dots,n.
+$$
+This indicates that if $\lambda_i > 0$, then $a_i = 0$. Therefore, $a_i$ can only be nonzero for $\lambda_i = 0$, which leads to 
+$$
+Au = \sum_{i=1}^n a_i \lambda_i v_i = 0.
+$$
+Therefore, $u \in \ker(A)$, proving the result.
+:::
+:::
+
+Lemma \@ref(lem:PSDRange) indicates that if $A \succeq B$, then $\Range(B) \subseteq \Range(A)$. What about the reverse? 
+
+::: {.theorembox}
+::: {.lemma #Extension name="Extend Line Segment"}
+Let $A,B \in \psd{n}$, if $\Range(B) \subseteq \Range(A)$, then there must exist $C \in \psd{n}$ such that 
+$$
+A \in (B,C),
+$$
+i.e., the line segment from $B$ to $A$ can be extended past $A$ within $\psd{n}$.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+Since $\Range(B) \subseteq \Range(A)$, we have 
+$$
+\ker(A) \subseteq \ker(B).
+$$
+Now consider extending the line segment past $A$ to 
+$$
+C_{\alpha} = A + \alpha(A - B) = (1+\alpha) A - \alpha B,
+$$
+with some $\alpha > 0$. We want to show that there exists $\alpha > 0$ such that $C_{\alpha} \succeq 0$.
+
+Pick $u \in \Real{n}$, then either $u \in \ker(B)$ or $u \not\in \ker(B)$. If $u \in \ker(B)$, then
+$$
+u\tran C_{\alpha} u = (1+\alpha) u\tran A u - \alpha u\tran B u = (1+\alpha) u\tran A u \geq 0.
+$$
+If $u \not\in \ker(B)$, then due to $\ker(A) \subseteq \ker(B)$, we have $u \not\in \ker(A)$ as well. As a result, we have
+\begin{equation}
+u\tran C_{\alpha} u = (1+\alpha) u\tran A u - \alpha u\tran B u = (1+\alpha) u\tran A u \lparen{ 1- \frac{\alpha}{1+\alpha} \frac{u\tran B u}{u\tran A u} }.
+(\#eq:prove-extension-1)
+\end{equation}
+Since 
+$$
+\max_{u: u \not\in \ker(A)} \frac{u\tran B u}{u\tran A u} \leq \frac{\lambda_{\max}(B)}{\lambda_{\min,>0}(A)},
+$$
+where $\lambda_{\min,>0}(A)$ denotes the minimum positive eigenvalue of $A$, we can always choose $\alpha$ sufficiently small to make \@ref(eq:prove-extension-1) nonnegative. Therefore, there exists $\alpha > 0$ such that $C_{\alpha} \succeq 0$.
+:::
+:::
+
+In fact, from Lemma \@ref(lem:PSDRange) we can induce a corollary.
+
+::: {.theorembox}
+::: {.corollary #PSDRange name="Range of PSD Matrices"}
+Let $A, B \in \psd{n}$, then we have 
+$$
+\Range(A + B) = \Range(A) + \Range(B),
+$$
+with "$+$" the Minkowski sum.
+:::
+:::
+
+::: {.exercisebox}
+::: {.exercise}
+Let $A,B \in \psd{n}$, show that $\inprod{A}{B} = 0$ if and only if $\Range(A) \perp \Range(B)$.
+:::
+:::
+
+
+
+For a subset $T \subseteq \psd{n}$, we use $\face(T,\psd{n})$ to denote the smallest face of $\psd{n}$ that contains $T$. We first characterize the smallest face that contains a given PSD matrix, i.e., $\face(A,\psd{n})$ for $A\succeq 0$. Clearly, if $A$ is PD, then $\face(A, \psd{n}) = \psd{n}$ is the entire cone. If $A$ is PSD but singular with rank $r < n$, then $A$ has the following spectral decomposition 
+$$
+Q\tran A Q = \begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix},
+$$
+where $\Lambda \in \pd{r}$ is a diagonal matrix with the $r$ nonzero eigenvalues of $A$, and $Q \in \Ogroup(n)$ is orthogonal. If 
+$$
+A = \lambda B + (1-\lambda)C, \quad B,C \in \psd{n},\lambda \in (0,1),
+$$
+then multiplying both sides by $Q\tran$ and $Q$ we have
+$$
+\begin{bmatrix} \Lambda & 0 \\ 0 & 0 \end{bmatrix} = Q\tran A Q = \lambda Q\tran B Q + (1-\lambda) Q\tran C Q.
+$$
+Therefore, it must hold that
+$$
+Q\tran B Q = \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad Q\tran C Q = \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix}, \quad B_1 \in \psd{r}, C_1 \in \psd{r},
+$$
+which is equivalent to 
+$$
+B = Q \begin{bmatrix} B_1 & 0 \\ 0 & 0 \end{bmatrix} Q\tran, C = Q \begin{bmatrix} C_1 & 0 \\ 0 & 0 \end{bmatrix} Q\tran, \quad B_1 \in \psd{r}, C_1 \in \psd{r}.
+$$
+We conclude that $\face(A,\psd{n})$ must contain the set 
+\begin{equation}
+G:= \lcbrace{Q \begin{bmatrix} X & 0 \\ 0 & 0 \end{bmatrix} Q\tran  \lmid  X \in \psd{r}}.
+(\#eq:face-of-A-psd)
+\end{equation}
+
+::: {.exercisebox}
+::: {.exercise}
+Show that $G$ in \@ref(eq:face-of-A-psd) is a face of $\psd{n}$, i.e., (i) $G$ is convex; (ii) $u \in (x,y), u \in G, x,y \in \psd{n} \Rightarrow x,y \in G$. 
+:::
+:::
+
+As a result, we have $\face(A,\psd{n}) = G$.
+
+More general faces of the PSD cone $\psd{n}$ can be characterized as follows (Theorem 3.7.1 in [@wolkowicz12book-sdp]).
+
+::: {.theorembox}
+::: {.theorem #FacePSD name="Faces of the PSD Cone"}
+A set $F \subseteq \psd{n}$ is a face if and only if there exists a subspace $L \subseteq \Real{n}$ such that 
+$$
+F = \cbrace{X \in \psd{n} \mid \Range(X) \subseteq L}.
+$$
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+It is easy to prove the "**If**" direction using Lemma \@ref(lem:PSDRange). 
+
+First we show $F$ is convex. Pick $A,B \in F$. We have $\Range(A) \subseteq L$ and $\Range(B) \subseteq L$. Let $v_1,\dots,v_m$ be a set of basis spanning $L$. We have that, for any $u \in \Real{n}$,
+\begin{equation}
+\begin{split}
+A u \in L & \Rightarrow Au = \sum_{i=1}^m a_i v_i, \\
+B u \in L & \Rightarrow Bu = \sum_{i=1}^m b_i v_i. 
+\end{split}
+\end{equation}
+So for any $\lambda \in [0,1]$, we have 
+$$
+(\lambda A + (1-\lambda) B) u = \lambda Au + (1-\lambda) Bu = \sum_{i=1}^m (\lambda a_i + (1-\lambda) b_i ) v_i \in L,
+$$
+implying $\lambda A + (1-\lambda) B \in F$ for any $\lambda \in [0,1]$.
+
+Now we show that:
+$$
+X \in (A,B), X \in F, A,B \in \psd{n} \Rightarrow A, B \in F.
+$$
+From $X = \lambda A + (1-\lambda) B$ for some $\lambda \in (0,1)$, and invoking Lemma \@ref(lem:PSDRange), we have 
+\begin{equation}
+\begin{split}
+\Range(X) & = \Range(\lambda A + (1-\lambda) B) \supseteq \Range(\lambda A) = \Range(A) \\
+\Range(X) & = \Range(\lambda A + (1-\lambda) B) \supseteq \Range((1-\lambda) B) = \Range(B).
+\end{split}
+\end{equation}
+Since $\Range(X) \subseteq L$ due to $X \in F$, we have
+$$
+\Range(A) \subseteq L, \quad \Range(B) \subseteq L,
+$$
+leading to $A,B \in F$.
+
+The proof for the "**Only If**" direction can be found in Theorem 3.7.1 of [@wolkowicz12book-sdp].
+:::
+:::
+
+## Semidefinite Programming
+
+### Spectrahedra 
+
+Recall the definition of a polyhedron in \@ref(eq:polyhedron), i.e., a vector $x$ constrained by finitely many linear inequalities. The feasible set of a Linear Program is a polyhedron.
+
+Similarly, we define a **spectrahedron** as a set defined by finitely many **linear matrix inequalities** (LMIs). Spectrahedra are the feasible sets of Semidefinite Programs (SDPs). 
+
+A linear matrix inequality has the form
+$$
+A_0 + \sum_{i=1}^m A_i x_i \succeq 0,
+$$
+where $A_i \in \sym{n},i=0,\dots,m$ are given symmetric matrices. Correspondingly, a spectrahedron is defined by finitely many LMIs.
+
+::: {.definitionbox}
+::: {.definition #Spectrahedron name="Spectrahedron"}
+A set $S \subseteq \Real{m}$ is a spectrahedron if it has the form
+$$
+S = \lcbrace{x \in \Real{m} \lmid A_0 + \sum_{i=1}^m x_i A_i \succeq 0},
+$$
+for given symmetric matrices $A_0,A_1,\dots,A_m \in \sym{n}$.
+:::
+:::
+Note that there is no less of generality in defining a spectrahedron using a single LMI. For example, in the case of a set defined by two LMIs:
+$$
+S = \lcbrace{x \in \Real{m} \lmid A_0 + \sum_{i=1}^m x_i A_i \succeq 0, B_0 + \sum_{i=1}^m x_i B_i \succeq 0 }, A_i \in \sym{n}, B_i \in \sym{d},
+$$
+we can compress the two LMIs into a single LMI by putting $A_i$ and $B_i$ along the diagonal: 
+$$
+S = \lcbrace{x \in \Real{m} \lmid \begin{bmatrix} A_0 & \\ & B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i & \\ & B_i \end{bmatrix} \succeq 0 }.
+$$
+
+Leveraging (5) of Lemma \@ref(lem:PositiveSemidefinite), we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) **basic semialgebraic set**, as seen in the following example [@blekherman12book-semidefinite]. Another example is provided in Fig. \@ref(fig:SpectrahedronStride).
+
+::: {.examplebox}
+::: {.example #EllipticCurve name="Elliptic Curve"}
+Consider the spectrahedron in $\Real{2}$ defined by 
+$$
+\lcbrace{(x,y) \in \Real{2} \lmid A(x,y) = \begin{bmatrix} x+1 & 0 & y \\ 0 & 2 & -x-1 \\ y & -x-1 & 2 \end{bmatrix} \succeq 0 }.
+$$
+To obtain scalar inequalities defining the set, let
+$$
+p_A(\lambda) = \det (\lambda I - A(x,y)) = \lambda^3 + p_2 \lambda^2 + p_1 \lambda + p_0
+$$
+be the characteristic polynomial of $A(x,y)$. $A(x,y) \succeq 0$ is then equivalent to the coefficients weakly alternating in sign:
+\begin{equation}
+\begin{split}
+p_2 & = -(x+5) \leq 0, \\
+p_1 & = -x^2 + 2x - y^2 + 7 \geq 0, \\
+p_0 & = -(3+ x -x^3 -3x^2 - 2y^2) \leq 0.
+\end{split}
+\end{equation}
+We can use the following Matlab script to plot the set shown in Fig. \@ref(fig:EllipticCurve). (The code is also available at [here](https://github.com/ComputationalRobotics/Semidefinite-Examples).) As we can see, the spectrahedron is convex, but it is not a polyhedron.
+
+```matlab 
+x = -2:0.01:2; 
+y = -2:0.01:2; 
+[X,Y] = meshgrid(x,y);
+
+ineq = (-X - 5 <= 0) & ...
+    (-X.^2 + 2*X - Y.^2 + 7 >=0) & ...
+    (3 + X - X.^3 - 3*X.^2 - 2*Y.^2 >= 0);
+
+h = pcolor(X,Y,double(ineq)) ;
+h.EdgeColor = 'none' ;
+```
+
+```{r EllipticCurve, out.width='60%', fig.show='hold', fig.cap='Elliptic Curve.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/elliptic_curve.png")
+```
+:::
+:::
+
+### Formulation and Duality
+
+Semidefinite programs (SDPs) are linear optimization problems over spectrahedra. A standard SDP in **primal** form is written as
+\begin{equation}
+\boxed{
+\begin{split}
+p^\star = \min_{X \in \sym{n}} & \quad \inprod{C}{X} \\
+\subject & \quad \calA(X) = b, \\
+& \quad X \succeq 0
+\end{split}
+}
+(\#eq:SDP-P)
+\end{equation}
+where $C \in \sym{n}$, $b \in \Real{m}$, and the linear map $\calA: \sym{n} \rightarrow \Real{m}$ is defined as 
+$$
+\calA(X) := \begin{bmatrix} \inprod{A_1}{X} \\
+\vdots \\ \inprod{A_i}{X} \\ \inprod{A_m}{X} \end{bmatrix}.
+$$
+Recall that $\inprod{C}{X} = \trace(CX)$. The feasible set of \@ref(eq:SDP-P) is the intersection of the PSD cone ($\psd{n}$) and the affine subspace defined by $\calA(X) = b$. 
+
+Closely related to the primal SDP \@ref(eq:SDP-P) is the **dual** problem
+\begin{equation}
+\boxed{
+\begin{split}
+d^\star = \max_{y \in \Real{m}} & \quad \inprod{b}{y} \\
+\subject & \quad C - \calA^* (y) \succeq 0
+\end{split}
+}
+(\#eq:SDP-D)
+\end{equation}
+where $\calA^{*}: \Real{m} \rightarrow \sym{n}$ is the **adjoint** map defined as
+$$
+\calA^*(y) := \sum_{i=1}^m y_i A_i.
+$$
+Observe how the primal-dual SDP pair \@ref(eq:SDP-P)-\@ref(eq:SDP-D) parallels the primal-dual LP pair \@ref(eq:primal-lp)-\@ref(eq:dual-lp).
+
+**Weak duality**. We have a similar weak duality between the primal and dual. Pick any $X$ that is feasible for the primal \@ref(eq:SDP-P) and $y$ that is feasible for the dual \@ref(eq:SDP-D), we have 
+$$
+\boxed{\inprod{C}{X} - \inprod{b}{y} = \inprod{C}{X} - \inprod{\calA(X)}{y} = \inprod{C - \calA^* (y)}{X} \geq 0,}
+$$
+where the last inequality holds because both $C - \calA^*(y)$ and $X$ are positive semidefinite. As a result, we have the weak duality
+$$
+d^\star \leq p^\star.
+$$
+
+Similar to the LP case, we will denote $p^\star = +\infty$ if the primal is infeasible, $p^\star = - \infty$ if the primal is unbounded below. We will denote $d^\star = +\infty$ if the dual is unbounded above, and $d^\star = -\infty$ if the dual is infeasible. We say the primal (or the dual) is **solvable** if it admits optimizers. We denote $p^\star - d^\star$ as the **duality gap**. 
+
+Recall Theorem \@ref(thm:LPStrongDuality) states that in LP, if at least one of the primal and dual is feasible, then strong duality holds (i.e., $p^\star = d^\star = \{\pm \infty, \text{finite} \}$). Unfortunately, this does not carry over to SDPs. Let us provide several examples.
+
+::: {.examplebox}
+::: {.example #FailureSDPDuality name="Failure of SDP Strong Duality"}
+
+The first example, from [@ramana97mp-exact], shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some $\alpha \geq 0$
+$$
+\begin{cases}
+\min_{X \in \sym{3}} & \alpha X_{11} \\
+\subject & X_{22} = 0 \\
+& X_{11} + 2 X_{23} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} & X_{13} \\
+* & X_{22} & X_{23} \\
+* & * & X_{33} \end{bmatrix} \succeq 0 
+\end{cases}, 
+\begin{cases}
+\max_{y \in \Real{2}} & y_2 \\
+\subject & \begin{bmatrix} \alpha & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \succeq \begin{bmatrix} y_2 & 0 & 0 \\ 0 & y_1 & y_2 \\ 0 & y_2 & 0 \end{bmatrix}
+\end{cases}
+$$
+To examine the primal feasible set, let us pick the bottom-right $2\times 2$ submatrix of $X$. The determinant of this submatrix needs to be nonnegative (due to (4) of Lemma \@ref(lem:PositiveSemidefinite)):
+$$
+X_{22} X_{33} - X_{23}^2 \geq 0.
+$$
+Because $X_{22} = 0$, we have $X_{23} = 0$ and hence $X_{11} = 1$. Therefore, $p^\star = \alpha$ is attained.
+
+To examine the dual feasible set, pick the bottom-right $2 \times 2$ submatrix of 
+$$
+\begin{bmatrix} \alpha - y_2 & 0 & 0 \\ 0 & - y_1 & -y_2 \\ 0 & -y_2 & 0 \end{bmatrix} \succeq 0,
+$$
+we have $y_2 = 0$. As a result, $d^\star = 0$, and strong duality fails. 
+
+
+The second example, from [@todd01an-semidefinite], shows that the duality gap can even be infinite. Consider the primal-dual SDP 
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 0 \\
+\subject & X_{11} = 0 \\
+& X_{12} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & 2 y_2 \\
+\subject & \begin{bmatrix} - y_1 & - y_2 \\ - y_2 & 0 \end{bmatrix} \succeq 0 
+\end{cases}
+$$
+Clearly, the primal is infeasible because
+$$
+\begin{bmatrix} 0 & 1 \\ 1 & X_{22} \end{bmatrix}
+$$
+can never be PSD. So $p^\star = + \infty$. The dual problem, however, is feasible. From the PSD constraint we have $y_2 = 0$ and $d^\star = 0$. Therefore, the duality gap is infinite.
+
+The third example, from [@todd01an-semidefinite], shows that even when the duality gap is zero, the primal or dual problem may not admit optimizers. Consider the primal-dual SDP
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 2 X_{12} \\
+\subject & - X_{11} = -1 \\
+& - X_{22} = 0 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{2}} & - y_1 \\
+\subject & \begin{bmatrix} y_1 & 1 \\ 1 & y_2 \end{bmatrix} \succeq 0
+\end{cases}
+$$
+To examine the primal feasible set, we have
+$$
+\begin{bmatrix} 1 & X_{12} \\ X_{12} & 0 \end{bmatrix} \succeq 0
+$$
+implies $X_{12} = 0$. Hence the primal feasible set only has one point and $p^\star = 0$. The dual feasible set reads
+$$
+y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
+$$
+and we want to minimize $y_1$. Clearly, $d^\star = 0$ but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.
+:::
+:::
+
+The examples above are somewhat "pathological" and they show that SDPs in general can be more complicated that LPs. It turns out, with the addition of **Slater's condition**, i.e., **strict feasibility** of the primal and dual, we can recover nice results parallel to those of LP.
+
+::: {.theorembox}
+::: {.theorem #SDPStrongDuality name="SDP Strong Duality"}
+Assume both the primal SDP \@ref(eq:SDP-P) and the dual SDP \@ref(eq:SDP-D) are _strictly feasible_, i.e., there exists $X \succ 0$ such that $\calA(X)=b$ for the primal and there exists $y \in \Real{m}$ such that $C - \calA^* (y) \succ 0$ for the dual, then strong duality holds, i.e., both problems are solvable and admit optimizers, and $p^\star = d^\star$ equals to some finite number. 
+
+Further, a pair of primal-dual feasible points $(X,y)$ is optimal if and only if 
+$$
+\inprod{C}{X} = \inprod{b}{y} \Leftrightarrow \inprod{C - \calA^* (y)}{X} = 0 \Leftrightarrow (C - \calA^* (y)) X = 0.
+$$
+:::
+:::
+
+One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then $p^\star = d^\star$ and the dual is solvable. If the dual is bounded above and strictly feasible, then $p^\star = d^\star$ and the primal is solvable [@nie23book-moment]. 
+
+::: {.examplebox}
+::: {.example #SuccessSDPDuality name="SDP Strong Duality"}
+Consider the following primal-dual SDP pair
+$$
+\begin{cases}
+\min_{X \in \sym{2}} & 2 X_{11} + 2 X_{12} \\
+\subject & X_{11} + X_{22} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \Real{}} & y \\
+\subject & \begin{bmatrix} 2 - y & 1 \\ 1 & - y \end{bmatrix} \succeq 0
+\end{cases}
+$$
+Choose
+$$
+X = \begin{bmatrix} 0.5 & 0 \\ 0 & 0.5 \end{bmatrix} \succ 0
+$$
+we see the primal is strictly feasible.
+Choose $y = -1$, we have 
+$$
+\begin{bmatrix} 3 & 1 \\ 1 & 1 \end{bmatrix} \succ 0
+$$
+and the dual is strictly feasible. Therefore, strong duality holds. 
+
+In this case, pick the pair of primal-dual feasible points
+$$
+X^\star = \begin{bmatrix} \frac{2 - \sqrt{2}}{4} & - \frac{1}{2 \sqrt{2}} \\ - \frac{1}{2 \sqrt{2}} & \frac{2 + \sqrt{2}}{4} \end{bmatrix}, \quad y^\star = 1 - \sqrt{2},
+$$
+we have 
+$$
+\inprod{C}{X^\star} = 1-\sqrt{2} = \inprod{b}{y^\star},
+$$
+and both $X^\star$ and $y^\star$ are optimal. 
+:::
+:::
+
+### Geometric Properties 
+
+
+## Interior Point Algorithm
+
+<!--chapter:end:02-semidefinite-optimization.Rmd-->
+
+`r if (knitr:::is_html_output()) '
+# References {-}
+'`
+
+<!--chapter:end:12-references.Rmd-->
+
