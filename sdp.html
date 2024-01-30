@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-29" />
+<meta name="date" content="2024-01-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="background.html"/>
-<link rel="next" href="psets.html"/>
+<link rel="next" href="references.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -137,7 +137,6 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.3</b> Interior Point Algorithm</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="psets.html"><a href="psets.html"><i class="fa fa-check"></i><b>3</b> Problem Sets</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -182,6 +181,17 @@ We use <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> to denote the set
 <li><p>There exists a factorization <span class="math inline">\(A = BB^\top\)</span>, where <span class="math inline">\(B \in \mathbb{R}^{n \times r}\)</span> with <span class="math inline">\(r\)</span> the rank of <span class="math inline">\(A\)</span>.</p></li>
 </ol>
 </div>
+</div>
+<p>Among the equivalent characterizations of PSD matrices, (5) is less well-known, but it can be very useful when we want to convert a PSD constraint into multiple scalar constraints. For example, consider the following subset of <span class="math inline">\(\mathbb{R}^{3}\)</span>:
+<span class="math display">\[
+\left\{ z \in \mathbb{R}^{3} \ \middle\vert\ X(z) = \begin{bmatrix} 1 &amp; z_1 &amp; z_2 \\ z_1 &amp; z_2 &amp; z_3 \\ z_2 &amp; z_3 &amp; 5 z_2 - 4  \end{bmatrix} \succeq 0  \right\} .
+\]</span>
+We can first form the characteristic polynomial of <span class="math inline">\(X(z)\)</span> –whose coefficients will be functions of <span class="math inline">\(z\)</span>– and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:spectrahedron-stride"></span>
+<img src="images/spectrahedron-stride.png" alt="An example spectrahedron." width="50%" />
+<p class="caption">
+Figure 2.1: An example spectrahedron.
+</p>
 </div>
 <p>Similarly, we say a matrix <span class="math inline">\(A \in \mathbb{S}^{n}\)</span> is <strong>positive definite</strong> (PD) is its associated quadratic form is always positive, i.e.,
 <span class="math display">\[
@@ -465,7 +475,7 @@ Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of 
         </div>
       </div>
 <a href="background.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="psets.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

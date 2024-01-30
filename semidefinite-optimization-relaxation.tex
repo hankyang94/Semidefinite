@@ -123,7 +123,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-29}
+\date{2024-01-30}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -1020,6 +1020,21 @@ Let \(A \in \mathbb{S}^{n}\) be a symmetric matrix, the following statements are
 
 \end{lemma}
 
+Among the equivalent characterizations of PSD matrices, (5) is less well-known, but it can be very useful when we want to convert a PSD constraint into multiple scalar constraints. For example, consider the following subset of \(\mathbb{R}^{3}\):
+\[
+ \left\{ z \in \mathbb{R}^{3} \ \middle\vert\ X(z) = \begin{bmatrix} 1 & z_1 & z_2 \\ z_1 & z_2 & z_3 \\ z_2 & z_3 & 5 z_2 - 4  \end{bmatrix} \succeq 0  \right\} .
+\]
+We can first form the characteristic polynomial of \(X(z)\) --whose coefficients will be functions of \(z\)-- and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{images/spectrahedron-stride} 
+
+}
+
+\caption{An example spectrahedron.}\label{fig:spectrahedron-stride}
+\end{figure}
+
 Similarly, we say a matrix \(A \in \mathbb{S}^{n}\) is \textbf{positive definite} (PD) is its associated quadratic form is always positive, i.e.,
 \[
 x^\top A x > 0, \quad \forall x \in \mathbb{R}^{n}.
@@ -1290,44 +1305,6 @@ The proof for the ``\textbf{Only If}'' direction can be found in Theorem 3.7.1 o
 
 \hypertarget{interior-point-algorithm}{%
 \section{Interior Point Algorithm}\label{interior-point-algorithm}}
-
-\hypertarget{psets}{%
-\chapter{Problem Sets}\label{psets}}
-
-Consider the SDP
-\[
-\min_{X \in \mathbb{S}^{n}} \{ \langle C, X \rangle \mid \mathcal{A}(X) = b, X \succeq 0 \}
-\]
-The ALM of the SDP reads
-\[
-L_{\sigma}(X,\mu) = \langle C, X \rangle - \langle \mu, \mathcal{A}(X)-b \rangle + \frac{\sigma}{2} \Vert \mathcal{A}(X) - b \Vert^2.
-\]
-Let \(x : = \mathrm{svec}(X)\), \(c:= \mathrm{svec}(C)\), and
-\[
-A = \begin{bmatrix} \mathrm{svec}(A_1) & \dots & \mathrm{svec}(A_m) \end{bmatrix},
-\]
-The ALM is equivalent to
-\[
-L_{\sigma}(x,\mu) = c^\top x - \mu^\top(A^\top x - b) + \frac{\sigma}{2}\Vert A^\top x - b \Vert^2.
-\]
-If instead, we use B-M factorization, then we have \(X = YY^\top\) with \(Y \in \mathbb{R}^{n \times r}\). Let \(y = \mathrm{vec}(Y)\), then it is clear we have
-\[
-x = \mathrm{svec}(X) = \mathrm{svec}(YY^\top) = \mathrm{svec}(\mathrm{mat}(y)\mathrm{mat}(y)^\top) := g_r(y),
-\]
-with \(g\) a quadratic function depending on \(r\). Let
-\[
-J(y) = \frac{\partial x}{\partial y} = \frac{\partial g_r(y)}{\partial y}.
-\]
-To get the gradient of \(L_{\sigma}(x,\mu)\) w.r.t. \(y\), we have
-\[
-\nabla_y L_{\sigma}  = \nabla_x L_{\sigma} \frac{\partial x}{\partial y} = J(y)^\top(c - A \mu + \sigma A (A^\top x - b)).
-\]
-
-\begin{exercise}[Test]
-\protect\hypertarget{exr:test}{}\label{exr:test}Test
-\end{exercise}
-
-~
 
   \bibliography{book.bib}
 
