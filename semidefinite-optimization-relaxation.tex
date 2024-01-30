@@ -33,6 +33,46 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
@@ -187,8 +227,7 @@ arc=4pt}
 \newcommand{\lbrkt}{[\![}
 \newcommand{\rbrkt}{]\!]}
 \newcommand{\brkt}[1]{\lbrkt #1 \rbrkt}
-\newcommand{\paren}[1]{(#1)}
-\renewcommand{\lparen}[1]{\left( #1 \right)}
+
 \newcommand{\cbrace}[1]{\{ #1 \}}
 \newcommand{\lcbrace}[1]{ \left\{ #1 \right\} }
 \newcommand{\aff}{\mathrm{aff}}
@@ -1196,7 +1235,7 @@ u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\
 \]
 If \(u \not\in \mathrm{ker}(B)\), then due to \(\mathrm{ker}(A) \subseteq \mathrm{ker}(B)\), we have \(u \not\in \mathrm{ker}(A)\) as well. As a result, we have
 \begin{equation}
-u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \left(  1- \frac{\alpha}{1+\alpha} \frac{u^\top B u}{u^\top A u}  \right).
+u^\top C_{\alpha} u = (1+\alpha) u^\top A u - \alpha u^\top B u = (1+\alpha) u^\top A u \lparen{ 1- \frac{\alpha}{1+\alpha} \frac{u^\top B u}{u^\top A u} }.
 \label{eq:prove-extension-1}
 \end{equation}
 Since
@@ -1299,6 +1338,254 @@ The proof for the ``\textbf{Only If}'' direction can be found in Theorem 3.7.1 o
 
 \hypertarget{semidefinite-programming}{%
 \section{Semidefinite Programming}\label{semidefinite-programming}}
+
+\hypertarget{spectrahedra}{%
+\subsection{Spectrahedra}\label{spectrahedra}}
+
+Recall the definition of a polyhedron in \eqref{eq:polyhedron}, i.e., a vector \(x\) constrained by finitely many linear inequalities. The feasible set of a Linear Program is a polyhedron.
+
+Similarly, we define a \textbf{spectrahedron} as a set defined by finitely many \textbf{linear matrix inequalities} (LMIs). Spectrahedra are the feasible sets of Semidefinite Programs (SDPs).
+
+A linear matrix inequality has the form
+\[
+A_0 + \sum_{i=1}^m A_i x_i \succeq 0,
+\]
+where \(A_i \in \mathbb{S}^{n},i=0,\dots,m\) are given symmetric matrices. Correspondingly, a spectrahedron is defined by finitely many LMIs.
+
+\begin{definition}[Spectrahedron]
+\protect\hypertarget{def:Spectrahedron}{}\label{def:Spectrahedron}A set \(S \subseteq \mathbb{R}^{m}\) is a spectrahedron if it has the form
+\[
+S =  \left\{ x \in \mathbb{R}^{m} \ \middle\vert\ A_0 + \sum_{i=1}^m x_i A_i \succeq 0 \right\} ,
+\]
+for given symmetric matrices \(A_0,A_1,\dots,A_m \in \mathbb{S}^{n}\).
+\end{definition}
+
+Note that there is no less of generality in defining a spectrahedron using a single LMI. For example, in the case of a set defined by two LMIs:
+\[
+S =  \left\{ x \in \mathbb{R}^{m} \ \middle\vert\ A_0 + \sum_{i=1}^m x_i A_i \succeq 0, B_0 + \sum_{i=1}^m x_i B_i \succeq 0  \right\} , A_i \in \mathbb{S}^{n}, B_i \in \mathbb{S}^{d},
+\]
+we can compress the two LMIs into a single LMI by putting \(A_i\) and \(B_i\) along the diagonal:
+\[
+S =  \left\{ x \in \mathbb{R}^{m} \ \middle\vert\ \begin{bmatrix} A_0 & \\ & B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i & \\ & B_i \end{bmatrix} \succeq 0  \right\} .
+\]
+
+Leveraging (5) of Lemma \ref{lem:PositiveSemidefinite}, we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) \textbf{basic semialgebraic set}, as seen in the following example \citep{blekherman12book-semidefinite}. Another example is provided in Fig. \ref{fig:SpectrahedronStride}.
+
+\begin{example}[Elliptic Curve]
+\protect\hypertarget{exm:EllipticCurve}{}\label{exm:EllipticCurve}
+
+Consider the spectrahedron in \(\mathbb{R}^{2}\) defined by
+\[
+ \left\{ (x,y) \in \mathbb{R}^{2} \ \middle\vert\ A(x,y) = \begin{bmatrix} x+1 & 0 & y \\ 0 & 2 & -x-1 \\ y & -x-1 & 2 \end{bmatrix} \succeq 0  \right\} .
+\]
+To obtain scalar inequalities defining the set, let
+\[
+p_A(\lambda) = \det (\lambda I - A(x,y)) = \lambda^3 + p_2 \lambda^2 + p_1 \lambda + p_0
+\]
+be the characteristic polynomial of \(A(x,y)\). \(A(x,y) \succeq 0\) is then equivalent to the coefficients weakly alternating in sign:
+\begin{equation}
+\begin{split}
+p_2 & = -(x+5) \leq 0, \\
+p_1 & = -x^2 + 2x - y^2 + 7 \geq 0, \\
+p_0 & = -(3+ x -x^3 -3x^2 - 2y^2) \leq 0.
+\end{split}
+\end{equation}
+We can use the following Matlab script to plot the set shown in Fig. \ref{fig:EllipticCurve}. (The code is also available at \href{https://github.com/ComputationalRobotics/Semidefinite-Examples}{here}.) As we can see, the spectrahedron is convex, but it is not a polyhedron.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\VariableTok{x} \OperatorTok{=} \OperatorTok{{-}}\FloatTok{2}\OperatorTok{:}\FloatTok{0.01}\OperatorTok{:}\FloatTok{2}\OperatorTok{;} 
+\VariableTok{y} \OperatorTok{=} \OperatorTok{{-}}\FloatTok{2}\OperatorTok{:}\FloatTok{0.01}\OperatorTok{:}\FloatTok{2}\OperatorTok{;} 
+\NormalTok{[}\VariableTok{X}\OperatorTok{,}\VariableTok{Y}\NormalTok{] }\OperatorTok{=} \VariableTok{meshgrid}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\VariableTok{y}\NormalTok{)}\OperatorTok{;}
+
+\VariableTok{ineq} \OperatorTok{=}\NormalTok{ (}\OperatorTok{{-}}\VariableTok{X} \OperatorTok{{-}} \FloatTok{5} \OperatorTok{\textless{}=} \FloatTok{0}\NormalTok{) }\OperatorTok{\&} \OperatorTok{...}
+\NormalTok{    (}\OperatorTok{{-}}\VariableTok{X}\OperatorTok{.\^{}}\FloatTok{2} \OperatorTok{+} \FloatTok{2}\OperatorTok{*}\VariableTok{X} \OperatorTok{{-}} \VariableTok{Y}\OperatorTok{.\^{}}\FloatTok{2} \OperatorTok{+} \FloatTok{7} \OperatorTok{\textgreater{}=}\FloatTok{0}\NormalTok{) }\OperatorTok{\&} \OperatorTok{...}
+\NormalTok{    (}\FloatTok{3} \OperatorTok{+} \VariableTok{X} \OperatorTok{{-}} \VariableTok{X}\OperatorTok{.\^{}}\FloatTok{3} \OperatorTok{{-}} \FloatTok{3}\OperatorTok{*}\VariableTok{X}\OperatorTok{.\^{}}\FloatTok{2} \OperatorTok{{-}} \FloatTok{2}\OperatorTok{*}\VariableTok{Y}\OperatorTok{.\^{}}\FloatTok{2} \OperatorTok{\textgreater{}=} \FloatTok{0}\NormalTok{)}\OperatorTok{;}
+
+\VariableTok{h} \OperatorTok{=} \VariableTok{pcolor}\NormalTok{(}\VariableTok{X}\OperatorTok{,}\VariableTok{Y}\OperatorTok{,}\VariableTok{double}\NormalTok{(}\VariableTok{ineq}\NormalTok{)) }\OperatorTok{;}
+\VariableTok{h}\NormalTok{.}\VariableTok{EdgeColor} \OperatorTok{=} \SpecialStringTok{\textquotesingle{}none\textquotesingle{}} \OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/elliptic_curve} 
+
+}
+
+\caption{Elliptic Curve.}\label{fig:EllipticCurve}
+\end{figure}
+
+\end{example}
+
+\hypertarget{formulation-and-duality}{%
+\subsection{Formulation and Duality}\label{formulation-and-duality}}
+
+Semidefinite programs (SDPs) are linear optimization problems over spectrahedra. A standard SDP in \textbf{primal} form is written as
+\begin{equation}
+\boxed{
+\begin{split}
+p^\star = \min_{X \in \mathbb{S}^{n}} & \quad \langle C, X \rangle \\
+\mathrm{s.t.}& \quad \mathcal{A}(X) = b, \\
+& \quad X \succeq 0
+\end{split}
+}
+\label{eq:SDP-P}
+\end{equation}
+where \(C \in \mathbb{S}^{n}\), \(b \in \mathbb{R}^{m}\), and the linear map \(\mathcal{A}: \mathbb{S}^{n} \rightarrow \mathbb{R}^{m}\) is defined as
+\[
+\mathcal{A}(X) := \begin{bmatrix} \langle A_1, X \rangle \\
+\vdots \\ \langle A_i, X \rangle \\ \langle A_m, X \rangle \end{bmatrix}.
+\]
+Recall that \(\langle C, X \rangle = \mathrm{tr}(CX)\). The feasible set of \eqref{eq:SDP-P} is the intersection of the PSD cone (\(\mathbb{S}^{n}_{+}\)) and the affine subspace defined by \(\mathcal{A}(X) = b\).
+
+Closely related to the primal SDP \eqref{eq:SDP-P} is the \textbf{dual} problem
+\begin{equation}
+\boxed{
+\begin{split}
+d^\star = \max_{y \in \mathbb{R}^{m}} & \quad \langle b, y \rangle \\
+\mathrm{s.t.}& \quad C - \mathcal{A}^* (y) \succeq 0
+\end{split}
+}
+\label{eq:SDP-D}
+\end{equation}
+where \(\mathcal{A}^{*}: \mathbb{R}^{m} \rightarrow \mathbb{S}^{n}\) is the \textbf{adjoint} map defined as
+\[
+\mathcal{A}^*(y) := \sum_{i=1}^m y_i A_i.
+\]
+Observe how the primal-dual SDP pair \eqref{eq:SDP-P}-\eqref{eq:SDP-D} parallels the primal-dual LP pair \eqref{eq:primal-lp}-\eqref{eq:dual-lp}.
+
+\textbf{Weak duality}. We have a similar weak duality between the primal and dual. Pick any \(X\) that is feasible for the primal \eqref{eq:SDP-P} and \(y\) that is feasible for the dual \eqref{eq:SDP-D}, we have
+\[
+\boxed{\langle C, X \rangle - \langle b, y \rangle = \langle C, X \rangle - \langle \mathcal{A}(X), y \rangle = \langle C - \mathcal{A}^* (y), X \rangle \geq 0,}
+\]
+where the last inequality holds because both \(C - \mathcal{A}^*(y)\) and \(X\) are positive semidefinite. As a result, we have the weak duality
+\[
+d^\star \leq p^\star.
+\]
+
+Similar to the LP case, we will denote \(p^\star = +\infty\) if the primal is infeasible, \(p^\star = - \infty\) if the primal is unbounded below. We will denote \(d^\star = +\infty\) if the dual is unbounded above, and \(d^\star = -\infty\) if the dual is infeasible. We say the primal (or the dual) is \textbf{solvable} if it admits optimizers. We denote \(p^\star - d^\star\) as the \textbf{duality gap}.
+
+Recall Theorem \ref{thm:LPStrongDuality} states that in LP, if at least one of the primal and dual is feasible, then strong duality holds (i.e., \(p^\star = d^\star = \{\pm \infty, \text{finite} \}\)). Unfortunately, this does not carry over to SDPs. Let us provide several examples.
+
+\begin{example}[Failure of SDP Strong Duality]
+\protect\hypertarget{exm:FailureSDPDuality}{}\label{exm:FailureSDPDuality}The first example, from \citep{ramana97mp-exact}, shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some \(\alpha \geq 0\)
+\[
+\begin{cases}
+\min_{X \in \mathbb{S}^{3}} & \alpha X_{11} \\
+\mathrm{s.t.}& X_{22} = 0 \\
+& X_{11} + 2 X_{23} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} & X_{13} \\
+* & X_{22} & X_{23} \\
+* & * & X_{33} \end{bmatrix} \succeq 0 
+\end{cases}, 
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} & y_2 \\
+\mathrm{s.t.}& \begin{bmatrix} \alpha & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \succeq \begin{bmatrix} y_2 & 0 & 0 \\ 0 & y_1 & y_2 \\ 0 & y_2 & 0 \end{bmatrix}
+\end{cases}
+\]
+To examine the primal feasible set, let us pick the bottom-right \(2\times 2\) submatrix of \(X\). The determinant of this submatrix needs to be nonnegative (due to (4) of Lemma \ref{lem:PositiveSemidefinite}):
+\[
+X_{22} X_{33} - X_{23}^2 \geq 0.
+\]
+Because \(X_{22} = 0\), we have \(X_{23} = 0\) and hence \(X_{11} = 1\). Therefore, \(p^\star = \alpha\) is attained.
+
+To examine the dual feasible set, pick the bottom-right \(2 \times 2\) submatrix of
+\[
+\begin{bmatrix} \alpha - y_2 & 0 & 0 \\ 0 & - y_1 & -y_2 \\ 0 & -y_2 & 0 \end{bmatrix} \succeq 0,
+\]
+we have \(y_2 = 0\). As a result, \(d^\star = 0\), and strong duality fails.
+
+The second example, from \citep{todd01an-semidefinite}, shows that the duality gap can even be infinite. Consider the primal-dual SDP
+\[
+\begin{cases}
+\min_{X \in \mathbb{S}^{2}} & 0 \\
+\mathrm{s.t.}& X_{11} = 0 \\
+& X_{12} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} & 2 y_2 \\
+\mathrm{s.t.}& \begin{bmatrix} - y_1 & - y_2 \\ - y_2 & 0 \end{bmatrix} \succeq 0 
+\end{cases}
+\]
+Clearly, the primal is infeasible because
+\[
+\begin{bmatrix} 0 & 1 \\ 1 & X_{22} \end{bmatrix}
+\]
+can never be PSD. So \(p^\star = + \infty\). The dual problem, however, is feasible. From the PSD constraint we have \(y_2 = 0\) and \(d^\star = 0\). Therefore, the duality gap is infinite.
+
+The third example, from \citep{todd01an-semidefinite}, shows that even when the duality gap is zero, the primal or dual problem may not admit optimizers. Consider the primal-dual SDP
+\[
+\begin{cases}
+\min_{X \in \mathbb{S}^{2}} & 2 X_{12} \\
+\mathrm{s.t.}& - X_{11} = -1 \\
+& - X_{22} = 0 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{2}} & - y_1 \\
+\mathrm{s.t.}& \begin{bmatrix} y_1 & 1 \\ 1 & y_2 \end{bmatrix} \succeq 0
+\end{cases}
+\]
+To examine the primal feasible set, we have
+\[
+\begin{bmatrix} 1 & X_{12} \\ X_{12} & 0 \end{bmatrix} \succeq 0
+\]
+implies \(X_{12} = 0\). Hence the primal feasible set only has one point and \(p^\star = 0\). The dual feasible set reads
+\[
+y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
+\]
+and we want to minimize \(y_1\). Clearly, \(d^\star = 0\) but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.
+\end{example}
+
+The examples above are somewhat ``pathological'' and they show that SDPs in general can be more complicated that LPs. It turns out, with the addition of \textbf{Slater's condition}, i.e., \textbf{strict feasibility} of the primal and dual, we can recover nice results parallel to those of LP.
+
+\begin{theorem}[SDP Strong Duality]
+\protect\hypertarget{thm:SDPStrongDuality}{}\label{thm:SDPStrongDuality}Assume both the primal SDP \eqref{eq:SDP-P} and the dual SDP \eqref{eq:SDP-D} are \emph{strictly feasible}, i.e., there exists \(X \succ 0\) such that \(\mathcal{A}(X)=b\) for the primal and there exists \(y \in \mathbb{R}^{m}\) such that \(C - \mathcal{A}^* (y) \succ 0\) for the dual, then strong duality holds, i.e., both problems are solvable and admit optimizers, and \(p^\star = d^\star\) equals to some finite number.
+
+Further, a pair of primal-dual feasible points \((X,y)\) is optimal if and only if
+\[
+\langle C, X \rangle = \langle b, y \rangle \Leftrightarrow \langle C - \mathcal{A}^* (y), X \rangle = 0 \Leftrightarrow (C - \mathcal{A}^* (y)) X = 0.
+\]
+\end{theorem}
+
+One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then \(p^\star = d^\star\) and the dual is solvable. If the dual is bounded above and strictly feasible, then \(p^\star = d^\star\) and the primal is solvable \citep{nie23book-moment}.
+
+\begin{example}[SDP Strong Duality]
+\protect\hypertarget{exm:SuccessSDPDuality}{}\label{exm:SuccessSDPDuality}Consider the following primal-dual SDP pair
+\[
+\begin{cases}
+\min_{X \in \mathbb{S}^{2}} & 2 X_{11} + 2 X_{12} \\
+\mathrm{s.t.}& X_{11} + X_{22} = 1 \\
+& \begin{bmatrix} X_{11} & X_{12} \\ * & X_{22} \end{bmatrix} \succeq 0 
+\end{cases},
+\begin{cases}
+\max_{y \in \mathbb{R}^{}} & y \\
+\mathrm{s.t.}& \begin{bmatrix} 2 - y & 1 \\ 1 & - y \end{bmatrix} \succeq 0
+\end{cases}
+\]
+Choose
+\[
+X = \begin{bmatrix} 0.5 & 0 \\ 0 & 0.5 \end{bmatrix} \succ 0
+\]
+we see the primal is strictly feasible.
+Choose \(y = -1\), we have
+\[
+\begin{bmatrix} 3 & 1 \\ 1 & 1 \end{bmatrix} \succ 0
+\]
+and the dual is strictly feasible. Therefore, strong duality holds.
+
+In this case, pick the pair of primal-dual feasible points
+\[
+X^\star = \begin{bmatrix} \frac{2 - \sqrt{2}}{4} & - \frac{1}{2 \sqrt{2}} \\ - \frac{1}{2 \sqrt{2}} & \frac{2 + \sqrt{2}}{4} \end{bmatrix}, \quad y^\star = 1 - \sqrt{2},
+\]
+we have
+\[
+\langle C, X^\star \rangle = 1-\sqrt{2} = \langle b, y^\star \rangle,
+\]
+and both \(X^\star\) and \(y^\star\) are optimal.
+\end{example}
 
 \hypertarget{geometric-properties-1}{%
 \subsection{Geometric Properties}\label{geometric-properties-1}}
