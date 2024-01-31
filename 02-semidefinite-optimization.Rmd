@@ -341,7 +341,7 @@ $$
 S = \lcbrace{x \in \Real{m} \lmid \begin{bmatrix} A_0 & \\ & B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i & \\ & B_i \end{bmatrix} \succeq 0 }.
 $$
 
-Leveraging (5) of Lemma \@ref(lem:PositiveSemidefinite), we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) **basic semialgebraic set**, as seen in the following example [@blekherman12book-semidefinite]. Another example is provided in Fig. \@ref(fig:SpectrahedronStride).
+Leveraging (5) of Lemma \@ref(lem:PositiveSemidefinite), we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) **basic semialgebraic set**, as seen in the following example [@blekherman12book-semidefinite].
 
 ::: {.examplebox}
 ::: {.example #EllipticCurve name="Elliptic Curve"}
@@ -381,6 +381,39 @@ knitr::include_graphics("images/elliptic_curve.png")
 ```
 :::
 :::
+
+We can use the same technique to visualize the elliptope, a spectrahedron that we will see again later when we study the MAXCUT problem.
+
+::: {.examplebox}
+::: {.example #Elliptope name="Elliptope"}
+Consider the 3D elliptope defined by 
+$$
+\lcbrace{(x,y,z) \in \Real{3} \lmid A(x,y,z) = \begin{bmatrix} 1 & x & y \\ x & 1 & z \\ y & z & 1 \end{bmatrix} \succeq 0}.
+$$
+The characteristic polynomial of $A(x,y,z)$ is
+$$
+p_A(\lambda) = \lambda^3 - 3 \lambda^2 + (-x^2 - y^2 - z^2 + 3) \lambda + x^2 - 2 xyz + y^2 + z^2 -1. 
+$$
+The coefficients need to weakly alternative in sign, we have the inequalities
+\begin{equation}
+\begin{split}
+-x^2 - y^2 - z^2 + 3 & \geq 0 \\
+x^2 - 2 xyz + y^2 + z^2 -1 & \leq 0
+\end{split}
+\end{equation}
+
+Using the Matlab script [here](https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/elliptope.m), we generate the following plot.
+ 
+```{r Elliptope, out.width='80%', fig.show='hold', fig.cap='Elliptope.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/elliptope.png")
+```
+
+:::
+:::
+
+
+Another example is provided in Fig. \@ref(fig:SpectrahedronStride).
+
 
 ### Formulation and Duality
 
