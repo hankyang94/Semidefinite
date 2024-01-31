@@ -687,6 +687,12 @@ A = [
 % solve using sedumi
 [xopt,yopt,info] = sedumi(A,b,c,K);
 ```
+Note that in providing $A$, we vectorize each $A_i$ and place it along the $i$-th row of the matrix $A$.
+The above Matlab script gives us the optimal solution
+$$
+y^\star = (0,1,2).
+$$
+To run the [code](https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sedumi_example.m), make sure you download [SeDuMi](https://github.com/sqlp/sedumi) and add that to your Matlab path. 
 
 :::
 :::
