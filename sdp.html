@@ -528,7 +528,7 @@ we can compress the two LMIs into a single LMI by putting <span class="math inli
 <span class="math display">\[
 S =  \left\{ x \in \mathbb{R}^{m} \ \middle\vert\ \begin{bmatrix} A_0 &amp; \\ &amp; B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i &amp; \\ &amp; B_i \end{bmatrix} \succeq 0  \right\} .
 \]</span></p>
-<p>Leveraging (5) of Lemma <a href="sdp.html#lem:PositiveSemidefinite">2.1</a>, we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) <strong>basic semialgebraic set</strong>, as seen in the following example <span class="citation">(<a href="#ref-blekherman12book-semidefinite" role="doc-biblioref">Blekherman, Parrilo, and Thomas 2012</a>)</span>. Another example is provided in Fig. <a href="sdp.html#fig:SpectrahedronStride">2.1</a>.</p>
+<p>Leveraging (5) of Lemma <a href="sdp.html#lem:PositiveSemidefinite">2.1</a>, we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) <strong>basic semialgebraic set</strong>, as seen in the following example <span class="citation">(<a href="#ref-blekherman12book-semidefinite" role="doc-biblioref">Blekherman, Parrilo, and Thomas 2012</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
 <p><span id="exm:EllipticCurve" class="example"><strong>Example 2.1  (Elliptic Curve) </strong></span>Consider the spectrahedron in <span class="math inline">\(\mathbb{R}^{2}\)</span> defined by
@@ -566,6 +566,34 @@ Figure 2.2: Elliptic Curve.
 </div>
 </div>
 </div>
+<p>We can use the same technique to visualize the elliptope, a spectrahedron that we will see again later when we study the MAXCUT problem.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:Elliptope" class="example"><strong>Example 2.2  (Elliptope) </strong></span>Consider the 3D elliptope defined by
+<span class="math display">\[
+\left\{ (x,y,z) \in \mathbb{R}^{3} \ \middle\vert\ A(x,y,z) = \begin{bmatrix} 1 &amp; x &amp; y \\ x &amp; 1 &amp; z \\ y &amp; z &amp; 1 \end{bmatrix} \succeq 0 \right\} .
+\]</span>
+The characteristic polynomial of <span class="math inline">\(A(x,y,z)\)</span> is
+<span class="math display">\[
+p_A(\lambda) = \lambda^3 - 3 \lambda^2 + (-x^2 - y^2 - z^2 + 3) \lambda + x^2 - 2 xyz + y^2 + z^2 -1.
+\]</span>
+The coefficients need to weakly alternative in sign, we have the inequalities
+<span class="math display">\[\begin{equation}
+\begin{split}
+-x^2 - y^2 - z^2 + 3 &amp; \geq 0 \\
+x^2 - 2 xyz + y^2 + z^2 -1 &amp; \leq 0
+\end{split}
+\end{equation}\]</span></p>
+<p>Using the Matlab script <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/elliptope.m">here</a>, we generate the following plot.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:Elliptope"></span>
+<img src="images/elliptope.png" alt="Elliptope." width="80%" />
+<p class="caption">
+Figure 2.3: Elliptope.
+</p>
+</div>
+</div>
+</div>
+<p>Another example is provided in Fig. <a href="sdp.html#fig:SpectrahedronStride">2.1</a>.</p>
 </div>
 <div id="formulation-and-duality" class="section level3 hasAnchor" number="2.2.2">
 <h3><span class="header-section-number">2.2.2</span> Formulation and Duality<a href="sdp.html#formulation-and-duality" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -613,7 +641,7 @@ d^\star \leq p^\star.
 <p>Recall Theorem <a href="background.html#thm:LPStrongDuality">1.9</a> states that in LP, if at least one of the primal and dual is feasible, then strong duality holds (i.e., <span class="math inline">\(p^\star = d^\star = \{\pm \infty, \text{finite} \}\)</span>). Unfortunately, this does not carry over to SDPs. Let us provide several examples.</p>
 <div class="examplebox">
 <div class="example">
-<p><span id="exm:FailureSDPDuality" class="example"><strong>Example 2.2  (Failure of SDP Strong Duality) </strong></span>The first example, from <span class="citation">(<a href="#ref-ramana97mp-exact" role="doc-biblioref">Ramana 1997</a>)</span>, shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some <span class="math inline">\(\alpha \geq 0\)</span>
+<p><span id="exm:FailureSDPDuality" class="example"><strong>Example 2.3  (Failure of SDP Strong Duality) </strong></span>The first example, from <span class="citation">(<a href="#ref-ramana97mp-exact" role="doc-biblioref">Ramana 1997</a>)</span>, shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some <span class="math inline">\(\alpha \geq 0\)</span>
 <span class="math display">\[
 \begin{cases}
 \min_{X \in \mathbb{S}^{3}} &amp; \alpha X_{11} \\
@@ -693,7 +721,7 @@ and we want to minimize <span class="math inline">\(y_1\)</span>. Clearly, <span
 <p>One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the dual is solvable. If the dual is bounded above and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the primal is solvable <span class="citation">(<a href="#ref-nie23book-moment" role="doc-biblioref">Nie 2023</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
-<p><span id="exm:SuccessSDPDuality" class="example"><strong>Example 2.3  (SDP Strong Duality) </strong></span>Consider the following primal-dual SDP pair
+<p><span id="exm:SuccessSDPDuality" class="example"><strong>Example 2.4  (SDP Strong Duality) </strong></span>Consider the following primal-dual SDP pair
 <span class="math display">\[
 \begin{cases}
 \min_{X \in \mathbb{S}^{2}} &amp; 2 X_{11} + 2 X_{12} \\
@@ -799,7 +827,7 @@ for vectors <span class="math inline">\(A_1,\dots,A_m\)</span> in the space <spa
 <p>Let us practice an example from <span class="citation">(<a href="#ref-nie23book-moment" role="doc-biblioref">Nie 2023</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
-<p><span id="exm:SeDuMiExample" class="example"><strong>Example 2.4  (SeDuMi Example) </strong></span>Consider the following optimization problem as an instance of <a href="sdp.html#eq:general-convex-sedumi">(2.7)</a>:
+<p><span id="exm:SeDuMiExample" class="example"><strong>Example 2.5  (SeDuMi Example) </strong></span>Consider the following optimization problem as an instance of <a href="sdp.html#eq:general-convex-sedumi">(2.7)</a>:
 <span class="math display" id="eq:sedumi-example">\[\begin{equation}
 \begin{split}
 \max_{y \in \mathbb{R}^{3}} &amp; \quad y_3 - y_1 \\
