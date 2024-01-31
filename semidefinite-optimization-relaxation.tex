@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-30}
+\date{2024-01-31}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -1666,9 +1666,7 @@ for vectors \(A_1,\dots,A_m\) in the space \(V\). Therefore, the primal problem 
 Let us practice an example from \citep{nie23book-moment}.
 
 \begin{example}[SeDuMi Example]
-\protect\hypertarget{exm:SeDuMiExample}{}\label{exm:SeDuMiExample}
-
-Consider the following optimization problem as an instance of \eqref{eq:general-convex-sedumi}:
+\protect\hypertarget{exm:SeDuMiExample}{}\label{exm:SeDuMiExample}Consider the following optimization problem as an instance of \eqref{eq:general-convex-sedumi}:
 \begin{equation}
 \begin{split}
 \max_{y \in \mathbb{R}^{3}} & \quad y_3 - y_1 \\
@@ -1725,6 +1723,12 @@ To input this problem to SeDuMi, we only need to provide the data \((A,b,C)\) to
 \end{Highlighting}
 \end{Shaded}
 
+Note that in providing \(A\), we vectorize each \(A_i\) and place it along the \(i\)-th row of the matrix \(A\).
+The above Matlab script gives us the optimal solution
+\[
+y^\star = (0,1,2).
+\]
+To run the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sedumi_example.m}{code}, make sure you download \href{https://github.com/sqlp/sedumi}{SeDuMi} and add that to your Matlab path.
 \end{example}
 
 \hypertarget{interior-point-algorithm}{%

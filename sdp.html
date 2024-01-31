@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-30" />
+<meta name="date" content="2024-01-31" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -849,6 +849,12 @@ C = \left( 3,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\-1\\0\\-1\end
 <span id="cb2-15"><a href="sdp.html#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="sdp.html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">% solve using sedumi</span></span>
 <span id="cb2-17"><a href="sdp.html#cb2-17" aria-hidden="true" tabindex="-1"></a>[<span class="va">xopt</span><span class="op">,</span><span class="va">yopt</span><span class="op">,</span><span class="va">info</span>] <span class="op">=</span> <span class="va">sedumi</span>(<span class="va">A</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">K</span>)<span class="op">;</span></span></code></pre></div>
+<p>Note that in providing <span class="math inline">\(A\)</span>, we vectorize each <span class="math inline">\(A_i\)</span> and place it along the <span class="math inline">\(i\)</span>-th row of the matrix <span class="math inline">\(A\)</span>.
+The above Matlab script gives us the optimal solution
+<span class="math display">\[
+y^\star = (0,1,2).
+\]</span>
+To run the <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sedumi_example.m">code</a>, make sure you download <a href="https://github.com/sqlp/sedumi">SeDuMi</a> and add that to your Matlab path.</p>
 </div>
 </div>
 </div>
