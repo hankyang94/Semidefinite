@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-01-31}
+\date{2024-02-01}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -1576,6 +1576,8 @@ implies \(X_{12} = 0\). Hence the primal feasible set only has one point and \(p
 y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
 \]
 and we want to minimize \(y_1\). Clearly, \(d^\star = 0\) but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.
+
+A Matlab script that passes these three examples to SDP solvers can be found \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/failure_strong_duality.m}{here}.
 \end{example}
 
 The examples above are somewhat ``pathological'' and they show that SDPs in general can be more complicated that LPs. It turns out, with the addition of \textbf{Slater's condition}, i.e., \textbf{strict feasibility} of the primal and dual, we can recover nice results parallel to those of LP.

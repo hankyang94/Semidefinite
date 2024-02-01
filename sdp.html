@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-01-31" />
+<meta name="date" content="2024-02-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -706,6 +706,7 @@ implies <span class="math inline">\(X_{12} = 0\)</span>. Hence the primal feasib
 y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
 \]</span>
 and we want to minimize <span class="math inline">\(y_1\)</span>. Clearly, <span class="math inline">\(d^\star = 0\)</span> but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.</p>
+<p>A Matlab script that passes these three examples to SDP solvers can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/failure_strong_duality.m">here</a>.</p>
 </div>
 </div>
 <p>The examples above are somewhat “pathological” and they show that SDPs in general can be more complicated that LPs. It turns out, with the addition of <strong>Slater’s condition</strong>, i.e., <strong>strict feasibility</strong> of the primal and dual, we can recover nice results parallel to those of LP.</p>
