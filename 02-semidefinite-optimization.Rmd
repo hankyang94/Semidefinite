@@ -536,6 +536,8 @@ $$
 y_1 y_2 \geq 1,\quad  y_1 \geq 0, \quad y_2 \geq 0,
 $$
 and we want to minimize $y_1$. Clearly, $d^\star = 0$ but it is not attainable. Therefore, strong duality holds but the dual problem is not solvable.
+
+A Matlab script that passes these three examples to SDP solvers can be found [here](https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/failure_strong_duality.m).
 :::
 :::
 
