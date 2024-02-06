@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-01}
+\date{2024-02-06}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -192,10 +192,14 @@ arc=4pt}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
+\newcommand{\calS}{\mathcal{S}}
 \newcommand{\mathx}{\mathrm{x}}
 \newcommand{\mathy}{\mathrm{y}}
+\newcommand{\bbE}{\mathbb{E}}
+\newcommand{\calN}{\mathcal{N}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
+\newcommand{\Comp}[1]{\mathbb{C}^{#1}}
 \newcommand{\sym}[1]{\mathbb{S}^{#1}}
 \newcommand{\psd}[1]{\sym{#1}_{+}}
 \newcommand{\pd}[1]{\sym{#1}_{++}}
@@ -244,6 +248,7 @@ arc=4pt}
 \renewcommand{\ker}{\mathrm{ker}}
 \newcommand{\face}{\mathrm{face}}
 \newcommand{\lmid}{\ \middle\vert\ }
+\renewcommand{\Re}{\mathrm{Re}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -1771,6 +1776,299 @@ To run the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/
 
 \hypertarget{interior-point-algorithm}{%
 \section{Interior Point Algorithm}\label{interior-point-algorithm}}
+
+\hypertarget{applications}{%
+\section{Applications}\label{applications}}
+
+\hypertarget{lyapunov-stability}{%
+\subsection{Lyapunov Stability}\label{lyapunov-stability}}
+
+One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see \citep{boyd94book-lmi}.
+
+Consider a discrete-time linear dynamical system
+\begin{equation}
+x_{k+1} = A x_k,\quad k=0,\dots
+\label{eq:dt-linear-system}
+\end{equation}
+where \(x \in \mathbb{R}^{n}\) is called the state of the system, and \(k\) indexes the time. An important property that one wants to understand about the system \eqref{eq:dt-linear-system} is whether it is \textbf{stable}, i.e., given an initial state \(x_0\), does \(x_k\) tend to zero as \(k\) tends to infinity.
+
+It is well-known that \(x_k\) tends to zero for all initial conditions \(x_0\) if and only if \(|\lambda_i(A)| < 1, \forall i=1,\dots,n\), i.e., all the eigenvalues of the transition matrix \(A\) lies inside the unit circle.
+
+Equivalently, one can also \textbf{certify} the stability of the system if a \textbf{Lyapunov function}
+\begin{equation}
+V(x_k) = x_k^\top P x_k
+\label{eq:Lyapunov-function}
+\end{equation}
+is given that satisfies the following matrix inequalities.
+
+\begin{lemma}[Lyapunov Stability]
+\protect\hypertarget{lem:LyapunovStability}{}\label{lem:LyapunovStability}
+
+Given \(A \in \mathbb{R}^{n \times n}\), the following statements are equivalent:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  All eigenvalues of \(A\) lie strictly inside the unit circle, i.e., \(|\lambda_i(A)| < 1, i=1,\dots,n\)
+\item
+  There exists a matrix \(P \in \mathbb{S}^{n}\) such that
+  \[
+  P \succ 0, \quad A^\top P A - P \prec 0.
+  \]
+\end{enumerate}
+
+\end{lemma}
+
+\begin{proof}
+2 \(\Rightarrow\) 1: Let \(\lambda \in \mathbb{C}^{}\) and \(v \neq 0 \in \mathbb{C}^{n}\) be a pair of eigenvalue and eigenvector of \(A\) such that \(A v = \lambda v\). Since \(A^\top P A - P \prec 0\), we have
+\[
+v^* (A^\top P A - P) v < 0 \Rightarrow (\lambda v)^* P (\lambda v) - v^* P v < 0 \Rightarrow (|\lambda|^2 - 1) (v^* P v) < 0.
+\]
+Since \(P \succ 0\), we have \(v^* P v > 0\). Hence, \(|\lambda|^2 - 1 < 0\) and \(|\lambda| < 1\).
+
+1 \(\Rightarrow\) 2: Construct
+\[
+P := \sum_{k=0}^{\infty} (A^k)^\top A^k.
+\]
+The sum converges by the condition that \(|\lambda_i(A)| < 1,\forall i\) and \(P \succ 0\). Then we have
+\[
+A^\top P A - P = \sum_{k=1}^{\infty} (A^k)^\top A^k - \sum_{k=0}^{\infty} (A^k)^\top A^k = - \mathrm{I}\prec 0,
+\]
+proving the result.
+\end{proof}
+
+Intuitively, the Lyapunov function \eqref{eq:Lyapunov-function} defines a positive definite energy function. The fact that \(P \succ 0\) implies \(V(0) = 0\) and \(V(x) > 0\) for any \(x\) that is nonzero. The condition \(A^\top P A - P \prec 0\) guarantees that the system's energy strictly decreases along any possible system trajectory. To see this, write
+\[
+V(x_{k+1}) - V(x_k) = V(Ax_k) - V(x_k) = x_k^\top(A^\top P A - P) x_k < 0, \forall x_k \neq 0.
+\]
+Therefore, the existence of a Lyapunov function guarantees any system trajectory will converge to the origin.
+
+The nice property of constructing such a Lyapunov function is that it goes beyond linear systems and can be similarly generalized to nonlinear systems, where one can compute a stability certificate from semidefinite optimization. See for example \href{https://hankyang.seas.harvard.edu/OptimalControlEstimation/stability.html\#lyapunov-analysis}{this lecture notes}.
+
+\textbf{Control Design}. Consider now the case where \(A\) is not stable, but we can use a linear \textbf{feedback controller} to stabilize the system, i.e.,
+\[
+u_k = K x_k, \quad x_{k+1} = A x_k + B u_k = (A+ BK) x_k,
+\]
+where the matrix \(K \in \mathbb{R}^{m \times n}\) is the feedback law we wish to design. We wish to design \(K\) using convex optimization, in particular semidefinite optimization.
+
+Involving Lemma\textasciitilde\ref{lem:LyapunovStability}, we see that designing \(K\) to stabilize \(A + BK\) is equivalent to finding
+\begin{equation}
+P \succ 0, \quad (A + BK)^\top P (A + BK) - P \prec 0.
+\label{eq:control-stability}
+\end{equation}
+Using the Schur complement technique in Proposition \ref{prp:SchurPSD}, we know \eqref{eq:control-stability} is equivalent to
+\[
+\begin{bmatrix}
+P & (A + BK)^\top P \\
+P(A+BK) & P \end{bmatrix} \succ 0.
+\]
+This matrix inequality is, however, not jointly convex in the unknowns \((P,A)\). To address this issue, we can pre-multiply and post-multiply the equation by \(\mathrm{BlkDiag}(P^{-1}, P^{-1})\), which leads to
+\begin{equation}
+\begin{split}
+\begin{bmatrix} P^{-1}& \\
+& P^{-1}\end{bmatrix}
+\begin{bmatrix}
+P & (A + BK)^\top P \\
+P(A+BK) & P \end{bmatrix}
+\begin{bmatrix} P^{-1}& \\
+& P^{-1}\end{bmatrix} \succ 0  \Leftrightarrow \\
+\begin{bmatrix} P^{-1}& P^{-1}(A + BK)^\top\\ (A+BK)P^{-1}& P^{-1}\end{bmatrix} \succ 0.
+\end{split}
+\end{equation}
+Now with a change of variable \(Q:= P^{-1}\), \(Y = K P^{-1}\), we have
+\[
+\begin{bmatrix} Q & Q A^\top+ Y^\top B^\top\\
+A Q + BY & Q \end{bmatrix} \succ 0,
+\]
+which is indeed a linear matrix inequality in the unknowns \((Q,Y)\). Solving the LMI, we can recover
+\[
+P = Q^{-1}, K = Y Q^{-1}.
+\]
+
+\hypertarget{linear-quadratic-regulator}{%
+\subsection{Linear Quadratic Regulator}\label{linear-quadratic-regulator}}
+
+Another (somewhat surprising) application of semidefinite optimization is that it can be used to convexify the direct optimization of the linear quadratic regulator problem (one of the cornerstones in modern optimal control). In fact, such a convex formulation is the key to prove why \textbf{policy optimization} works in reinforcement learning, as least in the linear quadratic case \citep{hu23review-toward} \citep{mohammadi21tac-convergence}.
+
+Consider a continuous-time linear dynamical system
+\begin{equation}
+\dot{x} = A x + B u, \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^{m}, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m},
+\label{eq:ct-linear-dynamical}
+\end{equation}
+where \(x\) denotes the state and \(u\) denotes the control. Consider the following optimal control problem
+\begin{equation}
+\begin{split}
+\min_{u(t)}  & \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
+\mathrm{s.t.}& \quad \dot{x} = A x + Bu, \quad x(0) \sim \mathcal{N}(0,\Omega)
+\end{split}
+\label{eq:linear-quadratic-regulator}
+\end{equation}
+where \(Q,R\succ 0\) are known cost matrices, and \(x(0)\) is supposed to satisfy the zero-mean Gaussian distribution with covariance \(\Omega \succ 0\). In the case where \(A,B,Q,R\) are perfectly known to the control designer, and \((A,B)\) is controllable (to be defined soon), problem \eqref{eq:linear-quadratic-regulator} can be solved exactly and optimally, with the optimal controller being a linear feedback controller of the form
+\[
+u(t) = -Kx(t),
+\]
+where
+\[
+K = R^{-1}B^\top S,
+\]
+with \(S\) the unique positive definite solution to the continuous-time \textbf{algebraic Riccati equation} (ARE)
+\[
+SA + A^\top S - SBR^{-1}B^\top S + Q = 0.
+\]
+
+\textbf{Policy Optimization}. The control and reinforcement learning community are interested in whether it is possible to directly find the optimal feedback policy \(K\), i.e., directly solving
+\begin{equation}
+\begin{split}
+\min_{K \in \mathcal{S}}  & \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
+\mathrm{s.t.}& \quad \dot{x} = A x + Bu, \quad u = -Kx, \quad x(0) \sim \mathcal{N}(0,\Omega).
+\end{split}
+\label{eq:linear-quadratic-regulator-directK}
+\end{equation}
+Note that problem \eqref{eq:linear-quadratic-regulator-directK} is different from the original problem \eqref{eq:linear-quadratic-regulator} in the sense that we assume the knowledge that the optimal controller is linear and directly optimize \(K\). The feasible set \(\mathcal{S}\) contains the set of \textbf{stabilizing controllers}, i.e.,
+\begin{equation}
+\mathcal{S}= \{ K \in \mathbb{R}^{m \times n} \mid A - BK \text{ is Hurwitz} \},
+\label{eq:stabilizing-K}
+\end{equation}
+where a matrix \(A\) is Hurwitz means \(\mathrm{Re}(\lambda_i(A)) < 0\) for all \(i=1,\dots,n\), i.e., all the eigenvalues of \(A\) have strictly negative real parts. When \(A - BK\) is Hurwitz, the closed-loop system is stable and the integral in \eqref{eq:linear-quadratic-regulator-directK} will not blow up (so it is sufficient to consider the class of stabilizing controllers).
+
+We will first observe that the direct optimization \eqref{eq:linear-quadratic-regulator-directK} is nonconvex, because the feasible set \(\mathcal{S}\) is nonconvex. The following example is adapted from \citep{fazel18icml-global}.
+
+\begin{example}[Nonconvex Set of Stabilizing Controllers]
+\protect\hypertarget{exm:NonconvexStabilizingController}{}\label{exm:NonconvexStabilizingController}Consider the dynamical system \eqref{eq:ct-linear-dynamical} with
+\[
+A = 0_{3 \times 3}, \quad B = \mathrm{I}_3.
+\]
+It is easy to show that both
+\[
+K_1 = \begin{bmatrix} 1 & 0 & -10 \\ -1 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad K_2 = \begin{bmatrix} 1 & -10 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix}
+\]
+are stabilizing controllers, as
+\[
+\lambda(A - BK_1) = (-1,-1,-1), \quad \lambda(A - BK_2) = (-1,-1,-1).
+\]
+However, pick
+\[
+K = \frac{K_1 + K_2}{2} = \begin{bmatrix} 1 & -5 & -5 \\ -0.5 & 1 & 0 \\ -0.5 & 0 & 1 \end{bmatrix},
+\]
+we have
+\[
+\lambda(A - BK) = (-3.2361, 1.2361, -1)
+\]
+and \(K\) does not stabilize the closed-loop system.
+\end{example}
+
+\textbf{Convex Parameterization with Semidefinite Optimization}. We will now show that it is possible to reparameterize problem \eqref{eq:linear-quadratic-regulator-directK} as a semidefinite optimization so it becomes convex. To do so, we note
+\[
+x^\top Q x + u^\top R u = x^\top Q x + x^\top K^\top R K x = x^\top(Q + K^\top R K)x^\top= \mathrm{tr}((Q + K^\top R K)xx^\top),
+\]
+and therefore the objective of \eqref{eq:linear-quadratic-regulator-directK} can be written as
+\begin{equation}
+\mathbb{E} \left\{ \int_{0}^{\infty} \mathrm{tr}((Q + K^\top R K) xx^\top) dt  \right\}  = \mathrm{tr}\left( (Q + K^\top R K) \mathbb{E} \left\{  \int_{0}^{\infty} xx^\top dt  \right\}    \right).
+\end{equation}
+For any given initial condition, the solution of the closed-loop dynamics is given by the matrix exponential
+\[
+x(t) = e^{(A-BK)t} x(0).
+\]
+For the distribution of initial conditions, we have
+\[
+\mathbb{E} \left\{ x(t)x(t)^\top \right\}  = e^{(A-BK)t} \mathbb{E}\{ x(0)x(0)^\top \}  e^{(A-BK)^\top t} = e^{(A-BK)t} \Omega  e^{(A-BK)^\top t}.
+\]
+The integral of this function, call it \(X\), represents the expected energy of the closed-loop response
+\[
+X = \mathbb{E} \left\{ \int_{0}^{\infty} xx^\top dt \right\} .
+\]
+For every \(K \in \mathcal{S}\) that is stabilizing, \(X\) can be computed as the solution to the Lyapunov equation
+\begin{equation}
+(A - BK) X + X(A - BK)^\top+ \Omega = 0.
+\label{eq:Lyapunov-equation}
+\end{equation}
+As a result, the objective of \eqref{eq:linear-quadratic-regulator-directK} is simplied as
+\[
+\mathrm{tr}((Q + K^\top R K) X),
+\]
+with \(X\) solves \eqref{eq:Lyapunov-equation}. We arrive at an optimization problem
+\begin{equation}
+\begin{split}
+\min_{X,K} & \quad \mathrm{tr}(QX) + \mathrm{tr}(K^\top R K X) \\
+\mathrm{s.t.}& \quad (A-BK) X + X (A - BK)^\top+ \Omega = 0 \\
+& \quad X \succ 0
+\end{split},
+\label{eq:lqr-directK-toX}
+\end{equation}
+which is still nonconvex. We do a change of variable \(Y = KX\), so \(K = Y X ^{-1}\) and obtain
+\begin{equation}
+\begin{split}
+\min_{X,Y} & \quad \mathrm{tr}(QX) + \mathrm{tr}(X^{-1}Y^\top R Y) \\
+\mathrm{s.t.}& \quad AX - BY + XA^\top- Y^\top B^\top+ \Omega = 0 \\
+& \quad X \succ 0
+\end{split}.
+\label{eq:lqr-directK-toX-1}
+\end{equation}
+The second term in the objective is still nonconvex, but we can use the Schur complement technique again, and arrive at the final optimization
+\begin{equation}
+\begin{split}
+\min_{X,Y,Z} & \quad \mathrm{tr}(QX) + \mathrm{tr}(Z) \\
+\mathrm{s.t.}& \quad AX - BY + XA^\top- Y^\top B^\top+ \Omega = 0 \\
+& \quad X \succ 0 \\
+& \quad \begin{bmatrix} Z & R^{1/2} Y & \\ Y^\top R^{1/2} & X \end{bmatrix} \succeq 0
+\end{split}.
+\label{eq:lqr-directK-toX-2}
+\end{equation}
+Note that the last two matrix inequalities of \eqref{eq:lqr-directK-toX-2} implies, by Schur complement
+\[
+Z - R^{1/2}Y X^{-1}Y^\top R^{1/2} \succeq 0 \Rightarrow \mathrm{tr}(Z - R^{1/2}Y X^{-1}Y^\top R^{1/2}) \geq 0.
+\]
+Since the optimization is trying to minimize \(\mathrm{tr}(Z)\), it will push the equality to hold
+\[
+Z - R^{1/2}Y X^{-1}Y^\top R^{1/2} = 0,
+\]
+and thus
+\[
+\mathrm{tr}(Z) = \mathrm{tr}(R^{1/2}Y X^{-1}Y^\top R^{1/2}) = \mathrm{tr}(X^{-1}Y^\top R Y).
+\]
+
+\begin{example}[Convex LQR]
+\protect\hypertarget{exm:ConvexLQR}{}\label{exm:ConvexLQR}
+
+For the same linear system as in Example \ref{exm:NonconvexStabilizingController}, let \(Q = R = \mathrm{I}_3\).
+
+If we solve the optimal feedback controller \(K\) by solving the ARE, we get the optimal controller is \(K^\star = \mathrm{I}_3\).
+
+If we implement the SDP in \eqref{eq:lqr-directK-toX-2}, we also get \(K^\star = \mathrm{I}_3\), confirming the correctness of the convex parameterization. The implementation is shown below and can be found \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/lqr_sdp.m}{here}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\%\% Show the feasible set is nonconvex}
+\VariableTok{A} \OperatorTok{=} \VariableTok{zeros}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{B} \OperatorTok{=} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{K1} \OperatorTok{=}\NormalTok{ [}\FloatTok{1}\OperatorTok{,} \FloatTok{0}\OperatorTok{,} \OperatorTok{{-}}\FloatTok{10}\OperatorTok{;} \OperatorTok{{-}}\FloatTok{1}\OperatorTok{,} \FloatTok{1}\OperatorTok{,} \FloatTok{0}\OperatorTok{;} \FloatTok{0}\OperatorTok{,} \FloatTok{0}\OperatorTok{,} \FloatTok{1}\NormalTok{]}\OperatorTok{;}
+\VariableTok{K2} \OperatorTok{=}\NormalTok{ [}\FloatTok{1}\OperatorTok{,} \OperatorTok{{-}}\FloatTok{10}\OperatorTok{,} \FloatTok{0}\OperatorTok{;} \FloatTok{0}\OperatorTok{,} \FloatTok{1}\OperatorTok{,} \FloatTok{0}\OperatorTok{;} \OperatorTok{{-}}\FloatTok{1}\OperatorTok{,} \FloatTok{0}\OperatorTok{,} \FloatTok{1}\NormalTok{]}\OperatorTok{;}
+\VariableTok{K} \OperatorTok{=}\NormalTok{ (}\VariableTok{K1} \OperatorTok{+} \VariableTok{K2}\NormalTok{)}\OperatorTok{/}\FloatTok{2}\OperatorTok{;}
+
+\CommentTok{\%\% get the groundtruth LQR controller}
+\VariableTok{Q} \OperatorTok{=} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)}\OperatorTok{;} \VariableTok{R} \OperatorTok{=} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{K\_lqr} \OperatorTok{=} \VariableTok{lqr}\NormalTok{(}\VariableTok{A}\OperatorTok{,}\VariableTok{B}\OperatorTok{,}\VariableTok{Q}\OperatorTok{,}\VariableTok{R}\OperatorTok{,}\VariableTok{zeros}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{))}\OperatorTok{;}
+\VariableTok{Omega} \OperatorTok{=} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+
+\CommentTok{\%\% solve SDP}
+\VariableTok{addpath}\NormalTok{(}\VariableTok{genpath}\NormalTok{(}\SpecialStringTok{\textquotesingle{}../YALMIP\textquotesingle{}}\NormalTok{))}
+\VariableTok{addpath}\NormalTok{(}\VariableTok{genpath}\NormalTok{(}\SpecialStringTok{\textquotesingle{}../../../mosek\textquotesingle{}}\NormalTok{))}
+
+\VariableTok{X} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Y} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\OperatorTok{,}\SpecialStringTok{\textquotesingle{}full\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Z} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{M} \OperatorTok{=}\NormalTok{ [}\VariableTok{Z}\OperatorTok{,} \VariableTok{R}\OperatorTok{*}\VariableTok{Y}\OperatorTok{;} \VariableTok{Y}\OperatorTok{\textquotesingle{}*}\VariableTok{R}\OperatorTok{,} \VariableTok{X}\NormalTok{]}\OperatorTok{;}
+\VariableTok{F} \OperatorTok{=}\NormalTok{ [}
+    \VariableTok{A}\OperatorTok{*}\VariableTok{X} \OperatorTok{{-}} \VariableTok{B}\OperatorTok{*}\VariableTok{Y} \OperatorTok{+} \VariableTok{X}\OperatorTok{*}\VariableTok{A}\OperatorTok{\textquotesingle{}} \OperatorTok{{-}} \VariableTok{Y}\OperatorTok{\textquotesingle{}*}\VariableTok{B}\OperatorTok{\textquotesingle{}} \OperatorTok{+} \VariableTok{Omega} \OperatorTok{==} \FloatTok{0}\OperatorTok{;}
+    \VariableTok{M} \OperatorTok{\textgreater{}=} \FloatTok{0}
+\NormalTok{]}\OperatorTok{;}
+\VariableTok{obj} \OperatorTok{=} \VariableTok{trace}\NormalTok{(}\VariableTok{Q}\OperatorTok{*}\VariableTok{X}\NormalTok{) }\OperatorTok{+} \VariableTok{trace}\NormalTok{(}\VariableTok{Z}\NormalTok{)}\OperatorTok{;}
+\VariableTok{optimize}\NormalTok{(}\VariableTok{F}\OperatorTok{,}\VariableTok{obj}\NormalTok{)}\OperatorTok{;}
+\VariableTok{K\_sdp} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{Y}\NormalTok{)}\OperatorTok{*}\VariableTok{inv}\NormalTok{(}\VariableTok{value}\NormalTok{(}\VariableTok{X}\NormalTok{))}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+\end{example}
 
   \bibliography{book.bib}
 

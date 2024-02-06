@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-01" />
+<meta name="date" content="2024-02-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -203,6 +203,11 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
 <li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -229,7 +234,7 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 1</span> Mathematical Background<a href="background.html#background" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="background:convexity" class="section level2 hasAnchor" number="1.1">
 <h2><span class="header-section-number">1.1</span> Convexity<a href="background.html#background:convexity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>A very important notion in modern optimization is that of <em>convexity</em>. To a large extent, an optimization problem is “easy” if it is convex, and “difficult” when convexity is lost, i.e., <em>nonconvex</em>. We give a basic review of convexity here and refer the reader to <span class="citation">(<a href="#ref-rockafellar70-convexanalysis" role="doc-biblioref">Rockafellar 1970</a>)</span>, <span class="citation">(<a href="#ref-boyd04book-convex" role="doc-biblioref">Boyd and Vandenberghe 2004</a>)</span>, and <span class="citation">(<a href="#ref-bertsekas03book-convex" role="doc-biblioref">Bertsekas, Nedic, and Ozdaglar 2003</a>)</span> for comprehensive treatments.</p>
+<p>A very important notion in modern optimization is that of <em>convexity</em>. To a large extent, an optimization problem is “easy” if it is convex, and “difficult” when convexity is lost, i.e., <em>nonconvex</em>. We give a basic review of convexity here and refer the reader to <span class="citation">(<a href="#ref-rockafellar70-convexanalysis" role="doc-biblioref">Rockafellar 1970</a>)</span>, <span class="citation">(<a href="#ref-boyd04book-convex" role="doc-biblioref">S. P. Boyd and Vandenberghe 2004</a>)</span>, and <span class="citation">(<a href="#ref-bertsekas03book-convex" role="doc-biblioref">Bertsekas, Nedic, and Ozdaglar 2003</a>)</span> for comprehensive treatments.</p>
 <p>We will work on a finite-dimensional real vector space, which we will identify with <span class="math inline">\(\mathbb{R}^{n}\)</span>.</p>
 <div class="definitionbox">
 <div class="definition">

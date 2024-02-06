@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-01" />
+<meta name="date" content="2024-02-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -203,6 +203,11 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
 <li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -889,13 +894,291 @@ To run the <a href="https://github.com/ComputationalRobotics/Semidefinite-Exampl
 </div>
 <div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="applications" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Applications<a href="sdp.html#applications" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="lyapunov-stability" class="section level3 hasAnchor" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Lyapunov Stability<a href="sdp.html#lyapunov-stability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see <span class="citation">(<a href="#ref-boyd94book-lmi" role="doc-biblioref">S. Boyd et al. 1994</a>)</span>.</p>
+<p>Consider a discrete-time linear dynamical system
+<span class="math display" id="eq:dt-linear-system">\[\begin{equation}
+x_{k+1} = A x_k,\quad k=0,\dots
+\tag{2.11}
+\end{equation}\]</span>
+where <span class="math inline">\(x \in \mathbb{R}^{n}\)</span> is called the state of the system, and <span class="math inline">\(k\)</span> indexes the time. An important property that one wants to understand about the system <a href="sdp.html#eq:dt-linear-system">(2.11)</a> is whether it is <strong>stable</strong>, i.e., given an initial state <span class="math inline">\(x_0\)</span>, does <span class="math inline">\(x_k\)</span> tend to zero as <span class="math inline">\(k\)</span> tends to infinity.</p>
+<p>It is well-known that <span class="math inline">\(x_k\)</span> tends to zero for all initial conditions <span class="math inline">\(x_0\)</span> if and only if <span class="math inline">\(|\lambda_i(A)| &lt; 1, \forall i=1,\dots,n\)</span>, i.e., all the eigenvalues of the transition matrix <span class="math inline">\(A\)</span> lies inside the unit circle.</p>
+<p>Equivalently, one can also <strong>certify</strong> the stability of the system if a <strong>Lyapunov function</strong>
+<span class="math display" id="eq:Lyapunov-function">\[\begin{equation}
+V(x_k) = x_k^\top P x_k
+\tag{2.12}
+\end{equation}\]</span>
+is given that satisfies the following matrix inequalities.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:LyapunovStability" class="lemma"><strong>Lemma 2.5  (Lyapunov Stability) </strong></span>Given <span class="math inline">\(A \in \mathbb{R}^{n \times n}\)</span>, the following statements are equivalent:</p>
+<ol style="list-style-type: decimal">
+<li><p>All eigenvalues of <span class="math inline">\(A\)</span> lie strictly inside the unit circle, i.e., <span class="math inline">\(|\lambda_i(A)| &lt; 1, i=1,\dots,n\)</span></p></li>
+<li><p>There exists a matrix <span class="math inline">\(P \in \mathbb{S}^{n}\)</span> such that
+<span class="math display">\[
+P \succ 0, \quad A^\top P A - P \prec 0.
+\]</span></p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-11" class="proof"><em>Proof</em>. </span>2 <span class="math inline">\(\Rightarrow\)</span> 1: Let <span class="math inline">\(\lambda \in \mathbb{C}^{}\)</span> and <span class="math inline">\(v \neq 0 \in \mathbb{C}^{n}\)</span> be a pair of eigenvalue and eigenvector of <span class="math inline">\(A\)</span> such that <span class="math inline">\(A v = \lambda v\)</span>. Since <span class="math inline">\(A^\top P A - P \prec 0\)</span>, we have
+<span class="math display">\[
+v^* (A^\top P A - P) v &lt; 0 \Rightarrow (\lambda v)^* P (\lambda v) - v^* P v &lt; 0 \Rightarrow (|\lambda|^2 - 1) (v^* P v) &lt; 0.
+\]</span>
+Since <span class="math inline">\(P \succ 0\)</span>, we have <span class="math inline">\(v^* P v &gt; 0\)</span>. Hence, <span class="math inline">\(|\lambda|^2 - 1 &lt; 0\)</span> and <span class="math inline">\(|\lambda| &lt; 1\)</span>.</p>
+<p>1 <span class="math inline">\(\Rightarrow\)</span> 2: Construct
+<span class="math display">\[
+P := \sum_{k=0}^{\infty} (A^k)^\top A^k.
+\]</span>
+The sum converges by the condition that <span class="math inline">\(|\lambda_i(A)| &lt; 1,\forall i\)</span> and <span class="math inline">\(P \succ 0\)</span>. Then we have
+<span class="math display">\[
+A^\top P A - P = \sum_{k=1}^{\infty} (A^k)^\top A^k - \sum_{k=0}^{\infty} (A^k)^\top A^k = - \mathrm{I}\prec 0,
+\]</span>
+proving the result.</p>
+</div>
+</div>
+<p>Intuitively, the Lyapunov function <a href="sdp.html#eq:Lyapunov-function">(2.12)</a> defines a positive definite energy function. The fact that <span class="math inline">\(P \succ 0\)</span> implies <span class="math inline">\(V(0) = 0\)</span> and <span class="math inline">\(V(x) &gt; 0\)</span> for any <span class="math inline">\(x\)</span> that is nonzero. The condition <span class="math inline">\(A^\top P A - P \prec 0\)</span> guarantees that the system’s energy strictly decreases along any possible system trajectory. To see this, write
+<span class="math display">\[
+V(x_{k+1}) - V(x_k) = V(Ax_k) - V(x_k) = x_k^\top(A^\top P A - P) x_k &lt; 0, \forall x_k \neq 0.
+\]</span>
+Therefore, the existence of a Lyapunov function guarantees any system trajectory will converge to the origin.</p>
+<p>The nice property of constructing such a Lyapunov function is that it goes beyond linear systems and can be similarly generalized to nonlinear systems, where one can compute a stability certificate from semidefinite optimization. See for example <a href="https://hankyang.seas.harvard.edu/OptimalControlEstimation/stability.html#lyapunov-analysis">this lecture notes</a>.</p>
+<p><strong>Control Design</strong>. Consider now the case where <span class="math inline">\(A\)</span> is not stable, but we can use a linear <strong>feedback controller</strong> to stabilize the system, i.e.,
+<span class="math display">\[
+u_k = K x_k, \quad x_{k+1} = A x_k + B u_k = (A+ BK) x_k,
+\]</span>
+where the matrix <span class="math inline">\(K \in \mathbb{R}^{m \times n}\)</span> is the feedback law we wish to design. We wish to design <span class="math inline">\(K\)</span> using convex optimization, in particular semidefinite optimization.</p>
+<p>Involving Lemma~<a href="sdp.html#lem:LyapunovStability">2.5</a>, we see that designing <span class="math inline">\(K\)</span> to stabilize <span class="math inline">\(A + BK\)</span> is equivalent to finding
+<span class="math display" id="eq:control-stability">\[\begin{equation}
+P \succ 0, \quad (A + BK)^\top P (A + BK) - P \prec 0.
+\tag{2.13}
+\end{equation}\]</span>
+Using the Schur complement technique in Proposition <a href="sdp.html#prp:SchurPSD">2.1</a>, we know <a href="sdp.html#eq:control-stability">(2.13)</a> is equivalent to
+<span class="math display">\[
+\begin{bmatrix}
+P &amp; (A + BK)^\top P \\
+P(A+BK) &amp; P \end{bmatrix} \succ 0.
+\]</span>
+This matrix inequality is, however, not jointly convex in the unknowns <span class="math inline">\((P,A)\)</span>. To address this issue, we can pre-multiply and post-multiply the equation by <span class="math inline">\(\mathrm{BlkDiag}(P^{-1}, P^{-1})\)</span>, which leads to
+<span class="math display">\[\begin{equation}
+\begin{split}
+\begin{bmatrix} P^{-1}&amp; \\
+&amp; P^{-1}\end{bmatrix}
+\begin{bmatrix}
+P &amp; (A + BK)^\top P \\
+P(A+BK) &amp; P \end{bmatrix}
+\begin{bmatrix} P^{-1}&amp; \\
+&amp; P^{-1}\end{bmatrix} \succ 0  \Leftrightarrow \\
+\begin{bmatrix} P^{-1}&amp; P^{-1}(A + BK)^\top\\ (A+BK)P^{-1}&amp; P^{-1}\end{bmatrix} \succ 0.
+\end{split}
+\end{equation}\]</span>
+Now with a change of variable <span class="math inline">\(Q:= P^{-1}\)</span>, <span class="math inline">\(Y = K P^{-1}\)</span>, we have
+<span class="math display">\[
+\begin{bmatrix} Q &amp; Q A^\top+ Y^\top B^\top\\
+A Q + BY &amp; Q \end{bmatrix} \succ 0,
+\]</span>
+which is indeed a linear matrix inequality in the unknowns <span class="math inline">\((Q,Y)\)</span>. Solving the LMI, we can recover
+<span class="math display">\[
+P = Q^{-1}, K = Y Q^{-1}.
+\]</span></p>
+</div>
+<div id="linear-quadratic-regulator" class="section level3 hasAnchor" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Linear Quadratic Regulator<a href="sdp.html#linear-quadratic-regulator" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Another (somewhat surprising) application of semidefinite optimization is that it can be used to convexify the direct optimization of the linear quadratic regulator problem (one of the cornerstones in modern optimal control). In fact, such a convex formulation is the key to prove why <strong>policy optimization</strong> works in reinforcement learning, as least in the linear quadratic case <span class="citation">(<a href="#ref-hu23review-toward" role="doc-biblioref">Hu et al. 2023</a>)</span> <span class="citation">(<a href="#ref-mohammadi21tac-convergence" role="doc-biblioref">Mohammadi et al. 2021</a>)</span>.</p>
+<p>Consider a continuous-time linear dynamical system
+<span class="math display" id="eq:ct-linear-dynamical">\[\begin{equation}
+\dot{x} = A x + B u, \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^{m}, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m},
+\tag{2.14}
+\end{equation}\]</span>
+where <span class="math inline">\(x\)</span> denotes the state and <span class="math inline">\(u\)</span> denotes the control. Consider the following optimal control problem
+<span class="math display" id="eq:linear-quadratic-regulator">\[\begin{equation}
+\begin{split}
+\min_{u(t)}  &amp; \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
+\mathrm{s.t.}&amp; \quad \dot{x} = A x + Bu, \quad x(0) \sim \mathcal{N}(0,\Omega)
+\end{split}
+\tag{2.15}
+\end{equation}\]</span>
+where <span class="math inline">\(Q,R\succ 0\)</span> are known cost matrices, and <span class="math inline">\(x(0)\)</span> is supposed to satisfy the zero-mean Gaussian distribution with covariance <span class="math inline">\(\Omega \succ 0\)</span>. In the case where <span class="math inline">\(A,B,Q,R\)</span> are perfectly known to the control designer, and <span class="math inline">\((A,B)\)</span> is controllable (to be defined soon), problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.15)</a> can be solved exactly and optimally, with the optimal controller being a linear feedback controller of the form
+<span class="math display">\[
+u(t) = -Kx(t),
+\]</span>
+where
+<span class="math display">\[
+K = R^{-1}B^\top S,
+\]</span>
+with <span class="math inline">\(S\)</span> the unique positive definite solution to the continuous-time <strong>algebraic Riccati equation</strong> (ARE)
+<span class="math display">\[
+SA + A^\top S - SBR^{-1}B^\top S + Q = 0.
+\]</span></p>
+<p><strong>Policy Optimization</strong>. The control and reinforcement learning community are interested in whether it is possible to directly find the optimal feedback policy <span class="math inline">\(K\)</span>, i.e., directly solving
+<span class="math display" id="eq:linear-quadratic-regulator-directK">\[\begin{equation}
+\begin{split}
+\min_{K \in \mathcal{S}}  &amp; \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
+\mathrm{s.t.}&amp; \quad \dot{x} = A x + Bu, \quad u = -Kx, \quad x(0) \sim \mathcal{N}(0,\Omega).
+\end{split}
+\tag{2.16}
+\end{equation}\]</span>
+Note that problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is different from the original problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.15)</a> in the sense that we assume the knowledge that the optimal controller is linear and directly optimize <span class="math inline">\(K\)</span>. The feasible set <span class="math inline">\(\mathcal{S}\)</span> contains the set of <strong>stabilizing controllers</strong>, i.e.,
+<span class="math display" id="eq:stabilizing-K">\[\begin{equation}
+\mathcal{S}= \{ K \in \mathbb{R}^{m \times n} \mid A - BK \text{ is Hurwitz} \},
+\tag{2.17}
+\end{equation}\]</span>
+where a matrix <span class="math inline">\(A\)</span> is Hurwitz means <span class="math inline">\(\mathrm{Re}(\lambda_i(A)) &lt; 0\)</span> for all <span class="math inline">\(i=1,\dots,n\)</span>, i.e., all the eigenvalues of <span class="math inline">\(A\)</span> have strictly negative real parts. When <span class="math inline">\(A - BK\)</span> is Hurwitz, the closed-loop system is stable and the integral in <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> will not blow up (so it is sufficient to consider the class of stabilizing controllers).</p>
+<p>We will first observe that the direct optimization <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is nonconvex, because the feasible set <span class="math inline">\(\mathcal{S}\)</span> is nonconvex. The following example is adapted from <span class="citation">(<a href="#ref-fazel18icml-global" role="doc-biblioref">Fazel et al. 2018</a>)</span>.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:NonconvexStabilizingController" class="example"><strong>Example 2.6  (Nonconvex Set of Stabilizing Controllers) </strong></span>Consider the dynamical system <a href="sdp.html#eq:ct-linear-dynamical">(2.14)</a> with
+<span class="math display">\[
+A = 0_{3 \times 3}, \quad B = \mathrm{I}_3.
+\]</span>
+It is easy to show that both
+<span class="math display">\[
+K_1 = \begin{bmatrix} 1 &amp; 0 &amp; -10 \\ -1 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}, \quad K_2 = \begin{bmatrix} 1 &amp; -10 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ -1 &amp; 0 &amp; 1 \end{bmatrix}
+\]</span>
+are stabilizing controllers, as
+<span class="math display">\[
+\lambda(A - BK_1) = (-1,-1,-1), \quad \lambda(A - BK_2) = (-1,-1,-1).
+\]</span>
+However, pick
+<span class="math display">\[
+K = \frac{K_1 + K_2}{2} = \begin{bmatrix} 1 &amp; -5 &amp; -5 \\ -0.5 &amp; 1 &amp; 0 \\ -0.5 &amp; 0 &amp; 1 \end{bmatrix},
+\]</span>
+we have
+<span class="math display">\[
+\lambda(A - BK) = (-3.2361, 1.2361, -1)
+\]</span>
+and <span class="math inline">\(K\)</span> does not stabilize the closed-loop system.</p>
+</div>
+</div>
+<p><strong>Convex Parameterization with Semidefinite Optimization</strong>. We will now show that it is possible to reparameterize problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> as a semidefinite optimization so it becomes convex. To do so, we note
+<span class="math display">\[
+x^\top Q x + u^\top R u = x^\top Q x + x^\top K^\top R K x = x^\top(Q + K^\top R K)x^\top= \mathrm{tr}((Q + K^\top R K)xx^\top),
+\]</span>
+and therefore the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> can be written as
+<span class="math display">\[\begin{equation}
+\mathbb{E} \left\{ \int_{0}^{\infty} \mathrm{tr}((Q + K^\top R K) xx^\top) dt  \right\}  = \mathrm{tr}\left( (Q + K^\top R K) \mathbb{E} \left\{  \int_{0}^{\infty} xx^\top dt  \right\}    \right).
+\end{equation}\]</span>
+For any given initial condition, the solution of the closed-loop dynamics is given by the matrix exponential
+<span class="math display">\[
+x(t) = e^{(A-BK)t} x(0).
+\]</span>
+For the distribution of initial conditions, we have
+<span class="math display">\[
+\mathbb{E} \left\{ x(t)x(t)^\top \right\}  = e^{(A-BK)t} \mathbb{E}\{ x(0)x(0)^\top \}  e^{(A-BK)^\top t} = e^{(A-BK)t} \Omega  e^{(A-BK)^\top t}.
+\]</span>
+The integral of this function, call it <span class="math inline">\(X\)</span>, represents the expected energy of the closed-loop response
+<span class="math display">\[
+X = \mathbb{E} \left\{ \int_{0}^{\infty} xx^\top dt \right\} .
+\]</span>
+For every <span class="math inline">\(K \in \mathcal{S}\)</span> that is stabilizing, <span class="math inline">\(X\)</span> can be computed as the solution to the Lyapunov equation
+<span class="math display" id="eq:Lyapunov-equation">\[\begin{equation}
+(A - BK) X + X(A - BK)^\top+ \Omega = 0.
+\tag{2.18}
+\end{equation}\]</span>
+As a result, the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is simplied as
+<span class="math display">\[
+\mathrm{tr}((Q + K^\top R K) X),
+\]</span>
+with <span class="math inline">\(X\)</span> solves <a href="sdp.html#eq:Lyapunov-equation">(2.18)</a>. We arrive at an optimization problem
+<span class="math display" id="eq:lqr-directK-toX">\[\begin{equation}
+\begin{split}
+\min_{X,K} &amp; \quad \mathrm{tr}(QX) + \mathrm{tr}(K^\top R K X) \\
+\mathrm{s.t.}&amp; \quad (A-BK) X + X (A - BK)^\top+ \Omega = 0 \\
+&amp; \quad X \succ 0
+\end{split},
+\tag{2.19}
+\end{equation}\]</span>
+which is still nonconvex. We do a change of variable <span class="math inline">\(Y = KX\)</span>, so <span class="math inline">\(K = Y X ^{-1}\)</span> and obtain
+<span class="math display" id="eq:lqr-directK-toX-1">\[\begin{equation}
+\begin{split}
+\min_{X,Y} &amp; \quad \mathrm{tr}(QX) + \mathrm{tr}(X^{-1}Y^\top R Y) \\
+\mathrm{s.t.}&amp; \quad AX - BY + XA^\top- Y^\top B^\top+ \Omega = 0 \\
+&amp; \quad X \succ 0
+\end{split}.
+\tag{2.20}
+\end{equation}\]</span>
+The second term in the objective is still nonconvex, but we can use the Schur complement technique again, and arrive at the final optimization
+<span class="math display" id="eq:lqr-directK-toX-2">\[\begin{equation}
+\begin{split}
+\min_{X,Y,Z} &amp; \quad \mathrm{tr}(QX) + \mathrm{tr}(Z) \\
+\mathrm{s.t.}&amp; \quad AX - BY + XA^\top- Y^\top B^\top+ \Omega = 0 \\
+&amp; \quad X \succ 0 \\
+&amp; \quad \begin{bmatrix} Z &amp; R^{1/2} Y &amp; \\ Y^\top R^{1/2} &amp; X \end{bmatrix} \succeq 0
+\end{split}.
+\tag{2.21}
+\end{equation}\]</span>
+Note that the last two matrix inequalities of <a href="sdp.html#eq:lqr-directK-toX-2">(2.21)</a> implies, by Schur complement
+<span class="math display">\[
+Z - R^{1/2}Y X^{-1}Y^\top R^{1/2} \succeq 0 \Rightarrow \mathrm{tr}(Z - R^{1/2}Y X^{-1}Y^\top R^{1/2}) \geq 0.
+\]</span>
+Since the optimization is trying to minimize <span class="math inline">\(\mathrm{tr}(Z)\)</span>, it will push the equality to hold
+<span class="math display">\[
+Z - R^{1/2}Y X^{-1}Y^\top R^{1/2} = 0,
+\]</span>
+and thus
+<span class="math display">\[
+\mathrm{tr}(Z) = \mathrm{tr}(R^{1/2}Y X^{-1}Y^\top R^{1/2}) = \mathrm{tr}(X^{-1}Y^\top R Y).
+\]</span></p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:ConvexLQR" class="example"><strong>Example 2.7  (Convex LQR) </strong></span>For the same linear system as in Example <a href="sdp.html#exm:NonconvexStabilizingController">2.6</a>, let <span class="math inline">\(Q = R = \mathrm{I}_3\)</span>.</p>
+<p>If we solve the optimal feedback controller <span class="math inline">\(K\)</span> by solving the ARE, we get the optimal controller is <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>.</p>
+<p>If we implement the SDP in <a href="sdp.html#eq:lqr-directK-toX-2">(2.21)</a>, we also get <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>, confirming the correctness of the convex parameterization. The implementation is shown below and can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/lqr_sdp.m">here</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="sdp.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">%% Show the feasible set is nonconvex</span></span>
+<span id="cb3-2"><a href="sdp.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="sdp.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">B</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="sdp.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="va">K1</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb3-5"><a href="sdp.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="va">K2</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb3-6"><a href="sdp.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">K</span> <span class="op">=</span> (<span class="va">K1</span> <span class="op">+</span> <span class="va">K2</span>)<span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="sdp.html#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="sdp.html#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">%% get the groundtruth LQR controller</span></span>
+<span id="cb3-9"><a href="sdp.html#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">Q</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span> <span class="va">R</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-10"><a href="sdp.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">K_lqr</span> <span class="op">=</span> <span class="va">lqr</span>(<span class="va">A</span><span class="op">,</span><span class="va">B</span><span class="op">,</span><span class="va">Q</span><span class="op">,</span><span class="va">R</span><span class="op">,</span><span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>))<span class="op">;</span></span>
+<span id="cb3-11"><a href="sdp.html#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="va">Omega</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-12"><a href="sdp.html#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="sdp.html#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">%% solve SDP</span></span>
+<span id="cb3-14"><a href="sdp.html#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../YALMIP&#39;</span>))</span>
+<span id="cb3-15"><a href="sdp.html#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../../../mosek&#39;</span>))</span>
+<span id="cb3-16"><a href="sdp.html#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="sdp.html#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-18"><a href="sdp.html#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="va">Y</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span><span class="op">,</span><span class="ss">&#39;full&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-19"><a href="sdp.html#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="va">Z</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-20"><a href="sdp.html#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="va">M</span> <span class="op">=</span> [<span class="va">Z</span><span class="op">,</span> <span class="va">R</span><span class="op">*</span><span class="va">Y</span><span class="op">;</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">R</span><span class="op">,</span> <span class="va">X</span>]<span class="op">;</span></span>
+<span id="cb3-21"><a href="sdp.html#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [</span>
+<span id="cb3-22"><a href="sdp.html#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="va">A</span><span class="op">*</span><span class="va">X</span> <span class="op">-</span> <span class="va">B</span><span class="op">*</span><span class="va">Y</span> <span class="op">+</span> <span class="va">X</span><span class="op">*</span><span class="va">A</span><span class="op">&#39;</span> <span class="op">-</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">B</span><span class="op">&#39;</span> <span class="op">+</span> <span class="va">Omega</span> <span class="op">==</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-23"><a href="sdp.html#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="va">M</span> <span class="op">&gt;=</span> <span class="fl">0</span></span>
+<span id="cb3-24"><a href="sdp.html#cb3-24" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb3-25"><a href="sdp.html#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="va">Q</span><span class="op">*</span><span class="va">X</span>) <span class="op">+</span> <span class="va">trace</span>(<span class="va">Z</span>)<span class="op">;</span></span>
+<span id="cb3-26"><a href="sdp.html#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
+<span id="cb3-27"><a href="sdp.html#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="va">K_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Y</span>)<span class="op">*</span><span class="va">inv</span>(<span class="va">value</span>(<span class="va">X</span>))<span class="op">;</span></span></code></pre></div>
+</div>
+</div>
 
+</div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-blekherman12book-semidefinite" class="csl-entry">
 Blekherman, Grigoriy, Pablo A Parrilo, and Rekha R Thomas. 2012. <em>Semidefinite Optimization and Convex Algebraic Geometry</em>. SIAM.
+</div>
+<div id="ref-boyd94book-lmi" class="csl-entry">
+Boyd, Stephen, Laurent El Ghaoui, Eric Feron, and Venkataramanan Balakrishnan. 1994. <em>Linear Matrix Inequalities in System and Control Theory</em>. SIAM.
+</div>
+<div id="ref-fazel18icml-global" class="csl-entry">
+Fazel, Maryam, Rong Ge, Sham Kakade, and Mehran Mesbahi. 2018. <span>“Global Convergence of Policy Gradient Methods for the Linear Quadratic Regulator.”</span> In <em>International Conference on Machine Learning</em>, 1467–76. PMLR.
+</div>
+<div id="ref-hu23review-toward" class="csl-entry">
+Hu, Bin, Kaiqing Zhang, Na Li, Mehran Mesbahi, Maryam Fazel, and Tamer Başar. 2023. <span>“Toward a Theoretical Foundation of Policy Optimization for Learning Control Policies.”</span> <em>Annual Review of Control, Robotics, and Autonomous Systems</em> 6: 123–58.
+</div>
+<div id="ref-mohammadi21tac-convergence" class="csl-entry">
+Mohammadi, Hesameddin, Armin Zare, Mahdi Soltanolkotabi, and Mihailo R Jovanović. 2021. <span>“Convergence and Sample Complexity of Gradient Methods for the Model-Free Linear–Quadratic Regulator Problem.”</span> <em>IEEE Transactions on Automatic Control</em> 67 (5): 2435–50.
 </div>
 <div id="ref-nie23book-moment" class="csl-entry">
 Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
