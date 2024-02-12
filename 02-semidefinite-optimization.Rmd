@@ -1021,3 +1021,7 @@ K_sdp = value(Y)*inv(value(X));
 
 :::
 :::
+
+### Domain Adaptation
+
+[@mansour09arxiv-domain]
