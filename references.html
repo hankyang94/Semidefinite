@@ -23,14 +23,14 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-06" />
+<meta name="date" content="2024-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sdp.html"/>
+<link rel="prev" href="Shor.html"/>
 
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -207,6 +207,16 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
 <li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -253,7 +263,19 @@ Boyd, Stephen, Laurent El Ghaoui, Eric Feron, and Venkataramanan Balakrishnan. 1
 Fazel, Maryam, Rong Ge, Sham Kakade, and Mehran Mesbahi. 2018. <span>“Global Convergence of Policy Gradient Methods for the Linear Quadratic Regulator.”</span> In <em>International Conference on Machine Learning</em>, 1467–76. PMLR.
 </div>
 <div class="csl-entry">
+Garcia-Salguero, Mercedes, Jesus Briales, and Javier Gonzalez-Jimenez. 2021. <span>“Certifiable Relative Pose Estimation.”</span> <em>Image and Vision Computing</em> 109: 104142.
+</div>
+<div class="csl-entry">
+Goemans, Michel X, and David P Williamson. 1995. <span>“Improved Approximation Algorithms for Maximum Cut and Satisfiability Problems Using Semidefinite Programming.”</span> <em>Journal of the ACM (JACM)</em> 42 (6): 1115–45.
+</div>
+<div class="csl-entry">
+Holmes, Connor, and Timothy D Barfoot. 2023. <span>“An Efficient Global Optimality Certificate for Landmark-Based SLAM.”</span> <em>IEEE Robotics and Automation Letters</em> 8 (3): 1539–46.
+</div>
+<div class="csl-entry">
 Hu, Bin, Kaiqing Zhang, Na Li, Mehran Mesbahi, Maryam Fazel, and Tamer Başar. 2023. <span>“Toward a Theoretical Foundation of Policy Optimization for Learning Control Policies.”</span> <em>Annual Review of Control, Robotics, and Autonomous Systems</em> 6: 123–58.
+</div>
+<div class="csl-entry">
+Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain Adaptation: Learning Bounds and Algorithms.”</span> <em>arXiv Preprint arXiv:0902.3430</em>.
 </div>
 <div class="csl-entry">
 Mohammadi, Hesameddin, Armin Zare, Mahdi Soltanolkotabi, and Mihailo R Jovanović. 2021. <span>“Convergence and Sample Complexity of Gradient Methods for the Model-Free Linear–Quadratic Regulator Problem.”</span> <em>IEEE Transactions on Automatic Control</em> 67 (5): 2435–50.
@@ -266,6 +288,9 @@ Ramana, Motakuri V. 1997. <span>“An Exact Duality Theory for Semidefinite Prog
 </div>
 <div class="csl-entry">
 Rockafellar, Ralph Tyrell. 1970. <em>Convex Analysis</em>. Princeton university press.
+</div>
+<div class="csl-entry">
+Shor, Naum Z. 1987. <span>“Quadratic Optimization Problems.”</span> <em>Soviet Journal of Computer and Systems Sciences</em> 25: 1–11.
 </div>
 <div class="csl-entry">
 Tang, Yukai, Jean-Bernard Lasserre, and Heng Yang. 2023. <span>“Uncertainty Quantification of Set-Membership Estimation in Control and Perception: Revisiting the Minimum Enclosing Ellipsoid.”</span> <em>arXiv Preprint arXiv:2311.15962</em>.
@@ -312,7 +337,7 @@ Yang, Heng, Ling Liang, Luca Carlone, and Kim-Chuan Toh. 2022. <span>“An Inexa
           </div>
         </div>
       </div>
-<a href="sdp.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="Shor.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>

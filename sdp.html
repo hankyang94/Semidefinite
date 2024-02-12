@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-06" />
+<meta name="date" content="2024-02-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="background.html"/>
-<link rel="next" href="references.html"/>
+<link rel="next" href="Shor.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -207,6 +207,16 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
 <li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -1159,6 +1169,10 @@ and thus
 <span id="cb3-27"><a href="sdp.html#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="va">K_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Y</span>)<span class="op">*</span><span class="va">inv</span>(<span class="va">value</span>(<span class="va">X</span>))<span class="op">;</span></span></code></pre></div>
 </div>
 </div>
+</div>
+<div id="domain-adaptation" class="section level3 hasAnchor" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Domain Adaptation<a href="sdp.html#domain-adaptation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="citation">(<a href="#ref-mansour09arxiv-domain" role="doc-biblioref">Mansour, Mohri, and Rostamizadeh 2009</a>)</span></p>
 
 </div>
 </div>
@@ -1176,6 +1190,9 @@ Fazel, Maryam, Rong Ge, Sham Kakade, and Mehran Mesbahi. 2018. <span>“Global C
 </div>
 <div id="ref-hu23review-toward" class="csl-entry">
 Hu, Bin, Kaiqing Zhang, Na Li, Mehran Mesbahi, Maryam Fazel, and Tamer Başar. 2023. <span>“Toward a Theoretical Foundation of Policy Optimization for Learning Control Policies.”</span> <em>Annual Review of Control, Robotics, and Autonomous Systems</em> 6: 123–58.
+</div>
+<div id="ref-mansour09arxiv-domain" class="csl-entry">
+Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain Adaptation: Learning Bounds and Algorithms.”</span> <em>arXiv Preprint arXiv:0902.3430</em>.
 </div>
 <div id="ref-mohammadi21tac-convergence" class="csl-entry">
 Mohammadi, Hesameddin, Armin Zare, Mahdi Soltanolkotabi, and Mihailo R Jovanović. 2021. <span>“Convergence and Sample Complexity of Gradient Methods for the Model-Free Linear–Quadratic Regulator Problem.”</span> <em>IEEE Transactions on Automatic Control</em> 67 (5): 2435–50.
@@ -1221,7 +1238,7 @@ Yang, Heng, Ling Liang, Luca Carlone, and Kim-Chuan Toh. 2022. <span>“An Inexa
         </div>
       </div>
 <a href="background.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="Shor.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Shor’s Semidefinite Relaxation | Semidefinite Optimization and Relaxation</title>
+  <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Shor’s Semidefinite Relaxation | Semidefinite Optimization and Relaxation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="github-repo" content="hankyang94/Semidefinite" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Shor’s Semidefinite Relaxation | Semidefinite Optimization and Relaxation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2024-02-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="sdp.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Semidefinite Optimization and Relaxation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#feedback"><i class="fa fa-check"></i>Feedback</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#offerings"><i class="fa fa-check"></i>Offerings</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#background:convex:optimization:Lagrangian"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
+<li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+<li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="sdp.html"><a href="sdp.html#positive-semidefinite-matrices"><i class="fa fa-check"></i><b>2.1</b> Positive Semidefinite Matrices</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="sdp.html"><a href="sdp.html#geometric-properties"><i class="fa fa-check"></i><b>2.1.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="sdp.html"><a href="sdp.html#semidefinite-programming"><i class="fa fa-check"></i><b>2.2</b> Semidefinite Programming</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="sdp.html"><a href="sdp.html#spectrahedra"><i class="fa fa-check"></i><b>2.2.1</b> Spectrahedra</a></li>
+<li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
+<li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Semidefinite Optimization and Relaxation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="Shor" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Shor’s Semidefinite Relaxation<a href="Shor.html#Shor" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this Chapter, we introduce one of the most important and well-known applications of semidefinite optimization, namely its use in the formulation of <strong>convex relaxations</strong> of nonconvex optimization problems.</p>
+<p>We will focus on the so-called Shor’s semidefinite relaxation <span class="citation">(<a href="#ref-shor87sjcss-quadratic" role="doc-biblioref">Shor 1987</a>)</span>, which is particularly designed for quadratically constrained quadratic programs (QCQPs). Shor’s semidefinite relaxation is relatively easy to formulate and understand, and as we will see later, is essentially the first-order relaxation in the moment-SOS hierarchy.</p>
+<div id="semidefinite-relaxation-of-qcqps" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Semidefinite Relaxation of QCQPs<a href="Shor.html#semidefinite-relaxation-of-qcqps" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider a quadratically constrained quadratic program (QCQP):
+<span class="math display" id="eq:qcqp">\[\begin{equation}
+\begin{split}
+f^\star = \min_{x \in \mathbb{R}^{n}} &amp; \quad x^\top C x \\
+\mathrm{s.t.}&amp; \quad x^\top A_i x = b_i, i=1,\dots,m
+\end{split}
+\tag{3.1}
+\end{equation}\]</span>
+where <span class="math inline">\(C,A_1,\dots,A_m \in \mathbb{S}^{n}\)</span> are given symmetric matrices and <span class="math inline">\(b = [b_1,\dots,b_m] \in \mathbb{R}^{m}\)</span> is a given vector. We assume the problem <a href="Shor.html#eq:qcqp">(3.1)</a> is feasible, solvable, and bounded from below, i.e., <span class="math inline">\(-\infty &lt; f^\star &lt; +\infty\)</span> and is attained. Many practical problems in optimization, engineering, and applied sciences can be formulated as <a href="Shor.html#eq:qcqp">(3.1)</a>. For example, problem <a href="Shor.html#eq:qcqp">(3.1)</a> includes binary quadratic optimization (BQP) problems by letting
+<span class="math display">\[
+A_i = e_i e_i^\top, i=1,\dots,n
+\]</span>
+with <span class="math inline">\(e_i \in \mathbb{R}^{n}\)</span> the standard Euclidean basis vector, in which case the <span class="math inline">\(i\)</span>-th constraint becomes
+<span class="math display">\[
+x_i^2 = 1 \Leftrightarrow x_i \in \{+1,-1\},i=1,\dots,n.
+\]</span>
+We will discuss a particular type of BQP known as the MAXCUT problem in more details later. From this simple example, since QCQP includes BQP, we know in general the problem <a href="Shor.html#eq:qcqp">(3.1)</a> is nonconvex and it is NP-hard to compute <span class="math inline">\(f^\star\)</span> and find a global optimizer.</p>
+<div id="lagrangian-dual-problem" class="section level3 hasAnchor" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Lagrangian Dual Problem<a href="Shor.html#lagrangian-dual-problem" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Since the original QCQP is hard to solve in general, we turn to computing a <strong>lower bound</strong> of <a href="Shor.html#eq:qcqp">(3.1)</a>. The most natural way to find a lower bound, according to Section <a href="background.html#background:convex:optimization:Lagrangian">1.3.2</a>, is to derive its Lagrangian dual problem. Towards this goal, we associate a Lagrangian multipler <span class="math inline">\(-y_i\)</span> with each equality constraint and obtain the Lagrangian
+<span class="math display">\[
+L(x,y) = x^\top C x - \sum_{i=1}^m y_i (x^\top A_i x - b_i), \quad x \in \mathbb{R}^{n},y \in \mathbb{R}^{m}.
+\]</span>
+The Lagrangian dual, by definition, is
+<span class="math display">\[
+\phi(y) = \min_x L(x,y) = \sum_{i=1}^m y_i b_i + \min_{x \in \mathbb{R}^{n}} x^\top\underbrace{\left( C - \sum_{i=1}^m y_i A_i \right)}_{Z} x.
+\]</span>
+Clearly, if <span class="math inline">\(Z\)</span> is positive semidefinite, then <span class="math inline">\(\min_x x^\top Z x = 0\)</span> (by choosing <span class="math inline">\(x=0\)</span>); otherwise, <span class="math inline">\(\min_x x^\top Z x = -\infty\)</span>. Therefore, the dual function is
+<span class="math display">\[
+\phi(y) = \begin{cases}
+\sum_{i=1}^m y_i b_i &amp; \text{if } C - \sum_{i=1}^m y_i A_i \succeq 0 \\
+- \infty &amp; \text{otherwise}
+\end{cases}.
+\]</span>
+The Lagrangian dual problem seeks to maximize <span class="math inline">\(y\)</span>, and hence it will make sure <span class="math inline">\(Z\)</span> is PSD
+<span class="math display" id="eq:Lagrangian-dual-qcqp">\[\begin{equation}
+\begin{split}
+d^\star = \max_{y \in \mathbb{R}^{m}} &amp; \quad b^\top y \\
+\mathrm{s.t.}&amp; \quad C - \mathcal{A}^*(y) \succeq 0.
+\end{split}
+\tag{3.2}
+\end{equation}\]</span>
+By Lagrangian duality, we have
+<span class="math display">\[
+d^\star \leq f^\star.
+\]</span>
+Note that problem <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a> is a convex SDP and can be solved by off-the-shelf solvers.</p>
+<p>Another nice property of the dual problem is that it naturally leads to a <strong>certifier</strong>.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:DualCertifier" class="proposition"><strong>Proposition 3.1  (Dual Optimality Certifier) </strong></span>Let <span class="math inline">\(x_\star\)</span> be a feasible solution to the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>, if there exists <span class="math inline">\(y_\star \in \mathbb{R}^{m}\)</span> such that
+<span class="math display" id="eq:dual-optimality-condition">\[\begin{equation}
+C - \mathcal{A}^*(y_\star) \succeq 0, \quad [ C - \mathcal{A}^*(y_\star) ] x_\star = 0,
+\tag{3.3}
+\end{equation}\]</span>
+then <span class="math inline">\(x_\star\)</span> is a global minimizer of <a href="Shor.html#eq:qcqp">(3.1)</a>, and <span class="math inline">\(y_\star\)</span> is a global minimizer of <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>We have zero duality gap
+<span class="math display">\[\begin{equation}
+\begin{split}
+x_\star^\top C x_\star - b^\top y_\star = \langle C, x_\star x_\star^\top \rangle - \langle b, y_\star \rangle = \langle C, x_\star x_\star^\top \rangle - \langle \mathcal{A}(x_\star x_\star^\top), y_\star \rangle \\
+= \langle C - \mathcal{A}^*(y_\star),  x_\star x_\star^\top \rangle = x_\star^\top[ C - \mathcal{A}^*(y_\star) ] x_\star = 0.
+\end{split}
+\end{equation}\]</span>
+and <span class="math inline">\((x_\star, y_\star)\)</span> is primal-dual feasible. Therefore, <span class="math inline">\((x_\star, y_\star)\)</span> is primal-dual optimal.</p>
+</div>
+</div>
+<p>The reason why Proposition <a href="Shor.html#prp:DualCertifier">3.1</a> can be quite useful is that it gives a very efficient algorithm to certify global optimality of a candidate (potentially locally) optimal solution <span class="math inline">\(x_\star\)</span>. In particular, in several practical applications in computer vision and robotics, the second equation in <a href="Shor.html#eq:dual-optimality-condition">(3.3)</a> is a linear system of <span class="math inline">\(n\)</span> equations in <span class="math inline">\(m\)</span> variables with <span class="math inline">\(m\leq n\)</span>, and hence it has a unique solution. Therefore, one can first solve the linear system and obtain a candidate <span class="math inline">\(y_\star\)</span>, and then simply check the PSD condition <span class="math inline">\(C - \mathcal{A}^*(y_\star) \succeq 0\)</span>. This leads to optimality certifiers that can run in real time <span class="citation">(<a href="#ref-garcia21ivc-certifiable" role="doc-biblioref">Garcia-Salguero, Briales, and Gonzalez-Jimenez 2021</a>)</span> <span class="citation">(<a href="#ref-holmes23ral-efficient" role="doc-biblioref">Holmes and Barfoot 2023</a>)</span>.</p>
+</div>
+<div id="dual-of-the-dual-bidual" class="section level3 hasAnchor" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Dual of the Dual (Bidual)<a href="Shor.html#dual-of-the-dual-bidual" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The dual problem <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a> should appear familiar to us at this moment – it is simply a standard-form dual SDP <a href="sdp.html#eq:SDP-D">(2.6)</a>. Therefore, we can write down the SDP dual of the QCQP dual <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a>
+<span class="math display" id="eq:qcqp-bidual">\[\begin{equation}
+\begin{split}
+p^\star = \min_{X \in \mathbb{S}^{n}} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \mathcal{A}(X) = b \\
+&amp; \quad X \succeq 0
+\end{split}
+\tag{3.4}
+\end{equation}\]</span>
+Under the assumption of SDP strong duality (e.g., both <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> and <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a> are strictly feasible), we have
+<span class="math display">\[
+p^\star = d^\star \leq f^\star.
+\]</span>
+The weak duality <span class="math inline">\(d^\star \leq f^\star\)</span> can be interpreted using standard Lagrangian duality. How about the weak duality <span class="math inline">\(p^\star \leq f^\star\)</span>?
+It turns out the dual of the dual (bidual) also has a nice interpretation.</p>
+<p>We first observe that the original QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> is equivalent to a rank-constrained matrix optimization problem.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:RankConstrainedMatrix" class="proposition"><strong>Proposition 3.2  (Rank-Constrained Matrix Optimization) </strong></span>The QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> is equivalent to the following rank-constrained matrix optimization
+<span class="math display" id="eq:rank-constrained-optimization">\[\begin{equation}
+\begin{split}
+f^\star_m = \min_{X \in \mathbb{S}^{n}} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \mathcal{A}(X) = b \\
+&amp; \quad X \succeq 0 \\
+&amp; \quad \mathrm{rank}(X) = 1
+\end{split}
+\tag{3.5}
+\end{equation}\]</span>
+in the sense that</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(f^\star = f^\star_m\)</span></p></li>
+<li><p>For every optimal solution <span class="math inline">\(x_\star\)</span> of the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>, <span class="math inline">\(X_\star = x_\star x_\star^\top\)</span> is globally optimal for the matrix optimization <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a></p></li>
+<li><p>Every optimal solution <span class="math inline">\(X_\star\)</span> of the matrix optimization can be factorized as <span class="math inline">\(X_\star = x_\star x_\star^\top\)</span> so that <span class="math inline">\(x_\star\)</span> is optimal for the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>.</p></li>
+</ol>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-13" class="proof"><em>Proof</em>. </span>We will show that the feasible set of the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> is the same as the feasible set of <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a>.</p>
+<p>Let <span class="math inline">\(x\)</span> be feasible for the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>, we have <span class="math inline">\(X=xx^\top\)</span> must be feasible for <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a> because <span class="math inline">\(X \succeq 0\)</span> by construction, <span class="math inline">\(\mathrm{rank}(X) = \mathrm{rank}(xx^\top) = \mathrm{rank}(x) = 1\)</span>, and
+<span class="math display">\[
+x^\top A_i x = b_i \Rightarrow \mathrm{tr}(x^\top A_i x) = b_i \Rightarrow \mathrm{tr}(A_i x x^\top) = b_i \Rightarrow \langle A_i, X \rangle = b_i, \forall i.
+\]</span></p>
+<p>Conversely, let <span class="math inline">\(X\)</span> be feasible for the matrix optimization <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a>. Since <span class="math inline">\(X \succeq 0\)</span> and <span class="math inline">\(\mathrm{rank}(X) = 1\)</span>, <span class="math inline">\(X = xx^\top\)</span> must hold for some <span class="math inline">\(x \in \mathbb{R}^{n}\)</span>. In the meanwhile,
+<span class="math display">\[
+\langle A_i, X \rangle = b_i \Rightarrow \langle A_i, xx^\top \rangle = b_i \Rightarrow x^\top A_i x = b_i, \forall i.
+\]</span>
+Therefore, <span class="math inline">\(x\)</span> is feasible for the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>.</p>
+<p>Finally, it is easy to observer that
+<span class="math display">\[
+\langle C, X \rangle = \langle C, xx^\top \rangle = x^\top C x,
+\]</span>
+and the objective is also the same.</p>
+</div>
+</div>
+<p>Since the QCQP is equivalent to the matrix optimization <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a>, one should expect the matrix optimization to be NP-hard in general as well. In fact, this is true due to the nonconvex rank constraint <span class="math inline">\(\mathrm{rank}(X) = 1\)</span>. Comparing the nonconvex SDP <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a> and the convex SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a>, we see the only difference is that we have dropped the nonconvex rank constraint in <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> to make it convex, hence the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> is a convex relaxation of the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> and <span class="math inline">\(p^\star \leq f^\star\)</span>.</p>
+<p>This convex relaxation perspective also provides a way to certify global optimality, by checking the rank of the optimal solution after solving the convex SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a>.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:SDPExactness" class="proposition"><strong>Proposition 3.3  (Exactness of SDP Relaxation) </strong></span>Let <span class="math inline">\(X_\star\)</span> be an optimal solution to the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a>, if <span class="math inline">\(\mathrm{rank}(X_\star) = 1\)</span>, then <span class="math inline">\(X_\star\)</span> can be factorized as <span class="math inline">\(X_\star = x_\star x_\star^\top\)</span> with <span class="math inline">\(x_\star\)</span> a globally optimal solution to the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>. If so, we say the relaxation <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> is exact, or tight.</p>
+</div>
+</div>
+<p>It is worth noting that, even when the relaxation is exact, i.e., <span class="math inline">\(p^\star = f^\star\)</span>, it may not be trivial to numerically certify the exactness, due to several reasons</p>
+<ul>
+<li><p>If the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> is solved using interior point methods such as MOSEK, then it is well known that they converge to the <em>maximum-rank solution</em> <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>. This is saying that even if the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> has rank-one solutions, the solvers may not find them. Consider the case where <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are both optimal solutions to the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> and the relaxation is exact, it is easy to check that
+<span class="math display">\[
+X = \lambda_1 x_1 x_1^\top+ \lambda_2 x_2 x_2^\top, \quad \lambda_1, \lambda_2 \geq 0, \lambda_1 + \lambda_2 = 1
+\]</span>
+is globally optimal for the SDP. When <span class="math inline">\(x_1 x_1^\top\)</span> and <span class="math inline">\(x_2 x_2^\top\)</span> are linearly independent, <span class="math inline">\(X\)</span> can have rank equal to two. In this case, interior point methods will not converge to either <span class="math inline">\(x_1x_1^\top\)</span> or <span class="math inline">\(x_2 x_2^\top\)</span>, but will instead find <span class="math inline">\(X\)</span> with some unknown coefficients of <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span>.</p></li>
+<li><p>Even if the original QCQP has a unique optimal solution and the relaxation is exact, the SDP solver will converge to a solution that is approximately rank-one (i.e., the second largest sigular value / eigenvalue will still be nonzero) and it may be difficult to draw a conclusion about exactness. Therefore, in practice one can compute a <strong>relative suboptimality gap</strong> by rounding a feasible point to the QCQP from the SDP (it may or may not be easy to round a feasible point), denoted as <span class="math inline">\(\hat{x}\)</span>, then compute
+<span class="math display">\[
+\hat{f} = \hat{x}^\top C \hat{x},
+\]</span>
+which serves as an upper bound
+<span class="math display">\[
+p^\star \leq f^\star \leq \hat{f}.
+\]</span>
+The relative suboptimality gap can be computed as
+<span class="math display">\[
+\eta = \frac{|\hat{f} - p^\star|}{1 + |\hat{f}| + |p^\star|}.
+\]</span>
+Clearly, <span class="math inline">\(\eta \approx 0\)</span> certifies exactness of the SDP relaxation.</p></li>
+</ul>
+</div>
+<div id="maxcut" class="section level3 hasAnchor" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> MAXCUT<a href="Shor.html#maxcut" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We will now study binary quadratic optimization problems, in particular the MAXCUT problem. The original QCQP reads
+<span class="math display" id="eq:bqp">\[\begin{equation}
+\begin{split}
+\min_{x \in \mathbb{R}^{n}} &amp; \quad x^\top C x \\
+\mathrm{s.t.}&amp; \quad x_i^2 = 1, i=1,\dots,n.
+\end{split}
+\tag{3.6}
+\end{equation}\]</span>
+For the MAXCUT problem, a standard formulation is
+<span class="math display" id="eq:maxcut-org">\[\begin{equation}
+\max_{x_i^2 = 1}  \frac{1}{4} \sum_{i,j} w_{ij} (1 - x_i x_j).
+\tag{3.7}
+\end{equation}\]</span>
+It is clear that if <span class="math inline">\(x_i, x_j\)</span> have the same sign, then <span class="math inline">\(1- x_i x_j = 0\)</span>, otherwise, <span class="math inline">\(1- x_i x_j = 2\)</span>. Removing the constant terms in <a href="Shor.html#eq:maxcut-org">(3.7)</a>, it is equivalent to the followng BQP
+<span class="math display" id="eq:maxcut-bqp">\[\begin{equation}
+\min_{x_i^2 = 1}  \sum_{i,j} w_{ij} x_i x_j.
+\tag{3.8}
+\end{equation}\]</span></p>
+<p><strong>Random Rounding</strong>. In general, solving the SDP relaxation of the MAXCUT problem will not produce a certifiably optimal solution. It is therefore interesting to ask if solving the SDP relaxation can produce provably good approximations.</p>
+<p>Let <span class="math inline">\(X\)</span> be the optimal solution of the SDP relaxation, and <span class="math inline">\(X = V^\top V\)</span> be a rank-<span class="math inline">\(r\)</span> factorization with <span class="math inline">\(V \in \mathbb{R}^{r \times n}\)</span>
+<span class="math display">\[
+V = [v_1,\dots,v_n]
+\]</span>
+and each vector <span class="math inline">\(v_i \in \mathbb{R}^{r}\)</span>. We have <span class="math inline">\(X_{ij} = v_i^\top v_j\)</span>. Since <span class="math inline">\(X_{ii} = 1\)</span>, the vectors <span class="math inline">\(v_i\)</span>’s lie on the unit sphere. Goemans and Williamson <span class="citation">(<a href="#ref-goemans95jacm-improved" role="doc-biblioref">Goemans and Williamson 1995</a>)</span> proposed to obtain a feasible point to the orignal BQP by first choosing a random unit direction <span class="math inline">\(p \in \mathbb{R}^{r}\)</span> and then assign
+<span class="math display">\[
+x_i = \mathrm{sgn}(p^\top v_i), i=1,\dots,n.
+\]</span>
+The expected value of this solution can be written as
+<span class="math display">\[
+\mathbb{E}_p  \left\{ x^\top C x \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ x_i x_j \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ \mathrm{sgn}(p^\top x_i) \mathrm{sgn}(p^\top x_j) \right\} .
+\]</span>
+This expectation can be computed using geometric intuition. Consider the plan spanned by <span class="math inline">\(v_i\)</span> and <span class="math inline">\(v_j\)</span> and let <span class="math inline">\(\theta_{ij}\)</span> be the angle between them. Then, it is easy to see that the desired expectation is equal to the probability that both points are on the same side of the hyperplane, minus the probability that they are on different sides. These probabilities are <span class="math inline">\(1- \theta_{ij} / \pi\)</span> and <span class="math inline">\(\theta_{ij} / \pi\)</span>, respectively. Therefore, the expected value of the rounded solution is
+<span class="math display">\[
+\sum_{i,j} C_{ij} \left( 1- \frac{2\theta_{ij}}{\pi} \right) = \sum_{i,j} C_{ij} \left( 1- \frac{2}{\pi} \arccos (v_i^\top v_j)  \right) = \frac{2}{\pi} \sum_{i,j} C_{ij} \arcsin X_{ij},
+\]</span>
+where we have used
+<span class="math display">\[
+\arccos t + \arcsin t = \frac{\pi}{2}.
+\]</span></p>
+<p><strong>MAXCUT Bound</strong>. For the MAXCUT problem, there are constant terms involved in the original cost function, which leads to the expected cut of the rounded solution to be
+<span class="math display">\[
+c_{\mathrm{expected}} = \frac{1}{4} \sum_{i,j} w_{ij} \left( 1- \frac{2}{\pi} \arcsin X_{ij} \right) = \frac{1}{4} \frac{2}{\pi} \sum_{ij} w_{ij} \arccos X_{ij}.
+\]</span>
+On the other hand, the optimal value of the SDP relaxation produces an upper bound on the true MAXCUT
+<span class="math display">\[
+c_{\mathrm{ub}} = \frac{1}{4} \sum_{i,j} w_{ij} (1 - X_{ij}).
+\]</span>
+We have
+<span class="math display">\[
+c_{\mathrm{expected}} \leq c_{\mathrm{MAXCUT}} \leq c_{\mathrm{ub}}.
+\]</span>
+We want to find the maximum possible <span class="math inline">\(\alpha\)</span> such that
+<span class="math display">\[
+\alpha c_{\mathrm{ub}} \leq c_{\mathrm{expected}} \leq c_{\mathrm{MAXCUT}} \leq c_{\mathrm{ub}},
+\]</span>
+so that <span class="math inline">\(\alpha\)</span> acts to be the best approximation ratio. To find such <span class="math inline">\(\alpha\)</span>, we need to find the maximum <span class="math inline">\(\alpha\)</span> such that
+<span class="math display">\[
+\alpha (1 - t) \leq \frac{2}{\pi} \arccos(t), \forall t \in [-1,1].
+\]</span>
+The best possible <span class="math inline">\(\alpha\)</span> is <span class="math inline">\(0.878\)</span>, see Fig. <a href="Shor.html#fig:MAXCUTAlpha">3.1</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:MAXCUTAlpha"></span>
+<img src="images/maxcut_alpha.png" alt="Best approximation ratio." width="60%" />
+<p class="caption">
+Figure 3.1: Best approximation ratio.
+</p>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-garcia21ivc-certifiable" class="csl-entry">
+Garcia-Salguero, Mercedes, Jesus Briales, and Javier Gonzalez-Jimenez. 2021. <span>“Certifiable Relative Pose Estimation.”</span> <em>Image and Vision Computing</em> 109: 104142.
+</div>
+<div id="ref-goemans95jacm-improved" class="csl-entry">
+Goemans, Michel X, and David P Williamson. 1995. <span>“Improved Approximation Algorithms for Maximum Cut and Satisfiability Problems Using Semidefinite Programming.”</span> <em>Journal of the ACM (JACM)</em> 42 (6): 1115–45.
+</div>
+<div id="ref-holmes23ral-efficient" class="csl-entry">
+Holmes, Connor, and Timothy D Barfoot. 2023. <span>“An Efficient Global Optimality Certificate for Landmark-Based SLAM.”</span> <em>IEEE Robotics and Automation Letters</em> 8 (3): 1539–46.
+</div>
+<div id="ref-shor87sjcss-quadratic" class="csl-entry">
+Shor, Naum Z. 1987. <span>“Quadratic Optimization Problems.”</span> <em>Soviet Journal of Computer and Systems Sciences</em> 25: 1–11.
+</div>
+<div id="ref-wolkowicz12book-sdp" class="csl-entry">
+Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of Semidefinite Programming: Theory, Algorithms, and Applications</em>. Vol. 27. Springer.
+</div>
+</div>
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://semidefinite.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="sdp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/Semidefinite/blob/main/03-ShorRelaxation.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["semidefinite-optimization-relaxation.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
