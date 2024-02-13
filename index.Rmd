@@ -12,6 +12,9 @@ github-repo: hankyang94/Semidefinite
 description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation."
 ---
 
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\calV}{\mathcal{V}}
+\newcommand{\calE}{\mathcal{E}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
@@ -20,6 +23,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
 \newcommand{\calN}{\mathcal{N}}
+\newcommand{\tldR}{\tilde{R}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\Comp}[1]{\mathbb{C}^{#1}}
@@ -75,6 +79,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\face}{\mathrm{face}}
 \newcommand{\lmid}{\ \middle\vert\ }
 \renewcommand{\Re}{\mathrm{Re}}
+\newcommand{\hatmap}[1]{[#1]_{\times}}
 
 
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
