@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-12}
+\date{2024-02-13}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -189,6 +189,9 @@ arc=4pt}
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\calV}{\mathcal{V}}
+\newcommand{\calE}{\mathcal{E}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
@@ -197,6 +200,7 @@ arc=4pt}
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
 \newcommand{\calN}{\mathcal{N}}
+\newcommand{\tldR}{\tilde{R}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\Comp}[1]{\mathbb{C}^{#1}}
@@ -251,6 +255,7 @@ arc=4pt}
 \newcommand{\face}{\mathrm{face}}
 \newcommand{\lmid}{\ \middle\vert\ }
 \renewcommand{\Re}{\mathrm{Re}}
+\newcommand{\hatmap}[1]{[#1]_{\times}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -2145,7 +2150,7 @@ Another nice property of the dual problem is that it naturally leads to a \textb
 C - \mathcal{A}^*(y_\star) \succeq 0, \quad [ C - \mathcal{A}^*(y_\star) ] x_\star = 0,
 \label{eq:dual-optimality-condition}
 \end{equation}
-then \(x_\star\) is a global minimizer of \eqref{eq:qcqp}, and \(y_\star\) is a global minimizer of \eqref{eq:Lagrangian-dual-qcqp}.
+then \(x_\star\) is a global minimizer of \eqref{eq:qcqp}, and \(y_\star\) is a global maximizer of \eqref{eq:Lagrangian-dual-qcqp}.
 \end{proposition}
 
 \begin{proof}
@@ -2276,10 +2281,22 @@ We will now study binary quadratic optimization problems, in particular the MAXC
 \end{equation}
 For the MAXCUT problem, a standard formulation is
 \begin{equation}
-\max_{x_i^2 = 1}  \frac{1}{4} \sum_{i,j} w_{ij} (1 - x_i x_j).
+\max_{x_i^2 = 1}  \frac{1}{4} \sum_{i,j} w_{ij} (1 - x_i x_j),
 \label{eq:maxcut-org}
 \end{equation}
-It is clear that if \(x_i, x_j\) have the same sign, then \(1- x_i x_j = 0\), otherwise, \(1- x_i x_j = 2\). Removing the constant terms in \eqref{eq:maxcut-org}, it is equivalent to the followng BQP
+where \(w_{ij} \geq 0\) is the weight of the edge between node \(i\) and node \(j\).
+It is clear that if \(x_i, x_j\) have the same sign, then \(1- x_i x_j = 0\), otherwise, \(1- x_i x_j = 2\).
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/max_cut} 
+
+}
+
+\caption{MAXCUT seeks to separate the node set of a graph into two disjoint groups such that the separation line cuts as many (weighted) edges as possible. For example, the blue line cuts four edges.}\label{fig:MAXCUT}
+\end{figure}
+
+Removing the constant terms in \eqref{eq:maxcut-org}, it is equivalent to the followng BQP
 \begin{equation}
 \min_{x_i^2 = 1}  \sum_{i,j} w_{ij} x_i x_j.
 \label{eq:maxcut-bqp}
@@ -2299,7 +2316,7 @@ The expected value of this solution can be written as
 \[
 \mathbb{E}_p  \left\{ x^\top C x \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ x_i x_j \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ \mathrm{sgn}(p^\top x_i) \mathrm{sgn}(p^\top x_j) \right\} .
 \]
-This expectation can be computed using geometric intuition. Consider the plan spanned by \(v_i\) and \(v_j\) and let \(\theta_{ij}\) be the angle between them. Then, it is easy to see that the desired expectation is equal to the probability that both points are on the same side of the hyperplane, minus the probability that they are on different sides. These probabilities are \(1- \theta_{ij} / \pi\) and \(\theta_{ij} / \pi\), respectively. Therefore, the expected value of the rounded solution is
+This expectation can be computed using geometric intuition. Consider the plane spanned by \(v_i\) and \(v_j\) and let \(\theta_{ij}\) be the angle between them. Then, it is easy to see that the desired expectation is equal to the probability that both points are on the same side of the hyperplane, minus the probability that they are on different sides. These probabilities are \(1- \theta_{ij} / \pi\) and \(\theta_{ij} / \pi\), respectively. Therefore, the expected value of the rounded solution is
 \[
 \sum_{i,j} C_{ij} \left( 1- \frac{2\theta_{ij}}{\pi} \right) = \sum_{i,j} C_{ij} \left( 1- \frac{2}{\pi} \arccos (v_i^\top v_j)  \right) = \frac{2}{\pi} \sum_{i,j} C_{ij} \arcsin X_{ij},
 \]
@@ -2338,6 +2355,316 @@ The best possible \(\alpha\) is \(0.878\), see Fig. \ref{fig:MAXCUTAlpha}.
 
 \caption{Best approximation ratio.}\label{fig:MAXCUTAlpha}
 \end{figure}
+
+\hypertarget{certifiably-optimal-rotation-averaging}{%
+\section{Certifiably Optimal Rotation Averaging}\label{certifiably-optimal-rotation-averaging}}
+
+Consider a graph \(\mathcal{G}= (\mathcal{V},\mathcal{E})\) with node set \(\mathcal{V}= [N]\) and edge set \(\mathcal{E}= \{(i,j) \mid i,j \in \mathcal{V}\}\). Each node \(i\) is associated with an unknown rotation matrix \(R_i \in \mathrm{SO}(3)\), and each edge is associated with a relative rotation
+\begin{equation}
+\tilde{R}_{ij} = R_i^\top R_j \cdot R_{\epsilon},
+\label{eq:rotation-averaging-gen-model}
+\end{equation}
+that measures the relative rotation between \(R_i\) and \(R_j\), up to some small noise corruption \(R_{\epsilon} \in \mathrm{SO}(3)\). See Fig. \ref{fig:RotationAveraging}.
+
+The goal of (multiple) rotation averaging is to estimate the absolute rotations \(\{R_i \}_{i=1}^N\) given the noisy relative rotation measurements on the edges \(\{\tilde{R}_{ij} \}_{(i,j) \in \mathcal{E}}\). This problem is also known as rotation synchronization and it finds applications in computer vision \citep{eriksson18cvpr-rotation}, robotics \citep{rosen19ijrr-sesync}, and medical imaging \citep{wang13ima-exact}.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/rotation_avg} 
+
+}
+
+\caption{Rotation Averaging.}\label{fig:RotationAveraging}
+\end{figure}
+
+To synchronize the absolute rotations from relative measurements, it is common practice to formulate the following optimization problem
+\begin{equation}
+\min_{R_i \in \mathrm{SO}(3), i\in \mathcal{V}} \sum_{(i,j) \in \mathcal{E}} \Vert \tilde{R}_{ij} - R_i^\top R_j \Vert_\mathrm{F}^2,
+\label{eq:rotation-averaging}
+\end{equation}
+to seek the best absolute rotations that fit the relative measurements according to the generative model \eqref{eq:rotation-averaging-gen-model}. It can be shown that when the noise \(R_\epsilon\) satisfies a Langevin distribution, then problem \eqref{eq:rotation-averaging} returns the maximum likelihood estimator. Even when the noise distribution is not Langevin, problem \eqref{eq:rotation-averaging} often produces accurate estimates.
+
+\textbf{QCQP Formulation}. We will first simplify problem \eqref{eq:rotation-averaging} as a QCQP. Note that the objective is equivalent to
+\[
+\sum_{(i,j) \in \mathcal{E}} \mathrm{tr}\left( (\tilde{R}_{ij} - R_i^\top R_j)^\top(\tilde{R}_{ij} - R_i^\top R_j) \right) = \sum_{(i,j) \in \mathcal{E}} \mathrm{tr}\left( 2 \mathrm{I}_3 - 2 \tilde{R}_{ij}^\top R_i^\top R_j \right).
+\]
+Therefore, problem \eqref{eq:rotation-averaging} is equivalent to
+\begin{equation}
+\min_{R_i \in \mathrm{SO}(3), i\in\mathcal{V}} -2\sum_{(i,j)\in\mathcal{E}} \mathrm{tr}(\tilde{R}_{ij}^\top R_i^\top R_j).
+\label{eq:rotation-averaging-qcqp}
+\end{equation}
+This is a QCQP because the objective is quadratic, and \(\mathrm{SO}(3)\) can be described by quadratic equality constraints.
+
+\textbf{Matrix Formulation}. Let
+\[
+R = \begin{bmatrix} 
+R_1^\top\\
+\vdots \\
+R_N^\top
+\end{bmatrix} \in \mathrm{SO}(3)^N,\quad 
+RR^\top= \begin{bmatrix}
+R_1^\top R_1 & R_1^\top R_2 & \cdots & R_1^\top R_N \\
+R_2^\top R_1 & R_2^\top R_2 & \cdots & R_2^\top R_N \\
+\vdots & \vdots & \ddots & \vdots \\
+R_N^\top R_1 & R_N^\top R_2 & \cdots & R_N^\top R_N
+\end{bmatrix} \in \mathbb{S}^{3N}_{+}
+\]
+and
+\begin{equation}
+\tilde{R}= \begin{bmatrix}
+0 & \tilde{R}_{12} & \cdots & \tilde{R}_{1N} \\
+\tilde{R}_{12}^\top& 0 & \cdots & \tilde{R}_{2N}\\
+\vdots & \vdots & \ddots & \vdots \\
+\tilde{R}_{1N}^\top& \tilde{R}_{2N}^\top& \cdots & 0
+\end{bmatrix} \in \mathbb{S}^{3N}
+\label{eq:rotation-averaging-tldR}
+\end{equation}
+Then problem \eqref{eq:rotation-averaging-qcqp} can be compactly written as
+\begin{equation}
+\min_{R \in \mathrm{SO}(3)^N} - \langle \tilde{R}, RR^\top \rangle
+\label{eq:rotation-averaging-matrix}
+\end{equation}
+
+\textbf{Semidefinite Relaxation}. Problem \eqref{eq:rotation-averaging-matrix} is nonconvex, so we apply semidefinite relaxation. Observe that, because \(R_i \in \mathrm{SO}(3)\), we have
+\[
+R_i^\top R_i = \mathrm{I}_3, \forall i=1,\dots,N.
+\]
+Therefore, the diagonal blocks of \(RR^\top\) are all \(3\times 3\) identity matrices. We have also that \(RR^\top\succeq 0\) by construction. Therefore, the following SDP is a convex relaxation of problem \eqref{eq:rotation-averaging-matrix}
+\begin{equation}
+\begin{split}
+\min_{X \in \mathbb{S}^{3N}} & \quad - \langle \tilde{R}, RR^\top \rangle \\
+\mathrm{s.t.}& \quad X \succeq 0 \\
+& \quad [X]_{ii} = \mathrm{I}_3, \quad i=1,\dots,N
+\end{split}
+\label{eq:rotation-averaging-sdp-relax}
+\end{equation}
+where the last constraint in \eqref{eq:rotation-averaging-sdp-relax} enforces all diagonal blocks to be identity matrices.
+
+How powerful is this SDP relaxation? You may think that it will be quite loose (and hence not very useful) because we have dropped many nonconvex constraints from the original QCQP to the convex SDP (e.g., \(\mathrm{rank}(X) = 3\), \(R_i \in \mathrm{SO}(3)\) but we only used \(R_i \in \mathrm{O}(3)\)), but empirically it is almost always exact.
+
+\begin{example}[Rotation Averaging]
+\protect\hypertarget{exm:RotationAveraging}{}\label{exm:RotationAveraging}I will generate a fully connected graph \(\mathcal{G}\) with \(N\) nodes.
+
+\begin{itemize}
+\item
+  For each node \(i\), I associate a random 3D rotation matrix \(R_i\). For the first node, I always let \(R_1 = \mathrm{I}_3\).
+\item
+  For each edge \((i,j)\), I generate a noisy measurement
+  \[
+  \tilde{R}_{ij} = R_i^\top R_j \cdot R_\epsilon,
+  \]
+  where \(R_\epsilon\) is a rotation matrix with a random rotation axis and a rotation angle uniformally distributed between \(0\) and \(\beta\) degrees.
+\end{itemize}
+
+After this graph is generated, I form the \(\tilde{R}\) matrix in \eqref{eq:rotation-averaging-tldR} and solve the SDP \eqref{eq:rotation-averaging-sdp-relax}. This can be easily programmed in Matlab:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\VariableTok{X} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{3}\OperatorTok{*}\VariableTok{n}\OperatorTok{,}\FloatTok{3}\OperatorTok{*}\VariableTok{n}\NormalTok{)}\OperatorTok{;}
+\VariableTok{F} \OperatorTok{=}\NormalTok{ [}\VariableTok{X} \OperatorTok{\textgreater{}=} \FloatTok{0}\NormalTok{]}\OperatorTok{;}
+\KeywordTok{for} \VariableTok{i} \OperatorTok{=} \FloatTok{1}\OperatorTok{:}\VariableTok{n}
+    \VariableTok{F} \OperatorTok{=}\NormalTok{ [}\VariableTok{F}\OperatorTok{,}
+        \VariableTok{X}\NormalTok{(}\VariableTok{blkIndices}\NormalTok{(}\VariableTok{i}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{,}\VariableTok{blkIndices}\NormalTok{(}\VariableTok{i}\OperatorTok{,}\FloatTok{3}\NormalTok{)) }\OperatorTok{==} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)]}\OperatorTok{;}
+\KeywordTok{end}
+\VariableTok{obj} \OperatorTok{=} \VariableTok{trace}\NormalTok{(}\OperatorTok{{-}}\VariableTok{Rtld}\OperatorTok{*}\VariableTok{X}\NormalTok{)}\OperatorTok{;}
+\VariableTok{optimize}\NormalTok{(}\VariableTok{F}\OperatorTok{,}\VariableTok{obj}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Xval} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{X}\NormalTok{)}\OperatorTok{;}
+\VariableTok{f\_sdp} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{obj}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+Note that \texttt{f\_sdp} will be a lower bound.
+
+Let \(X_\star\) be the optimal solution of the SDP. We know that, if the SDP relaxation is tight, then \(X_\star\) will look like \(RR^\top\). Because \(R_1 = \mathrm{I}_3\), we can directly read off the optimal rotation estimations from the first row of blocks. However, if the relaxation is not tight, the blocks there will not be valid rotation matrices, and we can perform a projection onto \(\mathrm{SO}(3)\). Using the estimated rotations, I can compute \texttt{f\_est}, which is an upper bound to the true global optimum.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\VariableTok{R\_est} \OperatorTok{=}\NormalTok{ []}\OperatorTok{;}
+\VariableTok{R\_errs} \OperatorTok{=}\NormalTok{ []}\OperatorTok{;}
+\KeywordTok{for} \VariableTok{i} \OperatorTok{=} \FloatTok{1}\OperatorTok{:}\VariableTok{n}
+    \KeywordTok{if} \VariableTok{i} \OperatorTok{==} \FloatTok{1}
+        \VariableTok{Ri} \OperatorTok{=} \VariableTok{eye}\NormalTok{(}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+    \KeywordTok{else}
+        \VariableTok{Ri} \OperatorTok{=} \VariableTok{project2SO3}\NormalTok{(}\VariableTok{Xval}\NormalTok{(}\FloatTok{1}\OperatorTok{:}\FloatTok{3}\OperatorTok{,}\VariableTok{blkIndices}\NormalTok{(}\VariableTok{i}\OperatorTok{,}\FloatTok{3}\NormalTok{)))}\OperatorTok{;}
+    \KeywordTok{end}
+    \VariableTok{R\_errs} \OperatorTok{=}\NormalTok{ [}\VariableTok{R\_errs}\OperatorTok{,} \VariableTok{getAngularError}\NormalTok{(}\VariableTok{Ri}\OperatorTok{,} \VariableTok{R\_gt}\NormalTok{(}\VariableTok{blkIndices}\NormalTok{(}\VariableTok{i}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{,:}\NormalTok{))]}\OperatorTok{;}
+    \VariableTok{R\_est} \OperatorTok{=}\NormalTok{ [}\VariableTok{R\_est}\OperatorTok{,} \VariableTok{Ri}\NormalTok{]}\OperatorTok{;}
+\KeywordTok{end}
+\VariableTok{X\_est} \OperatorTok{=} \VariableTok{R\_est}\OperatorTok{\textquotesingle{}*}\VariableTok{R\_est}\OperatorTok{;}
+\VariableTok{f\_est} \OperatorTok{=} \VariableTok{trace}\NormalTok{(}\OperatorTok{{-}}\VariableTok{Rtld}\OperatorTok{*}\VariableTok{X\_est}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+With \texttt{f\_est} and \texttt{f\_sdp}, an upper bound and a lower bound, I can compute the relative suboptimality gap \(\eta\). If \(\eta = 0\), then it certifies global optimality.
+
+How does this work?
+
+For \(N=30\) and \(\beta = 10\) (small noise), I got \(\eta = 6.26\times 10^{-13}\). Fig. \ref{fig:MVA-rot-err-30-10} plots the rotation estimation errors at each node compared to the groundtruth rotations.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/mva_rot_err_30_10} 
+
+}
+
+\caption{Rotation estimation errors, 30 nodes, noise bound 10 degrees.}\label{fig:MVA-rot-err-30-10}
+\end{figure}
+
+What if I increase the noise bound to \(\beta = 60\)? It turns out the relaxation is still exact with \(\eta = 6.84 \times 10^{-10}\)! Fig. \ref{fig:MVA-rot-err-30-60} plots the rotation estimation errors at each node compared to the groundtruth rotations.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/mva_rot_err_30_60} 
+
+}
+
+\caption{Rotation estimation errors, 30 nodes, noise bound 60 degrees.}\label{fig:MVA-rot-err-30-60}
+\end{figure}
+
+What if I set \(\beta = 120\)? The relaxation still remains exact with \(\eta = 9.5 \times 10^{-10}\). Fig. \ref{fig:MVA-rot-err-30-120} plots the rotation estimation errors at each node compared to the groundtruth rotations. Observe that even when the rotation estimates have large errors, they are still the certifiably optimal estimates.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/mva_rot_err_30_120} 
+
+}
+
+\caption{Rotation estimation errors, 30 nodes, noise bound 120 degrees.}\label{fig:MVA-rot-err-30-120}
+\end{figure}
+
+Play with the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/rotation_averaging/example.m}{code} yourself to appreciate the power of this simple SDP relaxation. You can, for example, increase the number of nodes \(N\). What if you make the graph sparse (e.g., fewer edges but still a connected graph)?
+\end{example}
+
+\hypertarget{dual-optimality-certifier}{%
+\subsection{Dual Optimality Certifier}\label{dual-optimality-certifier}}
+
+\hypertarget{stretch-to-high-degree-polynomial-optimization}{%
+\section{Stretch to High-Degree Polynomial Optimization}\label{stretch-to-high-degree-polynomial-optimization}}
+
+We have seen that Shor's semidefinite relaxation for QCQPs can be derived both using Lagrangian duality, or simply by dropping a rank constraint, both of which are straightforward to understand. When applied to the MAXCUT problem, it produces a provably good approximation ratio. When applied to the rotation averaging problem, it directly gives us the optimal solution without any approximation, and the optimality comes with a certificate.
+
+However, not every optimization problem is a QCQP, right? Is it possible to generalize Shor's semidefinite relaxation to higher-degree polynomial optimization problems? As we will see in the next Chapters, the moment and sums-of-squares (SOS) hierarchy delivers the perfect and principled generalization.
+
+Before going to the moment-SOS hierarchy, let me give you an example of a quartic (degree-4) optimization problem, for which we can still use Shor's relaxation, albeit with some (in my opinion, not so elegant) mathematical massage. This example in fact is from a recent paper in computer vision \citep{briales18cvpr-certifiably}.
+
+\textbf{Two-view Geometry}. Consider the problem of estimating the motion of a camera from two views illustrated in Fig. \ref{fig:two-view}. Let \(C_1\) and \(C_2\) be two cameras (or the same camera but in two different positions) observing the same 3D point \(p \in \mathbb{R}^{3}\). The 3D point will be observed by \(C_1\) and \(C_2\) via its 2D projections on the image plane, respectively. Let \(f_1 \in \mathbb{R}^{3}\) and \(f_2 \in \mathbb{R}^{3}\) be the unit-length bearing vector that emanates from the camera centers to the 2D projections in two cameras, respectively. Our goal is to estimate the relative rotation and translation between the two cameras \(C_1\) and \(C_2\), denoted by \(R \in \mathrm{SO}(3)\) and \(t \in \mathbb{R}^{3}\). The pair of bearing vectors \((f_1,f_2)\) is typically known as a \textbf{correspondence}, or a \textbf{match} in computer vision.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/two_view} 
+
+}
+
+\caption{Two-view Geometry.}\label{fig:two-view}
+\end{figure}
+
+It turns out only having one correspondence is insufficient to recover \((R,t)\), and we need at least \(5\) such correspondences \citep{nister04pami-efficient}. See Fig. \ref{fig:two-view-example} for an example I adapted from \href{https://www.mathworks.com/help/vision/ref/estimateessentialmatrix.html}{Mathworks}.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{images/two_view_example_matlab} 
+
+}
+
+\caption{A real two-view motion estimation example. Copyright: Mathworks.}\label{fig:two-view-example}
+\end{figure}
+
+Consequently, to formally state our problem, we are given a set of \(N\) correspondences (these correspondences are typically detected by neural networks today \citep{wang20eccv-caps})
+\[
+\{f_{1,i},f_{2,i} \}_{i=1}^N
+\]
+between two images taken by two cameras, and our goal is to estimate the relative motion \((R,t)\).
+
+\textbf{Epipolar Constraint}. When the correspondences are noise-free, it is known that they must satisfy the following epipolar constraint \citep{hartley03book-multiple}
+\begin{equation}
+f_{2,i}^\top[t]_{\times} R f_{1,i} = 0, \quad \forall i=1,\dots,N,
+\label{eq:epipolar-constraint}
+\end{equation}
+where
+\[
+[t]_{\times} := \begin{bmatrix} 0 & - t_3 & t_2 \\
+t_3 & 0 & - t_1 \\
+- t_2 & t_1 & 0 \end{bmatrix}
+\]
+is a linear map such that \(t \times v = [t]_{\times} v\) for any \(v \in \mathbb{R}^{3}\) and \(\times\) denotes cross product in 3D.
+
+\textbf{Nonlinear Least Squares}. Since the correspondences are detected by neural networks, they will be noisy and the epipolar constraint \eqref{eq:epipolar-constraint} will not be perfectly satisfied. Therefore, we formulate the following optimization problem to seek the best estimate that minimize the sum of the squared violations of \eqref{eq:epipolar-constraint}
+\begin{equation}
+\min_{R \in \mathrm{SO}(3), t \in \mathcal{S}^{2}} \sum_{i=1}^N (f_{2,i}^\top[t]_{\times} R f_{1,i})^2
+\label{eq:two-view-estimation-problem}
+\end{equation}
+Note that I have asked \(t \in \mathcal{S}^{2}\) to lie on the unit sphere, why?
+
+Problem \eqref{eq:two-view-estimation-problem} is not a QCQP anymore, because its objective is a degree-4 polynomial. However, all the constraints of \eqref{eq:two-view-estimation-problem} are quadratic equalities and inequalities. To see this, note that \(t \in \mathcal{S}^{2}\) can be written as
+\begin{equation}
+1 - t^\top t = 0,
+\label{eq:two-view-t-con}
+\end{equation}
+which is a quadratic polynomial equality.
+The constraint \(R \in \mathrm{SO}(3)\) can also be written as quadratic equalities. Let
+\[
+R = [c_1, c_2, c_3]
+\]
+where \(c_i\) is the \(i\)-the column. Then \(R\in \mathrm{SO}(3)\) is equivalent to
+\begin{equation}
+\begin{split}
+c_i^\top c_i - 1= 0, & \quad i=1,2,3 \\
+c_i^\top c_j = 0, & \quad (i,j) \in \{ (1,2),(2,3),(3,1) \} \\
+c_i \times c_j = c_k,& \quad (i,j,k) \in \{ (1,2,3),(2,3,1),(3,1,2) \}. 
+\end{split}
+\label{eq:two-view-R-con}
+\end{equation}
+all of which are quadratic polynomial equalities.
+
+Let \(r = \mathrm{vec}(R)\), \(x = [r^\top, t^\top]^\top\in \mathbb{R}^{12}\), we will collectively call all the constraints in \eqref{eq:two-view-t-con} and \eqref{eq:two-view-R-con} as
+\[
+h_k(x) = 0, k=1,\dots,l, 
+\]
+with \(l=16\).
+
+\textbf{Semidefinite Relaxation}. Clearly, we cannot directly apply Shor's semidefinite relaxation, because \(X = xx^\top\) only contains monomials in \(x\) of degree up to \(2\), but our objective function is degree \(4\) -- this matrix variable is not powerful enough.
+
+To fix this issue, a natural idea is to create a larger matrix variable
+\begin{equation}
+\hspace{-16mm}
+v = \begin{bmatrix} 
+1 \\ r \\ t \\ t_1 r \\ t_2 r \\ t_3 r \end{bmatrix} \in \mathbb{R}^{40}, \quad X = vv^\top= \begin{bmatrix} 1 & * & * & * & * & * \\
+r & rr^\top& * & * & * & * \\
+t & tr^\top& tt^\top& * & * & * \\
+t_1 r & t_1 rr^\top& t_1 r t^\top& t_1^2 rr^\top& * & * \\
+t_2 r & t_2 rr^\top& t_2 r t^\top& t_1 t_2 rr^\top& t_2^2 rr^\top& * \\
+t_3 r & t_3 rr^\top& t_3 r t^\top& t_3 t_1 rr^\top& t_3 t_2 rr^\top& t_3^2 rr^\top\end{bmatrix} \in \mathbb{S}^{40}_{+}
+\label{eq:two-view-larger-X}
+\end{equation}
+Note that now \(X\) has degree-4 monomials, which allows me to write the objective of the original problem \eqref{eq:two-view-estimation-problem} as
+\[
+\langle C, X \rangle
+\]
+with a suitable constant matrix \(C \in \mathbb{S}^{40}\).
+
+I can also write all the original constraints \(h_k(x) = 0,k=1,\dots,l\) as
+\[
+\langle A_k, X \rangle = 0, k=1,\dots,l,
+\]
+plus an additional constraint
+\[
+\langle A_0, X \rangle = 1, 
+\]
+where \(A_0\) is all zero except its top-left entry is equal to 1.
+
+This seems to be all we need for Shor's relaxation, will this work?
+
+\textbf{``Redundant'' Constraints}. In the original paper \citep{briales18cvpr-certifiably}, the authors found that we are missing some important constraints that we can add to the convex SDP. For example, in the matrix \(X\), we have
+\[
+t_1^2 rr^\top+ t_2^2 rr^\top+ t_3^2 rr^\top= (t_1^2 + t_2^2 + t_3^2) rr^\top= rr^\top,
+\]
+which gives us additional linear constraints on the entries of \(X\) (for free)! Essentially, these constraints are generated by multiplying the original constraints \(h_k(x)\) by suitable monomials:
+\[
+h_k(x) = 0 \Rightarrow h_k(x) \cdot \lambda(x) = 0,
+\]
+where \(\lambda(x)\) is a monomial such that all the monomials of \(h_k(x) \cdot \lambda(x)\) appear in the big matrix \(X\) (so that the resulting equality constraint can still be written as a linear equality on \(X\)). The authors of \citep{briales18cvpr-certifiably} enumerated all such constraints (by hand) and added them to the SDP relaxation, which led to the relaxation going from loose to tight/exact.
+
+\citep{briales18cvpr-certifiably} called these constraints ``redundant'', are they? We will revisit this after we study the moment-SOS hierarchy!
 
   \bibliography{book.bib}
 

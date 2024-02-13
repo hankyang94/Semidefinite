@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-12" />
+<meta name="date" content="2024-02-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -218,6 +218,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
 <li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
 </ul></li>
+<li class="chapter" data-level="3.2" data-path="Shor.html"><a href="Shor.html#certifiably-optimal-rotation-averaging"><i class="fa fa-check"></i><b>3.2</b> Certifiably Optimal Rotation Averaging</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="Shor.html"><a href="Shor.html#dual-optimality-certifier"><i class="fa fa-check"></i><b>3.2.1</b> Dual Optimality Certifier</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="Shor.html"><a href="Shor.html#stretch-to-high-degree-polynomial-optimization"><i class="fa fa-check"></i><b>3.3</b> Stretch to High-Degree Polynomial Optimization</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -301,7 +306,7 @@ Note that problem <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a> is a con
 C - \mathcal{A}^*(y_\star) \succeq 0, \quad [ C - \mathcal{A}^*(y_\star) ] x_\star = 0,
 \tag{3.3}
 \end{equation}\]</span>
-then <span class="math inline">\(x_\star\)</span> is a global minimizer of <a href="Shor.html#eq:qcqp">(3.1)</a>, and <span class="math inline">\(y_\star\)</span> is a global minimizer of <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a>.</p>
+then <span class="math inline">\(x_\star\)</span> is a global minimizer of <a href="Shor.html#eq:qcqp">(3.1)</a>, and <span class="math inline">\(y_\star\)</span> is a global maximizer of <a href="Shor.html#eq:Lagrangian-dual-qcqp">(3.2)</a>.</p>
 </div>
 </div>
 <div class="proofbox">
@@ -416,10 +421,18 @@ Clearly, <span class="math inline">\(\eta \approx 0\)</span> certifies exactness
 \end{equation}\]</span>
 For the MAXCUT problem, a standard formulation is
 <span class="math display" id="eq:maxcut-org">\[\begin{equation}
-\max_{x_i^2 = 1}  \frac{1}{4} \sum_{i,j} w_{ij} (1 - x_i x_j).
+\max_{x_i^2 = 1}  \frac{1}{4} \sum_{i,j} w_{ij} (1 - x_i x_j),
 \tag{3.7}
 \end{equation}\]</span>
-It is clear that if <span class="math inline">\(x_i, x_j\)</span> have the same sign, then <span class="math inline">\(1- x_i x_j = 0\)</span>, otherwise, <span class="math inline">\(1- x_i x_j = 2\)</span>. Removing the constant terms in <a href="Shor.html#eq:maxcut-org">(3.7)</a>, it is equivalent to the followng BQP
+where <span class="math inline">\(w_{ij} \geq 0\)</span> is the weight of the edge between node <span class="math inline">\(i\)</span> and node <span class="math inline">\(j\)</span>.
+It is clear that if <span class="math inline">\(x_i, x_j\)</span> have the same sign, then <span class="math inline">\(1- x_i x_j = 0\)</span>, otherwise, <span class="math inline">\(1- x_i x_j = 2\)</span>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:MAXCUT"></span>
+<img src="images/max_cut.png" alt="MAXCUT seeks to separate the node set of a graph into two disjoint groups such that the separation line cuts as many (weighted) edges as possible. For example, the blue line cuts four edges." width="60%" />
+<p class="caption">
+Figure 3.1: MAXCUT seeks to separate the node set of a graph into two disjoint groups such that the separation line cuts as many (weighted) edges as possible. For example, the blue line cuts four edges.
+</p>
+</div>
+<p>Removing the constant terms in <a href="Shor.html#eq:maxcut-org">(3.7)</a>, it is equivalent to the followng BQP
 <span class="math display" id="eq:maxcut-bqp">\[\begin{equation}
 \min_{x_i^2 = 1}  \sum_{i,j} w_{ij} x_i x_j.
 \tag{3.8}
@@ -437,7 +450,7 @@ The expected value of this solution can be written as
 <span class="math display">\[
 \mathbb{E}_p  \left\{ x^\top C x \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ x_i x_j \right\}  = \sum_{i,j} C_{ij} \mathbb{E}_p  \left\{ \mathrm{sgn}(p^\top x_i) \mathrm{sgn}(p^\top x_j) \right\} .
 \]</span>
-This expectation can be computed using geometric intuition. Consider the plan spanned by <span class="math inline">\(v_i\)</span> and <span class="math inline">\(v_j\)</span> and let <span class="math inline">\(\theta_{ij}\)</span> be the angle between them. Then, it is easy to see that the desired expectation is equal to the probability that both points are on the same side of the hyperplane, minus the probability that they are on different sides. These probabilities are <span class="math inline">\(1- \theta_{ij} / \pi\)</span> and <span class="math inline">\(\theta_{ij} / \pi\)</span>, respectively. Therefore, the expected value of the rounded solution is
+This expectation can be computed using geometric intuition. Consider the plane spanned by <span class="math inline">\(v_i\)</span> and <span class="math inline">\(v_j\)</span> and let <span class="math inline">\(\theta_{ij}\)</span> be the angle between them. Then, it is easy to see that the desired expectation is equal to the probability that both points are on the same side of the hyperplane, minus the probability that they are on different sides. These probabilities are <span class="math inline">\(1- \theta_{ij} / \pi\)</span> and <span class="math inline">\(\theta_{ij} / \pi\)</span>, respectively. Therefore, the expected value of the rounded solution is
 <span class="math display">\[
 \sum_{i,j} C_{ij} \left( 1- \frac{2\theta_{ij}}{\pi} \right) = \sum_{i,j} C_{ij} \left( 1- \frac{2}{\pi} \arccos (v_i^\top v_j)  \right) = \frac{2}{\pi} \sum_{i,j} C_{ij} \arcsin X_{ij},
 \]</span>
@@ -465,30 +478,299 @@ so that <span class="math inline">\(\alpha\)</span> acts to be the best approxim
 <span class="math display">\[
 \alpha (1 - t) \leq \frac{2}{\pi} \arccos(t), \forall t \in [-1,1].
 \]</span>
-The best possible <span class="math inline">\(\alpha\)</span> is <span class="math inline">\(0.878\)</span>, see Fig. <a href="Shor.html#fig:MAXCUTAlpha">3.1</a>.</p>
+The best possible <span class="math inline">\(\alpha\)</span> is <span class="math inline">\(0.878\)</span>, see Fig. <a href="Shor.html#fig:MAXCUTAlpha">3.2</a>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:MAXCUTAlpha"></span>
 <img src="images/maxcut_alpha.png" alt="Best approximation ratio." width="60%" />
 <p class="caption">
-Figure 3.1: Best approximation ratio.
+Figure 3.2: Best approximation ratio.
 </p>
 </div>
-
 </div>
+</div>
+<div id="certifiably-optimal-rotation-averaging" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Certifiably Optimal Rotation Averaging<a href="Shor.html#certifiably-optimal-rotation-averaging" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider a graph <span class="math inline">\(\mathcal{G}= (\mathcal{V},\mathcal{E})\)</span> with node set <span class="math inline">\(\mathcal{V}= [N]\)</span> and edge set <span class="math inline">\(\mathcal{E}= \{(i,j) \mid i,j \in \mathcal{V}\}\)</span>. Each node <span class="math inline">\(i\)</span> is associated with an unknown rotation matrix <span class="math inline">\(R_i \in \mathrm{SO}(3)\)</span>, and each edge is associated with a relative rotation
+<span class="math display" id="eq:rotation-averaging-gen-model">\[\begin{equation}
+\tilde{R}_{ij} = R_i^\top R_j \cdot R_{\epsilon},
+\tag{3.9}
+\end{equation}\]</span>
+that measures the relative rotation between <span class="math inline">\(R_i\)</span> and <span class="math inline">\(R_j\)</span>, up to some small noise corruption <span class="math inline">\(R_{\epsilon} \in \mathrm{SO}(3)\)</span>. See Fig. <a href="Shor.html#fig:RotationAveraging">3.3</a>.</p>
+<p>The goal of (multiple) rotation averaging is to estimate the absolute rotations <span class="math inline">\(\{R_i \}_{i=1}^N\)</span> given the noisy relative rotation measurements on the edges <span class="math inline">\(\{\tilde{R}_{ij} \}_{(i,j) \in \mathcal{E}}\)</span>. This problem is also known as rotation synchronization and it finds applications in computer vision <span class="citation">(<a href="#ref-eriksson18cvpr-rotation" role="doc-biblioref">Eriksson et al. 2018</a>)</span>, robotics <span class="citation">(<a href="#ref-rosen19ijrr-sesync" role="doc-biblioref">Rosen et al. 2019</a>)</span>, and medical imaging <span class="citation">(<a href="#ref-wang13ima-exact" role="doc-biblioref">L. Wang and Singer 2013</a>)</span>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:RotationAveraging"></span>
+<img src="images/rotation_avg.png" alt="Rotation Averaging." width="60%" />
+<p class="caption">
+Figure 3.3: Rotation Averaging.
+</p>
+</div>
+<p>To synchronize the absolute rotations from relative measurements, it is common practice to formulate the following optimization problem
+<span class="math display" id="eq:rotation-averaging">\[\begin{equation}
+\min_{R_i \in \mathrm{SO}(3), i\in \mathcal{V}} \sum_{(i,j) \in \mathcal{E}} \Vert \tilde{R}_{ij} - R_i^\top R_j \Vert_\mathrm{F}^2,
+\tag{3.10}
+\end{equation}\]</span>
+to seek the best absolute rotations that fit the relative measurements according to the generative model <a href="Shor.html#eq:rotation-averaging-gen-model">(3.9)</a>. It can be shown that when the noise <span class="math inline">\(R_\epsilon\)</span> satisfies a Langevin distribution, then problem <a href="Shor.html#eq:rotation-averaging">(3.10)</a> returns the maximum likelihood estimator. Even when the noise distribution is not Langevin, problem <a href="Shor.html#eq:rotation-averaging">(3.10)</a> often produces accurate estimates.</p>
+<p><strong>QCQP Formulation</strong>. We will first simplify problem <a href="Shor.html#eq:rotation-averaging">(3.10)</a> as a QCQP. Note that the objective is equivalent to
+<span class="math display">\[
+\sum_{(i,j) \in \mathcal{E}} \mathrm{tr}\left( (\tilde{R}_{ij} - R_i^\top R_j)^\top(\tilde{R}_{ij} - R_i^\top R_j) \right) = \sum_{(i,j) \in \mathcal{E}} \mathrm{tr}\left( 2 \mathrm{I}_3 - 2 \tilde{R}_{ij}^\top R_i^\top R_j \right).
+\]</span>
+Therefore, problem <a href="Shor.html#eq:rotation-averaging">(3.10)</a> is equivalent to
+<span class="math display" id="eq:rotation-averaging-qcqp">\[\begin{equation}
+\min_{R_i \in \mathrm{SO}(3), i\in\mathcal{V}} -2\sum_{(i,j)\in\mathcal{E}} \mathrm{tr}(\tilde{R}_{ij}^\top R_i^\top R_j).
+\tag{3.11}
+\end{equation}\]</span>
+This is a QCQP because the objective is quadratic, and <span class="math inline">\(\mathrm{SO}(3)\)</span> can be described by quadratic equality constraints.</p>
+<p><strong>Matrix Formulation</strong>. Let
+<span class="math display">\[
+R = \begin{bmatrix}
+R_1^\top\\
+\vdots \\
+R_N^\top
+\end{bmatrix} \in \mathrm{SO}(3)^N,\quad
+RR^\top= \begin{bmatrix}
+R_1^\top R_1 &amp; R_1^\top R_2 &amp; \cdots &amp; R_1^\top R_N \\
+R_2^\top R_1 &amp; R_2^\top R_2 &amp; \cdots &amp; R_2^\top R_N \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+R_N^\top R_1 &amp; R_N^\top R_2 &amp; \cdots &amp; R_N^\top R_N
+\end{bmatrix} \in \mathbb{S}^{3N}_{+}
+\]</span>
+and
+<span class="math display" id="eq:rotation-averaging-tldR">\[\begin{equation}
+\tilde{R}= \begin{bmatrix}
+0 &amp; \tilde{R}_{12} &amp; \cdots &amp; \tilde{R}_{1N} \\
+\tilde{R}_{12}^\top&amp; 0 &amp; \cdots &amp; \tilde{R}_{2N}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\tilde{R}_{1N}^\top&amp; \tilde{R}_{2N}^\top&amp; \cdots &amp; 0
+\end{bmatrix} \in \mathbb{S}^{3N}
+\tag{3.12}
+\end{equation}\]</span>
+Then problem <a href="Shor.html#eq:rotation-averaging-qcqp">(3.11)</a> can be compactly written as
+<span class="math display" id="eq:rotation-averaging-matrix">\[\begin{equation}
+\min_{R \in \mathrm{SO}(3)^N} - \langle \tilde{R}, RR^\top \rangle
+\tag{3.13}
+\end{equation}\]</span></p>
+<p><strong>Semidefinite Relaxation</strong>. Problem <a href="Shor.html#eq:rotation-averaging-matrix">(3.13)</a> is nonconvex, so we apply semidefinite relaxation. Observe that, because <span class="math inline">\(R_i \in \mathrm{SO}(3)\)</span>, we have
+<span class="math display">\[
+R_i^\top R_i = \mathrm{I}_3, \forall i=1,\dots,N.
+\]</span>
+Therefore, the diagonal blocks of <span class="math inline">\(RR^\top\)</span> are all <span class="math inline">\(3\times 3\)</span> identity matrices. We have also that <span class="math inline">\(RR^\top\succeq 0\)</span> by construction. Therefore, the following SDP is a convex relaxation of problem <a href="Shor.html#eq:rotation-averaging-matrix">(3.13)</a>
+<span class="math display" id="eq:rotation-averaging-sdp-relax">\[\begin{equation}
+\begin{split}
+\min_{X \in \mathbb{S}^{3N}} &amp; \quad - \langle \tilde{R}, RR^\top \rangle \\
+\mathrm{s.t.}&amp; \quad X \succeq 0 \\
+&amp; \quad [X]_{ii} = \mathrm{I}_3, \quad i=1,\dots,N
+\end{split}
+\tag{3.14}
+\end{equation}\]</span>
+where the last constraint in <a href="Shor.html#eq:rotation-averaging-sdp-relax">(3.14)</a> enforces all diagonal blocks to be identity matrices.</p>
+<p>How powerful is this SDP relaxation? You may think that it will be quite loose (and hence not very useful) because we have dropped many nonconvex constraints from the original QCQP to the convex SDP (e.g., <span class="math inline">\(\mathrm{rank}(X) = 3\)</span>, <span class="math inline">\(R_i \in \mathrm{SO}(3)\)</span> but we only used <span class="math inline">\(R_i \in \mathrm{O}(3)\)</span>), but empirically it is almost always exact.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:RotationAveraging" class="example"><strong>Example 3.1  (Rotation Averaging) </strong></span>I will generate a fully connected graph <span class="math inline">\(\mathcal{G}\)</span> with <span class="math inline">\(N\)</span> nodes.</p>
+<ul>
+<li><p>For each node <span class="math inline">\(i\)</span>, I associate a random 3D rotation matrix <span class="math inline">\(R_i\)</span>. For the first node, I always let <span class="math inline">\(R_1 = \mathrm{I}_3\)</span>.</p></li>
+<li><p>For each edge <span class="math inline">\((i,j)\)</span>, I generate a noisy measurement
+<span class="math display">\[
+\tilde{R}_{ij} = R_i^\top R_j \cdot R_\epsilon,
+\]</span>
+where <span class="math inline">\(R_\epsilon\)</span> is a rotation matrix with a random rotation axis and a rotation angle uniformally distributed between <span class="math inline">\(0\)</span> and <span class="math inline">\(\beta\)</span> degrees.</p></li>
+</ul>
+<p>After this graph is generated, I form the <span class="math inline">\(\tilde{R}\)</span> matrix in <a href="Shor.html#eq:rotation-averaging-tldR">(3.12)</a> and solve the SDP <a href="Shor.html#eq:rotation-averaging-sdp-relax">(3.14)</a>. This can be easily programmed in Matlab:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="Shor.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">*</span><span class="va">n</span><span class="op">,</span><span class="fl">3</span><span class="op">*</span><span class="va">n</span>)<span class="op">;</span></span>
+<span id="cb4-2"><a href="Shor.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [<span class="va">X</span> <span class="op">&gt;=</span> <span class="fl">0</span>]<span class="op">;</span></span>
+<span id="cb4-3"><a href="Shor.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb4-4"><a href="Shor.html#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">F</span> <span class="op">=</span> [<span class="va">F</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="Shor.html#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">X</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)) <span class="op">==</span> <span class="va">eye</span>(<span class="fl">3</span>)]<span class="op">;</span></span>
+<span id="cb4-6"><a href="Shor.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-7"><a href="Shor.html#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X</span>)<span class="op">;</span></span>
+<span id="cb4-8"><a href="Shor.html#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
+<span id="cb4-9"><a href="Shor.html#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="va">Xval</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">X</span>)<span class="op">;</span></span>
+<span id="cb4-10"><a href="Shor.html#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="va">f_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">obj</span>)<span class="op">;</span></span></code></pre></div>
+<p>Note that <code>f_sdp</code> will be a lower bound.</p>
+<p>Let <span class="math inline">\(X_\star\)</span> be the optimal solution of the SDP. We know that, if the SDP relaxation is tight, then <span class="math inline">\(X_\star\)</span> will look like <span class="math inline">\(RR^\top\)</span>. Because <span class="math inline">\(R_1 = \mathrm{I}_3\)</span>, we can directly read off the optimal rotation estimations from the first row of blocks. However, if the relaxation is not tight, the blocks there will not be valid rotation matrices, and we can perform a projection onto <span class="math inline">\(\mathrm{SO}(3)\)</span>. Using the estimated rotations, I can compute <code>f_est</code>, which is an upper bound to the true global optimum.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="Shor.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">R_est</span> <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb5-2"><a href="Shor.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">R_errs</span> <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb5-3"><a href="Shor.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb5-4"><a href="Shor.html#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">i</span> <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb5-5"><a href="Shor.html#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb5-6"><a href="Shor.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb5-7"><a href="Shor.html#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">project2SO3</span>(<span class="va">Xval</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)))<span class="op">;</span></span>
+<span id="cb5-8"><a href="Shor.html#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb5-9"><a href="Shor.html#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_errs</span> <span class="op">=</span> [<span class="va">R_errs</span><span class="op">,</span> <span class="va">getAngularError</span>(<span class="va">Ri</span><span class="op">,</span> <span class="va">R_gt</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,:</span>))]<span class="op">;</span></span>
+<span id="cb5-10"><a href="Shor.html#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_est</span> <span class="op">=</span> [<span class="va">R_est</span><span class="op">,</span> <span class="va">Ri</span>]<span class="op">;</span></span>
+<span id="cb5-11"><a href="Shor.html#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb5-12"><a href="Shor.html#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="va">X_est</span> <span class="op">=</span> <span class="va">R_est</span><span class="op">&#39;*</span><span class="va">R_est</span><span class="op">;</span></span>
+<span id="cb5-13"><a href="Shor.html#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="va">f_est</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X_est</span>)<span class="op">;</span></span></code></pre></div>
+<p>With <code>f_est</code> and <code>f_sdp</code>, an upper bound and a lower bound, I can compute the relative suboptimality gap <span class="math inline">\(\eta\)</span>. If <span class="math inline">\(\eta = 0\)</span>, then it certifies global optimality.</p>
+<p>How does this work?</p>
+<p>For <span class="math inline">\(N=30\)</span> and <span class="math inline">\(\beta = 10\)</span> (small noise), I got <span class="math inline">\(\eta = 6.26\times 10^{-13}\)</span>. Fig. <a href="Shor.html#fig:MVA-rot-err-30-10">3.4</a> plots the rotation estimation errors at each node compared to the groundtruth rotations.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:MVA-rot-err-30-10"></span>
+<img src="images/mva_rot_err_30_10.png" alt="Rotation estimation errors, 30 nodes, noise bound 10 degrees." width="60%" />
+<p class="caption">
+Figure 3.4: Rotation estimation errors, 30 nodes, noise bound 10 degrees.
+</p>
+</div>
+<p>What if I increase the noise bound to <span class="math inline">\(\beta = 60\)</span>? It turns out the relaxation is still exact with <span class="math inline">\(\eta = 6.84 \times 10^{-10}\)</span>! Fig. <a href="Shor.html#fig:MVA-rot-err-30-60">3.5</a> plots the rotation estimation errors at each node compared to the groundtruth rotations.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:MVA-rot-err-30-60"></span>
+<img src="images/mva_rot_err_30_60.png" alt="Rotation estimation errors, 30 nodes, noise bound 60 degrees." width="60%" />
+<p class="caption">
+Figure 3.5: Rotation estimation errors, 30 nodes, noise bound 60 degrees.
+</p>
+</div>
+<p>What if I set <span class="math inline">\(\beta = 120\)</span>? The relaxation still remains exact with <span class="math inline">\(\eta = 9.5 \times 10^{-10}\)</span>. Fig. <a href="Shor.html#fig:MVA-rot-err-30-120">3.6</a> plots the rotation estimation errors at each node compared to the groundtruth rotations. Observe that even when the rotation estimates have large errors, they are still the certifiably optimal estimates.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:MVA-rot-err-30-120"></span>
+<img src="images/mva_rot_err_30_120.png" alt="Rotation estimation errors, 30 nodes, noise bound 120 degrees." width="60%" />
+<p class="caption">
+Figure 3.6: Rotation estimation errors, 30 nodes, noise bound 120 degrees.
+</p>
+</div>
+<p>Play with the <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/rotation_averaging/example.m">code</a> yourself to appreciate the power of this simple SDP relaxation. You can, for example, increase the number of nodes <span class="math inline">\(N\)</span>. What if you make the graph sparse (e.g., fewer edges but still a connected graph)?</p>
+</div>
+</div>
+<div id="dual-optimality-certifier" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Dual Optimality Certifier<a href="Shor.html#dual-optimality-certifier" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+</div>
+<div id="stretch-to-high-degree-polynomial-optimization" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Stretch to High-Degree Polynomial Optimization<a href="Shor.html#stretch-to-high-degree-polynomial-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We have seen that Shor’s semidefinite relaxation for QCQPs can be derived both using Lagrangian duality, or simply by dropping a rank constraint, both of which are straightforward to understand. When applied to the MAXCUT problem, it produces a provably good approximation ratio. When applied to the rotation averaging problem, it directly gives us the optimal solution without any approximation, and the optimality comes with a certificate.</p>
+<p>However, not every optimization problem is a QCQP, right? Is it possible to generalize Shor’s semidefinite relaxation to higher-degree polynomial optimization problems? As we will see in the next Chapters, the moment and sums-of-squares (SOS) hierarchy delivers the perfect and principled generalization.</p>
+<p>Before going to the moment-SOS hierarchy, let me give you an example of a quartic (degree-4) optimization problem, for which we can still use Shor’s relaxation, albeit with some (in my opinion, not so elegant) mathematical massage. This example in fact is from a recent paper in computer vision <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>.</p>
+<p><strong>Two-view Geometry</strong>. Consider the problem of estimating the motion of a camera from two views illustrated in Fig. <a href="Shor.html#fig:two-view">3.7</a>. Let <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> be two cameras (or the same camera but in two different positions) observing the same 3D point <span class="math inline">\(p \in \mathbb{R}^{3}\)</span>. The 3D point will be observed by <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> via its 2D projections on the image plane, respectively. Let <span class="math inline">\(f_1 \in \mathbb{R}^{3}\)</span> and <span class="math inline">\(f_2 \in \mathbb{R}^{3}\)</span> be the unit-length bearing vector that emanates from the camera centers to the 2D projections in two cameras, respectively. Our goal is to estimate the relative rotation and translation between the two cameras <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>, denoted by <span class="math inline">\(R \in \mathrm{SO}(3)\)</span> and <span class="math inline">\(t \in \mathbb{R}^{3}\)</span>. The pair of bearing vectors <span class="math inline">\((f_1,f_2)\)</span> is typically known as a <strong>correspondence</strong>, or a <strong>match</strong> in computer vision.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:two-view"></span>
+<img src="images/two_view.png" alt="Two-view Geometry." width="60%" />
+<p class="caption">
+Figure 3.7: Two-view Geometry.
+</p>
+</div>
+<p>It turns out only having one correspondence is insufficient to recover <span class="math inline">\((R,t)\)</span>, and we need at least <span class="math inline">\(5\)</span> such correspondences <span class="citation">(<a href="#ref-nister04pami-efficient" role="doc-biblioref">Nistér 2004</a>)</span>. See Fig. <a href="Shor.html#fig:two-view-example">3.8</a> for an example I adapted from <a href="https://www.mathworks.com/help/vision/ref/estimateessentialmatrix.html">Mathworks</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:two-view-example"></span>
+<img src="images/two_view_example_matlab.png" alt="A real two-view motion estimation example. Copyright: Mathworks." width="80%" />
+<p class="caption">
+Figure 3.8: A real two-view motion estimation example. Copyright: Mathworks.
+</p>
+</div>
+<p>Consequently, to formally state our problem, we are given a set of <span class="math inline">\(N\)</span> correspondences (these correspondences are typically detected by neural networks today <span class="citation">(<a href="#ref-wang20eccv-caps" role="doc-biblioref">Q. Wang et al. 2020</a>)</span>)
+<span class="math display">\[
+\{f_{1,i},f_{2,i} \}_{i=1}^N
+\]</span>
+between two images taken by two cameras, and our goal is to estimate the relative motion <span class="math inline">\((R,t)\)</span>.</p>
+<p><strong>Epipolar Constraint</strong>. When the correspondences are noise-free, it is known that they must satisfy the following epipolar constraint <span class="citation">(<a href="#ref-hartley03book-multiple" role="doc-biblioref">Hartley and Zisserman 2003</a>)</span>
+<span class="math display" id="eq:epipolar-constraint">\[\begin{equation}
+f_{2,i}^\top[t]_{\times} R f_{1,i} = 0, \quad \forall i=1,\dots,N,
+\tag{3.15}
+\end{equation}\]</span>
+where
+<span class="math display">\[
+[t]_{\times} := \begin{bmatrix} 0 &amp; - t_3 &amp; t_2 \\
+t_3 &amp; 0 &amp; - t_1 \\
+- t_2 &amp; t_1 &amp; 0 \end{bmatrix}
+\]</span>
+is a linear map such that <span class="math inline">\(t \times v = [t]_{\times} v\)</span> for any <span class="math inline">\(v \in \mathbb{R}^{3}\)</span> and <span class="math inline">\(\times\)</span> denotes cross product in 3D.</p>
+<p><strong>Nonlinear Least Squares</strong>. Since the correspondences are detected by neural networks, they will be noisy and the epipolar constraint <a href="Shor.html#eq:epipolar-constraint">(3.15)</a> will not be perfectly satisfied. Therefore, we formulate the following optimization problem to seek the best estimate that minimize the sum of the squared violations of <a href="Shor.html#eq:epipolar-constraint">(3.15)</a>
+<span class="math display" id="eq:two-view-estimation-problem">\[\begin{equation}
+\min_{R \in \mathrm{SO}(3), t \in \mathcal{S}^{2}} \sum_{i=1}^N (f_{2,i}^\top[t]_{\times} R f_{1,i})^2
+\tag{3.16}
+\end{equation}\]</span>
+Note that I have asked <span class="math inline">\(t \in \mathcal{S}^{2}\)</span> to lie on the unit sphere, why?</p>
+<p>Problem <a href="Shor.html#eq:two-view-estimation-problem">(3.16)</a> is not a QCQP anymore, because its objective is a degree-4 polynomial. However, all the constraints of <a href="Shor.html#eq:two-view-estimation-problem">(3.16)</a> are quadratic equalities and inequalities. To see this, note that <span class="math inline">\(t \in \mathcal{S}^{2}\)</span> can be written as
+<span class="math display" id="eq:two-view-t-con">\[\begin{equation}
+1 - t^\top t = 0,
+\tag{3.17}
+\end{equation}\]</span>
+which is a quadratic polynomial equality.
+The constraint <span class="math inline">\(R \in \mathrm{SO}(3)\)</span> can also be written as quadratic equalities. Let
+<span class="math display">\[
+R = [c_1, c_2, c_3]
+\]</span>
+where <span class="math inline">\(c_i\)</span> is the <span class="math inline">\(i\)</span>-the column. Then <span class="math inline">\(R\in \mathrm{SO}(3)\)</span> is equivalent to
+<span class="math display" id="eq:two-view-R-con">\[\begin{equation}
+\begin{split}
+c_i^\top c_i - 1= 0, &amp; \quad i=1,2,3 \\
+c_i^\top c_j = 0, &amp; \quad (i,j) \in \{ (1,2),(2,3),(3,1) \} \\
+c_i \times c_j = c_k,&amp; \quad (i,j,k) \in \{ (1,2,3),(2,3,1),(3,1,2) \}.
+\end{split}
+\tag{3.18}
+\end{equation}\]</span>
+all of which are quadratic polynomial equalities.</p>
+<p>Let <span class="math inline">\(r = \mathrm{vec}(R)\)</span>, <span class="math inline">\(x = [r^\top, t^\top]^\top\in \mathbb{R}^{12}\)</span>, we will collectively call all the constraints in <a href="Shor.html#eq:two-view-t-con">(3.17)</a> and <a href="Shor.html#eq:two-view-R-con">(3.18)</a> as
+<span class="math display">\[
+h_k(x) = 0, k=1,\dots,l,
+\]</span>
+with <span class="math inline">\(l=16\)</span>.</p>
+<p><strong>Semidefinite Relaxation</strong>. Clearly, we cannot directly apply Shor’s semidefinite relaxation, because <span class="math inline">\(X = xx^\top\)</span> only contains monomials in <span class="math inline">\(x\)</span> of degree up to <span class="math inline">\(2\)</span>, but our objective function is degree <span class="math inline">\(4\)</span> – this matrix variable is not powerful enough.</p>
+<p>To fix this issue, a natural idea is to create a larger matrix variable
+<span class="math display" id="eq:two-view-larger-X">\[\begin{equation}
+\hspace{-16mm}
+v = \begin{bmatrix}
+1 \\ r \\ t \\ t_1 r \\ t_2 r \\ t_3 r \end{bmatrix} \in \mathbb{R}^{40}, \quad X = vv^\top= \begin{bmatrix} 1 &amp; * &amp; * &amp; * &amp; * &amp; * \\
+r &amp; rr^\top&amp; * &amp; * &amp; * &amp; * \\
+t &amp; tr^\top&amp; tt^\top&amp; * &amp; * &amp; * \\
+t_1 r &amp; t_1 rr^\top&amp; t_1 r t^\top&amp; t_1^2 rr^\top&amp; * &amp; * \\
+t_2 r &amp; t_2 rr^\top&amp; t_2 r t^\top&amp; t_1 t_2 rr^\top&amp; t_2^2 rr^\top&amp; * \\
+t_3 r &amp; t_3 rr^\top&amp; t_3 r t^\top&amp; t_3 t_1 rr^\top&amp; t_3 t_2 rr^\top&amp; t_3^2 rr^\top\end{bmatrix} \in \mathbb{S}^{40}_{+}
+\tag{3.19}
+\end{equation}\]</span>
+Note that now <span class="math inline">\(X\)</span> has degree-4 monomials, which allows me to write the objective of the original problem <a href="Shor.html#eq:two-view-estimation-problem">(3.16)</a> as
+<span class="math display">\[
+\langle C, X \rangle
+\]</span>
+with a suitable constant matrix <span class="math inline">\(C \in \mathbb{S}^{40}\)</span>.</p>
+<p>I can also write all the original constraints <span class="math inline">\(h_k(x) = 0,k=1,\dots,l\)</span> as
+<span class="math display">\[
+\langle A_k, X \rangle = 0, k=1,\dots,l,
+\]</span>
+plus an additional constraint
+<span class="math display">\[
+\langle A_0, X \rangle = 1,
+\]</span>
+where <span class="math inline">\(A_0\)</span> is all zero except its top-left entry is equal to 1.</p>
+<p>This seems to be all we need for Shor’s relaxation, will this work?</p>
+<p><strong>“Redundant” Constraints</strong>. In the original paper <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>, the authors found that we are missing some important constraints that we can add to the convex SDP. For example, in the matrix <span class="math inline">\(X\)</span>, we have
+<span class="math display">\[
+t_1^2 rr^\top+ t_2^2 rr^\top+ t_3^2 rr^\top= (t_1^2 + t_2^2 + t_3^2) rr^\top= rr^\top,
+\]</span>
+which gives us additional linear constraints on the entries of <span class="math inline">\(X\)</span> (for free)! Essentially, these constraints are generated by multiplying the original constraints <span class="math inline">\(h_k(x)\)</span> by suitable monomials:
+<span class="math display">\[
+h_k(x) = 0 \Rightarrow h_k(x) \cdot \lambda(x) = 0,
+\]</span>
+where <span class="math inline">\(\lambda(x)\)</span> is a monomial such that all the monomials of <span class="math inline">\(h_k(x) \cdot \lambda(x)\)</span> appear in the big matrix <span class="math inline">\(X\)</span> (so that the resulting equality constraint can still be written as a linear equality on <span class="math inline">\(X\)</span>). The authors of <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> enumerated all such constraints (by hand) and added them to the SDP relaxation, which led to the relaxation going from loose to tight/exact.</p>
+<p><span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> called these constraints “redundant”, are they? We will revisit this after we study the moment-SOS hierarchy!</p>
+
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-briales18cvpr-certifiably" class="csl-entry">
+Briales, Jesus, Laurent Kneip, and Javier Gonzalez-Jimenez. 2018. <span>“A Certifiably Globally Optimal Solution to the Non-Minimal Relative Pose Problem.”</span> In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em>, 145–54.
+</div>
+<div id="ref-eriksson18cvpr-rotation" class="csl-entry">
+Eriksson, Anders, Carl Olsson, Fredrik Kahl, and Tat-Jun Chin. 2018. <span>“Rotation Averaging and Strong Duality.”</span> In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em>, 127–35.
+</div>
 <div id="ref-garcia21ivc-certifiable" class="csl-entry">
 Garcia-Salguero, Mercedes, Jesus Briales, and Javier Gonzalez-Jimenez. 2021. <span>“Certifiable Relative Pose Estimation.”</span> <em>Image and Vision Computing</em> 109: 104142.
 </div>
 <div id="ref-goemans95jacm-improved" class="csl-entry">
 Goemans, Michel X, and David P Williamson. 1995. <span>“Improved Approximation Algorithms for Maximum Cut and Satisfiability Problems Using Semidefinite Programming.”</span> <em>Journal of the ACM (JACM)</em> 42 (6): 1115–45.
 </div>
+<div id="ref-hartley03book-multiple" class="csl-entry">
+Hartley, Richard, and Andrew Zisserman. 2003. <em>Multiple View Geometry in Computer Vision</em>. Cambridge university press.
+</div>
 <div id="ref-holmes23ral-efficient" class="csl-entry">
 Holmes, Connor, and Timothy D Barfoot. 2023. <span>“An Efficient Global Optimality Certificate for Landmark-Based SLAM.”</span> <em>IEEE Robotics and Automation Letters</em> 8 (3): 1539–46.
 </div>
+<div id="ref-nister04pami-efficient" class="csl-entry">
+Nistér, David. 2004. <span>“An Efficient Solution to the Five-Point Relative Pose Problem.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> 26 (6): 756–70.
+</div>
+<div id="ref-rosen19ijrr-sesync" class="csl-entry">
+Rosen, David M, Luca Carlone, Afonso S Bandeira, and John J Leonard. 2019. <span>“SE-Sync: A Certifiably Correct Algorithm for Synchronization over the Special Euclidean Group.”</span> <em>The International Journal of Robotics Research</em> 38 (2-3): 95–125.
+</div>
 <div id="ref-shor87sjcss-quadratic" class="csl-entry">
 Shor, Naum Z. 1987. <span>“Quadratic Optimization Problems.”</span> <em>Soviet Journal of Computer and Systems Sciences</em> 25: 1–11.
+</div>
+<div id="ref-wang13ima-exact" class="csl-entry">
+Wang, Lanhui, and Amit Singer. 2013. <span>“Exact and Stable Recovery of Rotations for Robust Synchronization.”</span> <em>Information and Inference: A Journal of the IMA</em> 2 (2): 145–93.
+</div>
+<div id="ref-wang20eccv-caps" class="csl-entry">
+Wang, Qianqian, Xiaowei Zhou, Bharath Hariharan, and Noah Snavely. 2020. <span>“Learning Feature Descriptors Using Camera Pose Supervision.”</span> In <em>Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part i 16</em>, 757–74. Springer.
 </div>
 <div id="ref-wolkowicz12book-sdp" class="csl-entry">
 Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of Semidefinite Programming: Theory, Algorithms, and Applications</em>. Vol. 27. Springer.
