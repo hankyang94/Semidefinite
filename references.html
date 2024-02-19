@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-13" />
+<meta name="date" content="2024-02-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -202,7 +202,14 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
-<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
@@ -250,6 +257,9 @@ div.csl-indent {
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div class="csl-entry">
+Alizadeh, Farid, Jean-Pierre A Haeberly, and Michael L Overton. 1998. <span>“Primal-Dual Interior-Point Methods for Semidefinite Programming: Convergence Rates, Stability and Numerical Results.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 746–68.
+</div>
+<div class="csl-entry">
 Bertsekas, Dimitri, Angelia Nedic, and Asuman Ozdaglar. 2003. <em>Convex Analysis and Optimization</em>. Vol. 1. Athena Scientific.
 </div>
 <div class="csl-entry">
@@ -283,10 +293,16 @@ Goemans, Michel X, and David P Williamson. 1995. <span>“Improved Approximation
 Hartley, Richard, and Andrew Zisserman. 2003. <em>Multiple View Geometry in Computer Vision</em>. Cambridge university press.
 </div>
 <div class="csl-entry">
+Helmberg, Christoph, Franz Rendl, Robert J Vanderbei, and Henry Wolkowicz. 1996. <span>“An Interior-Point Method for Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 6 (2): 342–61.
+</div>
+<div class="csl-entry">
 Holmes, Connor, and Timothy D Barfoot. 2023. <span>“An Efficient Global Optimality Certificate for Landmark-Based SLAM.”</span> <em>IEEE Robotics and Automation Letters</em> 8 (3): 1539–46.
 </div>
 <div class="csl-entry">
 Hu, Bin, Kaiqing Zhang, Na Li, Mehran Mesbahi, Maryam Fazel, and Tamer Başar. 2023. <span>“Toward a Theoretical Foundation of Policy Optimization for Learning Control Policies.”</span> <em>Annual Review of Control, Robotics, and Autonomous Systems</em> 6: 123–58.
+</div>
+<div class="csl-entry">
+Kojima, Masakazu, Susumu Shindoh, and Shinji Hara. 1997. <span>“Interior-Point Methods for the Monotone Semidefinite Linear Complementarity Problem in Symmetric Matrices.”</span> <em>SIAM Journal on Optimization</em> 7 (1): 86–125.
 </div>
 <div class="csl-entry">
 Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain Adaptation: Learning Bounds and Algorithms.”</span> <em>arXiv Preprint arXiv:0902.3430</em>.
@@ -295,10 +311,19 @@ Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain A
 Mohammadi, Hesameddin, Armin Zare, Mahdi Soltanolkotabi, and Mihailo R Jovanović. 2021. <span>“Convergence and Sample Complexity of Gradient Methods for the Model-Free Linear–Quadratic Regulator Problem.”</span> <em>IEEE Transactions on Automatic Control</em> 67 (5): 2435–50.
 </div>
 <div class="csl-entry">
+Monteiro, Renato DC. 1997. <span>“Primal–Dual Path-Following Algorithms for Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 7 (3): 663–78.
+</div>
+<div class="csl-entry">
+———. 1998. <span>“Polynomial Convergence of Primal-Dual Algorithms for Semidefinite Programming Based on the Monteiro and Zhang Family of Directions.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 797–812.
+</div>
+<div class="csl-entry">
 Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
 </div>
 <div class="csl-entry">
 Nistér, David. 2004. <span>“An Efficient Solution to the Five-Point Relative Pose Problem.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> 26 (6): 756–70.
+</div>
+<div class="csl-entry">
+Nocedal, Jorge, and Stephen J Wright. 1999. <em>Numerical Optimization</em>. Springer.
 </div>
 <div class="csl-entry">
 Ramana, Motakuri V. 1997. <span>“An Exact Duality Theory for Semidefinite Programming and Its Complexity Implications.”</span> <em>Mathematical Programming</em> 77: 129–62.
@@ -310,6 +335,9 @@ Rockafellar, Ralph Tyrell. 1970. <em>Convex Analysis</em>. Princeton university 
 Rosen, David M, Luca Carlone, Afonso S Bandeira, and John J Leonard. 2019. <span>“SE-Sync: A Certifiably Correct Algorithm for Synchronization over the Special Euclidean Group.”</span> <em>The International Journal of Robotics Research</em> 38 (2-3): 95–125.
 </div>
 <div class="csl-entry">
+Schacke, Kathrin. 2004. <span>“On the Kronecker Product.”</span> <em>Master’s Thesis, University of Waterloo</em>.
+</div>
+<div class="csl-entry">
 Shor, Naum Z. 1987. <span>“Quadratic Optimization Problems.”</span> <em>Soviet Journal of Computer and Systems Sciences</em> 25: 1–11.
 </div>
 <div class="csl-entry">
@@ -317,6 +345,9 @@ Tang, Yukai, Jean-Bernard Lasserre, and Heng Yang. 2023. <span>“Uncertainty Qu
 </div>
 <div class="csl-entry">
 Todd, Michael J. 2001. <span>“Semidefinite Optimization.”</span> <em>Acta Numerica</em> 10: 515–60.
+</div>
+<div class="csl-entry">
+Todd, Michael J, Kim-Chuan Toh, and Reha H Tütüncü. 1998. <span>“On the Nesterov–Todd Direction in Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 769–96.
 </div>
 <div class="csl-entry">
 Wang, Lanhui, and Amit Singer. 2013. <span>“Exact and Stable Recovery of Rotations for Robust Synchronization.”</span> <em>Information and Inference: A Journal of the IMA</em> 2 (2): 145–93.
@@ -329,6 +360,9 @@ Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of 
 </div>
 <div class="csl-entry">
 Yang, Heng, Ling Liang, Luca Carlone, and Kim-Chuan Toh. 2022. <span>“An Inexact Projected Gradient Method with Rounding and Lifting by Nonlinear Programming for Solving Rank-One Semidefinite Relaxation of Polynomial Optimization.”</span> <em>Mathematical Programming</em>, 1–64.
+</div>
+<div class="csl-entry">
+Zhang, Yin. 1998. <span>“On Extending Some Primal–Dual Interior-Point Algorithms from Linear Programming to Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 8 (2): 365–86.
 </div>
 </div>
 </div>

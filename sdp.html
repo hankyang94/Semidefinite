@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-13" />
+<meta name="date" content="2024-02-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -202,7 +202,14 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
-<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
@@ -909,6 +916,380 @@ To run the <a href="https://github.com/ComputationalRobotics/Semidefinite-Exampl
 </div>
 <div id="interior-point-algorithm" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Interior Point Algorithm<a href="sdp.html#interior-point-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A nice property of semidefinite optimization is that it can be solved in polynomial time. The algorithm of choice for solving SDPs is called an <strong>interior point method</strong> (IPM), which is also what popular SDP solvers like SeDuMI, MOSEK, and SDPT3 implement under the hood.</p>
+<p>Although it can be difficult to implement an SDP solver as efficient and robust as MOSEK (as it requires many engineering wisdom), it is surprisingly simple to sketch out the basic algorithmic framework, as it is based on <a href="https://en.wikipedia.org/wiki/Newton%27s_method#:~:text=14%20External%20links-,Description,the%20method%20can%20be%20iterated.">Newton’s method for solving a system of nonlinear equations</a>. Before I introduce you the basic algorithm, let me review two useful preliminaries.</p>
+<div class="highlightbox">
+<p style="text-align: center;">
+<b>Newton’s Method</b>
+</p>
+<p>Given a function <span class="math inline">\(f: \mathbb{R}^{} \rightarrow \mathbb{R}^{}\)</span> that is continuously differentiable, Newton’s method is designed to find a root of <span class="math inline">\(f(x) = 0\)</span>. Given an initial iterate <span class="math inline">\(x^{(0)}\)</span>, Newton’s method works as follows
+<span class="math display">\[
+x^{(k+1)} = x^{(k)} - \frac{f(x^{(k)})}{f&#39;(x^{(k)})},
+\]</span>
+where <span class="math inline">\(f&#39;(x^{(k)})\)</span> denotes the derivative of <span class="math inline">\(f\)</span> at the current iterate <span class="math inline">\(x^{(k)}\)</span>. This simple algorithm is indeed (in my opinion) the most important foundation of modern numerical optimization <span class="citation">(<a href="#ref-nocedal99book-numerical" role="doc-biblioref">Nocedal and Wright 1999</a>)</span>. Under mild conditions, Newton’s method has at least quadratic convergence rate, that is to say, if <span class="math inline">\(|x^{(k)} - x^\star| = \epsilon\)</span>, then <span class="math inline">\(|x^{(k+1)} - x^\star| = O(\epsilon^2)\)</span>. Of course, there exist pathological cases where even linear convergence is not guaranteed (e.g., when <span class="math inline">\(f&#39;(x^\star) = 0\)</span>).</p>
+<p>Newton’s method can be generalized to find a point at which multiple functions vanish simultaneously. Given a function <span class="math inline">\(F: \mathbb{R}^{n} \rightarrow \mathbb{R}^{n}\)</span> that is continuously differentiable, and an initial iterate <span class="math inline">\(x^{(0)}\)</span>, Newton’s method reads
+<span class="math display" id="eq:newton-method-vector">\[\begin{equation}
+x^{(k+1)} = x^{(k)} - J_F(x^{(k)})^{-1}F(x^{(k)}),
+\tag{2.11}
+\end{equation}\]</span>
+where <span class="math inline">\(J_F(\cdot)\)</span> denotes the Jacobian of <span class="math inline">\(F\)</span>. Iteration <a href="sdp.html#eq:newton-method-vector">(2.11)</a> is equivalent to
+<span class="math display" id="eq:newton-method-vector-1">\[\begin{equation}
+\begin{split}
+J_F(x^{(k)}) \Delta x^{(k)} &amp; = - F(x^{(k)}) \\
+x^{(k+1)} &amp; = x^{(k)} + \Delta x^{(k)}
+\end{split}
+\tag{2.12}
+\end{equation}\]</span>
+i.e., one first solves a linear system of equations to find an update direction <span class="math inline">\(\Delta x^{(k)}\)</span>, and then take a step along the direction.</p>
+<p>As we will see, IPMs for solving SDPs can be interpreted as applying Newton’s method to the perturbed KKT optimality conditions.</p>
+</div>
+<p>We introduce another useful preliminary about the symmetric Kronecker product.</p>
+<div class="highlightbox">
+<p style="text-align: center;">
+<b>Symmetric Vectorization and Kronecker Product</b>
+</p>
+<p>Consider a linear operator on <span class="math inline">\(\mathbb{R}^{n \times n}\)</span>:
+<span class="math display" id="eq:linear-opt-Rn">\[\begin{equation}
+\begin{split}
+\mathbb{R}^{n \times n} &amp; \rightarrow \mathbb{R}^{n \times n} \\
+K &amp; \mapsto N K M^\top
+\end{split}
+\tag{2.13}
+\end{equation}\]</span>
+where <span class="math inline">\(N,M \in \mathbb{R}^{n \times n}\)</span> are given square matrices. This linear map is equivalent to
+<span class="math display" id="eq:linear-opt-Rn-kron">\[\begin{equation}
+\begin{split}
+\mathbb{R}^{n^2} &amp; \rightarrow \mathbb{R}^{n^2} \\
+\mathrm{vec}(K) &amp; \mapsto (M \otimes N) \mathrm{vec}(K)
+\end{split}
+\tag{2.14}
+\end{equation}\]</span>
+where <span class="math inline">\(\otimes\)</span> denotes the usual kronecker product.</p>
+<p>Symmetric vectorization and kronecker product is to generalize the above linear map on <span class="math inline">\(\mathbb{R}^{n \times n}\)</span> to <span class="math inline">\(\mathbb{S}^{n}\)</span>.</p>
+<p>Consider a linear operator on <span class="math inline">\(\mathbb{S}^{n}\)</span>:
+<span class="math display" id="eq:linear-opt-Sn">\[\begin{equation}
+\begin{split}
+\mathbb{S}^{n} &amp; \rightarrow \mathbb{S}^{n} \\
+K &amp; \mapsto \frac{1}{2} \left( N K M^\top+ M K N^\top\right)
+\end{split}
+\tag{2.15}
+\end{equation}\]</span>
+where <span class="math inline">\(N,M\in\mathbb{R}^{n\times n}\)</span> are given square matrices. This linear map is equivalent to
+<span class="math display" id="eq:linear-opt-Sn-skron">\[\begin{equation}
+\begin{split}
+\mathbb{R}^{n^{\Delta}} &amp; \rightarrow \mathbb{R}^{n^{\Delta}} \\
+\mathrm{svec}(K) &amp; \mapsto (M \otimes_{\mathrm{s}}N) \mathrm{svec}(K)
+\end{split}
+\tag{2.16}
+\end{equation}\]</span>
+where
+<span class="math display">\[
+n^{\Delta} = \frac{n(n+1)}{2}
+\]</span>
+is the <span class="math inline">\(n\)</span>-th triangle number, <span class="math inline">\(\mathrm{svec}(K)\)</span> denotes the symmetric vectorization of <span class="math inline">\(K\)</span> defined as
+<span class="math display">\[
+\mathrm{svec}(K) = \begin{bmatrix}
+K_{11} \\
+\sqrt{2} K_{12} \\
+\vdots \\
+\sqrt{2} K_{1n} \\
+K_{22} \\
+\vdots \\
+\sqrt{2} K_{2n} \\
+\vdots \\
+K_{nn}
+\end{bmatrix},
+\]</span>
+and <span class="math inline">\(M \otimes_{\mathrm{s}}N\)</span> denotes the symmetric kronecker product. Note that we have
+<span class="math display">\[
+\langle A, B \rangle = \langle \mathrm{svec}(A), \mathrm{svec}(B) \rangle, \quad \forall A,B \in \mathbb{S}^{n},
+\]</span>
+and
+<span class="math display">\[
+M \otimes_{\mathrm{s}}N = N \otimes_{\mathrm{s}}M.
+\]</span>
+To compute the symmetric kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker" role="doc-biblioref">Schacke 2004</a>)</span>. The <span class="math inline">\(\otimes_{\mathrm{s}}\)</span> function is readily implemented in software packages such as SDPT3.</p>
+<p>The following property of the symmetric kronecker product is useful for us later.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:SkronEigLemma" class="lemma"><strong>Lemma 2.5  (Spectrum of Symmetric Kronecker Product) </strong></span>Let <span class="math inline">\(M,N \in \mathbb{S}^{n}\)</span> be two symmetric matrices that commute, i.e., <span class="math inline">\(MN = NM\)</span>, and <span class="math inline">\(\alpha_1,\dots,\alpha_n\)</span> and <span class="math inline">\(\beta_1,\dots,\beta_n\)</span> be their eigenvalues with <span class="math inline">\(v_1,\dots,v_n\)</span> a common basis of orthonormal eigenvectors. The <span class="math inline">\(n^\Delta\)</span> eigenvalues of <span class="math inline">\(M \otimes_{\mathrm{s}}N\)</span> are given by
+<span class="math display">\[
+\frac{1}{2}(\alpha_i \beta_j + \beta_i \alpha_j), \quad 1 \leq i \leq j \leq n,
+\]</span>
+with the corresponding set of orthonormal eigenvectors
+<span class="math display">\[
+\begin{cases}
+\mathrm{svec}(v_i v_i^\top) &amp; \text{if } i = j \\
+\frac{1}{\sqrt{2}} \mathrm{svec}(v_i v_j^\top+ v_j v_i^\top) &amp; \text{if } i &lt; j
+\end{cases}.
+\]</span></p>
+</div>
+</div>
+<p>It is easy to see that, if <span class="math inline">\(M,N\)</span> are two PSD matrices that commute, then <span class="math inline">\(M \otimes_{\mathrm{s}}N\)</span> is also PSD.</p>
+<p>For more properties of symmetric vectorization and Kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker" role="doc-biblioref">Schacke 2004</a>)</span>.</p>
+</div>
+<p>Now we are ready to sketch the interior-point algorithm.</p>
+<div id="the-central-path" class="section level3 hasAnchor" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> The Central Path<a href="sdp.html#the-central-path" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Assuming strict feasibility, strong duality holds between the SDP primal <a href="sdp.html#eq:SDP-P">(2.5)</a> and dual <a href="sdp.html#eq:SDP-D">(2.6)</a>, then <span class="math inline">\((X,y,Z)\)</span> is primal-dual optimal if and only if they satisfy the following KKT optimality conditions
+<span class="math display" id="eq:SDP-KKT">\[\begin{equation}
+\begin{split}
+\mathcal{A}(X) = b, \quad X \succeq 0 \\
+C - \mathcal{A}^*(y) - Z = 0, \quad Z \succeq 0 \\
+\langle X, Z \rangle = 0 \Leftrightarrow XZ = 0
+\end{split}
+\tag{2.17}
+\end{equation}\]</span>
+The first idea in IPM is to relax the last condition in <a href="sdp.html#eq:SDP-KKT">(2.17)</a>, i.e., zero duality gap, to a small positive gap, which leads to the notion of a central path.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:CentralPath" class="definition"><strong>Definition 2.2  (Central Path) </strong></span>A point <span class="math inline">\((X^\mu,y^\mu,Z^\mu)\)</span> is said to lie on the central path if there exists <span class="math inline">\(\mu &gt; 0\)</span> such that
+<span class="math display" id="eq:SDP-central-path">\[\begin{equation}
+\begin{split}
+\mathcal{A}(X^\mu) = b, \quad X^\mu \succeq 0 \\
+C - \mathcal{A}^*(y^\mu) - Z^\mu = 0, \quad Z^\mu \succeq 0 \\
+X^\mu Z^\mu = \mu \mathrm{I}
+\end{split},
+\tag{2.18}
+\end{equation}\]</span>
+that is, <span class="math inline">\((X^\mu,y^\mu,Z^\mu)\)</span> is primal and dual feasible, but attain a nonzero duality gap:
+<span class="math display">\[
+\langle C, X^\mu \rangle - \langle b, y^\mu \rangle = \langle C, X^\mu \rangle - \langle \mathcal{A}(X^\mu), y^\mu \rangle = \langle C - \mathcal{A}^*(y^\mu), X^\mu \rangle = \langle X^\mu, Z^\mu \rangle = n\mu.
+\]</span></p>
+</div>
+</div>
+<p>The central path exists and is unique.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:UniqueCentralPath" class="theorem"><strong>Theorem 2.3  (Central Path) </strong></span>Assume the SDP pair <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a> are strictly feasible. For any <span class="math inline">\(\mu &gt; 0\)</span>, <span class="math inline">\((X^\mu,y^\mu,Z^\mu)\)</span> satisfying <a href="sdp.html#eq:SDP-central-path">(2.18)</a> exists and is unique. Moreover,
+<span class="math display">\[
+(X,y,Z) = \lim_{\mu \rightarrow 0} (X^\mu, y^\mu, Z^\mu)
+\]</span>
+exists and solves <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a>.</p>
+</div>
+</div>
+<p>Theorem <a href="sdp.html#thm:UniqueCentralPath">2.3</a> states that the limit of the central path leads to a solution of the SDP. Therefore, the basic concept of IPM is to follow the central path and converge to the optimal solution.</p>
+</div>
+<div id="the-aho-newton-direction" class="section level3 hasAnchor" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> The AHO Newton Direction<a href="sdp.html#the-aho-newton-direction" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We will focus on the central path equation <a href="sdp.html#eq:SDP-central-path">(2.18)</a> and for simplicity of notation, we will rename <span class="math inline">\((X^\mu,y^\mu,Z^\mu)\)</span> as <span class="math inline">\((X,y,Z)\)</span>. Discarding the positive semidefiniteness condition for now, we can view <a href="sdp.html#eq:SDP-central-path">(2.18)</a> as finding a root to the following function
+<span class="math display" id="eq:central-path-F-1">\[\begin{equation}
+F(X,y,Z) = \begin{pmatrix}
+\mathcal{A}^*(y) + Z - C \\
+\mathcal{A}(X) - b \\
+X Z - \mu \mathrm{I}
+\end{pmatrix} = 0.
+\tag{2.19}
+\end{equation}\]</span>
+However, there is an issue with <span class="math inline">\(F\)</span> defined as above. The input of the function <span class="math inline">\((X,y,Z)\)</span> lives in <span class="math inline">\(\mathbb{S}^{n} \times \mathbb{R}^{m} \times \mathbb{S}^{n}\)</span>, but the output lives in <span class="math inline">\(\mathbb{S}^{n} \times \mathbb{R}^{m} \times \mathbb{R}^{n \times n}\)</span> because <span class="math inline">\(XZ\)</span> is not guaranteed to be symmetric (two symmetric matrices may not commute). Therefore, Newton’s method cannot be directly applied.</p>
+<p>An easy way to fix this issue is to treat the input and output of <span class="math inline">\(F\)</span> as both <span class="math inline">\(\mathbb{R}^{n \times n} \times \mathbb{R}^{m} \times \mathbb{R}^{n \times n}\)</span>. This could work, however, leads to nonsymmetric Newton iterates.</p>
+<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal" role="doc-biblioref">Alizadeh, Haeberly, and Overton 1998</a>)</span> proposed a better idea – to equivalently rewrite <a href="sdp.html#eq:central-path-F-1">(2.19)</a> as
+<span class="math display" id="eq:central-path-F-2">\[\begin{equation}
+F(X,y,Z) = \begin{pmatrix}
+\mathcal{A}^*(y) + Z - C \\
+\mathcal{A}(X) - b \\
+\frac{1}{2}(X Z + Z X) - \mu \mathrm{I}
+\end{pmatrix} = 0.
+\tag{2.20}
+\end{equation}\]</span></p>
+<p>The next proposition states that <a href="sdp.html#eq:central-path-F-2">(2.20)</a> and <a href="sdp.html#eq:central-path-F-1">(2.19)</a> are indeed equivalent.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:SymmetricCentralPath" class="proposition"><strong>Proposition 2.2  (Symmetrized Central Path) </strong></span>If <span class="math inline">\(X,Z \succeq 0\)</span>, then
+<span class="math display">\[
+XZ = \mu \mathrm{I}\Leftrightarrow XZ + ZX = 2 \mu \mathrm{I}.
+\]</span></p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-11" class="proof"><em>Proof</em>. </span>The <span class="math inline">\(\Rightarrow\)</span> direction is obvious. To show the “” direction, write <span class="math inline">\(X = Q \Lambda Q^\top\)</span> with <span class="math inline">\(QQ^\top= \mathrm{I}\)</span>.</p>
+</div>
+</div>
+<p>Now that the input and output domains of <span class="math inline">\(F\)</span> in <a href="sdp.html#eq:central-path-F-2">(2.20)</a> are both <span class="math inline">\(\mathbb{S}^{n} \times \mathbb{R}^{m} \times \mathbb{S}^{n}\)</span>, we can apply Newton’s method to solving the system of equations. For ease of implementation, let us denote
+<span class="math display">\[
+x = \mathrm{svec}(X), \quad z = \mathrm{svec}(Z), \quad c = \mathrm{svec}(C),
+\]</span>
+<span class="math display">\[
+A^\top= \begin{bmatrix}
+\mathrm{svec}(A_1) &amp; \mathrm{svec}(A_2) &amp; \cdots &amp; \mathrm{svec}(A_m)
+\end{bmatrix}
+\]</span>
+and rewrite <a href="sdp.html#eq:central-path-F-2">(2.20)</a> as
+<span class="math display" id="eq:central-path-F-3">\[\begin{equation}
+F(x,y,z) = \begin{pmatrix}
+A^\top y + z - c \\
+A x - b \\
+\frac{1}{2}\mathrm{svec}(XZ + ZX) - \mathrm{svec}(\mu \mathrm{I})
+\end{pmatrix} = 0.
+\tag{2.21}
+\end{equation}\]</span>
+The Jacobian of <span class="math inline">\(F\)</span> reads
+<span class="math display" id="eq:aho-Jacobian">\[\begin{equation}
+J_F = \begin{bmatrix}
+0 &amp; A^\top&amp; \mathrm{I}\\
+A &amp; 0 &amp; 0 \\
+P &amp; 0 &amp; Q
+\end{bmatrix}
+\tag{2.22}
+\end{equation}\]</span>
+where
+<span class="math display">\[
+P = Z \otimes_{\mathrm{s}}\mathrm{I}, \quad Q = X \otimes_{\mathrm{s}}\mathrm{I},
+\]</span>
+due to the symmetric kronecker product introduced before
+<span class="math display">\[
+\frac{1}{2}\mathrm{svec}(XZ + ZX) = (Z \otimes_{\mathrm{s}}\mathrm{I}) x = (X \otimes_{\mathrm{s}}\mathrm{I}) z.
+\]</span>
+Let
+<span class="math display">\[
+r_d = c - A^\top y - z, \quad r_p = b - Ax, \quad r_c = \mathrm{svec}(\mu \mathrm{I}) - \frac{1}{2}\mathrm{svec}(XZ + ZX),
+\]</span>
+be the dual, primal, and complementarity residuals, applying Newton’s method to <a href="sdp.html#eq:central-path-F-3">(2.21)</a> gives us the Newton direction as the solution to the following linear system
+<span class="math display" id="eq:aho-newton-direction">\[\begin{equation}
+\begin{bmatrix}
+0 &amp; A^\top&amp; \mathrm{I}\\
+A &amp; 0 &amp; 0 \\
+P &amp; 0 &amp; Q
+\end{bmatrix}
+\begin{bmatrix} \Delta x \\ \Delta y \\ \Delta z \end{bmatrix} = \begin{bmatrix} r_d \\ r_p \\ r_c \end{bmatrix}.
+\tag{2.23}
+\end{equation}\]</span>
+One can directly form the block matrix in <a href="sdp.html#eq:aho-newton-direction">(2.23)</a> and solve the linear system. However, leveraging the sparsity of the linear system, we can do better.</p>
+<p>We can first use the third equation to eliminate <span class="math inline">\(\Delta z\)</span>:
+<span class="math display" id="eq:aho-eliminate-z">\[\begin{equation}
+\Delta z = Q^{-1}(r_c - P \Delta x).
+\tag{2.24}
+\end{equation}\]</span>
+Then we can use the first equation to eliminate <span class="math inline">\(\Delta x\)</span>:
+<span class="math display" id="eq:aho-eliminate-x">\[\begin{equation}
+\Delta x = - P^{-1}Q r_d + P^{-1}r_c + P^{-1}Q A^\top\Delta y.
+\tag{2.25}
+\end{equation}\]</span>
+Then we are left with a single equation of <span class="math inline">\(\Delta y\)</span>:
+<span class="math display" id="eq:aho-schur-system">\[\begin{equation}
+\underbrace{ A P^{-1}Q A^\top}_{M} \Delta y = r_p + A P^{-1}(Q r_d - r_c),
+\tag{2.26}
+\end{equation}\]</span>
+which is called the <strong>Schur system</strong>.</p>
+</div>
+<div id="basic-algorithm" class="section level3 hasAnchor" number="2.4.3">
+<h3><span class="header-section-number">2.4.3</span> Basic Algorithm<a href="sdp.html#basic-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>With the AHO Newton direction worked out above, we can formulate the basic primal-dual path following interior point algorithm.</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose <span class="math inline">\(X,Z\)</span> strictly feasible for <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a>, <span class="math inline">\(0 \leq \sigma &lt; 1\)</span>, define
+<span class="math display">\[
+\mu = \sigma \frac{\langle X, Z \rangle}{n}
+\]</span></p></li>
+<li><p>Solve the Newton direction from <a href="sdp.html#eq:aho-schur-system">(2.26)</a>, <a href="sdp.html#eq:aho-eliminate-x">(2.25)</a>, and <a href="sdp.html#eq:aho-eliminate-z">(2.24)</a></p></li>
+<li><p>Step along the Newton direction
+<span class="math display">\[
+x \leftarrow x + \alpha \Delta x, \quad y \leftarrow y + \beta \Delta y, \quad z \leftarrow z + \beta \Delta z,
+\]</span>
+where the step sizes <span class="math inline">\(\alpha, \beta\)</span> are chosen as
+<span class="math display">\[
+\alpha = \min (1, \tau \hat{\alpha}), \quad \beta = \min (1, \tau \hat{\beta})
+\]</span>
+with <span class="math inline">\(\tau \in (0,1)\)</span> and <span class="math inline">\(\hat{\alpha}, \hat{\beta}\)</span> computed by
+<span class="math display" id="eq:ipm-step-size">\[\begin{equation}
+\hat{\alpha} = \sup \{ \bar{\alpha} \mid x + \bar{\alpha} \Delta x \succeq 0  \}, \quad \hat{\beta} = \sup \{ \bar{\beta} \mid z + \bar{\beta} \Delta z \succeq 0  \}.
+\tag{2.27}
+\end{equation}\]</span></p></li>
+</ol>
+<p>To compute the maximum step sizes <span class="math inline">\(\hat{\alpha}\)</span> and <span class="math inline">\(\hat{\beta}\)</span> in <a href="sdp.html#eq:ipm-step-size">(2.27)</a>, let
+<span class="math display">\[
+X = \mathrm{smat}(x), \quad \Delta X = \mathrm{smat}(\Delta x)
+\]</span>
+be the reconstructed matrices from the corresponding symmetric vectorizations. We can first perform a Cholesky factorization of <span class="math inline">\(X\)</span>
+<span class="math display">\[
+X = LL^\top.
+\]</span>
+Then we perform a <a href="https://en.wikipedia.org/wiki/Matrix_similarity">matrix similarity transformation</a>
+<span class="math display">\[
+X + \bar{\alpha} \Delta X \mapsto L^{-1}(X + \bar{\alpha} \Delta X) L^{-\top} = \mathrm{I}+ \bar{\alpha} L^{-1}\Delta X L^{-\top},
+\]</span>
+which does not change the eigenvalues of <span class="math inline">\(X + \bar{\alpha} \Delta X\)</span>. Therefore, the maximum step size <span class="math inline">\(\hat{\alpha}\)</span> is
+<span class="math display">\[
+\hat{\alpha}^{-1}= \lambda_{\max}(- L^{-1}\Delta X L^{-\top}),
+\]</span>
+assuming <span class="math inline">\(\Delta X\)</span> is not PSD.</p>
+</div>
+<div id="nondegeneracy" class="section level3 hasAnchor" number="2.4.4">
+<h3><span class="header-section-number">2.4.4</span> Nondegeneracy<a href="sdp.html#nondegeneracy" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Since the algorithm above is an application of Newton’s method to the system of equations <a href="sdp.html#eq:central-path-F-3">(2.21)</a>, the key to understand its asymptotic behavior is to analyze the Jacobian <a href="sdp.html#eq:aho-Jacobian">(2.22)</a> at the optimal solution. If the Jacobian at the optimal solution is nonsingular, then one can show that the algorithm above has asymptotic quadratic convergence rate.</p>
+<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal" role="doc-biblioref">Alizadeh, Haeberly, and Overton 1998</a>)</span> provided a sufficient condition for the Jacobian to be nonsingular, which is called nondegeneracy.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Nondegeneracy" class="definition"><strong>Definition 2.3  (Nondegeneracy) </strong></span>Let <span class="math inline">\((X,y,Z)\)</span> be a solution to the SDP pair <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a> and satisfies the KKT optimality conditions <a href="sdp.html#eq:SDP-KKT">(2.17)</a>. In this case, <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span> can be simultaneously diagonalized
+<span class="math display">\[
+X = Q \mathrm{Diag}(\lambda_1,\dots,\lambda_n) Q^\top, \quad Z = Q \mathrm{Diag}(\omega_1,\dots,\omega_n)Q^\top
+\]</span>
+by some orthogonal matrix <span class="math inline">\(Q\)</span>. We assume
+<span class="math display">\[
+\lambda_1, \geq \dots \geq \lambda_n, \quad \omega_1 \leq \dots \omega_n.
+\]</span>
+Due to <span class="math inline">\(XZ = 0\)</span>, we have
+<span class="math display">\[
+\lambda_i \omega_i = 0,\quad i=1,\dots,n.
+\]</span></p>
+<p>Let <span class="math inline">\(X\)</span> have rank <span class="math inline">\(r\)</span> with positive eigenvalues <span class="math inline">\(\lambda_1,\dots,\lambda_r\)</span>, and partition <span class="math inline">\(Q = [Q_1, Q_2]\)</span> where the colums of <span class="math inline">\(Q_1\)</span> are eigenvectors corresponding to <span class="math inline">\(\lambda_1,\dots,\lambda_r\)</span>. We say <span class="math inline">\((X,y,Z)\)</span> satisfies the strict complementarity and primal and dual nondegeneracy conditions if the following hold:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>(Strict Complementarity)</strong> <span class="math inline">\(\mathrm{rank}(Z) = n - r\)</span>.</p></li>
+<li><p><strong>(Primal Nondegeneracy)</strong> The matrices
+<span class="math display" id="eq:primal-nondegeneracy">\[\begin{equation}
+\begin{bmatrix} Q_1^\top A_k Q_1 &amp; Q_1^\top A_k Q_2 \\
+Q_2^\top A_k Q_1 &amp; 0 \end{bmatrix}, \quad k=1,\dots,m
+\tag{2.28}
+\end{equation}\]</span>
+are linearly independent in <span class="math inline">\(\mathbb{S}^{n}\)</span>.</p></li>
+<li><p><strong>(Dual Nondegeneracy)</strong> The matrices
+<span class="math display" id="eq:dual-nondegeneracy">\[\begin{equation}
+Q_1^\top A_k Q_1, \quad k=1,\dots,m
+\tag{2.29}
+\end{equation}\]</span>
+span the space <span class="math inline">\(\mathbb{S}^{r}\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>When strict complementarity holds, <strong>primal nondegeneracy implies the dual optimal solution is unique</strong>, and <strong>dual nondegeneracy implies the primal optimal solution is unique</strong>.</p>
+<p>Strict complementarity and primal-dual nondegeneracy also immediately imply, recalling <span class="math inline">\(r^{\Delta} = r(r+1)/2\)</span>,
+<span class="math display" id="eq:sc-pn-dn-m">\[\begin{equation}
+r^{\Delta} \leq m \leq r^{\Delta} + r (n - r),
+\tag{2.30}
+\end{equation}\]</span>
+where <span class="math inline">\(r^\Delta \leq m\)</span> is due to <a href="sdp.html#eq:dual-nondegeneracy">(2.29)</a> and <span class="math inline">\(m \leq r^{\Delta} + r (n - r)\)</span> is due to <a href="sdp.html#eq:primal-nondegeneracy">(2.28)</a>.</p>
+<p>From <a href="sdp.html#eq:sc-pn-dn-m">(2.30)</a>, we can understand that when <span class="math inline">\(m\)</span> is very large, then primal nondegeneracy must fail and the dual solution must not be unique. This is a property we will see later when we study the moment-SOS hierarchy.</p>
+</div>
+<div id="generalization" class="section level3 hasAnchor" number="2.4.5">
+<h3><span class="header-section-number">2.4.5</span> Generalization<a href="sdp.html#generalization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The AHO Newton direction is obtained by symmetrizing the centrality condition <span class="math inline">\(XZ = \mu \mathrm{I}\)</span> as
+<span class="math display">\[
+\frac{1}{2}(XZ + ZX) = \mu \mathrm{I}.
+\]</span></p>
+<p>It turns out that is not the only way (and also not the most robust way) to symmetrize the centrality condition. A more popular symmetrization is due to <span class="citation">(<a href="#ref-monteiro97siopt-primal" role="doc-biblioref">Monteiro 1997</a>)</span> and <span class="citation">(<a href="#ref-zhang98siopt-extending" role="doc-biblioref">Zhang 1998</a>)</span>, and is typically referred to as the Monteiro-Zhang family <span class="citation">(<a href="#ref-monteiro98siopt-polynomial" role="doc-biblioref">Monteiro 1998</a>)</span>. The basic idea is to symmetrize the centrality condition as
+<span class="math display" id="eq:Monteiro-Zhang">\[\begin{equation}
+\frac{1}{2}(P XZ P^{-1}+ P^{-\top}XZ P^\top) = \mu \mathrm{I}.
+\tag{2.31}
+\end{equation}\]</span>
+Clearly, the AHO direction is a special case of <a href="sdp.html#eq:Monteiro-Zhang">(2.31)</a> with the choice <span class="math inline">\(P = \mathrm{I}\)</span>.</p>
+<p>Two other most popular Newton directions are:</p>
+<ul>
+<li><p>Nesterov-Todd <span class="citation">(<a href="#ref-todd98siopt-nesterov" role="doc-biblioref">Todd, Toh, and Tütüncü 1998</a>)</span>, where <span class="math inline">\(P\)</span> is obtained by first solving
+<span class="math display">\[
+WZW = X,
+\]</span>
+and then setting
+<span class="math display">\[
+P = W^{-1/2}.
+\]</span>
+This is the Newton method implemented by SeDuMi.</p></li>
+<li><p>HKM, which was proposed and analyzed by multiple authors <span class="citation">(<a href="#ref-helmberg96siopt-interior" role="doc-biblioref">Helmberg et al. 1996</a>)</span>, <span class="citation">(<a href="#ref-kojima97siopt-interior" role="doc-biblioref">Kojima, Shindoh, and Hara 1997</a>)</span>, computes
+<span class="math display">\[
+P = Z^{1/2}.
+\]</span>
+This is the Newton method implemented by SDPT3 and MOSEK.</p></li>
+</ul>
+</div>
 </div>
 <div id="applications" class="section level2 hasAnchor" number="2.5">
 <h2><span class="header-section-number">2.5</span> Applications<a href="sdp.html#applications" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -918,19 +1299,19 @@ To run the <a href="https://github.com/ComputationalRobotics/Semidefinite-Exampl
 <p>Consider a discrete-time linear dynamical system
 <span class="math display" id="eq:dt-linear-system">\[\begin{equation}
 x_{k+1} = A x_k,\quad k=0,\dots
-\tag{2.11}
+\tag{2.32}
 \end{equation}\]</span>
-where <span class="math inline">\(x \in \mathbb{R}^{n}\)</span> is called the state of the system, and <span class="math inline">\(k\)</span> indexes the time. An important property that one wants to understand about the system <a href="sdp.html#eq:dt-linear-system">(2.11)</a> is whether it is <strong>stable</strong>, i.e., given an initial state <span class="math inline">\(x_0\)</span>, does <span class="math inline">\(x_k\)</span> tend to zero as <span class="math inline">\(k\)</span> tends to infinity.</p>
+where <span class="math inline">\(x \in \mathbb{R}^{n}\)</span> is called the state of the system, and <span class="math inline">\(k\)</span> indexes the time. An important property that one wants to understand about the system <a href="sdp.html#eq:dt-linear-system">(2.32)</a> is whether it is <strong>stable</strong>, i.e., given an initial state <span class="math inline">\(x_0\)</span>, does <span class="math inline">\(x_k\)</span> tend to zero as <span class="math inline">\(k\)</span> tends to infinity.</p>
 <p>It is well-known that <span class="math inline">\(x_k\)</span> tends to zero for all initial conditions <span class="math inline">\(x_0\)</span> if and only if <span class="math inline">\(|\lambda_i(A)| &lt; 1, \forall i=1,\dots,n\)</span>, i.e., all the eigenvalues of the transition matrix <span class="math inline">\(A\)</span> lies inside the unit circle.</p>
 <p>Equivalently, one can also <strong>certify</strong> the stability of the system if a <strong>Lyapunov function</strong>
 <span class="math display" id="eq:Lyapunov-function">\[\begin{equation}
 V(x_k) = x_k^\top P x_k
-\tag{2.12}
+\tag{2.33}
 \end{equation}\]</span>
 is given that satisfies the following matrix inequalities.</p>
 <div class="theorembox">
 <div class="lemma">
-<p><span id="lem:LyapunovStability" class="lemma"><strong>Lemma 2.5  (Lyapunov Stability) </strong></span>Given <span class="math inline">\(A \in \mathbb{R}^{n \times n}\)</span>, the following statements are equivalent:</p>
+<p><span id="lem:LyapunovStability" class="lemma"><strong>Lemma 2.6  (Lyapunov Stability) </strong></span>Given <span class="math inline">\(A \in \mathbb{R}^{n \times n}\)</span>, the following statements are equivalent:</p>
 <ol style="list-style-type: decimal">
 <li><p>All eigenvalues of <span class="math inline">\(A\)</span> lie strictly inside the unit circle, i.e., <span class="math inline">\(|\lambda_i(A)| &lt; 1, i=1,\dots,n\)</span></p></li>
 <li><p>There exists a matrix <span class="math inline">\(P \in \mathbb{S}^{n}\)</span> such that
@@ -942,7 +1323,7 @@ P \succ 0, \quad A^\top P A - P \prec 0.
 </div>
 <div class="proofbox">
 <div class="proof">
-<p><span id="unlabeled-div-11" class="proof"><em>Proof</em>. </span>2 <span class="math inline">\(\Rightarrow\)</span> 1: Let <span class="math inline">\(\lambda \in \mathbb{C}^{}\)</span> and <span class="math inline">\(v \neq 0 \in \mathbb{C}^{n}\)</span> be a pair of eigenvalue and eigenvector of <span class="math inline">\(A\)</span> such that <span class="math inline">\(A v = \lambda v\)</span>. Since <span class="math inline">\(A^\top P A - P \prec 0\)</span>, we have
+<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>2 <span class="math inline">\(\Rightarrow\)</span> 1: Let <span class="math inline">\(\lambda \in \mathbb{C}^{}\)</span> and <span class="math inline">\(v \neq 0 \in \mathbb{C}^{n}\)</span> be a pair of eigenvalue and eigenvector of <span class="math inline">\(A\)</span> such that <span class="math inline">\(A v = \lambda v\)</span>. Since <span class="math inline">\(A^\top P A - P \prec 0\)</span>, we have
 <span class="math display">\[
 v^* (A^\top P A - P) v &lt; 0 \Rightarrow (\lambda v)^* P (\lambda v) - v^* P v &lt; 0 \Rightarrow (|\lambda|^2 - 1) (v^* P v) &lt; 0.
 \]</span>
@@ -958,7 +1339,7 @@ A^\top P A - P = \sum_{k=1}^{\infty} (A^k)^\top A^k - \sum_{k=0}^{\infty} (A^k)^
 proving the result.</p>
 </div>
 </div>
-<p>Intuitively, the Lyapunov function <a href="sdp.html#eq:Lyapunov-function">(2.12)</a> defines a positive definite energy function. The fact that <span class="math inline">\(P \succ 0\)</span> implies <span class="math inline">\(V(0) = 0\)</span> and <span class="math inline">\(V(x) &gt; 0\)</span> for any <span class="math inline">\(x\)</span> that is nonzero. The condition <span class="math inline">\(A^\top P A - P \prec 0\)</span> guarantees that the system’s energy strictly decreases along any possible system trajectory. To see this, write
+<p>Intuitively, the Lyapunov function <a href="sdp.html#eq:Lyapunov-function">(2.33)</a> defines a positive definite energy function. The fact that <span class="math inline">\(P \succ 0\)</span> implies <span class="math inline">\(V(0) = 0\)</span> and <span class="math inline">\(V(x) &gt; 0\)</span> for any <span class="math inline">\(x\)</span> that is nonzero. The condition <span class="math inline">\(A^\top P A - P \prec 0\)</span> guarantees that the system’s energy strictly decreases along any possible system trajectory. To see this, write
 <span class="math display">\[
 V(x_{k+1}) - V(x_k) = V(Ax_k) - V(x_k) = x_k^\top(A^\top P A - P) x_k &lt; 0, \forall x_k \neq 0.
 \]</span>
@@ -969,12 +1350,12 @@ Therefore, the existence of a Lyapunov function guarantees any system trajectory
 u_k = K x_k, \quad x_{k+1} = A x_k + B u_k = (A+ BK) x_k,
 \]</span>
 where the matrix <span class="math inline">\(K \in \mathbb{R}^{m \times n}\)</span> is the feedback law we wish to design. We wish to design <span class="math inline">\(K\)</span> using convex optimization, in particular semidefinite optimization.</p>
-<p>Involving Lemma~<a href="sdp.html#lem:LyapunovStability">2.5</a>, we see that designing <span class="math inline">\(K\)</span> to stabilize <span class="math inline">\(A + BK\)</span> is equivalent to finding
+<p>Involving Lemma~<a href="sdp.html#lem:LyapunovStability">2.6</a>, we see that designing <span class="math inline">\(K\)</span> to stabilize <span class="math inline">\(A + BK\)</span> is equivalent to finding
 <span class="math display" id="eq:control-stability">\[\begin{equation}
 P \succ 0, \quad (A + BK)^\top P (A + BK) - P \prec 0.
-\tag{2.13}
+\tag{2.34}
 \end{equation}\]</span>
-Using the Schur complement technique in Proposition <a href="sdp.html#prp:SchurPSD">2.1</a>, we know <a href="sdp.html#eq:control-stability">(2.13)</a> is equivalent to
+Using the Schur complement technique in Proposition <a href="sdp.html#prp:SchurPSD">2.1</a>, we know <a href="sdp.html#eq:control-stability">(2.34)</a> is equivalent to
 <span class="math display">\[
 \begin{bmatrix}
 P &amp; (A + BK)^\top P \\
@@ -1009,7 +1390,7 @@ P = Q^{-1}, K = Y Q^{-1}.
 <p>Consider a continuous-time linear dynamical system
 <span class="math display" id="eq:ct-linear-dynamical">\[\begin{equation}
 \dot{x} = A x + B u, \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^{m}, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m},
-\tag{2.14}
+\tag{2.35}
 \end{equation}\]</span>
 where <span class="math inline">\(x\)</span> denotes the state and <span class="math inline">\(u\)</span> denotes the control. Consider the following optimal control problem
 <span class="math display" id="eq:linear-quadratic-regulator">\[\begin{equation}
@@ -1017,9 +1398,9 @@ where <span class="math inline">\(x\)</span> denotes the state and <span class="
 \min_{u(t)}  &amp; \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
 \mathrm{s.t.}&amp; \quad \dot{x} = A x + Bu, \quad x(0) \sim \mathcal{N}(0,\Omega)
 \end{split}
-\tag{2.15}
+\tag{2.36}
 \end{equation}\]</span>
-where <span class="math inline">\(Q,R\succ 0\)</span> are known cost matrices, and <span class="math inline">\(x(0)\)</span> is supposed to satisfy the zero-mean Gaussian distribution with covariance <span class="math inline">\(\Omega \succ 0\)</span>. In the case where <span class="math inline">\(A,B,Q,R\)</span> are perfectly known to the control designer, and <span class="math inline">\((A,B)\)</span> is controllable (to be defined soon), problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.15)</a> can be solved exactly and optimally, with the optimal controller being a linear feedback controller of the form
+where <span class="math inline">\(Q,R\succ 0\)</span> are known cost matrices, and <span class="math inline">\(x(0)\)</span> is supposed to satisfy the zero-mean Gaussian distribution with covariance <span class="math inline">\(\Omega \succ 0\)</span>. In the case where <span class="math inline">\(A,B,Q,R\)</span> are perfectly known to the control designer, and <span class="math inline">\((A,B)\)</span> is controllable (to be defined soon), problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.36)</a> can be solved exactly and optimally, with the optimal controller being a linear feedback controller of the form
 <span class="math display">\[
 u(t) = -Kx(t),
 \]</span>
@@ -1037,18 +1418,18 @@ SA + A^\top S - SBR^{-1}B^\top S + Q = 0.
 \min_{K \in \mathcal{S}}  &amp; \quad \mathbb{E} \left\{  \int_{t=0}^{\infty} x(t)^\top Q x(t) + u(t)^\top R u(t) dt  \right\}  \\
 \mathrm{s.t.}&amp; \quad \dot{x} = A x + Bu, \quad u = -Kx, \quad x(0) \sim \mathcal{N}(0,\Omega).
 \end{split}
-\tag{2.16}
+\tag{2.37}
 \end{equation}\]</span>
-Note that problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is different from the original problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.15)</a> in the sense that we assume the knowledge that the optimal controller is linear and directly optimize <span class="math inline">\(K\)</span>. The feasible set <span class="math inline">\(\mathcal{S}\)</span> contains the set of <strong>stabilizing controllers</strong>, i.e.,
+Note that problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> is different from the original problem <a href="sdp.html#eq:linear-quadratic-regulator">(2.36)</a> in the sense that we assume the knowledge that the optimal controller is linear and directly optimize <span class="math inline">\(K\)</span>. The feasible set <span class="math inline">\(\mathcal{S}\)</span> contains the set of <strong>stabilizing controllers</strong>, i.e.,
 <span class="math display" id="eq:stabilizing-K">\[\begin{equation}
 \mathcal{S}= \{ K \in \mathbb{R}^{m \times n} \mid A - BK \text{ is Hurwitz} \},
-\tag{2.17}
+\tag{2.38}
 \end{equation}\]</span>
-where a matrix <span class="math inline">\(A\)</span> is Hurwitz means <span class="math inline">\(\mathrm{Re}(\lambda_i(A)) &lt; 0\)</span> for all <span class="math inline">\(i=1,\dots,n\)</span>, i.e., all the eigenvalues of <span class="math inline">\(A\)</span> have strictly negative real parts. When <span class="math inline">\(A - BK\)</span> is Hurwitz, the closed-loop system is stable and the integral in <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> will not blow up (so it is sufficient to consider the class of stabilizing controllers).</p>
-<p>We will first observe that the direct optimization <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is nonconvex, because the feasible set <span class="math inline">\(\mathcal{S}\)</span> is nonconvex. The following example is adapted from <span class="citation">(<a href="#ref-fazel18icml-global" role="doc-biblioref">Fazel et al. 2018</a>)</span>.</p>
+where a matrix <span class="math inline">\(A\)</span> is Hurwitz means <span class="math inline">\(\mathrm{Re}(\lambda_i(A)) &lt; 0\)</span> for all <span class="math inline">\(i=1,\dots,n\)</span>, i.e., all the eigenvalues of <span class="math inline">\(A\)</span> have strictly negative real parts. When <span class="math inline">\(A - BK\)</span> is Hurwitz, the closed-loop system is stable and the integral in <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> will not blow up (so it is sufficient to consider the class of stabilizing controllers).</p>
+<p>We will first observe that the direct optimization <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> is nonconvex, because the feasible set <span class="math inline">\(\mathcal{S}\)</span> is nonconvex. The following example is adapted from <span class="citation">(<a href="#ref-fazel18icml-global" role="doc-biblioref">Fazel et al. 2018</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
-<p><span id="exm:NonconvexStabilizingController" class="example"><strong>Example 2.6  (Nonconvex Set of Stabilizing Controllers) </strong></span>Consider the dynamical system <a href="sdp.html#eq:ct-linear-dynamical">(2.14)</a> with
+<p><span id="exm:NonconvexStabilizingController" class="example"><strong>Example 2.6  (Nonconvex Set of Stabilizing Controllers) </strong></span>Consider the dynamical system <a href="sdp.html#eq:ct-linear-dynamical">(2.35)</a> with
 <span class="math display">\[
 A = 0_{3 \times 3}, \quad B = \mathrm{I}_3.
 \]</span>
@@ -1071,11 +1452,11 @@ we have
 and <span class="math inline">\(K\)</span> does not stabilize the closed-loop system.</p>
 </div>
 </div>
-<p><strong>Convex Parameterization with Semidefinite Optimization</strong>. We will now show that it is possible to reparameterize problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> as a semidefinite optimization so it becomes convex. To do so, we note
+<p><strong>Convex Parameterization with Semidefinite Optimization</strong>. We will now show that it is possible to reparameterize problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> as a semidefinite optimization so it becomes convex. To do so, we note
 <span class="math display">\[
 x^\top Q x + u^\top R u = x^\top Q x + x^\top K^\top R K x = x^\top(Q + K^\top R K)x^\top= \mathrm{tr}((Q + K^\top R K)xx^\top),
 \]</span>
-and therefore the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> can be written as
+and therefore the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> can be written as
 <span class="math display">\[\begin{equation}
 \mathbb{E} \left\{ \int_{0}^{\infty} \mathrm{tr}((Q + K^\top R K) xx^\top) dt  \right\}  = \mathrm{tr}\left( (Q + K^\top R K) \mathbb{E} \left\{  \int_{0}^{\infty} xx^\top dt  \right\}    \right).
 \end{equation}\]</span>
@@ -1094,20 +1475,20 @@ X = \mathbb{E} \left\{ \int_{0}^{\infty} xx^\top dt \right\} .
 For every <span class="math inline">\(K \in \mathcal{S}\)</span> that is stabilizing, <span class="math inline">\(X\)</span> can be computed as the solution to the Lyapunov equation
 <span class="math display" id="eq:Lyapunov-equation">\[\begin{equation}
 (A - BK) X + X(A - BK)^\top+ \Omega = 0.
-\tag{2.18}
+\tag{2.39}
 \end{equation}\]</span>
-As a result, the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.16)</a> is simplied as
+As a result, the objective of <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> is simplied as
 <span class="math display">\[
 \mathrm{tr}((Q + K^\top R K) X),
 \]</span>
-with <span class="math inline">\(X\)</span> solves <a href="sdp.html#eq:Lyapunov-equation">(2.18)</a>. We arrive at an optimization problem
+with <span class="math inline">\(X\)</span> solves <a href="sdp.html#eq:Lyapunov-equation">(2.39)</a>. We arrive at an optimization problem
 <span class="math display" id="eq:lqr-directK-toX">\[\begin{equation}
 \begin{split}
 \min_{X,K} &amp; \quad \mathrm{tr}(QX) + \mathrm{tr}(K^\top R K X) \\
 \mathrm{s.t.}&amp; \quad (A-BK) X + X (A - BK)^\top+ \Omega = 0 \\
 &amp; \quad X \succ 0
 \end{split},
-\tag{2.19}
+\tag{2.40}
 \end{equation}\]</span>
 which is still nonconvex. We do a change of variable <span class="math inline">\(Y = KX\)</span>, so <span class="math inline">\(K = Y X ^{-1}\)</span> and obtain
 <span class="math display" id="eq:lqr-directK-toX-1">\[\begin{equation}
@@ -1116,7 +1497,7 @@ which is still nonconvex. We do a change of variable <span class="math inline">\
 \mathrm{s.t.}&amp; \quad AX - BY + XA^\top- Y^\top B^\top+ \Omega = 0 \\
 &amp; \quad X \succ 0
 \end{split}.
-\tag{2.20}
+\tag{2.41}
 \end{equation}\]</span>
 The second term in the objective is still nonconvex, but we can use the Schur complement technique again, and arrive at the final optimization
 <span class="math display" id="eq:lqr-directK-toX-2">\[\begin{equation}
@@ -1126,9 +1507,9 @@ The second term in the objective is still nonconvex, but we can use the Schur co
 &amp; \quad X \succ 0 \\
 &amp; \quad \begin{bmatrix} Z &amp; R^{1/2} Y &amp; \\ Y^\top R^{1/2} &amp; X \end{bmatrix} \succeq 0
 \end{split}.
-\tag{2.21}
+\tag{2.42}
 \end{equation}\]</span>
-Note that the last two matrix inequalities of <a href="sdp.html#eq:lqr-directK-toX-2">(2.21)</a> implies, by Schur complement
+Note that the last two matrix inequalities of <a href="sdp.html#eq:lqr-directK-toX-2">(2.42)</a> implies, by Schur complement
 <span class="math display">\[
 Z - R^{1/2}Y X^{-1}Y^\top R^{1/2} \succeq 0 \Rightarrow \mathrm{tr}(Z - R^{1/2}Y X^{-1}Y^\top R^{1/2}) \geq 0.
 \]</span>
@@ -1144,7 +1525,7 @@ and thus
 <div class="example">
 <p><span id="exm:ConvexLQR" class="example"><strong>Example 2.7  (Convex LQR) </strong></span>For the same linear system as in Example <a href="sdp.html#exm:NonconvexStabilizingController">2.6</a>, let <span class="math inline">\(Q = R = \mathrm{I}_3\)</span>.</p>
 <p>If we solve the optimal feedback controller <span class="math inline">\(K\)</span> by solving the ARE, we get the optimal controller is <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>.</p>
-<p>If we implement the SDP in <a href="sdp.html#eq:lqr-directK-toX-2">(2.21)</a>, we also get <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>, confirming the correctness of the convex parameterization. The implementation is shown below and can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/lqr_sdp.m">here</a>.</p>
+<p>If we implement the SDP in <a href="sdp.html#eq:lqr-directK-toX-2">(2.42)</a>, we also get <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>, confirming the correctness of the convex parameterization. The implementation is shown below and can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/lqr_sdp.m">here</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="sdp.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">%% Show the feasible set is nonconvex</span></span>
 <span id="cb3-2"><a href="sdp.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
 <span id="cb3-3"><a href="sdp.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">B</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
@@ -1184,6 +1565,9 @@ and thus
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-alizadeh98siopt-primal" class="csl-entry">
+Alizadeh, Farid, Jean-Pierre A Haeberly, and Michael L Overton. 1998. <span>“Primal-Dual Interior-Point Methods for Semidefinite Programming: Convergence Rates, Stability and Numerical Results.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 746–68.
+</div>
 <div id="ref-blekherman12book-semidefinite" class="csl-entry">
 Blekherman, Grigoriy, Pablo A Parrilo, and Rekha R Thomas. 2012. <em>Semidefinite Optimization and Convex Algebraic Geometry</em>. SIAM.
 </div>
@@ -1193,8 +1577,14 @@ Boyd, Stephen, Laurent El Ghaoui, Eric Feron, and Venkataramanan Balakrishnan. 1
 <div id="ref-fazel18icml-global" class="csl-entry">
 Fazel, Maryam, Rong Ge, Sham Kakade, and Mehran Mesbahi. 2018. <span>“Global Convergence of Policy Gradient Methods for the Linear Quadratic Regulator.”</span> In <em>International Conference on Machine Learning</em>, 1467–76. PMLR.
 </div>
+<div id="ref-helmberg96siopt-interior" class="csl-entry">
+Helmberg, Christoph, Franz Rendl, Robert J Vanderbei, and Henry Wolkowicz. 1996. <span>“An Interior-Point Method for Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 6 (2): 342–61.
+</div>
 <div id="ref-hu23review-toward" class="csl-entry">
 Hu, Bin, Kaiqing Zhang, Na Li, Mehran Mesbahi, Maryam Fazel, and Tamer Başar. 2023. <span>“Toward a Theoretical Foundation of Policy Optimization for Learning Control Policies.”</span> <em>Annual Review of Control, Robotics, and Autonomous Systems</em> 6: 123–58.
+</div>
+<div id="ref-kojima97siopt-interior" class="csl-entry">
+Kojima, Masakazu, Susumu Shindoh, and Shinji Hara. 1997. <span>“Interior-Point Methods for the Monotone Semidefinite Linear Complementarity Problem in Symmetric Matrices.”</span> <em>SIAM Journal on Optimization</em> 7 (1): 86–125.
 </div>
 <div id="ref-mansour09arxiv-domain" class="csl-entry">
 Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain Adaptation: Learning Bounds and Algorithms.”</span> <em>arXiv Preprint arXiv:0902.3430</em>.
@@ -1202,20 +1592,38 @@ Mansour, Yishay, Mehryar Mohri, and Afshin Rostamizadeh. 2009. <span>“Domain A
 <div id="ref-mohammadi21tac-convergence" class="csl-entry">
 Mohammadi, Hesameddin, Armin Zare, Mahdi Soltanolkotabi, and Mihailo R Jovanović. 2021. <span>“Convergence and Sample Complexity of Gradient Methods for the Model-Free Linear–Quadratic Regulator Problem.”</span> <em>IEEE Transactions on Automatic Control</em> 67 (5): 2435–50.
 </div>
+<div id="ref-monteiro97siopt-primal" class="csl-entry">
+Monteiro, Renato DC. 1997. <span>“Primal–Dual Path-Following Algorithms for Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 7 (3): 663–78.
+</div>
+<div id="ref-monteiro98siopt-polynomial" class="csl-entry">
+———. 1998. <span>“Polynomial Convergence of Primal-Dual Algorithms for Semidefinite Programming Based on the Monteiro and Zhang Family of Directions.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 797–812.
+</div>
 <div id="ref-nie23book-moment" class="csl-entry">
 Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
+</div>
+<div id="ref-nocedal99book-numerical" class="csl-entry">
+Nocedal, Jorge, and Stephen J Wright. 1999. <em>Numerical Optimization</em>. Springer.
 </div>
 <div id="ref-ramana97mp-exact" class="csl-entry">
 Ramana, Motakuri V. 1997. <span>“An Exact Duality Theory for Semidefinite Programming and Its Complexity Implications.”</span> <em>Mathematical Programming</em> 77: 129–62.
 </div>
+<div id="ref-schacke04mthesis-kronecker" class="csl-entry">
+Schacke, Kathrin. 2004. <span>“On the Kronecker Product.”</span> <em>Master’s Thesis, University of Waterloo</em>.
+</div>
 <div id="ref-todd01an-semidefinite" class="csl-entry">
 Todd, Michael J. 2001. <span>“Semidefinite Optimization.”</span> <em>Acta Numerica</em> 10: 515–60.
+</div>
+<div id="ref-todd98siopt-nesterov" class="csl-entry">
+Todd, Michael J, Kim-Chuan Toh, and Reha H Tütüncü. 1998. <span>“On the Nesterov–Todd Direction in Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 769–96.
 </div>
 <div id="ref-wolkowicz12book-sdp" class="csl-entry">
 Wolkowicz, Henry, Romesh Saigal, and Lieven Vandenberghe. 2000. <em>Handbook of Semidefinite Programming: Theory, Algorithms, and Applications</em>. Vol. 27. Springer.
 </div>
 <div id="ref-yang22mp-inexact" class="csl-entry">
 Yang, Heng, Ling Liang, Luca Carlone, and Kim-Chuan Toh. 2022. <span>“An Inexact Projected Gradient Method with Rounding and Lifting by Nonlinear Programming for Solving Rank-One Semidefinite Relaxation of Polynomial Optimization.”</span> <em>Mathematical Programming</em>, 1–64.
+</div>
+<div id="ref-zhang98siopt-extending" class="csl-entry">
+Zhang, Yin. 1998. <span>“On Extending Some Primal–Dual Interior-Point Algorithms from Linear Programming to Semidefinite Programming.”</span> <em>SIAM Journal on Optimization</em> 8 (2): 365–86.
 </div>
 </div>
 <div id="disqus_thread"></div>

@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-13" />
+<meta name="date" content="2024-02-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -202,7 +202,14 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
-<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
@@ -311,7 +318,7 @@ then <span class="math inline">\(x_\star\)</span> is a global minimizer of <a hr
 </div>
 <div class="proofbox">
 <div class="proof">
-<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>We have zero duality gap
+<p><span id="unlabeled-div-13" class="proof"><em>Proof</em>. </span>We have zero duality gap
 <span class="math display">\[\begin{equation}
 \begin{split}
 x_\star^\top C x_\star - b^\top y_\star = \langle C, x_\star x_\star^\top \rangle - \langle b, y_\star \rangle = \langle C, x_\star x_\star^\top \rangle - \langle \mathcal{A}(x_\star x_\star^\top), y_\star \rangle \\
@@ -363,7 +370,7 @@ in the sense that</p>
 </div>
 <div class="proofbox">
 <div class="proof">
-<p><span id="unlabeled-div-13" class="proof"><em>Proof</em>. </span>We will show that the feasible set of the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> is the same as the feasible set of <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a>.</p>
+<p><span id="unlabeled-div-14" class="proof"><em>Proof</em>. </span>We will show that the feasible set of the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> is the same as the feasible set of <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a>.</p>
 <p>Let <span class="math inline">\(x\)</span> be feasible for the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a>, we have <span class="math inline">\(X=xx^\top\)</span> must be feasible for <a href="Shor.html#eq:rank-constrained-optimization">(3.5)</a> because <span class="math inline">\(X \succeq 0\)</span> by construction, <span class="math inline">\(\mathrm{rank}(X) = \mathrm{rank}(xx^\top) = \mathrm{rank}(x) = 1\)</span>, and
 <span class="math display">\[
 x^\top A_i x = b_i \Rightarrow \mathrm{tr}(x^\top A_i x) = b_i \Rightarrow \mathrm{tr}(A_i x x^\top) = b_i \Rightarrow \langle A_i, X \rangle = b_i, \forall i.
