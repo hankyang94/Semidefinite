@@ -74,12 +74,16 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\cl}{\mathrm{cl}}
 \newcommand{\eye}{\mathrm{I}}
 \newcommand{\inv}{^{-1}}
+\newcommand{\invtran}{^{-\top}}
 \newcommand{\Range}{\mathrm{Range}}
 \renewcommand{\ker}{\mathrm{ker}}
 \newcommand{\face}{\mathrm{face}}
 \newcommand{\lmid}{\ \middle\vert\ }
 \renewcommand{\Re}{\mathrm{Re}}
 \newcommand{\hatmap}[1]{[#1]_{\times}}
+\newcommand{\kron}{\otimes}
+\newcommand{\skron}{\kron_{\mathrm{s}}}
+
 
 
 <!-- \newcommand{\deg}{\mathrm{deg}} -->

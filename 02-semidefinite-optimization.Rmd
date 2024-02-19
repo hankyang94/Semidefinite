@@ -734,6 +734,412 @@ To run the [code](https://github.com/ComputationalRobotics/Semidefinite-Examples
 
 ## Interior Point Algorithm
 
+A nice property of semidefinite optimization is that it can be solved in polynomial time. The algorithm of choice for solving SDPs is called an **interior point method** (IPM), which is also what popular SDP solvers like SeDuMI, MOSEK, and SDPT3 implement under the hood. 
+
+Although it can be difficult to implement an SDP solver as efficient and robust as MOSEK (as it requires many engineering wisdom), it is surprisingly simple to sketch out the basic algorithmic framework, as it is based on [Newton's method for solving a system of nonlinear equations](https://en.wikipedia.org/wiki/Newton%27s_method#:~:text=14%20External%20links-,Description,the%20method%20can%20be%20iterated.). Before I introduce you the basic algorithm, let me review two useful preliminaries. 
+
+::: {.highlightbox}
+<p style="text-align: center;"><b>Newton's Method</b></p>
+
+Given a function $f: \Real{} \rightarrow \Real{}$ that is continuously differentiable, Newton's method is designed to find a root of $f(x) = 0$. Given an initial iterate $x^{(0)}$, Newton's method works as follows 
+$$
+x^{(k+1)} = x^{(k)} - \frac{f(x^{(k)})}{f'(x^{(k)})},
+$$
+where $f'(x^{(k)})$ denotes the derivative of $f$ at the current iterate $x^{(k)}$. This simple algorithm is indeed (in my opinion) the most important foundation of modern numerical optimization [@nocedal99book-numerical]. Under mild conditions, Newton's method has at least quadratic convergence rate, that is to say, if $|x^{(k)} - x^\star| = \epsilon$, then $|x^{(k+1)} - x^\star| = O(\epsilon^2)$. Of course, there exist pathological cases where even linear convergence is not guaranteed (e.g., when $f'(x^\star) = 0$). 
+
+Newton's method can be generalized to find a point at which multiple functions vanish simultaneously. Given a function $F: \Real{n} \rightarrow \Real{n}$ that is continuously differentiable, and an initial iterate $x^{(0)}$, Newton's method reads 
+\begin{equation}
+x^{(k+1)} = x^{(k)} - J_F(x^{(k)})\inv F(x^{(k)}),
+(\#eq:newton-method-vector)
+\end{equation}
+where $J_F(\cdot)$ denotes the Jacobian of $F$. Iteration \@ref(eq:newton-method-vector) is equivalent to 
+\begin{equation}
+\begin{split}
+J_F(x^{(k)}) \Delta x^{(k)} & = - F(x^{(k)}) \\
+x^{(k+1)} & = x^{(k)} + \Delta x^{(k)}
+\end{split}
+(\#eq:newton-method-vector-1)
+\end{equation}
+i.e., one first solves a linear system of equations to find an update direction $\Delta x^{(k)}$, and then take a step along the direction.
+
+As we will see, IPMs for solving SDPs can be interpreted as applying Newton's method to the perturbed KKT optimality conditions.
+:::
+
+We introduce another useful preliminary about the symmetric Kronecker product. 
+
+::: {.highlightbox}
+<p style="text-align: center;"><b>Symmetric Vectorization and Kronecker Product</b></p>
+Consider a linear operator on $\Real{n \times n}$:
+\begin{equation}
+\begin{split}
+\Real{n \times n} & \rightarrow \Real{n \times n} \\
+K & \mapsto N K M\tran 
+\end{split}
+(\#eq:linear-opt-Rn)
+\end{equation}
+where $N,M \in \Real{n \times n}$ are given square matrices. This linear map is equivalent to 
+\begin{equation}
+\begin{split}
+\Real{n^2} & \rightarrow \Real{n^2} \\
+\vectorize(K) & \mapsto (M \kron N) \vectorize(K)
+\end{split}
+(\#eq:linear-opt-Rn-kron)
+\end{equation}
+where $\kron$ denotes the usual kronecker product.
+
+Symmetric vectorization and kronecker product is to generalize the above linear map on $\Real{n \times n}$ to $\sym{n}$.
+
+Consider a linear operator on $\sym{n}$:
+\begin{equation}
+\begin{split}
+\sym{n} & \rightarrow \sym{n} \\
+K & \mapsto \frac{1}{2} \left( N K M\tran + M K N\tran \right)
+\end{split}
+(\#eq:linear-opt-Sn)
+\end{equation}
+where $N,M\in\Real{n\times n}$ are given square matrices. This linear map is equivalent to 
+\begin{equation}
+\begin{split}
+\Real{n^{\Delta}} & \rightarrow \Real{n^{\Delta}} \\
+\svec(K) & \mapsto (M \skron N) \svec(K)
+\end{split}
+(\#eq:linear-opt-Sn-skron)
+\end{equation}
+where
+$$
+n^{\Delta} = \frac{n(n+1)}{2}
+$$
+is the $n$-th triangle number, $\svec(K)$ denotes the symmetric vectorization of $K$ defined as
+$$
+\svec(K) = \begin{bmatrix}
+K_{11} \\
+\sqrt{2} K_{12} \\
+\vdots \\
+\sqrt{2} K_{1n} \\
+K_{22} \\
+\vdots \\
+\sqrt{2} K_{2n} \\
+\vdots \\
+K_{nn}
+\end{bmatrix},
+$$
+and $M \skron N$ denotes the symmetric kronecker product. Note that we have
+$$
+\inprod{A}{B} = \inprod{\svec(A)}{\svec(B)}, \quad \forall A,B \in \sym{n},
+$$
+and 
+$$
+M \skron N = N \skron M.
+$$
+To compute the symmetric kronecker product, see [@schacke04mthesis-kronecker]. The $\skron$ function is readily implemented in software packages such as SDPT3.
+
+The following property of the symmetric kronecker product is useful for us later.
+
+::: {.theorembox}
+::: {.lemma #SkronEigLemma name="Spectrum of Symmetric Kronecker Product"}
+Let $M,N \in \sym{n}$ be two symmetric matrices that commute, i.e., $MN = NM$, and $\alpha_1,\dots,\alpha_n$ and $\beta_1,\dots,\beta_n$ be their eigenvalues with $v_1,\dots,v_n$ a common basis of orthonormal eigenvectors. The $n^\Delta$ eigenvalues of $M \skron N$ are given by 
+$$
+\frac{1}{2}(\alpha_i \beta_j + \beta_i \alpha_j), \quad 1 \leq i \leq j \leq n,
+$$
+with the corresponding set of orthonormal eigenvectors 
+$$
+\begin{cases}
+\svec(v_i v_i\tran) & \text{if } i = j \\
+\frac{1}{\sqrt{2}} \svec(v_i v_j\tran + v_j v_i\tran) & \text{if } i < j
+\end{cases}.
+$$
+:::
+:::
+It is easy to see that, if $M,N$ are two PSD matrices that commute, then $M \skron N$ is also PSD. 
+
+For more properties of symmetric vectorization and Kronecker product, see [@schacke04mthesis-kronecker].
+:::
+
+Now we are ready to sketch the interior-point algorithm.
+
+### The Central Path 
+
+Assuming strict feasibility, strong duality holds between the SDP primal \@ref(eq:SDP-P) and dual \@ref(eq:SDP-D), then $(X,y,Z)$ is primal-dual optimal if and only if they satisfy the following KKT optimality conditions
+\begin{equation}
+\begin{split}
+\calA(X) = b, \quad X \succeq 0 \\
+C - \calA^*(y) - Z = 0, \quad Z \succeq 0 \\
+\inprod{X}{Z} = 0 \Leftrightarrow XZ = 0
+\end{split}
+(\#eq:SDP-KKT)
+\end{equation}
+The first idea in IPM is to relax the last condition in \@ref(eq:SDP-KKT), i.e., zero duality gap, to a small positive gap, which leads to the notion of a central path.
+
+::: {.definitionbox}
+::: {.definition #CentralPath name="Central Path"}
+A point $(X^\mu,y^\mu,Z^\mu)$ is said to lie on the central path if there exists $\mu > 0$ such that 
+\begin{equation}
+\begin{split}
+\calA(X^\mu) = b, \quad X^\mu \succeq 0 \\
+C - \calA^*(y^\mu) - Z^\mu = 0, \quad Z^\mu \succeq 0 \\
+X^\mu Z^\mu = \mu \eye 
+\end{split},
+(\#eq:SDP-central-path)
+\end{equation}
+that is, $(X^\mu,y^\mu,Z^\mu)$ is primal and dual feasible, but attain a nonzero duality gap:
+$$
+\inprod{C}{X^\mu} - \inprod{b}{y^\mu} = \inprod{C}{X^\mu} - \inprod{\calA(X^\mu)}{y^\mu} = \inprod{C - \calA^*(y^\mu)}{X^\mu} = \inprod{X^\mu}{Z^\mu} = n\mu.
+$$
+:::
+:::
+
+The central path exists and is unique.
+
+::: {.theorembox}
+::: {.theorem #UniqueCentralPath name="Central Path"}
+Assume the SDP pair \@ref(eq:SDP-P) and \@ref(eq:SDP-D) are strictly feasible. For any $\mu > 0$, $(X^\mu,y^\mu,Z^\mu)$ satisfying \@ref(eq:SDP-central-path) exists and is unique. Moreover,
+$$
+(X,y,Z) = \lim_{\mu \rightarrow 0} (X^\mu, y^\mu, Z^\mu)
+$$
+exists and solves \@ref(eq:SDP-P) and \@ref(eq:SDP-D). 
+:::
+:::
+
+Theorem \@ref(thm:UniqueCentralPath) states that the limit of the central path leads to a solution of the SDP. Therefore, the basic concept of IPM is to follow the central path and converge to the optimal solution.
+
+### The AHO Newton Direction
+
+We will focus on the central path equation \@ref(eq:SDP-central-path) and for simplicity of notation, we will rename $(X^\mu,y^\mu,Z^\mu)$ as $(X,y,Z)$. Discarding the positive semidefiniteness condition for now, we can view \@ref(eq:SDP-central-path) as finding a root to the following function
+\begin{equation}
+F(X,y,Z) = \begin{pmatrix}
+\calA^*(y) + Z - C \\
+\calA(X) - b \\
+X Z - \mu \eye 
+\end{pmatrix} = 0.
+(\#eq:central-path-F-1)
+\end{equation}
+However, there is an issue with $F$ defined as above. The input of the function $(X,y,Z)$ lives in $\sym{n} \times \Real{m} \times \sym{n}$, but the output lives in $\sym{n} \times \Real{m} \times \Real{n \times n}$ because $XZ$ is not guaranteed to be symmetric (two symmetric matrices may not commute). Therefore, Newton's method cannot be directly applied.
+
+An easy way to fix this issue is to treat the input and output of $F$ as both $\Real{n \times n} \times \Real{m} \times \Real{n \times n}$. This could work, however, leads to nonsymmetric Newton iterates.
+
+[@alizadeh98siopt-primal] proposed a better idea -- to equivalently rewrite \@ref(eq:central-path-F-1) as 
+\begin{equation}
+F(X,y,Z) = \begin{pmatrix}
+\calA^*(y) + Z - C \\
+\calA(X) - b \\
+\frac{1}{2}(X Z + Z X) - \mu \eye 
+\end{pmatrix} = 0.
+(\#eq:central-path-F-2)
+\end{equation}
+
+The next proposition states that \@ref(eq:central-path-F-2) and \@ref(eq:central-path-F-1) are indeed equivalent.
+
+::: {.theorembox}
+::: {.proposition #SymmetricCentralPath name="Symmetrized Central Path"}
+If $X,Z \succeq 0$, then 
+$$
+XZ = \mu \eye \Leftrightarrow XZ + ZX = 2 \mu \eye.
+$$
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+The $\Rightarrow$ direction is obvious. To show the "\Leftarrow" direction, write $X = Q \Lambda Q\tran$ with $QQ\tran = \eye$.
+:::
+:::
+
+Now that the input and output domains of $F$ in \@ref(eq:central-path-F-2) are both $\sym{n} \times \Real{m} \times \sym{n}$, we can apply Newton's method to solving the system of equations. For ease of implementation, let us denote 
+$$
+x = \svec(X), \quad z = \svec(Z), \quad c = \svec(C), 
+$$
+$$
+A\tran = \begin{bmatrix}
+\svec(A_1) & \svec(A_2) & \cdots & \svec(A_m)
+\end{bmatrix}
+$$
+and rewrite \@ref(eq:central-path-F-2) as 
+\begin{equation}
+F(x,y,z) = \begin{pmatrix}
+A\tran y + z - c \\
+A x - b \\
+\frac{1}{2}\svec(XZ + ZX) - \svec(\mu \eye)
+\end{pmatrix} = 0.
+(\#eq:central-path-F-3)
+\end{equation}
+The Jacobian of $F$ reads
+\begin{equation}
+J_F = \begin{bmatrix}
+0 & A\tran & \eye \\
+A & 0 & 0 \\
+P & 0 & Q
+\end{bmatrix}
+(\#eq:aho-Jacobian)
+\end{equation}
+where 
+$$
+P = Z \skron \eye, \quad Q = X \skron \eye,
+$$
+due to the symmetric kronecker product introduced before 
+$$
+\frac{1}{2}\svec(XZ + ZX) = (Z \skron \eye ) x = (X \skron \eye) z.
+$$
+Let 
+$$
+r_d = c - A\tran y - z, \quad r_p = b - Ax, \quad r_c = \svec(\mu \eye ) - \frac{1}{2}\svec(XZ + ZX),
+$$
+be the dual, primal, and complementarity residuals, applying Newton's method to \@ref(eq:central-path-F-3) gives us the Newton direction as the solution to the following linear system
+\begin{equation}
+\begin{bmatrix}
+0 & A\tran & \eye \\
+A & 0 & 0 \\
+P & 0 & Q 
+\end{bmatrix} 
+\begin{bmatrix} \Delta x \\ \Delta y \\ \Delta z \end{bmatrix} = \begin{bmatrix} r_d \\ r_p \\ r_c \end{bmatrix}.
+(\#eq:aho-newton-direction)
+\end{equation}
+One can directly form the block matrix in \@ref(eq:aho-newton-direction) and solve the linear system. However, leveraging the sparsity of the linear system, we can do better. 
+
+We can first use the third equation to eliminate $\Delta z$:
+\begin{equation}
+\Delta z = Q\inv (r_c - P \Delta x).
+(\#eq:aho-eliminate-z)
+\end{equation}
+Then we can use the first equation to eliminate $\Delta x$:
+\begin{equation}
+\Delta x = - P\inv Q r_d + P\inv r_c + P\inv Q A\tran \Delta y.
+(\#eq:aho-eliminate-x)
+\end{equation}
+Then we are left with a single equation of $\Delta y$:
+\begin{equation}
+\underbrace{ A P\inv Q A\tran}_{M} \Delta y = r_p + A P\inv (Q r_d - r_c),
+(\#eq:aho-schur-system)
+\end{equation}
+which is called the **Schur system**.
+
+### Basic Algorithm
+
+With the AHO Newton direction worked out above, we can formulate the basic primal-dual path following interior point algorithm.
+
+1. Choose $X,Z$ strictly feasible for \@ref(eq:SDP-P) and \@ref(eq:SDP-D), $0 \leq \sigma < 1$, define 
+$$
+\mu = \sigma \frac{\inprod{X}{Z}}{n}
+$$
+
+2. Solve the Newton direction from \@ref(eq:aho-schur-system), \@ref(eq:aho-eliminate-x), and \@ref(eq:aho-eliminate-z)
+
+3. Step along the Newton direction 
+$$
+x \leftarrow x + \alpha \Delta x, \quad y \leftarrow y + \beta \Delta y, \quad z \leftarrow z + \beta \Delta z,
+$$
+where the step sizes $\alpha, \beta$ are chosen as 
+$$
+\alpha = \min (1, \tau \hat{\alpha}), \quad \beta = \min (1, \tau \hat{\beta})
+$$
+with $\tau \in (0,1)$ and $\hat{\alpha}, \hat{\beta}$ computed by 
+\begin{equation}
+\hat{\alpha} = \sup \cbrace{\bar{\alpha} \mid x + \bar{\alpha} \Delta x \succeq 0 }, \quad \hat{\beta} = \sup \cbrace{\bar{\beta} \mid z + \bar{\beta} \Delta z \succeq 0 }.
+(\#eq:ipm-step-size)
+\end{equation}
+
+To compute the maximum step sizes $\hat{\alpha}$ and $\hat{\beta}$ in \@ref(eq:ipm-step-size), let
+$$
+X = \smat(x), \quad \Delta X = \smat(\Delta x)
+$$
+be the reconstructed matrices from the corresponding symmetric vectorizations. We can first perform a Cholesky factorization of $X$
+$$
+X = LL\tran.
+$$
+Then we perform a [matrix similarity transformation](https://en.wikipedia.org/wiki/Matrix_similarity) 
+$$
+X + \bar{\alpha} \Delta X \mapsto L\inv (X + \bar{\alpha} \Delta X) L^{-\top} = \eye + \bar{\alpha} L\inv \Delta X L^{-\top},
+$$
+which does not change the eigenvalues of $X + \bar{\alpha} \Delta X$. Therefore, the maximum step size $\hat{\alpha}$ is
+$$
+\hat{\alpha}\inv = \lambda_{\max}(- L\inv \Delta X L^{-\top}),
+$$
+assuming $\Delta X$ is not PSD.
+
+### Nondegeneracy
+
+Since the algorithm above is an application of Newton's method to the system of equations \@ref(eq:central-path-F-3), the key to understand its asymptotic behavior is to analyze the Jacobian \@ref(eq:aho-Jacobian) at the optimal solution. If the Jacobian at the optimal solution is nonsingular, then one can show that the algorithm above has asymptotic quadratic convergence rate. 
+
+[@alizadeh98siopt-primal] provided a sufficient condition for the Jacobian to be nonsingular, which is called nondegeneracy.
+
+::: {.definitionbox}
+::: {.definition #Nondegeneracy name="Nondegeneracy"}
+Let $(X,y,Z)$ be a solution to the SDP pair \@ref(eq:SDP-P) and \@ref(eq:SDP-D) and satisfies the KKT optimality conditions \@ref(eq:SDP-KKT). In this case, $X$ and $Z$ can be simultaneously diagonalized
+$$
+X = Q \Diag(\lambda_1,\dots,\lambda_n) Q\tran, \quad Z = Q \Diag(\omega_1,\dots,\omega_n)Q\tran
+$$
+by some orthogonal matrix $Q$. We assume 
+$$
+\lambda_1, \geq \dots \geq \lambda_n, \quad \omega_1 \leq \dots \omega_n.
+$$
+Due to $XZ = 0$, we have 
+$$
+\lambda_i \omega_i = 0,\quad i=1,\dots,n.
+$$
+
+Let $X$ have rank $r$ with positive eigenvalues $\lambda_1,\dots,\lambda_r$, and partition $Q = [Q_1, Q_2]$ where the colums of $Q_1$ are eigenvectors corresponding to $\lambda_1,\dots,\lambda_r$. We say $(X,y,Z)$ satisfies the strict complementarity and primal and dual nondegeneracy conditions if the following hold:
+
+1. **(Strict Complementarity)** $\rank(Z) = n - r$.
+
+2. **(Primal Nondegeneracy)** The matrices 
+\begin{equation}
+\begin{bmatrix} Q_1\tran A_k Q_1 & Q_1\tran A_k Q_2 \\
+Q_2\tran A_k Q_1 & 0 \end{bmatrix}, \quad k=1,\dots,m
+(\#eq:primal-nondegeneracy)
+\end{equation}
+are linearly independent in $\sym{n}$.
+
+3. **(Dual Nondegeneracy)** The matrices 
+\begin{equation}
+Q_1\tran A_k Q_1, \quad k=1,\dots,m
+(\#eq:dual-nondegeneracy)
+\end{equation}
+span the space $\sym{r}$.
+:::
+:::
+
+When strict complementarity holds, **primal nondegeneracy implies the dual optimal solution is unique**, and **dual nondegeneracy implies the primal optimal solution is unique**. 
+
+Strict complementarity and primal-dual nondegeneracy also immediately imply, recalling $r^{\Delta} = r(r+1)/2$,
+\begin{equation}
+r^{\Delta} \leq m \leq r^{\Delta} + r (n - r),
+(\#eq:sc-pn-dn-m)
+\end{equation}
+where $r^\Delta \leq m$ is due to \@ref(eq:dual-nondegeneracy) and $m \leq r^{\Delta} + r (n - r)$ is due to \@ref(eq:primal-nondegeneracy). 
+
+From \@ref(eq:sc-pn-dn-m), we can understand that when $m$ is very large, then primal nondegeneracy must fail and the dual solution must not be unique. This is a property we will see later when we study the moment-SOS hierarchy.
+
+### Generalization
+
+The AHO Newton direction is obtained by symmetrizing the centrality condition $XZ = \mu \eye$ as 
+$$
+\frac{1}{2}(XZ + ZX) = \mu \eye.
+$$
+
+It turns out that is not the only way (and also not the most robust way) to symmetrize the centrality condition. A more popular symmetrization is due to [@monteiro97siopt-primal] and [@zhang98siopt-extending], and is typically referred to as the Monteiro-Zhang family [@monteiro98siopt-polynomial]. The basic idea is to symmetrize the centrality condition as 
+\begin{equation}
+\frac{1}{2}(P XZ P\inv + P\invtran XZ P\tran) = \mu \eye.
+(\#eq:Monteiro-Zhang)
+\end{equation}
+Clearly, the AHO direction is a special case of \@ref(eq:Monteiro-Zhang) with the choice $P = \eye$.
+
+Two other most popular Newton directions are:
+
+- Nesterov-Todd [@todd98siopt-nesterov], where $P$ is obtained by first solving
+$$
+WZW = X, 
+$$
+and then setting 
+$$
+P = W^{-1/2}.
+$$
+This is the Newton method implemented by SeDuMi.
+
+- HKM, which was proposed and analyzed by multiple authors [@helmberg96siopt-interior], [@kojima97siopt-interior], computes 
+$$
+P = Z^{1/2}.
+$$
+This is the Newton method implemented by SDPT3 and MOSEK.
+
+
 
 ## Applications
 
