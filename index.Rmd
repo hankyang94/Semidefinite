@@ -24,6 +24,11 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\bbE}{\mathbb{E}}
 \newcommand{\calN}{\mathcal{N}}
 \newcommand{\tldR}{\tilde{R}}
+\newcommand{\bbZ}{\mathbb{Z}}
+\newcommand{\bbQ}{\mathbb{Q}}
+\newcommand{\bbC}{\mathbb{C}}
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbR}{\mathbb{R}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\Comp}[1]{\mathbb{C}^{#1}}
@@ -83,6 +88,14 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\hatmap}[1]{[#1]_{\times}}
 \newcommand{\kron}{\otimes}
 \newcommand{\skron}{\kron_{\mathrm{s}}}
+\newcommand{\Ideal}{\mathrm{Ideal}}
+\newcommand{\lexsucc}{\succ_{\mathrm{lex}}}
+\newcommand{\lexprec}{\prec_{\mathrm{lex}}}
+\newcommand{\grlexsucc}{\succ_{\mathrm{grlex}}}
+\newcommand{\grlexprec}{\prec_{\mathrm{grlex}}}
+\newcommand{\grevlexsucc}{\succ_{\mathrm{grevlex}}}
+\newcommand{\grevlexprec}{\prec_{\mathrm{grevlex}}}
+\newcommand{\abs}[1]{|#1|}
 
 
 

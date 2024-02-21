@@ -1,0 +1,281 @@
+# Sums of Squares Relaxation {#SOS}
+
+## Preliminaries
+
+We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment [@bochnak13book-real], [@cox13book-ideals], [@dummit04book-abstract], [@lang12book-algebra].
+
+### Groups, Rings, Fields
+
+::: {.definitionbox}
+::: {.definition #Group name="Group"}
+A **group** consists of a set $G$ and a binary operation "$\cdot$" defined on $G$ that satisfies the following conditions:
+
+1. Associative: $(a \cdot b) \cdot c = a \cdot (b \cdot c)$, for all $a,b,c \in G$.
+
+2. Identity: there exists $1 \in G$ such that $1 \cdot a = a \cdot 1 = a$, for all $a \in G$.
+
+3. Inverse: Given $a \in G$, there exists $b \in G$ such that $a \cdot b = b \cdot a = 1$.
+:::
+:::
+
+For example, the integers $\bbZ$ form a group under addition, but not under multiplication; the set $GL(n,\Real{})$ that contains nonsingular $n \times n$ matrices forms a group under the usual matrix multiplication. Another example is the set of rotation matrices $\SOd := \cbrace{R \in \Real{d \times d} \mid RR\tran = \eye_d, \det(R) = +1}$.
+
+In a group we only have one binary operation ("multiplication"). We will introduce another operation ("addition").
+
+::: {.definitionbox}
+::: {.definition #Ring name="Commutative Ring"}
+A **commutative ring** (with identity) consists of a set $S$ and two binary operations "$\cdot$" and "$+$" defined on $S$ that satisfy the following conditions 
+
+1. Associative: $(a+b)+c = a + (b+c)$, and $(a \cdot b) \cdot c = a \cdot (b \cdot c)$, for all $a,b,c \in S$.
+
+2. Commutative: $a+b=b+a$ and $a\cdot b = b \cdot a$, for all $a,b \in S$.
+
+3. Distributive: $a \cdot (b+c) = a\cdot b + a \cdot c$ for all $a,b,c \in S$.
+
+4. Identities: there exist $0, 1 \in S$ such that $a + 0 = a \cdot 1 = a$, for all $a \in S$.
+
+5. Additive inverse: given $a \in S$, there exists $b \in S$ such that $a + b = 0$.
+:::
+:::
+
+A simple example of a ring is the set of integers $\bbZ$ under the usual addition and multiplication.
+
+If we add a requirement for the existence of multiplicative inverse, we obtain a field.
+
+::: {.definitionbox}
+::: {.definition #Field name="Field"}
+A **field** consists of a set $S$ and two binary operations "$\cdot$" and "$+$" defined on $S$ that satisfy the following conditions 
+
+1. Associative: $(a+b)+c = a + (b+c)$, and $(a \cdot b) \cdot c = a \cdot (b \cdot c)$, for all $a,b,c \in S$.
+
+2. Commutative: $a+b=b+a$ and $a\cdot b = b \cdot a$, for all $a,b \in S$.
+
+3. Distributive: $a \cdot (b+c) = a\cdot b + a \cdot c$ for all $a,b,c \in S$.
+
+4. Identities: there exist $0, 1 \in S$, where $0 \neq 1$, such that $a + 0 = a \cdot 1 = a$, for all $a \in S$.
+
+5. Additive inverse: given $a \in S$, there exists $b \in S$ such that $a + b = 0$.
+
+6. Multiplicative inverse: given $a \in S$ and $a \neq 0$, there exists $c \in S$ such that $a \cdot c = 1$.
+:::
+:::
+
+Any field is obvious a commutative ring. Some commonly used fields are the rationals $\bbQ$, the reals $\Real{}$, and the complex numbers $\bbC$. Another important field is given by $k(x_1,\dots,x_n)$, the set of rational functions with coefficients in the field $k$, with the natural operations.
+
+### Polynomials, Ideals, and Varieties
+
+We will use $\bbF = \bbR$ or $\bbC$ to denote the field of real or complex numbers from now on. Let $x_1,\dots,x_n$ be indeterminates, we can define a polynomial.
+
+::: {.definitionbox}
+::: {.definition #Polynomial name="Polynomial"}
+A polynomial $f$ in $x_1,\dots,x_n$ with coefficients in a field $\bbF$ is a finite linear combination of monomials:
+$$
+f = \sum_{\alpha} c_\alpha x^\alpha = \sum_{\alpha} c_\alpha x_1^{\alpha_1}\cdots x_n^{\alpha_n}, \quad c_\alpha \in \bbF,
+$$
+where the sum is over a finite number of $n$-tuples (exponents) $\alpha = (\alpha_1,\dots,\alpha_n)$, $\alpha_i \in \bbN$. The set of all polynomials in $x$ with coefficients in $\bbF$ is denoted $\bbF[x]$ or $\bbF[x_1,\dots,x_n]$.
+:::
+:::
+
+The **degree** of a monomial is the sum of its exponents:
+$$
+\deg(x^\alpha) = \deg(x_1^{\alpha_1}\cdots x_n^{\alpha_n}) = \sum_{i=1}^n \alpha_i.
+$$
+The degree of a polynomial is the maximum degree of its monomials:
+$$
+\deg(f) = \max_{\alpha} \deg(x^\alpha).
+$$
+
+It is clear that $\bbF[x]$ is a commutative ring with the $0$ and $1$ identities. 
+
+A **form** is a polynomial where all the monomials have the same degree. It is also called a **homogeneous polynomial**. For example,
+$$
+f = 2 x_1^2 + x_1 x_2 + x_2^2
+$$
+is a form of degree $2$. A homogeneous polynomial of degree $d$ satisfies 
+$$
+f(\lambda x_1,\dots,\lambda x_n) = \lambda^d f(x_1,\dots,x_n).
+$$
+
+A polynomial in $n$ variables of degree $d$ has
+$$
+s(n,d) = \begin{pmatrix} n + d \\ d \end{pmatrix}
+$$
+coefficients. Let $\bbF[x]_{d}$ be the set of polynomials in $n$ variables of degree $d$, then any $f \in \bbF[x]_d$ can be written as 
+$$
+f = c\tran [x]_d, \quad c \in \bbF^{s(n,d)}
+$$
+with $[x]_d$ the **standard monomial basis** in $x$ of degree up to $d$. For example, when $x = (x_1,x_2)$, then 
+$$
+[x]_2 = \begin{bmatrix} 1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 \end{bmatrix}.
+$$
+
+Let $G$ be a set of polynomials, and $\bbF[G]$ denote the set of all polynomials that can be written as 
+$$
+\sum_{\alpha} c_\alpha g_1^{\alpha_1} \cdots g_k^{\alpha_k}, \quad c_\alpha \in \bbF, g_1,\dots,g_k \in G
+$$
+with finitely many nonzero coefficients. The polynomials in $G$ are called **generators** and $G$ is called a **generator set** for $\bbF[G]$. Clearly, the set 
+$$
+G = \{1, x_1, \dots, x_n\}
+$$
+is a generator set for $\bbF[x]$.
+
+We consider next ideals, which are subrings with an “absorbent” property.
+
+::: {.definitionbox}
+::: {.definition #Ideal name="Ideal"}
+Let $R$ be a commutative ring. A subset $I \subset R$ is an ideal if it satisfies 
+
+1. $0 \in I$.
+
+2. If $a, b \in I$, then $a + b \in I$.
+
+3. If $a \in I$ and $b \in R$, then $a \cdot b \in I$.
+:::
+:::
+
+A simple example of an ideal is the set of even integers, considered as a subset of the integer ring $\bbZ$. If the ideal $I$ contains the multiplicative identity "$1$", then $I = R$. For a tuple $h = (h_1,\dots,h_s)$ of polynomials in $\bbF[x]$, $\Ideal[h]:= \Ideal[h_1,\dots,h_m]$ denotes the smallest ideal containing $h$, or equivalently 
+$$
+\Ideal[h] = h_1 \cdot \bbF[x] + \cdots + h_s \cdot \bbF[x].
+$$
+The set $\Ideal[h]$ is called the ideal generated by $h$. Every ideal of $\bbF[x]$ is generated by finitely many polynomials, i.e., every ideal is **finitely generated**.
+
+::: {.theorembox}
+::: {.theorem #HilbertBasisTheorem name="Hilbert Basis Theorem"}
+For every ideal $I \subseteq \bbF[x]$, there exist finitely many polynomials $g_1,\dots,g_m \in I$ such that $I = \Ideal[g_1,\dots,g_m]$.
+:::
+:::
+
+We define the concept of an **algebraic variety** as the zero set of a set of polynomial equations.
+
+::: {.definitionbox}
+::: {.definition #AffineVariety name="Affine Variety"}
+Let $f_1,\dots,f_s \in \bbF[x_1,\dots,x_n]$ and $x = (x_1,\dots,x_n)$, and the set $V$ be 
+$$
+V_{\bbF}(f_1,\dots,f_s) = \cbrace{x \in \bbF^{n}\mid f_i(x) = 0, i=1,\dots,s}.
+$$
+We call $V_{\bbF}(f_1,\dots,f_s)$ the affine variety defined by $f_1,\dots,f_s$.
+:::
+:::
+
+Similarly, let $I \subset \bbF[x]$ be an ideal, we denote its zero set as 
+$$
+V_{\bbF}(I) = \cbrace{x \in \bbF^n \mid f(x) = 0, \forall f \in I}.
+$$
+Since the ideal is finitely generated, we have 
+$$
+V_{\bbF}(I) = V_{\bbF}(g_1,\dots,g_m),
+$$
+where $g_1,\dots,g_m$ are the generators of $I$.
+
+The set of polynomials that vanish in a given variety, i.e., 
+$$
+I(V)= \cbrace{f \in \bbF[x] \mid f(x) = 0, \forall x \in V},
+$$
+is an ideal, called the **vanishing ideal** of $V$.
+
+We define the **radical** of an ideal.
+
+::: {.definitionbox}
+::: {.definition #Radical name="Radical"}
+Let $I \subset \bbF[x]$ be an ideal. The radical of $I$, denoted $\sqrt{I}$, is the set 
+$$
+\sqrt{I} := \cbrace{f \mid f^k \in I \text{ for some integer }k}.
+$$
+:::
+:::
+
+It is clear that $I \subset \sqrt{I}$, and it can be shown that $\sqrt{I}$ is also a polynomial ideal. 
+
+Given an ideal $I$ and $V_{\bbC}(I)$, it is clear that any $f \in I$ vanishes on $V_{\bbC}(I)$, that is 
+$$
+I \subseteq I(V_{\bbC}(I)).
+$$
+However, not all polynomials that vanish on $V_{\bbC}(I)$ belong to $I$.
+
+::: {.theorembox}
+::: {.theorem #HilbertNull name="Hilbert's Nullstellensatz"}
+Let $I \subseteq \bbC[x]$ be an ideal.
+
+- (Weak Nullstellensatz) If $V_{\bbC}(I) = \emptyset$, then $1 \in I$.
+
+- (Strong Nullstellensatz) For $f \in \bbC[x]$, if $f(u) = 0$ for all $u \in V_{\bbC}(I)$, then $f^k \in I$ for some integer $k \geq 1$, i.e., $I(V_{\bbC}(I)) = \sqrt{I}$.
+:::
+:::
+
+Let us see an example of Hilbert's Nullstellensatz.
+
+::: {.examplebox}
+::: {.example #HilbertNullstellensatz name="Hilbert's Nullstellensatz"}
+Consider the ideal 
+$$
+I=\Ideal[x_1^2 x_2^3, x_1 x_2^4].
+$$
+The affine variety defined by $I$ is
+$$
+V = V_{\bbC}(I) = \cbrace{(x_1,x_2) \in \bbC^2 \mid x_1^2 x_2^3 = 0, x_1 x_2^4=0}.
+$$
+It is easy to see that the variety is the union of the two coordinate axes $x_1=0$ and $x_2 = 0$.
+
+Therefore, the polynomial $x_1x_2$ vanishes on the variety $V$, but $x_1 x_2$ does not belong to the ideal $I$ (because the degree is lower).
+
+We claim that
+$$
+\sqrt{I} = \Ideal[x_1 x_2].
+$$
+Indeed, $x_1 x_2 \in \sqrt{I}$ because 
+$$
+(x_1x_2)^3 = x_1^3 x_2^3 = x_1 \cdot x_1^2 x_3^3 \in I.
+$$
+Conversely, if $f \in \sqrt{I}$, then $f^k \in I$ for some integer $k$, i.e.,
+$$
+f^k = x_1^2 x_2^3 p(x) + x_1 x_2^4 q(x) = x_1 x_2 r(x)
+$$
+which implies $f^k \in \Ideal[x_1 x_2]$. Therefore, all the polynomials that vanish on the variety $V$ can be generated by $x_1 x_2$.
+
+As another example, consider the ideal generated by a single univariate polynomial
+$$
+I = \Ideal[f], \quad f = \prod_{i=1}^{s} (x - a_i)^{n_i}
+$$
+with $a_i \neq a_j$ for $i \neq j$ the unique roots of the polynomial $f$. Clearly, the affine variety defined by $I$ is the set of unique roots:
+$$
+V= V_{\bbC}(I) = \{a_1,\dots,a_s\}.
+$$
+The vanishing ideal of $V$ is 
+$$
+\sqrt{I} = \Ideal[(x-a_1)\cdots (x-a_s)].
+$$
+:::
+:::
+
+### Gröbner Bases 
+
+A polynomial ideal can have different "descriptions" in terms of its generators. We will now focus on a particular type of description that is better than the others.
+
+Let's first define a monomial ordering.
+
+::: {.definitionbox}
+::: {.definition #MonomialOrdering name="Monomial Ordering"}
+A monomial ordering on $\bbC[x]$ is a binary relation $\succ$ on $\bbN^n$, i.e., the exponents of the monomials, that satisfies 
+
+1. The relation $\succ$ is a total ordering, i.e., given any two monomials $x^{\alpha}, x^{\beta}$, we must have either $x^{\alpha} \succ x^{\beta}$, or $x^\beta \succ x^\alpha$, or $x^\alpha = x^\beta$.
+
+2. If $x^\alpha \succ x^\beta$, then $x^\alpha \cdot x^\gamma \succ x^\beta \cdot x^\gamma$ for any monomial $x^\gamma$.
+
+3. The relation $\succ$ is well ordered, i.e., every nonempty set has a smallest element under $\succ$.
+
+:::
+:::
+
+There are several monomial orderings of interest in computational algebra.
+
+- **Lexicographic** ("dictionary"). Here $\alpha \lexsucc \beta$ if the left-most nonzero entry of $\alpha - \beta$ is positive. Note that a particular ordering of the variables is assumed.
+
+- **Graded lexicographic**. Sort first by total degree, then Lexicographic, i.e., $\alpha \grlexsucc \beta$ if $\abs{\alpha} > \abs{\beta}$, or $\abs{\alpha} = \abs{\beta}$ and $\alpha \lexsucc \beta$.
+
+- **Graded reverse lexicographic**. Here $\alpha \grevlexsucc \beta$ if $\abs{\alpha} > \abs{\beta}$ or $\abs{\alpha} = \abs{\beta}$ but the right-most nonzero entry of $\alpha - \beta$ is negative. This ordering, although somewhat nonintuitive, has some desirable computational properties.
+
+::: {.examplebox}
+::: {.example #MonomialOrdering name="Monomial Ordering"}
+Consider the polynomial ring $\bbC[x,y]$ in two variables. 
+:::
+:::
