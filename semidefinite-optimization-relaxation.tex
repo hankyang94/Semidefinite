@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-19}
+\date{2024-02-21}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -201,6 +201,11 @@ arc=4pt}
 \newcommand{\bbE}{\mathbb{E}}
 \newcommand{\calN}{\mathcal{N}}
 \newcommand{\tldR}{\tilde{R}}
+\newcommand{\bbZ}{\mathbb{Z}}
+\newcommand{\bbQ}{\mathbb{Q}}
+\newcommand{\bbC}{\mathbb{C}}
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbR}{\mathbb{R}}
 
 \newcommand{\Real}[1]{\mathbb{R}^{#1}}
 \newcommand{\Comp}[1]{\mathbb{C}^{#1}}
@@ -259,6 +264,14 @@ arc=4pt}
 \newcommand{\hatmap}[1]{[#1]_{\times}}
 \newcommand{\kron}{\otimes}
 \newcommand{\skron}{\kron_{\mathrm{s}}}
+\newcommand{\Ideal}{\mathrm{Ideal}}
+\newcommand{\lexsucc}{\succ_{\mathrm{lex}}}
+\newcommand{\lexprec}{\prec_{\mathrm{lex}}}
+\newcommand{\grlexsucc}{\succ_{\mathrm{grlex}}}
+\newcommand{\grlexprec}{\prec_{\mathrm{grlex}}}
+\newcommand{\grevlexsucc}{\succ_{\mathrm{grevlex}}}
+\newcommand{\grevlexprec}{\prec_{\mathrm{grevlex}}}
+\newcommand{\abs}[1]{|#1|}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -3079,6 +3092,312 @@ h_k(x) = 0 \Rightarrow h_k(x) \cdot \lambda(x) = 0,
 where \(\lambda(x)\) is a monomial such that all the monomials of \(h_k(x) \cdot \lambda(x)\) appear in the big matrix \(X\) (so that the resulting equality constraint can still be written as a linear equality on \(X\)). The authors of \citep{briales18cvpr-certifiably} enumerated all such constraints (by hand) and added them to the SDP relaxation, which led to the relaxation going from loose to tight/exact.
 
 \citep{briales18cvpr-certifiably} called these constraints ``redundant'', are they? We will revisit this after we study the moment-SOS hierarchy!
+
+\hypertarget{SOS}{%
+\chapter{Sums of Squares Relaxation}\label{SOS}}
+
+\hypertarget{preliminaries}{%
+\section{Preliminaries}\label{preliminaries}}
+
+We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment \citep{bochnak13book-real}, \citep{cox13book-ideals}, \citep{dummit04book-abstract}, \citep{lang12book-algebra}.
+
+\hypertarget{groups-rings-fields}{%
+\subsection{Groups, Rings, Fields}\label{groups-rings-fields}}
+
+\begin{definition}[Group]
+\protect\hypertarget{def:Group}{}\label{def:Group}
+
+A \textbf{group} consists of a set \(G\) and a binary operation ``\(\cdot\)'' defined on \(G\) that satisfies the following conditions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Associative: \((a \cdot b) \cdot c = a \cdot (b \cdot c)\), for all \(a,b,c \in G\).
+\item
+  Identity: there exists \(1 \in G\) such that \(1 \cdot a = a \cdot 1 = a\), for all \(a \in G\).
+\item
+  Inverse: Given \(a \in G\), there exists \(b \in G\) such that \(a \cdot b = b \cdot a = 1\).
+\end{enumerate}
+
+\end{definition}
+
+For example, the integers \(\mathbb{Z}\) form a group under addition, but not under multiplication; the set \(GL(n,\mathbb{R}^{})\) that contains nonsingular \(n \times n\) matrices forms a group under the usual matrix multiplication. Another example is the set of rotation matrices \(\mathrm{SO}(d):= \{ R \in \mathbb{R}^{d \times d} \mid RR^\top= \mathrm{I}_d, \det(R) = +1 \}\).
+
+In a group we only have one binary operation (``multiplication''). We will introduce another operation (``addition'').
+
+\begin{definition}[Commutative Ring]
+\protect\hypertarget{def:Ring}{}\label{def:Ring}
+
+A \textbf{commutative ring} (with identity) consists of a set \(S\) and two binary operations ``\(\cdot\)'' and ``\(+\)'' defined on \(S\) that satisfy the following conditions
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Associative: \((a+b)+c = a + (b+c)\), and \((a \cdot b) \cdot c = a \cdot (b \cdot c)\), for all \(a,b,c \in S\).
+\item
+  Commutative: \(a+b=b+a\) and \(a\cdot b = b \cdot a\), for all \(a,b \in S\).
+\item
+  Distributive: \(a \cdot (b+c) = a\cdot b + a \cdot c\) for all \(a,b,c \in S\).
+\item
+  Identities: there exist \(0, 1 \in S\) such that \(a + 0 = a \cdot 1 = a\), for all \(a \in S\).
+\item
+  Additive inverse: given \(a \in S\), there exists \(b \in S\) such that \(a + b = 0\).
+\end{enumerate}
+
+\end{definition}
+
+A simple example of a ring is the set of integers \(\mathbb{Z}\) under the usual addition and multiplication.
+
+If we add a requirement for the existence of multiplicative inverse, we obtain a field.
+
+\begin{definition}[Field]
+\protect\hypertarget{def:Field}{}\label{def:Field}
+
+A \textbf{field} consists of a set \(S\) and two binary operations ``\(\cdot\)'' and ``\(+\)'' defined on \(S\) that satisfy the following conditions
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Associative: \((a+b)+c = a + (b+c)\), and \((a \cdot b) \cdot c = a \cdot (b \cdot c)\), for all \(a,b,c \in S\).
+\item
+  Commutative: \(a+b=b+a\) and \(a\cdot b = b \cdot a\), for all \(a,b \in S\).
+\item
+  Distributive: \(a \cdot (b+c) = a\cdot b + a \cdot c\) for all \(a,b,c \in S\).
+\item
+  Identities: there exist \(0, 1 \in S\), where \(0 \neq 1\), such that \(a + 0 = a \cdot 1 = a\), for all \(a \in S\).
+\item
+  Additive inverse: given \(a \in S\), there exists \(b \in S\) such that \(a + b = 0\).
+\item
+  Multiplicative inverse: given \(a \in S\) and \(a \neq 0\), there exists \(c \in S\) such that \(a \cdot c = 1\).
+\end{enumerate}
+
+\end{definition}
+
+Any field is obvious a commutative ring. Some commonly used fields are the rationals \(\mathbb{Q}\), the reals \(\mathbb{R}^{}\), and the complex numbers \(\mathbb{C}\). Another important field is given by \(k(x_1,\dots,x_n)\), the set of rational functions with coefficients in the field \(k\), with the natural operations.
+
+\hypertarget{polynomials-ideals-and-varieties}{%
+\subsection{Polynomials, Ideals, and Varieties}\label{polynomials-ideals-and-varieties}}
+
+We will use \(\mathbb{F}= \mathbb{R}\) or \(\mathbb{C}\) to denote the field of real or complex numbers from now on. Let \(x_1,\dots,x_n\) be indeterminates, we can define a polynomial.
+
+\begin{definition}[Polynomial]
+\protect\hypertarget{def:Polynomial}{}\label{def:Polynomial}A polynomial \(f\) in \(x_1,\dots,x_n\) with coefficients in a field \(\mathbb{F}\) is a finite linear combination of monomials:
+\[
+f = \sum_{\alpha} c_\alpha x^\alpha = \sum_{\alpha} c_\alpha x_1^{\alpha_1}\cdots x_n^{\alpha_n}, \quad c_\alpha \in \mathbb{F},
+\]
+where the sum is over a finite number of \(n\)-tuples (exponents) \(\alpha = (\alpha_1,\dots,\alpha_n)\), \(\alpha_i \in \mathbb{N}\). The set of all polynomials in \(x\) with coefficients in \(\mathbb{F}\) is denoted \(\mathbb{F}[x]\) or \(\mathbb{F}[x_1,\dots,x_n]\).
+\end{definition}
+
+The \textbf{degree} of a monomial is the sum of its exponents:
+\[
+\deg(x^\alpha) = \deg(x_1^{\alpha_1}\cdots x_n^{\alpha_n}) = \sum_{i=1}^n \alpha_i.
+\]
+The degree of a polynomial is the maximum degree of its monomials:
+\[
+\deg(f) = \max_{\alpha} \deg(x^\alpha).
+\]
+
+It is clear that \(\mathbb{F}[x]\) is a commutative ring with the \(0\) and \(1\) identities.
+
+A \textbf{form} is a polynomial where all the monomials have the same degree. It is also called a \textbf{homogeneous polynomial}. For example,
+\[
+f = 2 x_1^2 + x_1 x_2 + x_2^2
+\]
+is a form of degree \(2\). A homogeneous polynomial of degree \(d\) satisfies
+\[
+f(\lambda x_1,\dots,\lambda x_n) = \lambda^d f(x_1,\dots,x_n).
+\]
+
+A polynomial in \(n\) variables of degree \(d\) has
+\[
+s(n,d) = \begin{pmatrix} n + d \\ d \end{pmatrix}
+\]
+coefficients. Let \(\mathbb{F}[x]_{d}\) be the set of polynomials in \(n\) variables of degree \(d\), then any \(f \in \mathbb{F}[x]_d\) can be written as
+\[
+f = c^\top[x]_d, \quad c \in \mathbb{F}^{s(n,d)}
+\]
+with \([x]_d\) the \textbf{standard monomial basis} in \(x\) of degree up to \(d\). For example, when \(x = (x_1,x_2)\), then
+\[
+[x]_2 = \begin{bmatrix} 1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 \end{bmatrix}.
+\]
+
+Let \(G\) be a set of polynomials, and \(\mathbb{F}[G]\) denote the set of all polynomials that can be written as
+\[
+\sum_{\alpha} c_\alpha g_1^{\alpha_1} \cdots g_k^{\alpha_k}, \quad c_\alpha \in \mathbb{F}, g_1,\dots,g_k \in G
+\]
+with finitely many nonzero coefficients. The polynomials in \(G\) are called \textbf{generators} and \(G\) is called a \textbf{generator set} for \(\mathbb{F}[G]\). Clearly, the set
+\[
+G = \{1, x_1, \dots, x_n\}
+\]
+is a generator set for \(\mathbb{F}[x]\).
+
+We consider next ideals, which are subrings with an ``absorbent'' property.
+
+\begin{definition}[Ideal]
+\protect\hypertarget{def:Ideal}{}\label{def:Ideal}
+
+Let \(R\) be a commutative ring. A subset \(I \subset R\) is an ideal if it satisfies
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \(0 \in I\).
+\item
+  If \(a, b \in I\), then \(a + b \in I\).
+\item
+  If \(a \in I\) and \(b \in R\), then \(a \cdot b \in I\).
+\end{enumerate}
+
+\end{definition}
+
+A simple example of an ideal is the set of even integers, considered as a subset of the integer ring \(\mathbb{Z}\). If the ideal \(I\) contains the multiplicative identity ``\(1\)'', then \(I = R\). For a tuple \(h = (h_1,\dots,h_s)\) of polynomials in \(\mathbb{F}[x]\), \(\mathrm{Ideal}[h]:= \mathrm{Ideal}[h_1,\dots,h_m]\) denotes the smallest ideal containing \(h\), or equivalently
+\[
+\mathrm{Ideal}[h] = h_1 \cdot \mathbb{F}[x] + \cdots + h_s \cdot \mathbb{F}[x].
+\]
+The set \(\mathrm{Ideal}[h]\) is called the ideal generated by \(h\). Every ideal of \(\mathbb{F}[x]\) is generated by finitely many polynomials, i.e., every ideal is \textbf{finitely generated}.
+
+\begin{theorem}[Hilbert Basis Theorem]
+\protect\hypertarget{thm:HilbertBasisTheorem}{}\label{thm:HilbertBasisTheorem}For every ideal \(I \subseteq \mathbb{F}[x]\), there exist finitely many polynomials \(g_1,\dots,g_m \in I\) such that \(I = \mathrm{Ideal}[g_1,\dots,g_m]\).
+\end{theorem}
+
+We define the concept of an \textbf{algebraic variety} as the zero set of a set of polynomial equations.
+
+\begin{definition}[Affine Variety]
+\protect\hypertarget{def:AffineVariety}{}\label{def:AffineVariety}Let \(f_1,\dots,f_s \in \mathbb{F}[x_1,\dots,x_n]\) and \(x = (x_1,\dots,x_n)\), and the set \(V\) be
+\[
+V_{\mathbb{F}}(f_1,\dots,f_s) = \{ x \in \mathbb{F}^{n}\mid f_i(x) = 0, i=1,\dots,s \}.
+\]
+We call \(V_{\mathbb{F}}(f_1,\dots,f_s)\) the affine variety defined by \(f_1,\dots,f_s\).
+\end{definition}
+
+Similarly, let \(I \subset \mathbb{F}[x]\) be an ideal, we denote its zero set as
+\[
+V_{\mathbb{F}}(I) = \{ x \in \mathbb{F}^n \mid f(x) = 0, \forall f \in I \}.
+\]
+Since the ideal is finitely generated, we have
+\[
+V_{\mathbb{F}}(I) = V_{\mathbb{F}}(g_1,\dots,g_m),
+\]
+where \(g_1,\dots,g_m\) are the generators of \(I\).
+
+The set of polynomials that vanish in a given variety, i.e.,
+\[
+I(V)= \{ f \in \mathbb{F}[x] \mid f(x) = 0, \forall x \in V \},
+\]
+is an ideal, called the \textbf{vanishing ideal} of \(V\).
+
+We define the \textbf{radical} of an ideal.
+
+\begin{definition}[Radical]
+\protect\hypertarget{def:Radical}{}\label{def:Radical}Let \(I \subset \mathbb{F}[x]\) be an ideal. The radical of \(I\), denoted \(\sqrt{I}\), is the set
+\[
+\sqrt{I} := \{ f \mid f^k \in I \text{ for some integer }k \}.
+\]
+\end{definition}
+
+It is clear that \(I \subset \sqrt{I}\), and it can be shown that \(\sqrt{I}\) is also a polynomial ideal.
+
+Given an ideal \(I\) and \(V_{\mathbb{C}}(I)\), it is clear that any \(f \in I\) vanishes on \(V_{\mathbb{C}}(I)\), that is
+\[
+I \subseteq I(V_{\mathbb{C}}(I)).
+\]
+However, not all polynomials that vanish on \(V_{\mathbb{C}}(I)\) belong to \(I\).
+
+\begin{theorem}[Hilbert's Nullstellensatz]
+\protect\hypertarget{thm:HilbertNull}{}\label{thm:HilbertNull}
+
+Let \(I \subseteq \mathbb{C}[x]\) be an ideal.
+
+\begin{itemize}
+\item
+  (Weak Nullstellensatz) If \(V_{\mathbb{C}}(I) = \emptyset\), then \(1 \in I\).
+\item
+  (Strong Nullstellensatz) For \(f \in \mathbb{C}[x]\), if \(f(u) = 0\) for all \(u \in V_{\mathbb{C}}(I)\), then \(f^k \in I\) for some integer \(k \geq 1\), i.e., \(I(V_{\mathbb{C}}(I)) = \sqrt{I}\).
+\end{itemize}
+
+\end{theorem}
+
+Let us see an example of Hilbert's Nullstellensatz.
+
+\begin{example}[Hilbert's Nullstellensatz]
+\protect\hypertarget{exm:HilbertNullstellensatz}{}\label{exm:HilbertNullstellensatz}Consider the ideal
+\[
+I=\mathrm{Ideal}[x_1^2 x_2^3, x_1 x_2^4].
+\]
+The affine variety defined by \(I\) is
+\[
+V = V_{\mathbb{C}}(I) = \{ (x_1,x_2) \in \mathbb{C}^2 \mid x_1^2 x_2^3 = 0, x_1 x_2^4=0 \}.
+\]
+It is easy to see that the variety is the union of the two coordinate axes \(x_1=0\) and \(x_2 = 0\).
+
+Therefore, the polynomial \(x_1x_2\) vanishes on the variety \(V\), but \(x_1 x_2\) does not belong to the ideal \(I\) (because the degree is lower).
+
+We claim that
+\[
+\sqrt{I} = \mathrm{Ideal}[x_1 x_2].
+\]
+Indeed, \(x_1 x_2 \in \sqrt{I}\) because
+\[
+(x_1x_2)^3 = x_1^3 x_2^3 = x_1 \cdot x_1^2 x_3^3 \in I.
+\]
+Conversely, if \(f \in \sqrt{I}\), then \(f^k \in I\) for some integer \(k\), i.e.,
+\[
+f^k = x_1^2 x_2^3 p(x) + x_1 x_2^4 q(x) = x_1 x_2 r(x)
+\]
+which implies \(f^k \in \mathrm{Ideal}[x_1 x_2]\). Therefore, all the polynomials that vanish on the variety \(V\) can be generated by \(x_1 x_2\).
+
+As another example, consider the ideal generated by a single univariate polynomial
+\[
+I = \mathrm{Ideal}[f], \quad f = \prod_{i=1}^{s} (x - a_i)^{n_i}
+\]
+with \(a_i \neq a_j\) for \(i \neq j\) the unique roots of the polynomial \(f\). Clearly, the affine variety defined by \(I\) is the set of unique roots:
+\[
+V= V_{\mathbb{C}}(I) = \{a_1,\dots,a_s\}.
+\]
+The vanishing ideal of \(V\) is
+\[
+\sqrt{I} = \mathrm{Ideal}[(x-a_1)\cdots (x-a_s)].
+\]
+\end{example}
+
+\hypertarget{gruxf6bner-bases}{%
+\subsection{Gröbner Bases}\label{gruxf6bner-bases}}
+
+A polynomial ideal can have different ``descriptions'' in terms of its generators. We will now focus on a particular type of description that is better than the others.
+
+Let's first define a monomial ordering.
+
+\begin{definition}[Monomial Ordering]
+\protect\hypertarget{def:MonomialOrdering}{}\label{def:MonomialOrdering}
+
+A monomial ordering on \(\mathbb{C}[x]\) is a binary relation \(\succ\) on \(\mathbb{N}^n\), i.e., the exponents of the monomials, that satisfies
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The relation \(\succ\) is a total ordering, i.e., given any two monomials \(x^{\alpha}, x^{\beta}\), we must have either \(x^{\alpha} \succ x^{\beta}\), or \(x^\beta \succ x^\alpha\), or \(x^\alpha = x^\beta\).
+\item
+  If \(x^\alpha \succ x^\beta\), then \(x^\alpha \cdot x^\gamma \succ x^\beta \cdot x^\gamma\) for any monomial \(x^\gamma\).
+\item
+  The relation \(\succ\) is well ordered, i.e., every nonempty set has a smallest element under \(\succ\).
+\end{enumerate}
+
+\end{definition}
+
+There are several monomial orderings of interest in computational algebra.
+
+\begin{itemize}
+\item
+  \textbf{Lexicographic} (``dictionary''). Here \(\alpha \succ_{\mathrm{lex}}\beta\) if the left-most nonzero entry of \(\alpha - \beta\) is positive. Note that a particular ordering of the variables is assumed.
+\item
+  \textbf{Graded lexicographic}. Sort first by total degree, then Lexicographic, i.e., \(\alpha \succ_{\mathrm{grlex}}\beta\) if \(|\alpha| > |\beta|\), or \(|\alpha| = |\beta|\) and \(\alpha \succ_{\mathrm{lex}}\beta\).
+\item
+  \textbf{Graded reverse lexicographic}. Here \(\alpha \succ_{\mathrm{grevlex}}\beta\) if \(|\alpha| > |\beta|\) or \(|\alpha| = |\beta|\) but the right-most nonzero entry of \(\alpha - \beta\) is negative. This ordering, although somewhat nonintuitive, has some desirable computational properties.
+\end{itemize}
+
+\begin{example}[Monomial Ordering]
+\protect\hypertarget{exm:MonomialOrdering}{}\label{exm:MonomialOrdering}Consider the polynomial ring \(\mathbb{C}[x,y]\) in two variables.
+\end{example}
 
   \bibliography{book.bib}
 

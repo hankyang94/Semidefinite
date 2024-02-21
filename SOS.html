@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Sums of Squares Relaxation | Semidefinite Optimization and Relaxation</title>
+  <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Sums of Squares Relaxation | Semidefinite Optimization and Relaxation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="github-repo" content="hankyang94/Semidefinite" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Sums of Squares Relaxation | Semidefinite Optimization and Relaxation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2024-02-21" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Shor.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Semidefinite Optimization and Relaxation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#feedback"><i class="fa fa-check"></i>Feedback</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#offerings"><i class="fa fa-check"></i>Offerings</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#background:convex:optimization:Lagrangian"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
+<li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+<li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="sdp.html"><a href="sdp.html#positive-semidefinite-matrices"><i class="fa fa-check"></i><b>2.1</b> Positive Semidefinite Matrices</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="sdp.html"><a href="sdp.html#geometric-properties"><i class="fa fa-check"></i><b>2.1.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="sdp.html"><a href="sdp.html#semidefinite-programming"><i class="fa fa-check"></i><b>2.2</b> Semidefinite Programming</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="sdp.html"><a href="sdp.html#spectrahedra"><i class="fa fa-check"></i><b>2.2.1</b> Spectrahedra</a></li>
+<li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
+<li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#lyapunov-stability"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="Shor.html"><a href="Shor.html#certifiably-optimal-rotation-averaging"><i class="fa fa-check"></i><b>3.2</b> Certifiably Optimal Rotation Averaging</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="Shor.html"><a href="Shor.html#dual-optimality-certifier"><i class="fa fa-check"></i><b>3.2.1</b> Dual Optimality Certifier</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="Shor.html"><a href="Shor.html#stretch-to-high-degree-polynomial-optimization"><i class="fa fa-check"></i><b>3.3</b> Stretch to High-Degree Polynomial Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="SOS.html"><a href="SOS.html"><i class="fa fa-check"></i><b>4</b> Sums of Squares Relaxation</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="SOS.html"><a href="SOS.html#preliminaries"><i class="fa fa-check"></i><b>4.1</b> Preliminaries</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="SOS.html"><a href="SOS.html#groups-rings-fields"><i class="fa fa-check"></i><b>4.1.1</b> Groups, Rings, Fields</a></li>
+<li class="chapter" data-level="4.1.2" data-path="SOS.html"><a href="SOS.html#polynomials-ideals-and-varieties"><i class="fa fa-check"></i><b>4.1.2</b> Polynomials, Ideals, and Varieties</a></li>
+<li class="chapter" data-level="4.1.3" data-path="SOS.html"><a href="SOS.html#gröbner-bases"><i class="fa fa-check"></i><b>4.1.3</b> Gröbner Bases</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Semidefinite Optimization and Relaxation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="SOS" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Sums of Squares Relaxation<a href="SOS.html#SOS" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="preliminaries" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Preliminaries<a href="SOS.html#preliminaries" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment <span class="citation">(<a href="#ref-bochnak13book-real" role="doc-biblioref">Bochnak, Coste, and Roy 2013</a>)</span>, <span class="citation">(<a href="#ref-cox13book-ideals" role="doc-biblioref">Cox, Little, and OShea 2013</a>)</span>, <span class="citation">(<a href="#ref-dummit04book-abstract" role="doc-biblioref">Dummit and Foote 2004</a>)</span>, <span class="citation">(<a href="#ref-lang12book-algebra" role="doc-biblioref">Lang 2012</a>)</span>.</p>
+<div id="groups-rings-fields" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Groups, Rings, Fields<a href="SOS.html#groups-rings-fields" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Group" class="definition"><strong>Definition 4.1  (Group) </strong></span>A <strong>group</strong> consists of a set <span class="math inline">\(G\)</span> and a binary operation “<span class="math inline">\(\cdot\)</span>” defined on <span class="math inline">\(G\)</span> that satisfies the following conditions:</p>
+<ol style="list-style-type: decimal">
+<li><p>Associative: <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>, for all <span class="math inline">\(a,b,c \in G\)</span>.</p></li>
+<li><p>Identity: there exists <span class="math inline">\(1 \in G\)</span> such that <span class="math inline">\(1 \cdot a = a \cdot 1 = a\)</span>, for all <span class="math inline">\(a \in G\)</span>.</p></li>
+<li><p>Inverse: Given <span class="math inline">\(a \in G\)</span>, there exists <span class="math inline">\(b \in G\)</span> such that <span class="math inline">\(a \cdot b = b \cdot a = 1\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>For example, the integers <span class="math inline">\(\mathbb{Z}\)</span> form a group under addition, but not under multiplication; the set <span class="math inline">\(GL(n,\mathbb{R}^{})\)</span> that contains nonsingular <span class="math inline">\(n \times n\)</span> matrices forms a group under the usual matrix multiplication. Another example is the set of rotation matrices <span class="math inline">\(\mathrm{SO}(d):= \{ R \in \mathbb{R}^{d \times d} \mid RR^\top= \mathrm{I}_d, \det(R) = +1 \}\)</span>.</p>
+<p>In a group we only have one binary operation (“multiplication”). We will introduce another operation (“addition”).</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Ring" class="definition"><strong>Definition 4.2  (Commutative Ring) </strong></span>A <strong>commutative ring</strong> (with identity) consists of a set <span class="math inline">\(S\)</span> and two binary operations “<span class="math inline">\(\cdot\)</span>” and “<span class="math inline">\(+\)</span>” defined on <span class="math inline">\(S\)</span> that satisfy the following conditions</p>
+<ol style="list-style-type: decimal">
+<li><p>Associative: <span class="math inline">\((a+b)+c = a + (b+c)\)</span>, and <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>, for all <span class="math inline">\(a,b,c \in S\)</span>.</p></li>
+<li><p>Commutative: <span class="math inline">\(a+b=b+a\)</span> and <span class="math inline">\(a\cdot b = b \cdot a\)</span>, for all <span class="math inline">\(a,b \in S\)</span>.</p></li>
+<li><p>Distributive: <span class="math inline">\(a \cdot (b+c) = a\cdot b + a \cdot c\)</span> for all <span class="math inline">\(a,b,c \in S\)</span>.</p></li>
+<li><p>Identities: there exist <span class="math inline">\(0, 1 \in S\)</span> such that <span class="math inline">\(a + 0 = a \cdot 1 = a\)</span>, for all <span class="math inline">\(a \in S\)</span>.</p></li>
+<li><p>Additive inverse: given <span class="math inline">\(a \in S\)</span>, there exists <span class="math inline">\(b \in S\)</span> such that <span class="math inline">\(a + b = 0\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>A simple example of a ring is the set of integers <span class="math inline">\(\mathbb{Z}\)</span> under the usual addition and multiplication.</p>
+<p>If we add a requirement for the existence of multiplicative inverse, we obtain a field.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Field" class="definition"><strong>Definition 4.3  (Field) </strong></span>A <strong>field</strong> consists of a set <span class="math inline">\(S\)</span> and two binary operations “<span class="math inline">\(\cdot\)</span>” and “<span class="math inline">\(+\)</span>” defined on <span class="math inline">\(S\)</span> that satisfy the following conditions</p>
+<ol style="list-style-type: decimal">
+<li><p>Associative: <span class="math inline">\((a+b)+c = a + (b+c)\)</span>, and <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>, for all <span class="math inline">\(a,b,c \in S\)</span>.</p></li>
+<li><p>Commutative: <span class="math inline">\(a+b=b+a\)</span> and <span class="math inline">\(a\cdot b = b \cdot a\)</span>, for all <span class="math inline">\(a,b \in S\)</span>.</p></li>
+<li><p>Distributive: <span class="math inline">\(a \cdot (b+c) = a\cdot b + a \cdot c\)</span> for all <span class="math inline">\(a,b,c \in S\)</span>.</p></li>
+<li><p>Identities: there exist <span class="math inline">\(0, 1 \in S\)</span>, where <span class="math inline">\(0 \neq 1\)</span>, such that <span class="math inline">\(a + 0 = a \cdot 1 = a\)</span>, for all <span class="math inline">\(a \in S\)</span>.</p></li>
+<li><p>Additive inverse: given <span class="math inline">\(a \in S\)</span>, there exists <span class="math inline">\(b \in S\)</span> such that <span class="math inline">\(a + b = 0\)</span>.</p></li>
+<li><p>Multiplicative inverse: given <span class="math inline">\(a \in S\)</span> and <span class="math inline">\(a \neq 0\)</span>, there exists <span class="math inline">\(c \in S\)</span> such that <span class="math inline">\(a \cdot c = 1\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>Any field is obvious a commutative ring. Some commonly used fields are the rationals <span class="math inline">\(\mathbb{Q}\)</span>, the reals <span class="math inline">\(\mathbb{R}^{}\)</span>, and the complex numbers <span class="math inline">\(\mathbb{C}\)</span>. Another important field is given by <span class="math inline">\(k(x_1,\dots,x_n)\)</span>, the set of rational functions with coefficients in the field <span class="math inline">\(k\)</span>, with the natural operations.</p>
+</div>
+<div id="polynomials-ideals-and-varieties" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Polynomials, Ideals, and Varieties<a href="SOS.html#polynomials-ideals-and-varieties" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We will use <span class="math inline">\(\mathbb{F}= \mathbb{R}\)</span> or <span class="math inline">\(\mathbb{C}\)</span> to denote the field of real or complex numbers from now on. Let <span class="math inline">\(x_1,\dots,x_n\)</span> be indeterminates, we can define a polynomial.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Polynomial" class="definition"><strong>Definition 4.4  (Polynomial) </strong></span>A polynomial <span class="math inline">\(f\)</span> in <span class="math inline">\(x_1,\dots,x_n\)</span> with coefficients in a field <span class="math inline">\(\mathbb{F}\)</span> is a finite linear combination of monomials:
+<span class="math display">\[
+f = \sum_{\alpha} c_\alpha x^\alpha = \sum_{\alpha} c_\alpha x_1^{\alpha_1}\cdots x_n^{\alpha_n}, \quad c_\alpha \in \mathbb{F},
+\]</span>
+where the sum is over a finite number of <span class="math inline">\(n\)</span>-tuples (exponents) <span class="math inline">\(\alpha = (\alpha_1,\dots,\alpha_n)\)</span>, <span class="math inline">\(\alpha_i \in \mathbb{N}\)</span>. The set of all polynomials in <span class="math inline">\(x\)</span> with coefficients in <span class="math inline">\(\mathbb{F}\)</span> is denoted <span class="math inline">\(\mathbb{F}[x]\)</span> or <span class="math inline">\(\mathbb{F}[x_1,\dots,x_n]\)</span>.</p>
+</div>
+</div>
+<p>The <strong>degree</strong> of a monomial is the sum of its exponents:
+<span class="math display">\[
+\deg(x^\alpha) = \deg(x_1^{\alpha_1}\cdots x_n^{\alpha_n}) = \sum_{i=1}^n \alpha_i.
+\]</span>
+The degree of a polynomial is the maximum degree of its monomials:
+<span class="math display">\[
+\deg(f) = \max_{\alpha} \deg(x^\alpha).
+\]</span></p>
+<p>It is clear that <span class="math inline">\(\mathbb{F}[x]\)</span> is a commutative ring with the <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span> identities.</p>
+<p>A <strong>form</strong> is a polynomial where all the monomials have the same degree. It is also called a <strong>homogeneous polynomial</strong>. For example,
+<span class="math display">\[
+f = 2 x_1^2 + x_1 x_2 + x_2^2
+\]</span>
+is a form of degree <span class="math inline">\(2\)</span>. A homogeneous polynomial of degree <span class="math inline">\(d\)</span> satisfies
+<span class="math display">\[
+f(\lambda x_1,\dots,\lambda x_n) = \lambda^d f(x_1,\dots,x_n).
+\]</span></p>
+<p>A polynomial in <span class="math inline">\(n\)</span> variables of degree <span class="math inline">\(d\)</span> has
+<span class="math display">\[
+s(n,d) = \begin{pmatrix} n + d \\ d \end{pmatrix}
+\]</span>
+coefficients. Let <span class="math inline">\(\mathbb{F}[x]_{d}\)</span> be the set of polynomials in <span class="math inline">\(n\)</span> variables of degree <span class="math inline">\(d\)</span>, then any <span class="math inline">\(f \in \mathbb{F}[x]_d\)</span> can be written as
+<span class="math display">\[
+f = c^\top[x]_d, \quad c \in \mathbb{F}^{s(n,d)}
+\]</span>
+with <span class="math inline">\([x]_d\)</span> the <strong>standard monomial basis</strong> in <span class="math inline">\(x\)</span> of degree up to <span class="math inline">\(d\)</span>. For example, when <span class="math inline">\(x = (x_1,x_2)\)</span>, then
+<span class="math display">\[
+[x]_2 = \begin{bmatrix} 1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 \end{bmatrix}.
+\]</span></p>
+<p>Let <span class="math inline">\(G\)</span> be a set of polynomials, and <span class="math inline">\(\mathbb{F}[G]\)</span> denote the set of all polynomials that can be written as
+<span class="math display">\[
+\sum_{\alpha} c_\alpha g_1^{\alpha_1} \cdots g_k^{\alpha_k}, \quad c_\alpha \in \mathbb{F}, g_1,\dots,g_k \in G
+\]</span>
+with finitely many nonzero coefficients. The polynomials in <span class="math inline">\(G\)</span> are called <strong>generators</strong> and <span class="math inline">\(G\)</span> is called a <strong>generator set</strong> for <span class="math inline">\(\mathbb{F}[G]\)</span>. Clearly, the set
+<span class="math display">\[
+G = \{1, x_1, \dots, x_n\}
+\]</span>
+is a generator set for <span class="math inline">\(\mathbb{F}[x]\)</span>.</p>
+<p>We consider next ideals, which are subrings with an “absorbent” property.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Ideal" class="definition"><strong>Definition 4.5  (Ideal) </strong></span>Let <span class="math inline">\(R\)</span> be a commutative ring. A subset <span class="math inline">\(I \subset R\)</span> is an ideal if it satisfies</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(0 \in I\)</span>.</p></li>
+<li><p>If <span class="math inline">\(a, b \in I\)</span>, then <span class="math inline">\(a + b \in I\)</span>.</p></li>
+<li><p>If <span class="math inline">\(a \in I\)</span> and <span class="math inline">\(b \in R\)</span>, then <span class="math inline">\(a \cdot b \in I\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>A simple example of an ideal is the set of even integers, considered as a subset of the integer ring <span class="math inline">\(\mathbb{Z}\)</span>. If the ideal <span class="math inline">\(I\)</span> contains the multiplicative identity “<span class="math inline">\(1\)</span>”, then <span class="math inline">\(I = R\)</span>. For a tuple <span class="math inline">\(h = (h_1,\dots,h_s)\)</span> of polynomials in <span class="math inline">\(\mathbb{F}[x]\)</span>, <span class="math inline">\(\mathrm{Ideal}[h]:= \mathrm{Ideal}[h_1,\dots,h_m]\)</span> denotes the smallest ideal containing <span class="math inline">\(h\)</span>, or equivalently
+<span class="math display">\[
+\mathrm{Ideal}[h] = h_1 \cdot \mathbb{F}[x] + \cdots + h_s \cdot \mathbb{F}[x].
+\]</span>
+The set <span class="math inline">\(\mathrm{Ideal}[h]\)</span> is called the ideal generated by <span class="math inline">\(h\)</span>. Every ideal of <span class="math inline">\(\mathbb{F}[x]\)</span> is generated by finitely many polynomials, i.e., every ideal is <strong>finitely generated</strong>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:HilbertBasisTheorem" class="theorem"><strong>Theorem 4.1  (Hilbert Basis Theorem) </strong></span>For every ideal <span class="math inline">\(I \subseteq \mathbb{F}[x]\)</span>, there exist finitely many polynomials <span class="math inline">\(g_1,\dots,g_m \in I\)</span> such that <span class="math inline">\(I = \mathrm{Ideal}[g_1,\dots,g_m]\)</span>.</p>
+</div>
+</div>
+<p>We define the concept of an <strong>algebraic variety</strong> as the zero set of a set of polynomial equations.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:AffineVariety" class="definition"><strong>Definition 4.6  (Affine Variety) </strong></span>Let <span class="math inline">\(f_1,\dots,f_s \in \mathbb{F}[x_1,\dots,x_n]\)</span> and <span class="math inline">\(x = (x_1,\dots,x_n)\)</span>, and the set <span class="math inline">\(V\)</span> be
+<span class="math display">\[
+V_{\mathbb{F}}(f_1,\dots,f_s) = \{ x \in \mathbb{F}^{n}\mid f_i(x) = 0, i=1,\dots,s \}.
+\]</span>
+We call <span class="math inline">\(V_{\mathbb{F}}(f_1,\dots,f_s)\)</span> the affine variety defined by <span class="math inline">\(f_1,\dots,f_s\)</span>.</p>
+</div>
+</div>
+<p>Similarly, let <span class="math inline">\(I \subset \mathbb{F}[x]\)</span> be an ideal, we denote its zero set as
+<span class="math display">\[
+V_{\mathbb{F}}(I) = \{ x \in \mathbb{F}^n \mid f(x) = 0, \forall f \in I \}.
+\]</span>
+Since the ideal is finitely generated, we have
+<span class="math display">\[
+V_{\mathbb{F}}(I) = V_{\mathbb{F}}(g_1,\dots,g_m),
+\]</span>
+where <span class="math inline">\(g_1,\dots,g_m\)</span> are the generators of <span class="math inline">\(I\)</span>.</p>
+<p>The set of polynomials that vanish in a given variety, i.e.,
+<span class="math display">\[
+I(V)= \{ f \in \mathbb{F}[x] \mid f(x) = 0, \forall x \in V \},
+\]</span>
+is an ideal, called the <strong>vanishing ideal</strong> of <span class="math inline">\(V\)</span>.</p>
+<p>We define the <strong>radical</strong> of an ideal.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:Radical" class="definition"><strong>Definition 4.7  (Radical) </strong></span>Let <span class="math inline">\(I \subset \mathbb{F}[x]\)</span> be an ideal. The radical of <span class="math inline">\(I\)</span>, denoted <span class="math inline">\(\sqrt{I}\)</span>, is the set
+<span class="math display">\[
+\sqrt{I} := \{ f \mid f^k \in I \text{ for some integer }k \}.
+\]</span></p>
+</div>
+</div>
+<p>It is clear that <span class="math inline">\(I \subset \sqrt{I}\)</span>, and it can be shown that <span class="math inline">\(\sqrt{I}\)</span> is also a polynomial ideal.</p>
+<p>Given an ideal <span class="math inline">\(I\)</span> and <span class="math inline">\(V_{\mathbb{C}}(I)\)</span>, it is clear that any <span class="math inline">\(f \in I\)</span> vanishes on <span class="math inline">\(V_{\mathbb{C}}(I)\)</span>, that is
+<span class="math display">\[
+I \subseteq I(V_{\mathbb{C}}(I)).
+\]</span>
+However, not all polynomials that vanish on <span class="math inline">\(V_{\mathbb{C}}(I)\)</span> belong to <span class="math inline">\(I\)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:HilbertNull" class="theorem"><strong>Theorem 4.2  (Hilbert's Nullstellensatz) </strong></span>Let <span class="math inline">\(I \subseteq \mathbb{C}[x]\)</span> be an ideal.</p>
+<ul>
+<li><p>(Weak Nullstellensatz) If <span class="math inline">\(V_{\mathbb{C}}(I) = \emptyset\)</span>, then <span class="math inline">\(1 \in I\)</span>.</p></li>
+<li><p>(Strong Nullstellensatz) For <span class="math inline">\(f \in \mathbb{C}[x]\)</span>, if <span class="math inline">\(f(u) = 0\)</span> for all <span class="math inline">\(u \in V_{\mathbb{C}}(I)\)</span>, then <span class="math inline">\(f^k \in I\)</span> for some integer <span class="math inline">\(k \geq 1\)</span>, i.e., <span class="math inline">\(I(V_{\mathbb{C}}(I)) = \sqrt{I}\)</span>.</p></li>
+</ul>
+</div>
+</div>
+<p>Let us see an example of Hilbert’s Nullstellensatz.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:HilbertNullstellensatz" class="example"><strong>Example 4.1  (Hilbert's Nullstellensatz) </strong></span>Consider the ideal
+<span class="math display">\[
+I=\mathrm{Ideal}[x_1^2 x_2^3, x_1 x_2^4].
+\]</span>
+The affine variety defined by <span class="math inline">\(I\)</span> is
+<span class="math display">\[
+V = V_{\mathbb{C}}(I) = \{ (x_1,x_2) \in \mathbb{C}^2 \mid x_1^2 x_2^3 = 0, x_1 x_2^4=0 \}.
+\]</span>
+It is easy to see that the variety is the union of the two coordinate axes <span class="math inline">\(x_1=0\)</span> and <span class="math inline">\(x_2 = 0\)</span>.</p>
+<p>Therefore, the polynomial <span class="math inline">\(x_1x_2\)</span> vanishes on the variety <span class="math inline">\(V\)</span>, but <span class="math inline">\(x_1 x_2\)</span> does not belong to the ideal <span class="math inline">\(I\)</span> (because the degree is lower).</p>
+<p>We claim that
+<span class="math display">\[
+\sqrt{I} = \mathrm{Ideal}[x_1 x_2].
+\]</span>
+Indeed, <span class="math inline">\(x_1 x_2 \in \sqrt{I}\)</span> because
+<span class="math display">\[
+(x_1x_2)^3 = x_1^3 x_2^3 = x_1 \cdot x_1^2 x_3^3 \in I.
+\]</span>
+Conversely, if <span class="math inline">\(f \in \sqrt{I}\)</span>, then <span class="math inline">\(f^k \in I\)</span> for some integer <span class="math inline">\(k\)</span>, i.e.,
+<span class="math display">\[
+f^k = x_1^2 x_2^3 p(x) + x_1 x_2^4 q(x) = x_1 x_2 r(x)
+\]</span>
+which implies <span class="math inline">\(f^k \in \mathrm{Ideal}[x_1 x_2]\)</span>. Therefore, all the polynomials that vanish on the variety <span class="math inline">\(V\)</span> can be generated by <span class="math inline">\(x_1 x_2\)</span>.</p>
+<p>As another example, consider the ideal generated by a single univariate polynomial
+<span class="math display">\[
+I = \mathrm{Ideal}[f], \quad f = \prod_{i=1}^{s} (x - a_i)^{n_i}
+\]</span>
+with <span class="math inline">\(a_i \neq a_j\)</span> for <span class="math inline">\(i \neq j\)</span> the unique roots of the polynomial <span class="math inline">\(f\)</span>. Clearly, the affine variety defined by <span class="math inline">\(I\)</span> is the set of unique roots:
+<span class="math display">\[
+V= V_{\mathbb{C}}(I) = \{a_1,\dots,a_s\}.
+\]</span>
+The vanishing ideal of <span class="math inline">\(V\)</span> is
+<span class="math display">\[
+\sqrt{I} = \mathrm{Ideal}[(x-a_1)\cdots (x-a_s)].
+\]</span></p>
+</div>
+</div>
+</div>
+<div id="gröbner-bases" class="section level3 hasAnchor" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Gröbner Bases<a href="SOS.html#gröbner-bases" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A polynomial ideal can have different “descriptions” in terms of its generators. We will now focus on a particular type of description that is better than the others.</p>
+<p>Let’s first define a monomial ordering.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:MonomialOrdering" class="definition"><strong>Definition 4.8  (Monomial Ordering) </strong></span>A monomial ordering on <span class="math inline">\(\mathbb{C}[x]\)</span> is a binary relation <span class="math inline">\(\succ\)</span> on <span class="math inline">\(\mathbb{N}^n\)</span>, i.e., the exponents of the monomials, that satisfies</p>
+<ol style="list-style-type: decimal">
+<li><p>The relation <span class="math inline">\(\succ\)</span> is a total ordering, i.e., given any two monomials <span class="math inline">\(x^{\alpha}, x^{\beta}\)</span>, we must have either <span class="math inline">\(x^{\alpha} \succ x^{\beta}\)</span>, or <span class="math inline">\(x^\beta \succ x^\alpha\)</span>, or <span class="math inline">\(x^\alpha = x^\beta\)</span>.</p></li>
+<li><p>If <span class="math inline">\(x^\alpha \succ x^\beta\)</span>, then <span class="math inline">\(x^\alpha \cdot x^\gamma \succ x^\beta \cdot x^\gamma\)</span> for any monomial <span class="math inline">\(x^\gamma\)</span>.</p></li>
+<li><p>The relation <span class="math inline">\(\succ\)</span> is well ordered, i.e., every nonempty set has a smallest element under <span class="math inline">\(\succ\)</span>.</p></li>
+</ol>
+</div>
+</div>
+<p>There are several monomial orderings of interest in computational algebra.</p>
+<ul>
+<li><p><strong>Lexicographic</strong> (“dictionary”). Here <span class="math inline">\(\alpha \succ_{\mathrm{lex}}\beta\)</span> if the left-most nonzero entry of <span class="math inline">\(\alpha - \beta\)</span> is positive. Note that a particular ordering of the variables is assumed.</p></li>
+<li><p><strong>Graded lexicographic</strong>. Sort first by total degree, then Lexicographic, i.e., <span class="math inline">\(\alpha \succ_{\mathrm{grlex}}\beta\)</span> if <span class="math inline">\(|\alpha| &gt; |\beta|\)</span>, or <span class="math inline">\(|\alpha| = |\beta|\)</span> and <span class="math inline">\(\alpha \succ_{\mathrm{lex}}\beta\)</span>.</p></li>
+<li><p><strong>Graded reverse lexicographic</strong>. Here <span class="math inline">\(\alpha \succ_{\mathrm{grevlex}}\beta\)</span> if <span class="math inline">\(|\alpha| &gt; |\beta|\)</span> or <span class="math inline">\(|\alpha| = |\beta|\)</span> but the right-most nonzero entry of <span class="math inline">\(\alpha - \beta\)</span> is negative. This ordering, although somewhat nonintuitive, has some desirable computational properties.</p></li>
+</ul>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:MonomialOrdering" class="example"><strong>Example 4.2  (Monomial Ordering) </strong></span>Consider the polynomial ring <span class="math inline">\(\mathbb{C}[x,y]\)</span> in two variables.</p>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bochnak13book-real" class="csl-entry">
+Bochnak, Jacek, Michel Coste, and Marie-Françoise Roy. 2013. <em>Real Algebraic Geometry</em>. Vol. 36. Springer Science &amp; Business Media.
+</div>
+<div id="ref-cox13book-ideals" class="csl-entry">
+Cox, David, John Little, and Donal OShea. 2013. <em>Ideals, Varieties, and Algorithms: An Introduction to Computational Algebraic Geometry and Commutative Algebra</em>. Springer Science &amp; Business Media.
+</div>
+<div id="ref-dummit04book-abstract" class="csl-entry">
+Dummit, David Steven, and Richard M Foote. 2004. <em>Abstract Algebra</em>. Vol. 3. Wiley Hoboken.
+</div>
+<div id="ref-lang12book-algebra" class="csl-entry">
+Lang, Serge. 2012. <em>Algebra</em>. Vol. 211. Springer Science &amp; Business Media.
+</div>
+</div>
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://semidefinite.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Shor.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/Semidefinite/blob/main/04-SOSRelaxation.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["semidefinite-optimization-relaxation.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
