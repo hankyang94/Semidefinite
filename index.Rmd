@@ -96,6 +96,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\grevlexsucc}{\succ_{\mathrm{grevlex}}}
 \newcommand{\grevlexprec}{\prec_{\mathrm{grevlex}}}
 \newcommand{\abs}[1]{|#1|}
+\newcommand{\initial}[1]{\mathrm{in}(#1)}
 
 
 
