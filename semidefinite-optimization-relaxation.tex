@@ -163,7 +163,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-21}
+\date{2024-02-26}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -196,6 +196,8 @@ arc=4pt}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
 \newcommand{\calS}{\mathcal{S}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calI}{\mathcal{I}}
 \newcommand{\mathx}{\mathrm{x}}
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
@@ -273,6 +275,7 @@ arc=4pt}
 \newcommand{\grevlexprec}{\prec_{\mathrm{grevlex}}}
 \newcommand{\abs}[1]{|#1|}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
+\newcommand{\NormalForm}{\mathrm{NormalForm}}
 
 \hypertarget{preface}{%
 \chapter*{Preface}\label{preface}}
@@ -3503,7 +3506,474 @@ Computing a Grobner basis (e.g., using the \href{https://www.mathworks.com/help/
 The standard monomials are \(\{ 1,x,y,xy \}\).
 \end{example}
 
-We will see that Grobner basis is a powerful tool with many applications in computational algebra.
+We will see that Grobner basis is a powerful tool with many applications in computational algebra. For a brief introduction to Grobner Basis, see \citep{sturmfels05notes-grobner}.
+
+\hypertarget{quotient-ring}{%
+\subsection{Quotient Ring}\label{quotient-ring}}
+
+Given an ideal \(I\), we can immediately define a notion of \textbf{equivalence classess}, where we identify two elements in the ring if and only if their difference is in the ideal.
+
+For example, in the ring of integers \(\mathbb{Z}\), the set of even integers is an ideal. We can identify two integers as the same if their difference is even. This effectively divides the ring \(\mathbb{Z}\) into two equivalence classess, the set of odd and even integers.
+
+We can do the same for the ring of polynomials \(\mathbb{C}[x]\) given an ideal \(I\).
+
+\begin{definition}[Congruence]
+\protect\hypertarget{def:CongruenceIdeal}{}\label{def:CongruenceIdeal}Let \(I \subset \mathbb{C}[x]\) be an ideal. We are two polynomials \(f,g \in \mathbb{C}[x]\) is \textbf{congruent} modulo \(I\), written as
+\[
+f \equiv g \quad \text{mod } I,
+\]
+if \(f - g \in I\).
+\end{definition}
+
+It is easy to see that this is an \href{https://en.wikipedia.org/wiki/Equivalence_relation}{equivalence relation}, i.e., it is reflexive, symmetric, and transitive. Therefore, an ideal \(I\) partitions \(\mathbb{C}[x]\) into equivalence classes, where two polynomials are the same if their difference belongs to the ideal. This allows us to define the notion of a quotient ring.
+
+\begin{definition}[Quotient Ring]
+\protect\hypertarget{def:QuotientRing}{}\label{def:QuotientRing}The quotient \(\mathbb{C}[x]/I\) is the set of equivalence classes for congruence modulo \(I\).
+\end{definition}
+
+The quotient \(\mathbb{C}[x]/I\) inherits the ring structure of \(\mathbb{C}[x]\). With the addition and multiplication operations defined between equivalence classes, \(\mathbb{C}[x]/I\) becomes a ring, known as the quotient ring. Indeed, given a polynomial \(p\), the set of all polynomials equivalent to \(p\) is denoted as
+\[
+[p]:= \{ p + q \mid q \in I \}.
+\]
+We have \([p] = [q]\) if and only if \(p - q \in I\). Given two equivalent classes \([p]\) and \([q]\), the addition and multiplication are defined as
+\[
+[p] + [q] = [p+q], \quad [p] \cdot [q] = [p q].
+\]
+One can verify that \((\mathbb{C}[x],+,\cdot)\) with \(+\) and \(\cdot\) defined above forms a ring structure.
+
+The quotient ring \(\mathbb{C}[x]/I\) is in fact a vector space, and the Grobner basis gives us a way to find a set of basis in the quotient ring! Let \(G\) be a Grobner basis of the ideal \(I\), and recall from Definition \ref{def:InitialIdeal} that a monomial is standard if it does not belong to the initial ideal \(\mathrm{in}(I)\). This implies that when the Grobner basis is available, the set of all \textbf{standard monomials} can be directly read off from the Grobner basis, as in Example \ref{exm:GrobnerBasis}. Let \(S\) be this set of standard monomials, then the basis of the quotient ring is simply
+\[
+\{ [s] \mid s\in S \}.
+\]
+Note that the quotient ring needs not be finite-dimensional as the set of standard monomials can be infinite. Given such a basis of the quotient ring, we can associate every polynomial with a \textbf{normal form} that is a linear combination of the standard monomials.
+
+\begin{definition}[Normal Form]
+\protect\hypertarget{def:NormalForm}{}\label{def:NormalForm}
+
+Let \(G\) be a Grobner basis of the ideal \(I \subset \mathbb{C}[x]\). Given any \(p \in \mathbb{C}[x]\), there exists a unique polynomial \(\bar{p}\), called the \textbf{normal form} of \(p\) such that
+
+\begin{itemize}
+\item
+  \(p\) and \(\bar{p}\) are congruent mod \(I\), i.e., \(p - \bar{p} \in I\).
+\item
+  Only standard monomials appear in \(\bar{p}\).
+\end{itemize}
+
+\end{definition}
+
+Note that since \(p - \bar{p} \in I\), we have
+\[
+p = \sum_{i}^s\lambda_i g_i + \bar{p}, \quad g_i \in G.
+\]
+Therefore, the normal form \(\bar{p}\) can be interpreted as the ``reminder'' of \(p\) divided by the ideal \(I\). The unique property of the Grobner basis ensures that the normal form is unique and it is just a \(\mathbb{C}\)-combination of the standard monomials.
+
+As a consequence, we can check the ideal membership of a given polynomial. Indeed, a polynomial \(p\) belongs to the ideal \(I\) if and only if its normal form is the zero polynomial.
+
+See an example of using Grobner basis to compute the normal form in the \href{https://www.maplesoft.com/support/help/maple/view.aspx?path=Groebner\%2FNormalForm}{Maple software}.
+
+\hypertarget{zero-dimensional-ideal}{%
+\subsection{Zero-dimensional Ideal}\label{zero-dimensional-ideal}}
+
+In practice, we are often interested in polynomial systems that have only a finite number of solutions, in which case the associated ideal is called zero-dimensional.
+
+\begin{definition}[Zero-Dimensional Ideal]
+\protect\hypertarget{def:ZeroDimensional}{}\label{def:ZeroDimensional}An ideal \(I\) is zero-dimensional if the associated affine variety \(V_{\mathbb{C}}(I)\) is a finite set.
+\end{definition}
+
+Note that the variety \(V_{\mathbb{C}}(I)\) having a finite number of points is stronger than \(V_{\mathbb{R}}(I)\) have a finite number of points.
+
+The following result characterizes when an ideal is zero-dimensional.
+
+\begin{theorem}[Finiteness Theorem]
+\protect\hypertarget{thm:FiniteTheorem}{}\label{thm:FiniteTheorem}
+
+Let \(I \subset \mathbb{C}[x]\) be an ideal. Fix a monomial ordering and let \(G\) be a Grobner basis of \(I\). Then the following statements are equivalent.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The ideal \(I\) is finite-dimensional (i.e., \(V(I)\) is a finite set of points).
+\item
+  The quotient ring \(\mathbb{C}[x]/I\) is a finite-dimensional vector space (i.e., there are a finite number of standard monomials).
+\item
+  For each \(x_i, i=1,\dots,n\), there exists an integer \(m_i \in \mathbb{N}\) such that \(x_i^{m_i}\) is the leading monomial of some \(g \in G\).
+\end{enumerate}
+
+\end{theorem}
+
+Let us work out an example.
+
+\begin{example}[Zero-dimensional Ideal]
+\protect\hypertarget{exm:ZeroDIdeal}{}\label{exm:ZeroDIdeal}Consider the ideal in \(\mathbb{C}[x,y]\):
+\[
+I = \mathrm{Ideal}[xy^3-x^2, x^3y^2 - y].
+\]
+Using the graded lexicographic monomial ordering, we obtain the reduced Grobner basis
+\[
+G = \{ x^3 y^2 - y, x^4 - y^2,  xy^3 - x^2, y^4 - xy \}.
+\]
+We can see that \(x^4\) is the leading monomial of \(x^4 - y^2\), and \(y^4\) is the leading monomial of \(y^4 - xy\). Therefore, we know \(I\) is zero-dimensional. We can also see this by checking the number of standard monomials. The standard monomials are those that do not belong to the initial ideal \(\mathrm{in}(I)\), which in the case of a Grobner basis, is simply
+\[
+\mathrm{in}(I) = \mathrm{Ideal}[x^3 y^2, x^4, xy^3, y^4].
+\]
+This is a monomial ideal and hence is ``closed upwards''. The shaded gray areas in Fig. \ref{fig:ZeroDimensional1} shows all the monomials in the initial ideal, whose boundary forms a ``staircase''. The standard monomials, shown as blue squares in the figure, are those that are below the staircase:
+\[
+1,x,x^2,x^3,y,xy,x^2 y, x^3 y, y^2, xy^2, x^2 y^2, y^3.
+\]
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/zero_dimensional_1} 
+
+}
+
+\caption{Initial ideal and the standard monomials with graded lexicographic monomial ordering.}\label{fig:ZeroDimensional1}
+\end{figure}
+
+We can change the monomial ordering and see what happens. Let us use the lexicographic monomial ordering this time. We obtain the reduced Grobner basis
+\[
+G = \{ x^2-y^6, xy - y^4, y^{11} - y \}.
+\]
+The monomial \(x^2\) is the leading monomial of \(x^2 - y^6\), and the monomial \(y^{11}\) is the leading monomial of \(y^11 - y\). Hence, the ideal is verified to be zero-dimensional as well. A different monomial ordering does change the set of standard monomials. Fig. \ref{fig:ZeroDimensional2} shows the initial ideal and the standard monomials (blue squares) under the staircase:
+\[
+1,x,y,y^2,y^3,y^4,y^5,y^6,y^7,y^8,y^9,y^{10}.
+\]
+Though the set of standard monomials has changed, the number of standard monomials remains to be \(12\). This makes sense because the dimension of the quotient ring \(\mathbb{C}[x]/I\) should not change.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/zero_dimensional_2} 
+
+}
+
+\caption{Initial ideal and the standard monomials with lexicographic monomial ordering.}\label{fig:ZeroDimensional2}
+\end{figure}
+
+The code for computing the Grobner basis can be found \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/zero_d_ideal.m}{here}.
+\end{example}
+
+If an ideal \(I\) is zero-dimensional, can we find all the points in the affine variety \(V(I)\)? The next result shows that the number of points in \(V(I)\) (counting multiplicity) is precisely the number of standard monomials.
+
+\begin{theorem}[Number of Roots]
+\protect\hypertarget{thm:PolySysRoots}{}\label{thm:PolySysRoots}If an ideal \(I \subset \mathbb{C}[x]\) is zero-dimensional, then the number of standard monomials equals to the cardinality of \(V(I)\), counting multiplicities.
+\end{theorem}
+
+Once a set of standard monomials is found, we can also design a numerical procedure to compute the roots of the polynomial system of equations. For each \(x_i,\dots,x_n\), define the multiplication mapping
+\[
+\mathcal{M}_{x_i}: \mathbb{C}[x]/I \rightarrow \mathbb{C}[x]/I, \quad [p] \rightarrow [x_i p].
+\]
+It can be shown that \(\mathcal{M}_{x_i}\) is a linear mapping. Let \(M_{x_i}\) be the matrix representation of this linear map using \(S\), the set of standard monomials, as the basis of the quotient ring \(\mathbb{C}[x]/I\). \(M_{x_i}\) is called the \textbf{companion matrix} or \textbf{multiplication matrix} of the ideal \(I\) with respect to \(x_i\). The companion matrices \(M_{x_1},\dots,M_{x_n}\) commute with each other and share common eigenvectors. The affine variety \(V_{\mathbb{C}}(I)\) can be determined by eigenvalues of the companion matrices.
+
+\begin{theorem}[Stickelberger's Theorem]
+\protect\hypertarget{thm:StickelbergerTheorem}{}\label{thm:StickelbergerTheorem}Let \(I \subset \mathbb{C}[x]\) be a zero-dimensional ideal and let \(M_{x_1},\dots,M_{x_n}\) be the companion matrices, then
+\[
+V_{\mathbb{C}}(I) = \{ (\lambda_1,\dots,\lambda_n) \mid \exists v \in \mathbb{C}^D \backslash \{0 \}, M_{x_i} v = \lambda_i v, i=1,\dots,n  \},
+\]
+where \(D\) is the dimension of the quotient ring \(\mathbb{C}[x]/I\).
+\end{theorem}
+
+With Stickelberger's Theorem, one can further show that a zero-dimensional ideal \(I\) is radical if and only if the companion matrices \(M_{x_1},\dots,M_{x_n}\) are simultaneously diagonalizable, which occurs if and only if the cardinality \(|V_{\mathbb{C}}(I)| = D\).
+
+Let us make Stickelberger's Theorem concrete through an example.
+
+\begin{example}[Solving Polynomial Equations]
+\protect\hypertarget{exm:SolvingPolynomialSystem}{}\label{exm:SolvingPolynomialSystem}Consider the ideal \(I \subset \mathbb{C}[x,y,z]\)
+\[
+I = \mathrm{Ideal}[xy-z, yz -x, zx - y].
+\]
+Choosing lexicographic monomial ordering, we get the Groebner basis
+\[
+G = \{ z - yx, y^2 - x^2, yx^2 - y, x^3 - x \}.
+\]
+We can see that this ideal is zero-dimensional (due to \(z\), \(y^2\), \(x^3\) being the leading monomials in \(G\)). The standard monomials are
+\[
+S = \{ 1, x, x^2, y, yx \}.
+\]
+We now need to form the matrices \(M_x, M_y, M_z\).
+This can be done as follows.
+\[
+\mathrm{NormalForm}\left(
+x \cdot \begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\right) = 
+\begin{bmatrix}
+x \\
+x^2 \\
+x \\
+xy \\
+y \end{bmatrix} = 
+\underbrace{\begin{bmatrix}
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 0 
+\end{bmatrix}}_{M_x}
+\begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\]
+\[
+\mathrm{NormalForm}\left(
+y \cdot \begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\right) = 
+\begin{bmatrix}
+y \\
+xy \\
+y \\
+x^2 \\
+x \end{bmatrix} = 
+\underbrace{\begin{bmatrix}
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 
+\end{bmatrix}}_{M_y}
+\begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\]
+\[
+\mathrm{NormalForm}\left(
+z \cdot \begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\right) = 
+\begin{bmatrix}
+yx \\
+y \\
+xy \\
+x \\
+x^2 \end{bmatrix} = 
+\underbrace{\begin{bmatrix}
+0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 
+\end{bmatrix}}_{M_z}
+\begin{bmatrix}
+1 \\
+x \\
+x^2 \\
+y \\
+yx 
+\end{bmatrix}
+\]
+We can then simultaneously diagonalize \(M_x,M_y,M_z\) using the following matrix
+\[
+V = \frac{1}{4}\begin{bmatrix}
+4 & 0 & -4 & 0 & 0 \\
+0 & 1 & 1 & 1 & 1\\
+0 & 1 & 1 & -1 & -1 \\
+0 & -1 & 1 & 1 & -1 \\
+0 & -1 & 1 & -1 & 1
+\end{bmatrix}, \quad 
+V^{-1}= \begin{bmatrix}
+1 & 1 & 1 & 1 & 1\\
+0 & 1 & 1 & -1 & -1\\
+0 & 1 & 1 & 1 & 1\\
+0 & 1 & -1 & 1 & -1 \\
+0 & 1 & -1 & -1 & 1
+\end{bmatrix}.
+\]
+The result is
+\begin{equation}
+\begin{split}
+V M_x V^{-1}&= \mathrm{diag}(0 , 1, 1, -1, -1)\\
+V M_y V^{-1}&= \mathrm{diag}(0 , 1, -1, 1, -1)\\
+V M_z V^{-1}&= \mathrm{diag}(0 , 1, -1, -1, 1)
+\end{split}.
+\end{equation}
+Therefore, the five roots of the polynomial system is
+\[
+\begin{pmatrix}
+x \\ y \\ z 
+\end{pmatrix} =
+ \left\{ 
+    \begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix},
+    \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix},
+    \begin{pmatrix} 1 \\ -1 \\ -1 \end{pmatrix},
+    \begin{pmatrix} -1 \\ 1 \\ -1 \end{pmatrix},
+    \begin{pmatrix} -1 \\ -1 \\ 1 \end{pmatrix}
+ \right\} .
+\]
+\end{example}
+
+In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots \citep{corless97-reordered}. We will see that in the homework.
+
+\hypertarget{algebraic-and-semialgebraic-sets}{%
+\subsection{Algebraic and Semialgebraic Sets}\label{algebraic-and-semialgebraic-sets}}
+
+An \textbf{algebraic set} in \(\mathbb{R}^{n}\) is the set of common \textbf{real} roots of a set of polynomials. For instance, the unit sphere is an algebraic set because it is real zero set of the polynomial \(x_1^2 + \dots + x_n^2 - 1\).
+
+Intersections and unions of finitely many algebraic sets are again algebraic sets. A nonempty algebraic set is said to be \textbf{irreducible} if it cannot be written as a union of two distinct proper algebraic subsets; otherwise it is called reducible. Every algebraic set is the union of finitely many irreducible ones.
+
+More general than algebraic sets are \textbf{semialgebraic sets}.
+
+\begin{definition}[Basic Semialgebraic Set]
+\protect\hypertarget{def:BasisSemialgebraic}{}\label{def:BasisSemialgebraic}A set \(S \subset \mathbb{R}^{n}\) defined as
+\[
+S = \{ x \in \mathbb{R}^{n} \mid f_i(x) \triangleright_i 0, i=1,\dots,\ell  \},
+\]
+where for each \(i\), \(\triangleright_i\) is one of \(\{ \geq, >, =, \neq \}\) and \(f_i(x) \in \mathbb{R}[x]\), is called a basic semialgebraic set.
+
+A basic closed semialgebraic set is a set of the form
+\[
+S = \{ x \in \mathbb{R}^{n} \mid f_1\geq 0, \dots f_\ell(x) \geq 0 \}.
+\]
+\end{definition}
+
+Every basic semialgebraic set can be expressed with polynomial inequalities of the form \(f(x) \geq 0\) and a single inequality \(g \neq 0\).
+
+\begin{definition}[Semialgebraic Set]
+\protect\hypertarget{def:SemialgebraicSet}{}\label{def:SemialgebraicSet}A finite union of basic semialgebraic sets in \(\mathbb{R}^{n}\) is called a semialgebraic set, and a finite union of basic closed semialgebraic sets is a closed semialgebraic set.
+\end{definition}
+
+Semialgebraic sets are closed under finite unions, finite intersections, and complementation. The following theorem states that they are also closed under projections.
+
+\begin{theorem}[Tarski-Seidenberg Theorem]
+\protect\hypertarget{thm:TarskiSeidenberg}{}\label{thm:TarskiSeidenberg}Let \(S \subset \mathbb{R}^{k+n}\) be a semialgebraic set and \(\pi : \mathbb{R}^{k+n} \rightarrow \mathbb{R}^{n}\) be the projection map that sends \((y,x) \mapsto x\). Then \(\pi(S)\) is a semialgebraic set in \(\mathbb{R}^{n}\).
+\end{theorem}
+
+Note that an algebraic set is not closed under projection. For example consider the algebraic set defined by \(xy = 1\). The projection of this algebraic set to \(x\) is defined by \(x \neq 0\), which is not an algebraic set, but a semialgebraic set.
+
+Semialgebraic functions are similarly defined. Let \(f: D \rightarrow \mathbb{R}^{}\) be a real-valued function where the domain \(D\) is a semialgebraic set. Then \(f\) is called a \textbf{semialgebraic function} if the graph \(\{ (x,y) \mid x \in D, f(x)=y \}\) is a semialgebraic set.
+
+\hypertarget{sos-and-nonnegative-polynomials}{%
+\section{SOS and Nonnegative Polynomials}\label{sos-and-nonnegative-polynomials}}
+
+\hypertarget{nonnegative-polynomials}{%
+\subsection{Nonnegative polynomials}\label{nonnegative-polynomials}}
+
+Consider polynomials in \(n\) variables with real coefficients, i.e., the set \(\mathbb{R}[x]\). A polynomial \(p(x_1,\dots,x_n)\) is nonnegative if
+\[
+p(x_1,\dots,x_n) \geq 0, \quad \forall (x_1,\dots,x_n) \in \mathbb{R}^{n}.
+\]
+
+Of couse, a natural question is, given a polynomial \(p(x)\), is it possible to efficiently decide whether \(p(x)\) is nonnegative?
+
+\textbf{Univariate Polynomials}. Let us start the discussion on univariate polynomials, i.e., polynomials in a single variable \(x\). A univariate polynomial of degree \(d\) can be written as
+\begin{equation}
+p(x) = p_d x^d + p_{d-1} x^{d-1} + \cdots + p_1 x + p_0.
+\label{eq:univariate-poly}
+\end{equation}
+Without loss of generality, we can assume \(p_d = 1\), in which case the polynomial is said to be \textbf{monic}. The univariate polynomial can also be written as
+\begin{equation}
+p(x) = p_d \prod_{i=1}^d (x - x_i),
+\label{eq:univariate-poly-root}
+\end{equation}
+with \(x_i,i=1,\dots,d\) its complex roots that may have multiplicities.
+
+How do we decide if \(p(x)\) is nonnegative? A simple necessary condition is that \(d\) must be even. Otherwise if \(d\) is odd, then either pushing \(x \rightarrow \infty\) or \(x \rightarrow -infinity\) will lead to \(p(x)\) negative.
+
+In certain cases it is easy to derive an explict characterization of nonnegativity.
+
+\begin{example}[Univaraite Quadratic Polynomial]
+\protect\hypertarget{exm:NonnegativeQuadratic}{}\label{exm:NonnegativeQuadratic}Let \(p(x) = x^2 + p_1 x + p_0\) be a monic quadratic polynomial. Clearly, \(p(x) \geq 0\) if and only if
+\[
+\min_{x} p(x) \geq 0.
+\]
+Since \(p(x)\) is convex, its global minimum can be easily computed by setting its gradient to zero, which gives
+\[
+x_\star = - \frac{p_1}{2}, \quad p(x_\star) = p_0 - \frac{p_1^2}{4}.
+\]
+Therefore, \(p(x)\) is nonnegative if and only if
+\[
+4 p_0 - p_1^2 \geq 0.
+\]
+\end{example}
+
+For general univariate polynomials, we describe a technique known as the Hermite method for deciding nonnegativity. Consider a monic polynomial as in \eqref{eq:univariate-poly} and \eqref{eq:univariate-poly-root} and define its associated \textbf{Hermite matrix} as the following \(d \times d\) symmetric Hankel matrix
+\[
+H_1(p) = \begin{bmatrix}
+s_0 & s_1 & \cdots & s_{d-1} \\
+s_1 & s_2 & \cdots & s_d \\
+\vdots & \vdots & \ddots & \vdots \\
+s_{d-1} & s_d & \cdots & s_{2d-2}
+\end{bmatrix}, \quad s_k = \sum_{j=1}^d x_j^k,
+\]
+where recall \(x_j,j=1,\dots,d\) are the roots of \(p\). The quantities \(s_k\) are known as the power sums. The follow lemma states that the power sums can be computed without computing the roots.
+
+\begin{lemma}[Newton Identities]
+\protect\hypertarget{lem:NewtonIdentity}{}\label{lem:NewtonIdentity}The power sums \(s_k\) satisfy the following recursive equations known as the Newton identities:
+\[
+s_0 = d, \quad s_k = -1\left(k p_{d-k} + \sum_{i=1}^{k-1} p_{d-i} s_{k-i} \right), k=1,2,\dots.
+\]
+\end{lemma}
+
+After forming the Hermite matrix, its rank and signature tells us the number of complex and real roots.
+
+\begin{theorem}[Hermite Matrix]
+\protect\hypertarget{thm:HermiteMatrix}{}\label{thm:HermiteMatrix}The rank of the Hermite matrix \(H_1(p)\) is equal to the number of distinct complex roots. The signature of \(H_1(p)\) is equal to the number of distinct real roots.
+\end{theorem}
+
+Recall that given a symmetric matrix \(A\), its \textbf{inertia}, denoted \(\mathcal{I}(A)\), is the triplet \((n_+, n_0, n_{-})\), where \(n_+,n_0, n_-\) are the number of positive, zero, and negative eigenvalues, respectively. The \textbf{signature} of \(A\) is equal to \(n_+ - n_-\).
+
+With the Hermite matrix, we can decide nonnegativity.
+
+\begin{theorem}[Nonnegativity from Hermite Matrix]
+\protect\hypertarget{thm:NonnegativityHermite}{}\label{thm:NonnegativityHermite}
+
+Let \(p(x)\) be a monic polynomial of degree \(2d\). Then the following statements are equivalent.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The polynomial \(p(x)\) is strictly positive.
+\item
+  The polynomial \(p(x)\) has no real roots.
+\item
+  The inertia of the Hermite matrix is \(\mathcal{I}(H_1(p)) = (k, 2d-k, k)\) for some \(1 \leq k \leq d\).
+\end{enumerate}
+
+\end{theorem}
+
+We can use this result on the quadratic example before.
+
+\begin{example}[Hermite Matrix of A Quadratic Polynomial]
+\protect\hypertarget{exm:HermiteQuadratic}{}\label{exm:HermiteQuadratic}Consider the quadratic polynomial \(p(x) = x^2 + p_1 x + p_0\). Using the Newton identifies, we have
+\[
+s_0 = 2, \quad s_1 = -p_1, \quad s_2 = p_1^2 - 2p_0.
+\]
+The Hermite matrix is then
+\[
+H_1(p) = \begin{bmatrix} 2 & - p_1 \\ -p_1 & p_1^2 - 2 p_0 \end{bmatrix}.
+\]
+Let \(\Delta = \det H_1(p) = p_1^2 - 4p_0\). The inertia of the Hermite matrix is
+\[
+\mathcal{I}(H_1(p)) = \begin{cases}
+(0,0,2) & \text{if } \Delta > 0 \\
+(0,1,1) & \text{if } \Delta = 0 \\
+(1,0,1) & \text{if } \Delta < 0.
+\end{cases}
+\]
+Thus, \(p\) is strictly positive if and only if \(\Delta < 0\).
+\end{example}
 
   \bibliography{book.bib}
 
