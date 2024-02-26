@@ -19,6 +19,8 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
 \newcommand{\calS}{\mathcal{S}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calI}{\mathcal{I}}
 \newcommand{\mathx}{\mathrm{x}}
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
@@ -97,6 +99,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\grevlexprec}{\prec_{\mathrm{grevlex}}}
 \newcommand{\abs}[1]{|#1|}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
+\newcommand{\NormalForm}{\mathrm{NormalForm}}
 
 
 
