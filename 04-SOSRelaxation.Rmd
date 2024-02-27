@@ -862,3 +862,251 @@ Thus, $p$ is strictly positive if and only if $\Delta < 0$.
 :::
 :::
 
+**Multivariate Polynomials**. Let us denote by $P_{n,2d}$ the set of nonnegative polynomials in $n$ variables with degree up to $2d$, i.e., 
+$$
+P_{n,2d} = \cbrace{f \in \poly{x}_{2d} \mid f(x) \geq 0, \forall x \in \Real{n}}.
+$$
+There are 
+$$
+s(n,2d) = \begin{pmatrix} n + 2d \\ 2d \end{pmatrix}
+$$
+coefficients for $f \in P_{n,2d}$. Notice that the constraint $f(x) \geq 0$ when fixing $x$ is an affine constraint in the coefficients of $p$. Therefore, $P_{n,2d}$ is in fact a convex set. Further, it is a proper cone.
+
+::: {.theorembox}
+::: {.theorem #ConeNonnegative name="Cone of Nonnegative Polynomials"}
+The set of nonnegative polynomials $P_{n,2d}$ is a proper cone (i.e., closed, convex, pointed, and solid) in $\poly{x}_{2d} \sim \Real{s(n,2d)}$.
+:::
+:::
+
+Let us see an example of quadratic polynomials.
+
+::: {.examplebox}
+::: {.example #ConeNonnegativeQuadratic name="Cone of Nonnegative Quadratic Polynomials"}
+Consider the cone $P_{n,2}$, nonnegative polynomials in $n$ variables of degree up to $2$. Such polynomials can be written as 
+$$
+p(x) = x\tran A x + 2 b\tran x + c,
+$$
+for some $A \in \sym{n}$, $b \in \Real{n}$, $c \in \Real{}$. Observe that we can write 
+$$
+p(x) = \begin{bmatrix} x \\ 1 \end{bmatrix}\tran \begin{bmatrix} A & b \\ b\tran & c \end{bmatrix} \begin{bmatrix} x \\ 1 \end{bmatrix},
+$$
+therefore $p(x) \geq 0$ if and only if 
+$$
+\begin{bmatrix} A & b \\ b\tran & 1 \end{bmatrix} \succeq 0.
+$$
+Thus, in this case the set $P_{n,2}$ is isomorphic to the positive semidefinite cone $\psd{n+1}$.
+:::
+:::
+
+One may wonder is it the case that $P_{n,2d}$, being a convex cone, will always have nice descriptions as in the previous example?
+
+Unfortunately the answer is no. In general the geometry of $P_{n,2d}$ is extremely complicated. In Example \@ref(exm:ConeNonnegativeQuadratic) we showed $P_{n,2}$ is isomorphic to $\psd{n+1}$ and hence it is **basic semialgebraic** (recall that the PSD cone can be described by a finite number of polynomial constraints). However, in general $P_{n,2d}$ is semialgebraic but not basic semialgebraic.
+
+::: {.examplebox}
+::: {.example #DegreeFourNonnegative name="Semialgebraic Set of Nonnegative Polynomials"}
+Consider the quartic univariate polynomial
+$$
+p(x) = x^4 + 2ax^2 + b, \quad a,b \in \Real{}.
+$$
+We are interested in finding conditions on $a,b$ such that $p(x) \geq 0$ for any $x \in \Real{}$.
+
+A formal analysis can be done via the discriminant of $p(x)$. But here we will leverage a powerful tool known as **quantifier elimination**, using cylindrical algebraic decomposition, to directly give us the answer. For example, we can use the quantifier elimination function in the Maple software.
+
+Fig. \@ref(fig:QuantifierEliminationQuartic) shows my query to Maple. The quantifier elimination algorithm produces me a set of conditions on $a,b$ such that $p(x) \geq 0$.
+
+```{r QuantifierEliminationQuartic, out.width='60%', fig.show='hold', fig.cap='Quantifier elimination in Maple.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/quantifier_elimination_quartic.png")
+```
+
+Plotting the conditions we get the blue region in Fig. \@ref(fig:NonnegativeQuartic). As we can see, the set of $(a,b)$ such that $p(x)$ is nonnegative is indeed a convex set, but it is not a basic semialgebraic set in the sense that it cannot be written as the feasible set of a finite number of polynomial constraints. However, it is a semialgebraic set that can be described by the union of several basic semialgebraic sets. 
+
+```{r NonnegativeQuartic, out.width='60%', fig.show='hold', fig.cap='Set of coefficients such that the polynomial is nonnegative.', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/nonnegative_quartic.png")
+```
+
+Another issue with the convex set shown in Fig. \@ref(fig:NonnegativeQuartic) is that there exists a zero-dimensional face (a vertex) that is not exposed, which is the point $(0,0)$. A non-exposed face is a known obstruction for a convex set to be the feasible set of a semidefinite program [@ramana95jgo-some].
+
+:::
+:::
+
+This shows the difficulty of working with nonnegative polynomials. 
+
+From the computational complexity perspective, the difficulty of working with nonnegative polynomials is seen by the fact that deciding polynomial nonnegativity for $2d \geq 4$ is known to be NP-hard in the worst case.
+
+However, we do know very well a special class of nonnegative polynomials, the nonnegative polynomials that can be written as a sum of squares. 
+
+### Sums-of-Squares Polynomials 
+
+A multivariate polynomial $p(x)$ is a **sum of squares** (SOS) if it can be written as the sum of squares of some other polynomials.
+
+::: {.definitionbox}
+::: {.definition #SumOfSquares name="Sum of Squares Polynomial"}
+A polynomial $p(x) \in \poly{x}_{2d}$ is a sum of squares if there exist $q_1,\dots,q_m \in \poly{x}_d$ such that 
+$$
+p(x) = \sum_{k=1}^m q_k^2(x).
+$$
+:::
+:::
+
+We will use $\Sigma_{n,2d}$ to denote the set of SOS polynomials in $n$ variables of degree up to $2d$. Clearly, we have 
+$$
+\Sigma_{n,2d} \subseteq P_{n,2d},
+$$
+because any SOS polynomial is necessarily nonnegative. 
+
+Similar to $P_{n,2d}$, the set of SOS polynomials is also a convex proper cone.
+
+::: {.theorembox}
+::: {.theorem #ConeSOSPolynomial name="Cone of SOS Polynomials"}
+The set of SOS polynomials $\Sigma_{n,2d}$ is a proper cone (i.e., closed, convex, pointed, and solid) in $\poly{x}_{2d}$.
+:::
+:::
+
+One of the central questions in convex algebraic geometry is to understand the relationships between $P_{n,2d}$ and $\Sigma_{n,2d}$. 
+
+The first question is when is nonnegativity equal to sum of squares? David Hilbert showed that equality between $\Sigma_{n,2d}$ and $P_{n,2d}$ happens only in the following three cases:
+
+- Univariate polynomials, $n=1$
+
+- Quadratic polynomials, $2d=2$
+
+- Bivariate quartics, $n=2, 2d=4$.
+
+For all other cases, there always exist nonnegative polynomials that are not SOS.  One of the most famous examples is the **Motzkin's polynomial** written as
+$$
+M(x,y) = x^4 y^2 + x^2 y^4 + 1 - 3 x^2 y^2.
+$$
+One can show that this polynomial is nonnegative but not SOS. Other examples of nonnegative but not SOS polynomials can be found in [@reznick00cm-some].
+
+Let us show that univariate nonnegative polynomials can always be written as a sum of squares. 
+
+::: {.theorembox}
+::: {.theorem #UnivaraiteNonSOS name="Univaraite Nonnegative Polynomials are SOS"}
+A univariate polynomial is nonnegative if and only if it is a sum of squares.
+:::
+:::
+::: {.proofbox}
+::: {.proof}
+Since $p(x)$ is univariate, we can factorize it as 
+\begin{equation}
+p(x) = p_n \prod_j (x - r_j)^{n_j} \prod_{k} (x - a_k + i b_k)^{m_k} (x - a_k - i b_k)^{m_k},
+(\#eq:proof-univariate-non-sos-factorization)
+\end{equation}
+where $r_j$'s are the real roots and $a_k \pm i b_k$'s are the complex roots. Because $p(x)$ is nonnegative, then $p_n > 0$ and the multiplicities of the real roots must be even, i.e., $n_j = 2 s_j$.
+
+Also note that 
+$$
+(x - a + ib)(x - a - ib) = (x-a)^2 + b^2.
+$$
+Consequently we can write \@ref(eq:proof-univariate-non-sos-factorization) as 
+$$
+p(x) = p_n \prod_j (x - r_j)^{2 s_j} \prod_k ((x-a_k)^2 + b_k^2)^{m_k}.
+$$
+Since products of sums of squares are still sums of squares and all the factors in the above expression are SOS, it follows that $p(x)$ is SOS.
+
+Furthermore, the two-squares identify
+$$
+(\alpha^2 + \beta^2)(\gamma^2 + \delta^2) = (\alpha \gamma - \beta \delta)^2 + (\alpha \delta + \beta \delta)^2
+$$
+allows us to combine very partial product as a sum of only two squares:
+$$
+p(x) = q_1^2(x) + q_2^2(x).
+$$
+Therefore, it suffices to write every nonnegative univariate polynomial as the sum of only two squares.
+:::
+:::
+
+In the next section, we focus on how to numerically compute SOS decompositions.
+
+## Compute SOS Decompositions 
+
+Given a polynomial $p(x)$, how do we decide if $p(x)$ is SOS? We knew that deciding if $p(x)$ is nonnegative is generally NP-hard. The nice thing about SOS polynomials is that the decision problem is tractable and it is a convex semidefinite program.
+
+### Univaraite Polynomials
+
+Consider a univariate polynomial $p(x)$ of degree $2d$
+$$
+p(x) = p_{2d} x^{2d} + p_{2d-1} x^{2d-1} + \cdots + p_1 x + p_0.
+$$
+Assume $p(x)$ is SOS and can be written as 
+\begin{equation}
+p(x) = q_1^2(x) + \dots + q_m^2(x).
+(\#eq:univariate-sos)
+\end{equation}
+Note that the degree of the polynomials $q_k$ must be at most $d$ since the leading term of $q_k^2(x)$ must have positive coefficients and there cannot be any cancellation in the highest power of $x$. Then, we can write 
+\begin{equation}
+\begin{bmatrix} q_1(x) \\ q_2(x) \\ \vdots \\ q_m(x) \end{bmatrix} = V \begin{bmatrix} 1 \\ x \\ \vdots \\ x^d \end{bmatrix} = V [x]_d,
+(\#eq:univariate-q-V)
+\end{equation}
+where recall $[x]_d$ is the vector of monomials in $x$ of degree up to $d$. Plugging \@ref(eq:univariate-q-V) into \@ref(eq:univariate-sos), we get 
+\begin{equation}
+p(x) = \sum_{k=1}^m q_k^2 (x) = (V [x]_d)\tran (V [x]_d) = [x]_d\tran V\tran V [x]_d = [x]_d\tran Q [x]_d.
+(\#eq:univariate-sos-gram-Q)
+\end{equation}
+
+This suggests the following characterization of univariate SOS polynomials. 
+
+::: {.theorembox}
+::: {.lemma #UnivaraiteSOS name="Characterization of Univaraite SOS Polynomials"}
+A univariate polynomial $p(x) \in \poly{x}_{2d}$ is SOS if and only if there exists a symmetric matrix $Q \in \sym{d+1}$ that satisfies
+$$
+p(x) = [x]_d\tran Q [x]_d, \quad Q \succeq 0.
+$$
+:::
+:::
+
+The matrix $Q$ is typically called the **Gram matrix** of the SOS representation. Lemma \@ref(lem:UnivaraiteSOS) can be easily verified: one direction is clear from \@ref(eq:univariate-sos-gram-Q) and the other direction can be shown by factorizing a positive semidefinite matrix $Q = V\tran V$.
+
+Although it may not be immediately clear, but the nice property of Lemma \@ref(lem:UnivaraiteSOS) is that it says deciding if a univariate polynomial is SOS (and finding its SOS decomposition) is in fact a convex semidefinite program!
+
+To see this, note that the constraint $Q \succeq 0$ is a convex PSD constraint and the constraint $p(x) = [x]_d\tran Q [x]_d$ leads to a finite number of affine constraints on the entries of $Q$ by "matching coefficients". In particular, let us index the rows and columns of $Q$ from $0$ to $d$, and expand 
+$$
+[x]_d\tran Q [x]_d = \sum_{k=0}^{2d} \left( \sum_{i+j=k} Q_{ij} \right) x^k.
+$$
+It now becomes clear that $p(x) = [x]_d\tran Q [x]_d$ simply askes 
+$$
+\sum_{i+j=k} Q_{ij} = p_k, \quad k = 0, \dots, 2d.
+$$
+
+It is easier to work this out via an example.
+
+::: {.examplebox}
+::: {.example #SOSDecompositionUnivariate name="SOS Decomposition of Univaraite Polynomials"}
+Consider the univariate polynomial
+$$
+p(x) = x^4 + 4 x^3 + 6 x^2 + 4 x + 5.
+$$
+To decide if this polynomial is SOS, we write the polynomial equality constraint 
+\begin{equation}
+\begin{split}
+p(x) & = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \begin{bmatrix} Q_{00} & Q_{01} & Q_{02} \\
+Q_{01} & Q_{11} & Q_{12} \\
+Q_{02} & Q_{12} & Q_{22} 
+\end{bmatrix}  \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \\
+& = Q_{22} x^4 + 2 Q_{12} x^3 + (Q_{11} + 2 Q_{02}) x^2 + 2 Q_{01} x + Q_{00}.
+\end{split}
+\end{equation}
+Matching coefficients, we get the constraints 
+\begin{equation}
+\begin{split}
+x^4: & \quad Q_{22} = 1\\
+x^3: & \quad 2 Q_{12} = 4\\
+x^2: & \quad Q_{11} + 2 Q_{02} = 6\\
+x: & \quad 2Q_{01} = 4\\
+1: & \quad Q_{00} = 5
+\end{split}
+\end{equation}
+We need to find a $Q \succeq 0$ that satisfies the above constraints, which is clearly a convex SDP. In this case, the SDP is feasible and we can find a solution 
+$$
+Q = \begin{bmatrix} 5 & 2 & 0 \\ 2 & 6 & 2 \\ 0 & 2 & 1 \end{bmatrix}.
+$$
+Factorizing $Q=V\tran V$ with 
+$$
+V = \begin{bmatrix} 0 & 2 & 1 \\ \sqrt{2} & \sqrt{2} & 0 \\ \sqrt{3} & 0 & 0 \end{bmatrix},
+$$
+we obtain the SOS decomposition
+$$
+p(x) = (x^2 + 2x)^2 + 2 (1+x)^2 + 3,
+$$
+:::
+:::
