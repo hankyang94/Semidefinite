@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-26" />
+<meta name="date" content="2024-02-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -56,7 +56,7 @@
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -128,6 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -245,6 +246,11 @@ div.csl-indent {
 <li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="SOS.html"><a href="SOS.html#nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2.1</b> Nonnegative polynomials</a></li>
+<li class="chapter" data-level="4.2.2" data-path="SOS.html"><a href="SOS.html#sums-of-squares-polynomials"><i class="fa fa-check"></i><b>4.2.2</b> Sums-of-Squares Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -271,7 +277,7 @@ div.csl-indent {
 <div id="Shor" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Shor’s Semidefinite Relaxation<a href="Shor.html#Shor" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In this Chapter, we introduce one of the most important and well-known applications of semidefinite optimization, namely its use in the formulation of <strong>convex relaxations</strong> of nonconvex optimization problems.</p>
-<p>We will focus on the so-called Shor’s semidefinite relaxation <span class="citation">(<a href="#ref-shor87sjcss-quadratic" role="doc-biblioref">Shor 1987</a>)</span>, which is particularly designed for quadratically constrained quadratic programs (QCQPs). Shor’s semidefinite relaxation is relatively easy to formulate and understand, and as we will see later, is essentially the first-order relaxation in the moment-SOS hierarchy.</p>
+<p>We will focus on the so-called Shor’s semidefinite relaxation <span class="citation">(<a href="#ref-shor87sjcss-quadratic">Shor 1987</a>)</span>, which is particularly designed for quadratically constrained quadratic programs (QCQPs). Shor’s semidefinite relaxation is relatively easy to formulate and understand, and as we will see later, is essentially the first-order relaxation in the moment-SOS hierarchy.</p>
 <div id="semidefinite-relaxation-of-qcqps" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Semidefinite Relaxation of QCQPs<a href="Shor.html#semidefinite-relaxation-of-qcqps" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Consider a quadratically constrained quadratic program (QCQP):
@@ -344,7 +350,7 @@ x_\star^\top C x_\star - b^\top y_\star = \langle C, x_\star x_\star^\top \rangl
 and <span class="math inline">\((x_\star, y_\star)\)</span> is primal-dual feasible. Therefore, <span class="math inline">\((x_\star, y_\star)\)</span> is primal-dual optimal.</p>
 </div>
 </div>
-<p>The reason why Proposition <a href="Shor.html#prp:DualCertifier">3.1</a> can be quite useful is that it gives a very efficient algorithm to certify global optimality of a candidate (potentially locally) optimal solution <span class="math inline">\(x_\star\)</span>. In particular, in several practical applications in computer vision and robotics, the second equation in <a href="Shor.html#eq:dual-optimality-condition">(3.3)</a> is a linear system of <span class="math inline">\(n\)</span> equations in <span class="math inline">\(m\)</span> variables with <span class="math inline">\(m\leq n\)</span>, and hence it has a unique solution. Therefore, one can first solve the linear system and obtain a candidate <span class="math inline">\(y_\star\)</span>, and then simply check the PSD condition <span class="math inline">\(C - \mathcal{A}^*(y_\star) \succeq 0\)</span>. This leads to optimality certifiers that can run in real time <span class="citation">(<a href="#ref-garcia21ivc-certifiable" role="doc-biblioref">Garcia-Salguero, Briales, and Gonzalez-Jimenez 2021</a>)</span> <span class="citation">(<a href="#ref-holmes23ral-efficient" role="doc-biblioref">Holmes and Barfoot 2023</a>)</span>.</p>
+<p>The reason why Proposition <a href="Shor.html#prp:DualCertifier">3.1</a> can be quite useful is that it gives a very efficient algorithm to certify global optimality of a candidate (potentially locally) optimal solution <span class="math inline">\(x_\star\)</span>. In particular, in several practical applications in computer vision and robotics, the second equation in <a href="Shor.html#eq:dual-optimality-condition">(3.3)</a> is a linear system of <span class="math inline">\(n\)</span> equations in <span class="math inline">\(m\)</span> variables with <span class="math inline">\(m\leq n\)</span>, and hence it has a unique solution. Therefore, one can first solve the linear system and obtain a candidate <span class="math inline">\(y_\star\)</span>, and then simply check the PSD condition <span class="math inline">\(C - \mathcal{A}^*(y_\star) \succeq 0\)</span>. This leads to optimality certifiers that can run in real time <span class="citation">(<a href="#ref-garcia21ivc-certifiable">Garcia-Salguero, Briales, and Gonzalez-Jimenez 2021</a>)</span> <span class="citation">(<a href="#ref-holmes23ral-efficient">Holmes and Barfoot 2023</a>)</span>.</p>
 </div>
 <div id="dual-of-the-dual-bidual" class="section level3 hasAnchor" number="3.1.2">
 <h3><span class="header-section-number">3.1.2</span> Dual of the Dual (Bidual)<a href="Shor.html#dual-of-the-dual-bidual" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -412,7 +418,7 @@ and the objective is also the same.</p>
 </div>
 <p>It is worth noting that, even when the relaxation is exact, i.e., <span class="math inline">\(p^\star = f^\star\)</span>, it may not be trivial to numerically certify the exactness, due to several reasons</p>
 <ul>
-<li><p>If the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> is solved using interior point methods such as MOSEK, then it is well known that they converge to the <em>maximum-rank solution</em> <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>. This is saying that even if the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> has rank-one solutions, the solvers may not find them. Consider the case where <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are both optimal solutions to the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> and the relaxation is exact, it is easy to check that
+<li><p>If the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> is solved using interior point methods such as MOSEK, then it is well known that they converge to the <em>maximum-rank solution</em> <span class="citation">(<a href="#ref-wolkowicz12book-sdp">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>. This is saying that even if the SDP <a href="Shor.html#eq:qcqp-bidual">(3.4)</a> has rank-one solutions, the solvers may not find them. Consider the case where <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are both optimal solutions to the QCQP <a href="Shor.html#eq:qcqp">(3.1)</a> and the relaxation is exact, it is easy to check that
 <span class="math display">\[
 X = \lambda_1 x_1 x_1^\top+ \lambda_2 x_2 x_2^\top, \quad \lambda_1, \lambda_2 \geq 0, \lambda_1 + \lambda_2 = 1
 \]</span>
@@ -465,7 +471,7 @@ Figure 3.1: MAXCUT seeks to separate the node set of a graph into two disjoint g
 <span class="math display">\[
 V = [v_1,\dots,v_n]
 \]</span>
-and each vector <span class="math inline">\(v_i \in \mathbb{R}^{r}\)</span>. We have <span class="math inline">\(X_{ij} = v_i^\top v_j\)</span>. Since <span class="math inline">\(X_{ii} = 1\)</span>, the vectors <span class="math inline">\(v_i\)</span>’s lie on the unit sphere. Goemans and Williamson <span class="citation">(<a href="#ref-goemans95jacm-improved" role="doc-biblioref">Goemans and Williamson 1995</a>)</span> proposed to obtain a feasible point to the orignal BQP by first choosing a random unit direction <span class="math inline">\(p \in \mathbb{R}^{r}\)</span> and then assign
+and each vector <span class="math inline">\(v_i \in \mathbb{R}^{r}\)</span>. We have <span class="math inline">\(X_{ij} = v_i^\top v_j\)</span>. Since <span class="math inline">\(X_{ii} = 1\)</span>, the vectors <span class="math inline">\(v_i\)</span>’s lie on the unit sphere. Goemans and Williamson <span class="citation">(<a href="#ref-goemans95jacm-improved">Goemans and Williamson 1995</a>)</span> proposed to obtain a feasible point to the orignal BQP by first choosing a random unit direction <span class="math inline">\(p \in \mathbb{R}^{r}\)</span> and then assign
 <span class="math display">\[
 x_i = \mathrm{sgn}(p^\top v_i), i=1,\dots,n.
 \]</span>
@@ -518,7 +524,7 @@ Figure 3.2: Best approximation ratio.
 \tag{3.9}
 \end{equation}\]</span>
 that measures the relative rotation between <span class="math inline">\(R_i\)</span> and <span class="math inline">\(R_j\)</span>, up to some small noise corruption <span class="math inline">\(R_{\epsilon} \in \mathrm{SO}(3)\)</span>. See Fig. <a href="Shor.html#fig:RotationAveraging">3.3</a>.</p>
-<p>The goal of (multiple) rotation averaging is to estimate the absolute rotations <span class="math inline">\(\{R_i \}_{i=1}^N\)</span> given the noisy relative rotation measurements on the edges <span class="math inline">\(\{\tilde{R}_{ij} \}_{(i,j) \in \mathcal{E}}\)</span>. This problem is also known as rotation synchronization and it finds applications in computer vision <span class="citation">(<a href="#ref-eriksson18cvpr-rotation" role="doc-biblioref">Eriksson et al. 2018</a>)</span>, robotics <span class="citation">(<a href="#ref-rosen19ijrr-sesync" role="doc-biblioref">Rosen et al. 2019</a>)</span>, and medical imaging <span class="citation">(<a href="#ref-wang13ima-exact" role="doc-biblioref">L. Wang and Singer 2013</a>)</span>.</p>
+<p>The goal of (multiple) rotation averaging is to estimate the absolute rotations <span class="math inline">\(\{R_i \}_{i=1}^N\)</span> given the noisy relative rotation measurements on the edges <span class="math inline">\(\{\tilde{R}_{ij} \}_{(i,j) \in \mathcal{E}}\)</span>. This problem is also known as rotation synchronization and it finds applications in computer vision <span class="citation">(<a href="#ref-eriksson18cvpr-rotation">Eriksson et al. 2018</a>)</span>, robotics <span class="citation">(<a href="#ref-rosen19ijrr-sesync">Rosen et al. 2019</a>)</span>, and medical imaging <span class="citation">(<a href="#ref-wang13ima-exact">L. Wang and Singer 2013</a>)</span>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:RotationAveraging"></span>
 <img src="images/rotation_avg.png" alt="Rotation Averaging." width="60%" />
 <p class="caption">
@@ -597,31 +603,31 @@ where the last constraint in <a href="Shor.html#eq:rotation-averaging-sdp-relax"
 where <span class="math inline">\(R_\epsilon\)</span> is a rotation matrix with a random rotation axis and a rotation angle uniformally distributed between <span class="math inline">\(0\)</span> and <span class="math inline">\(\beta\)</span> degrees.</p></li>
 </ul>
 <p>After this graph is generated, I form the <span class="math inline">\(\tilde{R}\)</span> matrix in <a href="Shor.html#eq:rotation-averaging-tldR">(3.12)</a> and solve the SDP <a href="Shor.html#eq:rotation-averaging-sdp-relax">(3.14)</a>. This can be easily programmed in Matlab:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="Shor.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">*</span><span class="va">n</span><span class="op">,</span><span class="fl">3</span><span class="op">*</span><span class="va">n</span>)<span class="op">;</span></span>
-<span id="cb4-2"><a href="Shor.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [<span class="va">X</span> <span class="op">&gt;=</span> <span class="fl">0</span>]<span class="op">;</span></span>
-<span id="cb4-3"><a href="Shor.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
-<span id="cb4-4"><a href="Shor.html#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">F</span> <span class="op">=</span> [<span class="va">F</span><span class="op">,</span></span>
-<span id="cb4-5"><a href="Shor.html#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">X</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)) <span class="op">==</span> <span class="va">eye</span>(<span class="fl">3</span>)]<span class="op">;</span></span>
-<span id="cb4-6"><a href="Shor.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb4-7"><a href="Shor.html#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X</span>)<span class="op">;</span></span>
-<span id="cb4-8"><a href="Shor.html#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
-<span id="cb4-9"><a href="Shor.html#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="va">Xval</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">X</span>)<span class="op">;</span></span>
-<span id="cb4-10"><a href="Shor.html#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="va">f_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">obj</span>)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="Shor.html#cb4-1" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">*</span><span class="va">n</span><span class="op">,</span><span class="fl">3</span><span class="op">*</span><span class="va">n</span>)<span class="op">;</span></span>
+<span id="cb4-2"><a href="Shor.html#cb4-2" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [<span class="va">X</span> <span class="op">&gt;=</span> <span class="fl">0</span>]<span class="op">;</span></span>
+<span id="cb4-3"><a href="Shor.html#cb4-3" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb4-4"><a href="Shor.html#cb4-4" tabindex="-1"></a>    <span class="va">F</span> <span class="op">=</span> [<span class="va">F</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="Shor.html#cb4-5" tabindex="-1"></a>        <span class="va">X</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)) <span class="op">==</span> <span class="va">eye</span>(<span class="fl">3</span>)]<span class="op">;</span></span>
+<span id="cb4-6"><a href="Shor.html#cb4-6" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-7"><a href="Shor.html#cb4-7" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X</span>)<span class="op">;</span></span>
+<span id="cb4-8"><a href="Shor.html#cb4-8" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
+<span id="cb4-9"><a href="Shor.html#cb4-9" tabindex="-1"></a><span class="va">Xval</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">X</span>)<span class="op">;</span></span>
+<span id="cb4-10"><a href="Shor.html#cb4-10" tabindex="-1"></a><span class="va">f_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">obj</span>)<span class="op">;</span></span></code></pre></div>
 <p>Note that <code>f_sdp</code> will be a lower bound.</p>
 <p>Let <span class="math inline">\(X_\star\)</span> be the optimal solution of the SDP. We know that, if the SDP relaxation is tight, then <span class="math inline">\(X_\star\)</span> will look like <span class="math inline">\(RR^\top\)</span>. Because <span class="math inline">\(R_1 = \mathrm{I}_3\)</span>, we can directly read off the optimal rotation estimations from the first row of blocks. However, if the relaxation is not tight, the blocks there will not be valid rotation matrices, and we can perform a projection onto <span class="math inline">\(\mathrm{SO}(3)\)</span>. Using the estimated rotations, I can compute <code>f_est</code>, which is an upper bound to the true global optimum.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="Shor.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">R_est</span> <span class="op">=</span> []<span class="op">;</span></span>
-<span id="cb5-2"><a href="Shor.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">R_errs</span> <span class="op">=</span> []<span class="op">;</span></span>
-<span id="cb5-3"><a href="Shor.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
-<span id="cb5-4"><a href="Shor.html#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">i</span> <span class="op">==</span> <span class="fl">1</span></span>
-<span id="cb5-5"><a href="Shor.html#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb5-6"><a href="Shor.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
-<span id="cb5-7"><a href="Shor.html#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">project2SO3</span>(<span class="va">Xval</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)))<span class="op">;</span></span>
-<span id="cb5-8"><a href="Shor.html#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
-<span id="cb5-9"><a href="Shor.html#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_errs</span> <span class="op">=</span> [<span class="va">R_errs</span><span class="op">,</span> <span class="va">getAngularError</span>(<span class="va">Ri</span><span class="op">,</span> <span class="va">R_gt</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,:</span>))]<span class="op">;</span></span>
-<span id="cb5-10"><a href="Shor.html#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_est</span> <span class="op">=</span> [<span class="va">R_est</span><span class="op">,</span> <span class="va">Ri</span>]<span class="op">;</span></span>
-<span id="cb5-11"><a href="Shor.html#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb5-12"><a href="Shor.html#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="va">X_est</span> <span class="op">=</span> <span class="va">R_est</span><span class="op">&#39;*</span><span class="va">R_est</span><span class="op">;</span></span>
-<span id="cb5-13"><a href="Shor.html#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="va">f_est</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X_est</span>)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="Shor.html#cb5-1" tabindex="-1"></a><span class="va">R_est</span> <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb5-2"><a href="Shor.html#cb5-2" tabindex="-1"></a><span class="va">R_errs</span> <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb5-3"><a href="Shor.html#cb5-3" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb5-4"><a href="Shor.html#cb5-4" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">i</span> <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb5-5"><a href="Shor.html#cb5-5" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb5-6"><a href="Shor.html#cb5-6" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb5-7"><a href="Shor.html#cb5-7" tabindex="-1"></a>        <span class="va">Ri</span> <span class="op">=</span> <span class="va">project2SO3</span>(<span class="va">Xval</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">,</span><span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)))<span class="op">;</span></span>
+<span id="cb5-8"><a href="Shor.html#cb5-8" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb5-9"><a href="Shor.html#cb5-9" tabindex="-1"></a>    <span class="va">R_errs</span> <span class="op">=</span> [<span class="va">R_errs</span><span class="op">,</span> <span class="va">getAngularError</span>(<span class="va">Ri</span><span class="op">,</span> <span class="va">R_gt</span>(<span class="va">blkIndices</span>(<span class="va">i</span><span class="op">,</span><span class="fl">3</span>)<span class="op">,:</span>))]<span class="op">;</span></span>
+<span id="cb5-10"><a href="Shor.html#cb5-10" tabindex="-1"></a>    <span class="va">R_est</span> <span class="op">=</span> [<span class="va">R_est</span><span class="op">,</span> <span class="va">Ri</span>]<span class="op">;</span></span>
+<span id="cb5-11"><a href="Shor.html#cb5-11" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb5-12"><a href="Shor.html#cb5-12" tabindex="-1"></a><span class="va">X_est</span> <span class="op">=</span> <span class="va">R_est</span><span class="op">&#39;*</span><span class="va">R_est</span><span class="op">;</span></span>
+<span id="cb5-13"><a href="Shor.html#cb5-13" tabindex="-1"></a><span class="va">f_est</span> <span class="op">=</span> <span class="va">trace</span>(<span class="op">-</span><span class="va">Rtld</span><span class="op">*</span><span class="va">X_est</span>)<span class="op">;</span></span></code></pre></div>
 <p>With <code>f_est</code> and <code>f_sdp</code>, an upper bound and a lower bound, I can compute the relative suboptimality gap <span class="math inline">\(\eta\)</span>. If <span class="math inline">\(\eta = 0\)</span>, then it certifies global optimality.</p>
 <p>How does this work?</p>
 <p>For <span class="math inline">\(N=30\)</span> and <span class="math inline">\(\beta = 10\)</span> (small noise), I got <span class="math inline">\(\eta = 6.26\times 10^{-13}\)</span>. Fig. <a href="Shor.html#fig:MVA-rot-err-30-10">3.4</a> plots the rotation estimation errors at each node compared to the groundtruth rotations.</p>
@@ -656,7 +662,7 @@ Figure 3.6: Rotation estimation errors, 30 nodes, noise bound 120 degrees.
 <h2><span class="header-section-number">3.3</span> Stretch to High-Degree Polynomial Optimization<a href="Shor.html#stretch-to-high-degree-polynomial-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We have seen that Shor’s semidefinite relaxation for QCQPs can be derived both using Lagrangian duality, or simply by dropping a rank constraint, both of which are straightforward to understand. When applied to the MAXCUT problem, it produces a provably good approximation ratio. When applied to the rotation averaging problem, it directly gives us the optimal solution without any approximation, and the optimality comes with a certificate.</p>
 <p>However, not every optimization problem is a QCQP, right? Is it possible to generalize Shor’s semidefinite relaxation to higher-degree polynomial optimization problems? As we will see in the next Chapters, the moment and sums-of-squares (SOS) hierarchy delivers the perfect and principled generalization.</p>
-<p>Before going to the moment-SOS hierarchy, let me give you an example of a quartic (degree-4) optimization problem, for which we can still use Shor’s relaxation, albeit with some (in my opinion, not so elegant) mathematical massage. This example in fact is from a recent paper in computer vision <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>.</p>
+<p>Before going to the moment-SOS hierarchy, let me give you an example of a quartic (degree-4) optimization problem, for which we can still use Shor’s relaxation, albeit with some (in my opinion, not so elegant) mathematical massage. This example in fact is from a recent paper in computer vision <span class="citation">(<a href="#ref-briales18cvpr-certifiably">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>.</p>
 <p><strong>Two-view Geometry</strong>. Consider the problem of estimating the motion of a camera from two views illustrated in Fig. <a href="Shor.html#fig:two-view">3.7</a>. Let <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> be two cameras (or the same camera but in two different positions) observing the same 3D point <span class="math inline">\(p \in \mathbb{R}^{3}\)</span>. The 3D point will be observed by <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> via its 2D projections on the image plane, respectively. Let <span class="math inline">\(f_1 \in \mathbb{R}^{3}\)</span> and <span class="math inline">\(f_2 \in \mathbb{R}^{3}\)</span> be the unit-length bearing vector that emanates from the camera centers to the 2D projections in two cameras, respectively. Our goal is to estimate the relative rotation and translation between the two cameras <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span>, denoted by <span class="math inline">\(R \in \mathrm{SO}(3)\)</span> and <span class="math inline">\(t \in \mathbb{R}^{3}\)</span>. The pair of bearing vectors <span class="math inline">\((f_1,f_2)\)</span> is typically known as a <strong>correspondence</strong>, or a <strong>match</strong> in computer vision.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:two-view"></span>
 <img src="images/two_view.png" alt="Two-view Geometry." width="60%" />
@@ -664,19 +670,19 @@ Figure 3.6: Rotation estimation errors, 30 nodes, noise bound 120 degrees.
 Figure 3.7: Two-view Geometry.
 </p>
 </div>
-<p>It turns out only having one correspondence is insufficient to recover <span class="math inline">\((R,t)\)</span>, and we need at least <span class="math inline">\(5\)</span> such correspondences <span class="citation">(<a href="#ref-nister04pami-efficient" role="doc-biblioref">Nistér 2004</a>)</span>. See Fig. <a href="Shor.html#fig:two-view-example">3.8</a> for an example I adapted from <a href="https://www.mathworks.com/help/vision/ref/estimateessentialmatrix.html">Mathworks</a>.</p>
+<p>It turns out only having one correspondence is insufficient to recover <span class="math inline">\((R,t)\)</span>, and we need at least <span class="math inline">\(5\)</span> such correspondences <span class="citation">(<a href="#ref-nister04pami-efficient">Nistér 2004</a>)</span>. See Fig. <a href="Shor.html#fig:two-view-example">3.8</a> for an example I adapted from <a href="https://www.mathworks.com/help/vision/ref/estimateessentialmatrix.html">Mathworks</a>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:two-view-example"></span>
 <img src="images/two_view_example_matlab.png" alt="A real two-view motion estimation example. Copyright: Mathworks." width="80%" />
 <p class="caption">
 Figure 3.8: A real two-view motion estimation example. Copyright: Mathworks.
 </p>
 </div>
-<p>Consequently, to formally state our problem, we are given a set of <span class="math inline">\(N\)</span> correspondences (these correspondences are typically detected by neural networks today <span class="citation">(<a href="#ref-wang20eccv-caps" role="doc-biblioref">Q. Wang et al. 2020</a>)</span>)
+<p>Consequently, to formally state our problem, we are given a set of <span class="math inline">\(N\)</span> correspondences (these correspondences are typically detected by neural networks today <span class="citation">(<a href="#ref-wang20eccv-caps">Q. Wang et al. 2020</a>)</span>)
 <span class="math display">\[
 \{f_{1,i},f_{2,i} \}_{i=1}^N
 \]</span>
 between two images taken by two cameras, and our goal is to estimate the relative motion <span class="math inline">\((R,t)\)</span>.</p>
-<p><strong>Epipolar Constraint</strong>. When the correspondences are noise-free, it is known that they must satisfy the following epipolar constraint <span class="citation">(<a href="#ref-hartley03book-multiple" role="doc-biblioref">Hartley and Zisserman 2003</a>)</span>
+<p><strong>Epipolar Constraint</strong>. When the correspondences are noise-free, it is known that they must satisfy the following epipolar constraint <span class="citation">(<a href="#ref-hartley03book-multiple">Hartley and Zisserman 2003</a>)</span>
 <span class="math display" id="eq:epipolar-constraint">\[\begin{equation}
 f_{2,i}^\top[t]_{\times} R f_{1,i} = 0, \quad \forall i=1,\dots,N,
 \tag{3.15}
@@ -747,7 +753,7 @@ plus an additional constraint
 \]</span>
 where <span class="math inline">\(A_0\)</span> is all zero except its top-left entry is equal to 1.</p>
 <p>This seems to be all we need for Shor’s relaxation, will this work?</p>
-<p><strong>“Redundant” Constraints</strong>. In the original paper <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>, the authors found that we are missing some important constraints that we can add to the convex SDP. For example, in the matrix <span class="math inline">\(X\)</span>, we have
+<p><strong>“Redundant” Constraints</strong>. In the original paper <span class="citation">(<a href="#ref-briales18cvpr-certifiably">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span>, the authors found that we are missing some important constraints that we can add to the convex SDP. For example, in the matrix <span class="math inline">\(X\)</span>, we have
 <span class="math display">\[
 t_1^2 rr^\top+ t_2^2 rr^\top+ t_3^2 rr^\top= (t_1^2 + t_2^2 + t_3^2) rr^\top= rr^\top,
 \]</span>
@@ -755,13 +761,13 @@ which gives us additional linear constraints on the entries of <span class="math
 <span class="math display">\[
 h_k(x) = 0 \Rightarrow h_k(x) \cdot \lambda(x) = 0,
 \]</span>
-where <span class="math inline">\(\lambda(x)\)</span> is a monomial such that all the monomials of <span class="math inline">\(h_k(x) \cdot \lambda(x)\)</span> appear in the big matrix <span class="math inline">\(X\)</span> (so that the resulting equality constraint can still be written as a linear equality on <span class="math inline">\(X\)</span>). The authors of <span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> enumerated all such constraints (by hand) and added them to the SDP relaxation, which led to the relaxation going from loose to tight/exact.</p>
-<p><span class="citation">(<a href="#ref-briales18cvpr-certifiably" role="doc-biblioref">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> called these constraints “redundant”, are they? We will revisit this after we study the moment-SOS hierarchy!</p>
+where <span class="math inline">\(\lambda(x)\)</span> is a monomial such that all the monomials of <span class="math inline">\(h_k(x) \cdot \lambda(x)\)</span> appear in the big matrix <span class="math inline">\(X\)</span> (so that the resulting equality constraint can still be written as a linear equality on <span class="math inline">\(X\)</span>). The authors of <span class="citation">(<a href="#ref-briales18cvpr-certifiably">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> enumerated all such constraints (by hand) and added them to the SDP relaxation, which led to the relaxation going from loose to tight/exact.</p>
+<p><span class="citation">(<a href="#ref-briales18cvpr-certifiably">Briales, Kneip, and Gonzalez-Jimenez 2018</a>)</span> called these constraints “redundant”, are they? We will revisit this after we study the moment-SOS hierarchy!</p>
 
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-briales18cvpr-certifiably" class="csl-entry">
 Briales, Jesus, Laurent Kneip, and Javier Gonzalez-Jimenez. 2018. <span>“A Certifiably Globally Optimal Solution to the Non-Minimal Relative Pose Problem.”</span> In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em>, 145–54.
 </div>

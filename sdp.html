@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-26" />
+<meta name="date" content="2024-02-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -56,7 +56,7 @@
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -128,6 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -245,6 +246,11 @@ div.csl-indent {
 <li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="SOS.html"><a href="SOS.html#nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2.1</b> Nonnegative polynomials</a></li>
+<li class="chapter" data-level="4.2.2" data-path="SOS.html"><a href="SOS.html#sums-of-squares-polynomials"><i class="fa fa-check"></i><b>4.2.2</b> Sums-of-Squares Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -296,7 +302,7 @@ We use <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> to denote the set
 <span class="math display">\[
 \left\{ z \in \mathbb{R}^{3} \ \middle\vert\ X(z) = \begin{bmatrix} 1 &amp; z_1 &amp; z_2 \\ z_1 &amp; z_2 &amp; z_3 \\ z_2 &amp; z_3 &amp; 5 z_2 - 4  \end{bmatrix} \succeq 0  \right\} .
 \]</span>
-We can first form the characteristic polynomial of <span class="math inline">\(X(z)\)</span> –whose coefficients will be functions of <span class="math inline">\(z\)</span>– and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure <span class="citation">(<a href="#ref-yang22mp-inexact" role="doc-biblioref">Yang et al. 2022</a>)</span>.</p>
+We can first form the characteristic polynomial of <span class="math inline">\(X(z)\)</span> –whose coefficients will be functions of <span class="math inline">\(z\)</span>– and then invoking (5) to obtain a finite number scalar inequality constraints. We can then pass these scalar constraints to Mathematica and plot the set as in the following figure <span class="citation">(<a href="#ref-yang22mp-inexact">Yang et al. 2022</a>)</span>.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:SpectrahedronStride"></span>
 <img src="images/spectrahedron-stride.png" alt="An example spectrahedron." width="50%" />
 <p class="caption">
@@ -498,7 +504,7 @@ G:=  \left\{ Q \begin{bmatrix} X &amp; 0 \\ 0 &amp; 0 \end{bmatrix} Q^\top\ \mid
 </div>
 </div>
 <p>As a result, we have <span class="math inline">\(\mathrm{face}(A,\mathbb{S}^{n}_{+}) = G\)</span>.</p>
-<p>More general faces of the PSD cone <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> can be characterized as follows (Theorem 3.7.1 in <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>).</p>
+<p>More general faces of the PSD cone <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span> can be characterized as follows (Theorem 3.7.1 in <span class="citation">(<a href="#ref-wolkowicz12book-sdp">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>).</p>
 <div class="theorembox">
 <div class="theorem">
 <p><span id="thm:FacePSD" class="theorem"><strong>Theorem 2.1  (Faces of the PSD Cone) </strong></span>A set <span class="math inline">\(F \subseteq \mathbb{S}^{n}_{+}\)</span> is a face if and only if there exists a subspace <span class="math inline">\(L \subseteq \mathbb{R}^{n}\)</span> such that
@@ -538,7 +544,7 @@ Since <span class="math inline">\(\mathrm{Range}(X) \subseteq L\)</span> due to 
 \mathrm{Range}(A) \subseteq L, \quad \mathrm{Range}(B) \subseteq L,
 \]</span>
 leading to <span class="math inline">\(A,B \in F\)</span>.</p>
-<p>The proof for the “<strong>Only If</strong>” direction can be found in Theorem 3.7.1 of <span class="citation">(<a href="#ref-wolkowicz12book-sdp" role="doc-biblioref">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>.</p>
+<p>The proof for the “<strong>Only If</strong>” direction can be found in Theorem 3.7.1 of <span class="citation">(<a href="#ref-wolkowicz12book-sdp">Wolkowicz, Saigal, and Vandenberghe 2000</a>)</span>.</p>
 </div>
 </div>
 </div>
@@ -571,7 +577,7 @@ we can compress the two LMIs into a single LMI by putting <span class="math inli
 <span class="math display">\[
 S =  \left\{ x \in \mathbb{R}^{m} \ \middle\vert\ \begin{bmatrix} A_0 &amp; \\ &amp; B_0 \end{bmatrix} + \sum_{i=1}^m x_i \begin{bmatrix} A_i &amp; \\ &amp; B_i \end{bmatrix} \succeq 0  \right\} .
 \]</span></p>
-<p>Leveraging (5) of Lemma <a href="sdp.html#lem:PositiveSemidefinite">2.1</a>, we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) <strong>basic semialgebraic set</strong>, as seen in the following example <span class="citation">(<a href="#ref-blekherman12book-semidefinite" role="doc-biblioref">Blekherman, Parrilo, and Thomas 2012</a>)</span>.</p>
+<p>Leveraging (5) of Lemma <a href="sdp.html#lem:PositiveSemidefinite">2.1</a>, we know that a PSD constraint is equivalent to weakly alternating signs of the characteristic polynomial of the given matrix. Therefore, a spectrahedron is defined by finitely many polynomial inequalities, i.e., a spectrahedron is a (convex) <strong>basic semialgebraic set</strong>, as seen in the following example <span class="citation">(<a href="#ref-blekherman12book-semidefinite">Blekherman, Parrilo, and Thomas 2012</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
 <p><span id="exm:EllipticCurve" class="example"><strong>Example 2.1  (Elliptic Curve) </strong></span>Consider the spectrahedron in <span class="math inline">\(\mathbb{R}^{2}\)</span> defined by
@@ -591,16 +597,16 @@ p_0 &amp; = -(3+ x -x^3 -3x^2 - 2y^2) \leq 0.
 \end{split}
 \end{equation}\]</span>
 We can use the following Matlab script to plot the set shown in Fig. <a href="sdp.html#fig:EllipticCurve">2.2</a>. (The code is also available at <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples">here</a>.) As we can see, the spectrahedron is convex, but it is not a polyhedron.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="sdp.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">x</span> <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">2</span><span class="op">;</span> </span>
-<span id="cb1-2"><a href="sdp.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">2</span><span class="op">;</span> </span>
-<span id="cb1-3"><a href="sdp.html#cb1-3" aria-hidden="true" tabindex="-1"></a>[<span class="va">X</span><span class="op">,</span><span class="va">Y</span>] <span class="op">=</span> <span class="va">meshgrid</span>(<span class="va">x</span><span class="op">,</span><span class="va">y</span>)<span class="op">;</span></span>
-<span id="cb1-4"><a href="sdp.html#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="sdp.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="va">ineq</span> <span class="op">=</span> (<span class="op">-</span><span class="va">X</span> <span class="op">-</span> <span class="fl">5</span> <span class="op">&lt;=</span> <span class="fl">0</span>) <span class="op">&amp;</span> <span class="op">...</span></span>
-<span id="cb1-6"><a href="sdp.html#cb1-6" aria-hidden="true" tabindex="-1"></a>    (<span class="op">-</span><span class="va">X</span><span class="op">.^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span> <span class="op">-</span> <span class="va">Y</span><span class="op">.^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">7</span> <span class="op">&gt;=</span><span class="fl">0</span>) <span class="op">&amp;</span> <span class="op">...</span></span>
-<span id="cb1-7"><a href="sdp.html#cb1-7" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">3</span> <span class="op">+</span> <span class="va">X</span> <span class="op">-</span> <span class="va">X</span><span class="op">.^</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">3</span><span class="op">*</span><span class="va">X</span><span class="op">.^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">Y</span><span class="op">.^</span><span class="fl">2</span> <span class="op">&gt;=</span> <span class="fl">0</span>)<span class="op">;</span></span>
-<span id="cb1-8"><a href="sdp.html#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="sdp.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="va">h</span> <span class="op">=</span> <span class="va">pcolor</span>(<span class="va">X</span><span class="op">,</span><span class="va">Y</span><span class="op">,</span><span class="va">double</span>(<span class="va">ineq</span>)) <span class="op">;</span></span>
-<span id="cb1-10"><a href="sdp.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">h</span>.<span class="va">EdgeColor</span> <span class="op">=</span> <span class="ss">&#39;none&#39;</span> <span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="sdp.html#cb1-1" tabindex="-1"></a><span class="va">x</span> <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">2</span><span class="op">;</span> </span>
+<span id="cb1-2"><a href="sdp.html#cb1-2" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="op">-</span><span class="fl">2</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">2</span><span class="op">;</span> </span>
+<span id="cb1-3"><a href="sdp.html#cb1-3" tabindex="-1"></a>[<span class="va">X</span><span class="op">,</span><span class="va">Y</span>] <span class="op">=</span> <span class="va">meshgrid</span>(<span class="va">x</span><span class="op">,</span><span class="va">y</span>)<span class="op">;</span></span>
+<span id="cb1-4"><a href="sdp.html#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="sdp.html#cb1-5" tabindex="-1"></a><span class="va">ineq</span> <span class="op">=</span> (<span class="op">-</span><span class="va">X</span> <span class="op">-</span> <span class="fl">5</span> <span class="op">&lt;=</span> <span class="fl">0</span>) <span class="op">&amp;</span> <span class="op">...</span></span>
+<span id="cb1-6"><a href="sdp.html#cb1-6" tabindex="-1"></a>    (<span class="op">-</span><span class="va">X</span><span class="op">.^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span> <span class="op">-</span> <span class="va">Y</span><span class="op">.^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">7</span> <span class="op">&gt;=</span><span class="fl">0</span>) <span class="op">&amp;</span> <span class="op">...</span></span>
+<span id="cb1-7"><a href="sdp.html#cb1-7" tabindex="-1"></a>    (<span class="fl">3</span> <span class="op">+</span> <span class="va">X</span> <span class="op">-</span> <span class="va">X</span><span class="op">.^</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">3</span><span class="op">*</span><span class="va">X</span><span class="op">.^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">Y</span><span class="op">.^</span><span class="fl">2</span> <span class="op">&gt;=</span> <span class="fl">0</span>)<span class="op">;</span></span>
+<span id="cb1-8"><a href="sdp.html#cb1-8" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="sdp.html#cb1-9" tabindex="-1"></a><span class="va">h</span> <span class="op">=</span> <span class="va">pcolor</span>(<span class="va">X</span><span class="op">,</span><span class="va">Y</span><span class="op">,</span><span class="va">double</span>(<span class="va">ineq</span>)) <span class="op">;</span></span>
+<span id="cb1-10"><a href="sdp.html#cb1-10" tabindex="-1"></a><span class="va">h</span>.<span class="va">EdgeColor</span> <span class="op">=</span> <span class="ss">&#39;none&#39;</span> <span class="op">;</span></span></code></pre></div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:EllipticCurve"></span>
 <img src="images/elliptic_curve.png" alt="Elliptic Curve." width="60%" />
 <p class="caption">
@@ -684,7 +690,7 @@ d^\star \leq p^\star.
 <p>Recall Theorem <a href="background.html#thm:LPStrongDuality">1.9</a> states that in LP, if at least one of the primal and dual is feasible, then strong duality holds (i.e., <span class="math inline">\(p^\star = d^\star = \{\pm \infty, \text{finite} \}\)</span>). Unfortunately, this does not carry over to SDPs. Let us provide several examples.</p>
 <div class="examplebox">
 <div class="example">
-<p><span id="exm:FailureSDPDuality" class="example"><strong>Example 2.3  (Failure of SDP Strong Duality) </strong></span>The first example, from <span class="citation">(<a href="#ref-ramana97mp-exact" role="doc-biblioref">Ramana 1997</a>)</span>, shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some <span class="math inline">\(\alpha \geq 0\)</span>
+<p><span id="exm:FailureSDPDuality" class="example"><strong>Example 2.3  (Failure of SDP Strong Duality) </strong></span>The first example, from <span class="citation">(<a href="#ref-ramana97mp-exact">M. V. Ramana 1997</a>)</span>, shows that even if both primal and dual are feasible, there could exist a nonzero duality gap. Consider the following SDP pair for some <span class="math inline">\(\alpha \geq 0\)</span>
 <span class="math display">\[
 \begin{cases}
 \min_{X \in \mathbb{S}^{3}} &amp; \alpha X_{11} \\
@@ -709,7 +715,7 @@ Because <span class="math inline">\(X_{22} = 0\)</span>, we have <span class="ma
 \begin{bmatrix} \alpha - y_2 &amp; 0 &amp; 0 \\ 0 &amp; - y_1 &amp; -y_2 \\ 0 &amp; -y_2 &amp; 0 \end{bmatrix} \succeq 0,
 \]</span>
 we have <span class="math inline">\(y_2 = 0\)</span>. As a result, <span class="math inline">\(d^\star = 0\)</span>, and strong duality fails.</p>
-<p>The second example, from <span class="citation">(<a href="#ref-todd01an-semidefinite" role="doc-biblioref">Todd 2001</a>)</span>, shows that the duality gap can even be infinite. Consider the primal-dual SDP
+<p>The second example, from <span class="citation">(<a href="#ref-todd01an-semidefinite">Todd 2001</a>)</span>, shows that the duality gap can even be infinite. Consider the primal-dual SDP
 <span class="math display">\[
 \begin{cases}
 \min_{X \in \mathbb{S}^{2}} &amp; 0 \\
@@ -727,7 +733,7 @@ Clearly, the primal is infeasible because
 \begin{bmatrix} 0 &amp; 1 \\ 1 &amp; X_{22} \end{bmatrix}
 \]</span>
 can never be PSD. So <span class="math inline">\(p^\star = + \infty\)</span>. The dual problem, however, is feasible. From the PSD constraint we have <span class="math inline">\(y_2 = 0\)</span> and <span class="math inline">\(d^\star = 0\)</span>. Therefore, the duality gap is infinite.</p>
-<p>The third example, from <span class="citation">(<a href="#ref-todd01an-semidefinite" role="doc-biblioref">Todd 2001</a>)</span>, shows that even when the duality gap is zero, the primal or dual problem may not admit optimizers. Consider the primal-dual SDP
+<p>The third example, from <span class="citation">(<a href="#ref-todd01an-semidefinite">Todd 2001</a>)</span>, shows that even when the duality gap is zero, the primal or dual problem may not admit optimizers. Consider the primal-dual SDP
 <span class="math display">\[
 \begin{cases}
 \min_{X \in \mathbb{S}^{2}} &amp; 2 X_{12} \\
@@ -762,7 +768,7 @@ and we want to minimize <span class="math inline">\(y_1\)</span>. Clearly, <span
 \]</span></p>
 </div>
 </div>
-<p>One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the dual is solvable. If the dual is bounded above and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the primal is solvable <span class="citation">(<a href="#ref-nie23book-moment" role="doc-biblioref">Nie 2023</a>)</span>.</p>
+<p>One can relax the requirement of both primal and dual being strictly feasible to only one of them being strictly feasible, and similar results would hold. Precisely, if the primal is bounded below and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the dual is solvable. If the dual is bounded above and strictly feasible, then <span class="math inline">\(p^\star = d^\star\)</span> and the primal is solvable <span class="citation">(<a href="#ref-nie23book-moment">Nie 2023</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
 <p><span id="exm:SuccessSDPDuality" class="example"><strong>Example 2.4  (SDP Strong Duality) </strong></span>Consider the following primal-dual SDP pair
@@ -868,7 +874,7 @@ for vectors <span class="math inline">\(A_1,\dots,A_m\)</span> in the space <spa
 \min_{X \in V} \{ \langle C, X \rangle \mid \langle A_i, X \rangle=b_i,i=1,\dots,m,X \in \mathcal{K} \}.
 \tag{2.9}
 \end{equation}\]</span></p>
-<p>Let us practice an example from <span class="citation">(<a href="#ref-nie23book-moment" role="doc-biblioref">Nie 2023</a>)</span>.</p>
+<p>Let us practice an example from <span class="citation">(<a href="#ref-nie23book-moment">Nie 2023</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
 <p><span id="exm:SeDuMiExample" class="example"><strong>Example 2.5  (SeDuMi Example) </strong></span>Consider the following optimization problem as an instance of <a href="sdp.html#eq:general-convex-sedumi">(2.7)</a>:
@@ -904,23 +910,23 @@ The vector <span class="math inline">\(C\)</span> is
 C = \left( 3,\begin{bmatrix}-1\\-1\end{bmatrix}, \begin{bmatrix}0\\-1\\0\\-1\end{bmatrix},\begin{bmatrix}1&amp;0&amp;0\\0&amp;2&amp;0\\0&amp;0&amp;3\end{bmatrix} \right).
 \]</span></p>
 <p>To input this problem to SeDuMi, we only need to provide the data <span class="math inline">\((A,b,C)\)</span> together with the description of the cones <span class="math inline">\(\mathcal{K}\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="sdp.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">% describe dimensions of the cones</span></span>
-<span id="cb2-2"><a href="sdp.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">f</span> <span class="op">=</span> <span class="fl">1</span><span class="op">;</span> <span class="co">% free cone</span></span>
-<span id="cb2-3"><a href="sdp.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">l</span> <span class="op">=</span> <span class="fl">2</span><span class="op">;</span> <span class="co">% nonnegative orthant</span></span>
-<span id="cb2-4"><a href="sdp.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">q</span> <span class="op">=</span> <span class="fl">4</span><span class="op">;</span> <span class="co">% second order cone</span></span>
-<span id="cb2-5"><a href="sdp.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="va">K</span>.<span class="va">s</span> <span class="op">=</span> <span class="fl">3</span><span class="op">;</span> <span class="co">% psd cone</span></span>
-<span id="cb2-6"><a href="sdp.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="sdp.html#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">% provide A,b,c</span></span>
-<span id="cb2-8"><a href="sdp.html#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="va">c</span> <span class="op">=</span> [<span class="fl">3</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">2</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">3</span>]<span class="op">;</span></span>
-<span id="cb2-9"><a href="sdp.html#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="va">b</span> <span class="op">=</span> [<span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">1</span>]<span class="op">;</span></span>
-<span id="cb2-10"><a href="sdp.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> [</span>
-<span id="cb2-11"><a href="sdp.html#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
-<span id="cb2-12"><a href="sdp.html#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
-<span id="cb2-13"><a href="sdp.html#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span></span>
-<span id="cb2-14"><a href="sdp.html#cb2-14" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">;</span></span>
-<span id="cb2-15"><a href="sdp.html#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="sdp.html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">% solve using sedumi</span></span>
-<span id="cb2-17"><a href="sdp.html#cb2-17" aria-hidden="true" tabindex="-1"></a>[<span class="va">xopt</span><span class="op">,</span><span class="va">yopt</span><span class="op">,</span><span class="va">info</span>] <span class="op">=</span> <span class="va">sedumi</span>(<span class="va">A</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">K</span>)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="sdp.html#cb2-1" tabindex="-1"></a><span class="co">% describe dimensions of the cones</span></span>
+<span id="cb2-2"><a href="sdp.html#cb2-2" tabindex="-1"></a><span class="va">K</span>.<span class="va">f</span> <span class="op">=</span> <span class="fl">1</span><span class="op">;</span> <span class="co">% free cone</span></span>
+<span id="cb2-3"><a href="sdp.html#cb2-3" tabindex="-1"></a><span class="va">K</span>.<span class="va">l</span> <span class="op">=</span> <span class="fl">2</span><span class="op">;</span> <span class="co">% nonnegative orthant</span></span>
+<span id="cb2-4"><a href="sdp.html#cb2-4" tabindex="-1"></a><span class="va">K</span>.<span class="va">q</span> <span class="op">=</span> <span class="fl">4</span><span class="op">;</span> <span class="co">% second order cone</span></span>
+<span id="cb2-5"><a href="sdp.html#cb2-5" tabindex="-1"></a><span class="va">K</span>.<span class="va">s</span> <span class="op">=</span> <span class="fl">3</span><span class="op">;</span> <span class="co">% psd cone</span></span>
+<span id="cb2-6"><a href="sdp.html#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="sdp.html#cb2-7" tabindex="-1"></a><span class="co">% provide A,b,c</span></span>
+<span id="cb2-8"><a href="sdp.html#cb2-8" tabindex="-1"></a><span class="va">c</span> <span class="op">=</span> [<span class="fl">3</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">2</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">3</span>]<span class="op">;</span></span>
+<span id="cb2-9"><a href="sdp.html#cb2-9" tabindex="-1"></a><span class="va">b</span> <span class="op">=</span> [<span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb2-10"><a href="sdp.html#cb2-10" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> [</span>
+<span id="cb2-11"><a href="sdp.html#cb2-11" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-12"><a href="sdp.html#cb2-12" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="sdp.html#cb2-13" tabindex="-1"></a>    <span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span><span class="op">,-</span><span class="fl">1</span><span class="op">,</span><span class="fl">0</span></span>
+<span id="cb2-14"><a href="sdp.html#cb2-14" tabindex="-1"></a>    ]<span class="op">;</span></span>
+<span id="cb2-15"><a href="sdp.html#cb2-15" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="sdp.html#cb2-16" tabindex="-1"></a><span class="co">% solve using sedumi</span></span>
+<span id="cb2-17"><a href="sdp.html#cb2-17" tabindex="-1"></a>[<span class="va">xopt</span><span class="op">,</span><span class="va">yopt</span><span class="op">,</span><span class="va">info</span>] <span class="op">=</span> <span class="va">sedumi</span>(<span class="va">A</span><span class="op">,</span><span class="va">b</span><span class="op">,</span><span class="va">c</span><span class="op">,</span><span class="va">K</span>)<span class="op">;</span></span></code></pre></div>
 <p>Note that in providing <span class="math inline">\(A\)</span>, we vectorize each <span class="math inline">\(A_i\)</span> and place it along the <span class="math inline">\(i\)</span>-th row of the matrix <span class="math inline">\(A\)</span>.
 The above Matlab script gives us the optimal solution
 <span class="math display">\[
@@ -942,7 +948,7 @@ To run the <a href="https://github.com/ComputationalRobotics/Semidefinite-Exampl
 <span class="math display">\[
 x^{(k+1)} = x^{(k)} - \frac{f(x^{(k)})}{f&#39;(x^{(k)})},
 \]</span>
-where <span class="math inline">\(f&#39;(x^{(k)})\)</span> denotes the derivative of <span class="math inline">\(f\)</span> at the current iterate <span class="math inline">\(x^{(k)}\)</span>. This simple algorithm is indeed (in my opinion) the most important foundation of modern numerical optimization <span class="citation">(<a href="#ref-nocedal99book-numerical" role="doc-biblioref">Nocedal and Wright 1999</a>)</span>. Under mild conditions, Newton’s method has at least quadratic convergence rate, that is to say, if <span class="math inline">\(|x^{(k)} - x^\star| = \epsilon\)</span>, then <span class="math inline">\(|x^{(k+1)} - x^\star| = O(\epsilon^2)\)</span>. Of course, there exist pathological cases where even linear convergence is not guaranteed (e.g., when <span class="math inline">\(f&#39;(x^\star) = 0\)</span>).</p>
+where <span class="math inline">\(f&#39;(x^{(k)})\)</span> denotes the derivative of <span class="math inline">\(f\)</span> at the current iterate <span class="math inline">\(x^{(k)}\)</span>. This simple algorithm is indeed (in my opinion) the most important foundation of modern numerical optimization <span class="citation">(<a href="#ref-nocedal99book-numerical">Nocedal and Wright 1999</a>)</span>. Under mild conditions, Newton’s method has at least quadratic convergence rate, that is to say, if <span class="math inline">\(|x^{(k)} - x^\star| = \epsilon\)</span>, then <span class="math inline">\(|x^{(k+1)} - x^\star| = O(\epsilon^2)\)</span>. Of course, there exist pathological cases where even linear convergence is not guaranteed (e.g., when <span class="math inline">\(f&#39;(x^\star) = 0\)</span>).</p>
 <p>Newton’s method can be generalized to find a point at which multiple functions vanish simultaneously. Given a function <span class="math inline">\(F: \mathbb{R}^{n} \rightarrow \mathbb{R}^{n}\)</span> that is continuously differentiable, and an initial iterate <span class="math inline">\(x^{(0)}\)</span>, Newton’s method reads
 <span class="math display" id="eq:newton-method-vector">\[\begin{equation}
 x^{(k+1)} = x^{(k)} - J_F(x^{(k)})^{-1}F(x^{(k)}),
@@ -1024,7 +1030,7 @@ and
 <span class="math display">\[
 M \otimes_{\mathrm{s}}N = N \otimes_{\mathrm{s}}M.
 \]</span>
-To compute the symmetric kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker" role="doc-biblioref">Schacke 2004</a>)</span>. The <span class="math inline">\(\otimes_{\mathrm{s}}\)</span> function is readily implemented in software packages such as SDPT3.</p>
+To compute the symmetric kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker">Schacke 2004</a>)</span>. The <span class="math inline">\(\otimes_{\mathrm{s}}\)</span> function is readily implemented in software packages such as SDPT3.</p>
 <p>The following property of the symmetric kronecker product is useful for us later.</p>
 <div class="theorembox">
 <div class="lemma">
@@ -1042,7 +1048,7 @@ with the corresponding set of orthonormal eigenvectors
 </div>
 </div>
 <p>It is easy to see that, if <span class="math inline">\(M,N\)</span> are two PSD matrices that commute, then <span class="math inline">\(M \otimes_{\mathrm{s}}N\)</span> is also PSD.</p>
-<p>For more properties of symmetric vectorization and Kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker" role="doc-biblioref">Schacke 2004</a>)</span>.</p>
+<p>For more properties of symmetric vectorization and Kronecker product, see <span class="citation">(<a href="#ref-schacke04mthesis-kronecker">Schacke 2004</a>)</span>.</p>
 </div>
 <p>Now we are ready to sketch the interior-point algorithm.</p>
 <div id="the-central-path" class="section level3 hasAnchor" number="2.4.1">
@@ -1099,7 +1105,7 @@ X Z - \mu \mathrm{I}
 \end{equation}\]</span>
 However, there is an issue with <span class="math inline">\(F\)</span> defined as above. The input of the function <span class="math inline">\((X,y,Z)\)</span> lives in <span class="math inline">\(\mathbb{S}^{n} \times \mathbb{R}^{m} \times \mathbb{S}^{n}\)</span>, but the output lives in <span class="math inline">\(\mathbb{S}^{n} \times \mathbb{R}^{m} \times \mathbb{R}^{n \times n}\)</span> because <span class="math inline">\(XZ\)</span> is not guaranteed to be symmetric (two symmetric matrices may not commute). Therefore, Newton’s method cannot be directly applied.</p>
 <p>An easy way to fix this issue is to treat the input and output of <span class="math inline">\(F\)</span> as both <span class="math inline">\(\mathbb{R}^{n \times n} \times \mathbb{R}^{m} \times \mathbb{R}^{n \times n}\)</span>. This could work, however, leads to nonsymmetric Newton iterates.</p>
-<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal" role="doc-biblioref">Alizadeh, Haeberly, and Overton 1998</a>)</span> proposed a better idea – to equivalently rewrite <a href="sdp.html#eq:central-path-F-1">(2.19)</a> as
+<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal">Alizadeh, Haeberly, and Overton 1998</a>)</span> proposed a better idea – to equivalently rewrite <a href="sdp.html#eq:central-path-F-1">(2.19)</a> as
 <span class="math display" id="eq:central-path-F-2">\[\begin{equation}
 F(X,y,Z) = \begin{pmatrix}
 \mathcal{A}^*(y) + Z - C \\
@@ -1233,7 +1239,7 @@ assuming <span class="math inline">\(\Delta X\)</span> is not PSD.</p>
 <div id="nondegeneracy" class="section level3 hasAnchor" number="2.4.4">
 <h3><span class="header-section-number">2.4.4</span> Nondegeneracy<a href="sdp.html#nondegeneracy" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Since the algorithm above is an application of Newton’s method to the system of equations <a href="sdp.html#eq:central-path-F-3">(2.21)</a>, the key to understand its asymptotic behavior is to analyze the Jacobian <a href="sdp.html#eq:aho-Jacobian">(2.22)</a> at the optimal solution. If the Jacobian at the optimal solution is nonsingular, then one can show that the algorithm above has asymptotic quadratic convergence rate.</p>
-<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal" role="doc-biblioref">Alizadeh, Haeberly, and Overton 1998</a>)</span> provided a sufficient condition for the Jacobian to be nonsingular, which is called nondegeneracy.</p>
+<p><span class="citation">(<a href="#ref-alizadeh98siopt-primal">Alizadeh, Haeberly, and Overton 1998</a>)</span> provided a sufficient condition for the Jacobian to be nonsingular, which is called nondegeneracy.</p>
 <div class="definitionbox">
 <div class="definition">
 <p><span id="def:Nondegeneracy" class="definition"><strong>Definition 2.3  (Nondegeneracy) </strong></span>Let <span class="math inline">\((X,y,Z)\)</span> be a solution to the SDP pair <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a> and satisfies the KKT optimality conditions <a href="sdp.html#eq:SDP-KKT">(2.17)</a>. In this case, <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span> can be simultaneously diagonalized
@@ -1282,7 +1288,7 @@ where <span class="math inline">\(r^\Delta \leq m\)</span> is due to <a href="sd
 <span class="math display">\[
 \frac{1}{2}(XZ + ZX) = \mu \mathrm{I}.
 \]</span></p>
-<p>It turns out that is not the only way (and also not the most robust way) to symmetrize the centrality condition. A more popular symmetrization is due to <span class="citation">(<a href="#ref-monteiro97siopt-primal" role="doc-biblioref">Monteiro 1997</a>)</span> and <span class="citation">(<a href="#ref-zhang98siopt-extending" role="doc-biblioref">Zhang 1998</a>)</span>, and is typically referred to as the Monteiro-Zhang family <span class="citation">(<a href="#ref-monteiro98siopt-polynomial" role="doc-biblioref">Monteiro 1998</a>)</span>. The basic idea is to symmetrize the centrality condition as
+<p>It turns out that is not the only way (and also not the most robust way) to symmetrize the centrality condition. A more popular symmetrization is due to <span class="citation">(<a href="#ref-monteiro97siopt-primal">Monteiro 1997</a>)</span> and <span class="citation">(<a href="#ref-zhang98siopt-extending">Zhang 1998</a>)</span>, and is typically referred to as the Monteiro-Zhang family <span class="citation">(<a href="#ref-monteiro98siopt-polynomial">Monteiro 1998</a>)</span>. The basic idea is to symmetrize the centrality condition as
 <span class="math display" id="eq:Monteiro-Zhang">\[\begin{equation}
 \frac{1}{2}(P XZ P^{-1}+ P^{-\top}XZ P^\top) = \mu \mathrm{I}.
 \tag{2.31}
@@ -1290,7 +1296,7 @@ where <span class="math inline">\(r^\Delta \leq m\)</span> is due to <a href="sd
 Clearly, the AHO direction is a special case of <a href="sdp.html#eq:Monteiro-Zhang">(2.31)</a> with the choice <span class="math inline">\(P = \mathrm{I}\)</span>.</p>
 <p>Two other most popular Newton directions are:</p>
 <ul>
-<li><p>Nesterov-Todd <span class="citation">(<a href="#ref-todd98siopt-nesterov" role="doc-biblioref">Todd, Toh, and Tütüncü 1998</a>)</span>, where <span class="math inline">\(P\)</span> is obtained by first solving
+<li><p>Nesterov-Todd <span class="citation">(<a href="#ref-todd98siopt-nesterov">Todd, Toh, and Tütüncü 1998</a>)</span>, where <span class="math inline">\(P\)</span> is obtained by first solving
 <span class="math display">\[
 WZW = X,
 \]</span>
@@ -1299,7 +1305,7 @@ and then setting
 P = W^{-1/2}.
 \]</span>
 This is the Newton method implemented by SeDuMi.</p></li>
-<li><p>HKM, which was proposed and analyzed by multiple authors <span class="citation">(<a href="#ref-helmberg96siopt-interior" role="doc-biblioref">Helmberg et al. 1996</a>)</span>, <span class="citation">(<a href="#ref-kojima97siopt-interior" role="doc-biblioref">Kojima, Shindoh, and Hara 1997</a>)</span>, computes
+<li><p>HKM, which was proposed and analyzed by multiple authors <span class="citation">(<a href="#ref-helmberg96siopt-interior">Helmberg et al. 1996</a>)</span>, <span class="citation">(<a href="#ref-kojima97siopt-interior">Kojima, Shindoh, and Hara 1997</a>)</span>, computes
 <span class="math display">\[
 P = Z^{1/2}.
 \]</span>
@@ -1311,7 +1317,7 @@ This is the Newton method implemented by SDPT3 and MOSEK.</p></li>
 <h2><span class="header-section-number">2.5</span> Applications<a href="sdp.html#applications" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="lyapunov-stability" class="section level3 hasAnchor" number="2.5.1">
 <h3><span class="header-section-number">2.5.1</span> Lyapunov Stability<a href="sdp.html#lyapunov-stability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see <span class="citation">(<a href="#ref-boyd94book-lmi" role="doc-biblioref">S. Boyd et al. 1994</a>)</span>.</p>
+<p>One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see <span class="citation">(<a href="#ref-boyd94book-lmi">S. Boyd et al. 1994</a>)</span>.</p>
 <p>Consider a discrete-time linear dynamical system
 <span class="math display" id="eq:dt-linear-system">\[\begin{equation}
 x_{k+1} = A x_k,\quad k=0,\dots
@@ -1339,7 +1345,7 @@ P \succ 0, \quad A^\top P A - P \prec 0.
 </div>
 <div class="proofbox">
 <div class="proof">
-<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>2 <span class="math inline">\(\Rightarrow\)</span> 1: Let <span class="math inline">\(\lambda \in \mathbb{C}^{}\)</span> and <span class="math inline">\(v \neq 0 \in \mathbb{C}^{n}\)</span> be a pair of eigenvalue and eigenvector of <span class="math inline">\(A\)</span> such that <span class="math inline">\(A v = \lambda v\)</span>. Since <span class="math inline">\(A^\top P A - P \prec 0\)</span>, we have
+<p><span id="unlabeled-div-12" class="proof"><em>Proof</em>. </span>2 <span class="math inline">\(\Rightarrow\)</span> 1: Let <span class="math inline">\(\lambda \in \mathbb{C}^{}\)</span> and <span class="math inline">\(v  \neq 0 \in \mathbb{C}^{n}\)</span> be a pair of eigenvalue and eigenvector of <span class="math inline">\(A\)</span> such that <span class="math inline">\(A v = \lambda v\)</span>. Since <span class="math inline">\(A^\top P A - P \prec 0\)</span>, we have
 <span class="math display">\[
 v^* (A^\top P A - P) v &lt; 0 \Rightarrow (\lambda v)^* P (\lambda v) - v^* P v &lt; 0 \Rightarrow (|\lambda|^2 - 1) (v^* P v) &lt; 0.
 \]</span>
@@ -1402,7 +1408,7 @@ P = Q^{-1}, K = Y Q^{-1}.
 </div>
 <div id="linear-quadratic-regulator" class="section level3 hasAnchor" number="2.5.2">
 <h3><span class="header-section-number">2.5.2</span> Linear Quadratic Regulator<a href="sdp.html#linear-quadratic-regulator" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Another (somewhat surprising) application of semidefinite optimization is that it can be used to convexify the direct optimization of the linear quadratic regulator problem (one of the cornerstones in modern optimal control). In fact, such a convex formulation is the key to prove why <strong>policy optimization</strong> works in reinforcement learning, as least in the linear quadratic case <span class="citation">(<a href="#ref-hu23review-toward" role="doc-biblioref">Hu et al. 2023</a>)</span> <span class="citation">(<a href="#ref-mohammadi21tac-convergence" role="doc-biblioref">Mohammadi et al. 2021</a>)</span>.</p>
+<p>Another (somewhat surprising) application of semidefinite optimization is that it can be used to convexify the direct optimization of the linear quadratic regulator problem (one of the cornerstones in modern optimal control). In fact, such a convex formulation is the key to prove why <strong>policy optimization</strong> works in reinforcement learning, as least in the linear quadratic case <span class="citation">(<a href="#ref-hu23review-toward">Hu et al. 2023</a>)</span> <span class="citation">(<a href="#ref-mohammadi21tac-convergence">Mohammadi et al. 2021</a>)</span>.</p>
 <p>Consider a continuous-time linear dynamical system
 <span class="math display" id="eq:ct-linear-dynamical">\[\begin{equation}
 \dot{x} = A x + B u, \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^{m}, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m},
@@ -1442,7 +1448,7 @@ Note that problem <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37
 \tag{2.38}
 \end{equation}\]</span>
 where a matrix <span class="math inline">\(A\)</span> is Hurwitz means <span class="math inline">\(\mathrm{Re}(\lambda_i(A)) &lt; 0\)</span> for all <span class="math inline">\(i=1,\dots,n\)</span>, i.e., all the eigenvalues of <span class="math inline">\(A\)</span> have strictly negative real parts. When <span class="math inline">\(A - BK\)</span> is Hurwitz, the closed-loop system is stable and the integral in <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> will not blow up (so it is sufficient to consider the class of stabilizing controllers).</p>
-<p>We will first observe that the direct optimization <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> is nonconvex, because the feasible set <span class="math inline">\(\mathcal{S}\)</span> is nonconvex. The following example is adapted from <span class="citation">(<a href="#ref-fazel18icml-global" role="doc-biblioref">Fazel et al. 2018</a>)</span>.</p>
+<p>We will first observe that the direct optimization <a href="sdp.html#eq:linear-quadratic-regulator-directK">(2.37)</a> is nonconvex, because the feasible set <span class="math inline">\(\mathcal{S}\)</span> is nonconvex. The following example is adapted from <span class="citation">(<a href="#ref-fazel18icml-global">Fazel et al. 2018</a>)</span>.</p>
 <div class="examplebox">
 <div class="example">
 <p><span id="exm:NonconvexStabilizingController" class="example"><strong>Example 2.6  (Nonconvex Set of Stabilizing Controllers) </strong></span>Consider the dynamical system <a href="sdp.html#eq:ct-linear-dynamical">(2.35)</a> with
@@ -1542,45 +1548,45 @@ and thus
 <p><span id="exm:ConvexLQR" class="example"><strong>Example 2.7  (Convex LQR) </strong></span>For the same linear system as in Example <a href="sdp.html#exm:NonconvexStabilizingController">2.6</a>, let <span class="math inline">\(Q = R = \mathrm{I}_3\)</span>.</p>
 <p>If we solve the optimal feedback controller <span class="math inline">\(K\)</span> by solving the ARE, we get the optimal controller is <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>.</p>
 <p>If we implement the SDP in <a href="sdp.html#eq:lqr-directK-toX-2">(2.42)</a>, we also get <span class="math inline">\(K^\star = \mathrm{I}_3\)</span>, confirming the correctness of the convex parameterization. The implementation is shown below and can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/lqr_sdp.m">here</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="sdp.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">%% Show the feasible set is nonconvex</span></span>
-<span id="cb3-2"><a href="sdp.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-3"><a href="sdp.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">B</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-4"><a href="sdp.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="va">K1</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
-<span id="cb3-5"><a href="sdp.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="va">K2</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
-<span id="cb3-6"><a href="sdp.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">K</span> <span class="op">=</span> (<span class="va">K1</span> <span class="op">+</span> <span class="va">K2</span>)<span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
-<span id="cb3-7"><a href="sdp.html#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="sdp.html#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">%% get the groundtruth LQR controller</span></span>
-<span id="cb3-9"><a href="sdp.html#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">Q</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span> <span class="va">R</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-10"><a href="sdp.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">K_lqr</span> <span class="op">=</span> <span class="va">lqr</span>(<span class="va">A</span><span class="op">,</span><span class="va">B</span><span class="op">,</span><span class="va">Q</span><span class="op">,</span><span class="va">R</span><span class="op">,</span><span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>))<span class="op">;</span></span>
-<span id="cb3-11"><a href="sdp.html#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="va">Omega</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-12"><a href="sdp.html#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="sdp.html#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">%% solve SDP</span></span>
-<span id="cb3-14"><a href="sdp.html#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../YALMIP&#39;</span>))</span>
-<span id="cb3-15"><a href="sdp.html#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../../../mosek&#39;</span>))</span>
-<span id="cb3-16"><a href="sdp.html#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="sdp.html#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-18"><a href="sdp.html#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="va">Y</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span><span class="op">,</span><span class="ss">&#39;full&#39;</span>)<span class="op">;</span></span>
-<span id="cb3-19"><a href="sdp.html#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="va">Z</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
-<span id="cb3-20"><a href="sdp.html#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="va">M</span> <span class="op">=</span> [<span class="va">Z</span><span class="op">,</span> <span class="va">R</span><span class="op">*</span><span class="va">Y</span><span class="op">;</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">R</span><span class="op">,</span> <span class="va">X</span>]<span class="op">;</span></span>
-<span id="cb3-21"><a href="sdp.html#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [</span>
-<span id="cb3-22"><a href="sdp.html#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="va">A</span><span class="op">*</span><span class="va">X</span> <span class="op">-</span> <span class="va">B</span><span class="op">*</span><span class="va">Y</span> <span class="op">+</span> <span class="va">X</span><span class="op">*</span><span class="va">A</span><span class="op">&#39;</span> <span class="op">-</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">B</span><span class="op">&#39;</span> <span class="op">+</span> <span class="va">Omega</span> <span class="op">==</span> <span class="fl">0</span><span class="op">;</span></span>
-<span id="cb3-23"><a href="sdp.html#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="va">M</span> <span class="op">&gt;=</span> <span class="fl">0</span></span>
-<span id="cb3-24"><a href="sdp.html#cb3-24" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
-<span id="cb3-25"><a href="sdp.html#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="va">Q</span><span class="op">*</span><span class="va">X</span>) <span class="op">+</span> <span class="va">trace</span>(<span class="va">Z</span>)<span class="op">;</span></span>
-<span id="cb3-26"><a href="sdp.html#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
-<span id="cb3-27"><a href="sdp.html#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="va">K_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Y</span>)<span class="op">*</span><span class="va">inv</span>(<span class="va">value</span>(<span class="va">X</span>))<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="sdp.html#cb3-1" tabindex="-1"></a><span class="co">%% Show the feasible set is nonconvex</span></span>
+<span id="cb3-2"><a href="sdp.html#cb3-2" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="sdp.html#cb3-3" tabindex="-1"></a><span class="va">B</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="sdp.html#cb3-4" tabindex="-1"></a><span class="va">K1</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb3-5"><a href="sdp.html#cb3-5" tabindex="-1"></a><span class="va">K2</span> <span class="op">=</span> [<span class="fl">1</span><span class="op">,</span> <span class="op">-</span><span class="fl">10</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">;</span> <span class="op">-</span><span class="fl">1</span><span class="op">,</span> <span class="fl">0</span><span class="op">,</span> <span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb3-6"><a href="sdp.html#cb3-6" tabindex="-1"></a><span class="va">K</span> <span class="op">=</span> (<span class="va">K1</span> <span class="op">+</span> <span class="va">K2</span>)<span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="sdp.html#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="sdp.html#cb3-8" tabindex="-1"></a><span class="co">%% get the groundtruth LQR controller</span></span>
+<span id="cb3-9"><a href="sdp.html#cb3-9" tabindex="-1"></a><span class="va">Q</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span> <span class="va">R</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-10"><a href="sdp.html#cb3-10" tabindex="-1"></a><span class="va">K_lqr</span> <span class="op">=</span> <span class="va">lqr</span>(<span class="va">A</span><span class="op">,</span><span class="va">B</span><span class="op">,</span><span class="va">Q</span><span class="op">,</span><span class="va">R</span><span class="op">,</span><span class="va">zeros</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>))<span class="op">;</span></span>
+<span id="cb3-11"><a href="sdp.html#cb3-11" tabindex="-1"></a><span class="va">Omega</span> <span class="op">=</span> <span class="va">eye</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-12"><a href="sdp.html#cb3-12" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="sdp.html#cb3-13" tabindex="-1"></a><span class="co">%% solve SDP</span></span>
+<span id="cb3-14"><a href="sdp.html#cb3-14" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../YALMIP&#39;</span>))</span>
+<span id="cb3-15"><a href="sdp.html#cb3-15" tabindex="-1"></a><span class="va">addpath</span>(<span class="va">genpath</span>(<span class="ss">&#39;../../../mosek&#39;</span>))</span>
+<span id="cb3-16"><a href="sdp.html#cb3-16" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="sdp.html#cb3-17" tabindex="-1"></a><span class="va">X</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-18"><a href="sdp.html#cb3-18" tabindex="-1"></a><span class="va">Y</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span><span class="op">,</span><span class="ss">&#39;full&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-19"><a href="sdp.html#cb3-19" tabindex="-1"></a><span class="va">Z</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb3-20"><a href="sdp.html#cb3-20" tabindex="-1"></a><span class="va">M</span> <span class="op">=</span> [<span class="va">Z</span><span class="op">,</span> <span class="va">R</span><span class="op">*</span><span class="va">Y</span><span class="op">;</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">R</span><span class="op">,</span> <span class="va">X</span>]<span class="op">;</span></span>
+<span id="cb3-21"><a href="sdp.html#cb3-21" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [</span>
+<span id="cb3-22"><a href="sdp.html#cb3-22" tabindex="-1"></a>    <span class="va">A</span><span class="op">*</span><span class="va">X</span> <span class="op">-</span> <span class="va">B</span><span class="op">*</span><span class="va">Y</span> <span class="op">+</span> <span class="va">X</span><span class="op">*</span><span class="va">A</span><span class="op">&#39;</span> <span class="op">-</span> <span class="va">Y</span><span class="op">&#39;*</span><span class="va">B</span><span class="op">&#39;</span> <span class="op">+</span> <span class="va">Omega</span> <span class="op">==</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-23"><a href="sdp.html#cb3-23" tabindex="-1"></a>    <span class="va">M</span> <span class="op">&gt;=</span> <span class="fl">0</span></span>
+<span id="cb3-24"><a href="sdp.html#cb3-24" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb3-25"><a href="sdp.html#cb3-25" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="va">trace</span>(<span class="va">Q</span><span class="op">*</span><span class="va">X</span>) <span class="op">+</span> <span class="va">trace</span>(<span class="va">Z</span>)<span class="op">;</span></span>
+<span id="cb3-26"><a href="sdp.html#cb3-26" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span>)<span class="op">;</span></span>
+<span id="cb3-27"><a href="sdp.html#cb3-27" tabindex="-1"></a><span class="va">K_sdp</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Y</span>)<span class="op">*</span><span class="va">inv</span>(<span class="va">value</span>(<span class="va">X</span>))<span class="op">;</span></span></code></pre></div>
 </div>
 </div>
 </div>
 <div id="domain-adaptation" class="section level3 hasAnchor" number="2.5.3">
 <h3><span class="header-section-number">2.5.3</span> Domain Adaptation<a href="sdp.html#domain-adaptation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><span class="citation">(<a href="#ref-mansour09arxiv-domain" role="doc-biblioref">Mansour, Mohri, and Rostamizadeh 2009</a>)</span></p>
+<p><span class="citation">(<a href="#ref-mansour09arxiv-domain">Mansour, Mohri, and Rostamizadeh 2009</a>)</span></p>
 
 </div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-alizadeh98siopt-primal" class="csl-entry">
 Alizadeh, Farid, Jean-Pierre A Haeberly, and Michael L Overton. 1998. <span>“Primal-Dual Interior-Point Methods for Semidefinite Programming: Convergence Rates, Stability and Numerical Results.”</span> <em>SIAM Journal on Optimization</em> 8 (3): 746–68.
 </div>

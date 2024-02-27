@@ -5,16 +5,19 @@
 \documentclass[
 ]{book}
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -44,13 +47,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -58,7 +61,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -67,7 +70,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -152,9 +155,9 @@ arc=4pt}
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Semidefinite Optimization and Relaxation},
   pdfauthor={Heng Yang},
@@ -163,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-26}
+\date{2024-02-27}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -277,14 +280,12 @@ arc=4pt}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 
-\hypertarget{preface}{%
-\chapter*{Preface}\label{preface}}
+\chapter*{Preface}\label{preface}
 \addcontentsline{toc}{chapter}{Preface}
 
 This is the textbook for Harvard ENG-SCI 257: Semidefinite Optimization and Relaxation.
 
-\hypertarget{feedback}{%
-\section*{Feedback}\label{feedback}}
+\section*{Feedback}\label{feedback}
 \addcontentsline{toc}{section}{Feedback}
 
 I would like to invite you to provide comments to the textbook via the following two ways:
@@ -315,14 +316,12 @@ I would like to invite you to provide comments to the textbook via the following
 
 I would recommend using Disqus for high-level and general feedback regarding the entire Chapter, but using Hypothesis for feedback and questions about the technical details.
 
-\hypertarget{offerings}{%
-\section*{Offerings}\label{offerings}}
+\section*{Offerings}\label{offerings}
 \addcontentsline{toc}{section}{Offerings}
 
 Information about the offerings of the class is listed below.
 
-\hypertarget{spring}{%
-\subsubsection*{2024 Spring}\label{spring}}
+\subsubsection*{2024 Spring}\label{spring}
 \addcontentsline{toc}{subsubsection}{2024 Spring}
 
 \textbf{Time}: Mon/Wed 2:15 - 3:30pm
@@ -335,8 +334,7 @@ Information about the offerings of the class is listed below.
 
 \href{https://docs.google.com/document/d/1H6Wqht_PVw_n8Jl0kXN3HjZfHkeZJYqYWT4ayxvqRlU/edit?usp=sharing}{\textbf{Syllabus}}
 
-\hypertarget{notation}{%
-\chapter*{Notation}\label{notation}}
+\chapter*{Notation}\label{notation}
 \addcontentsline{toc}{chapter}{Notation}
 
 We will use the following standard notation throughout this book.
@@ -346,8 +344,10 @@ We will use the following standard notation throughout this book.
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7083}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2917}}@{}}
-\toprule()
+\toprule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \(\mathbb{R}^{}\) & real numbers \\
 \(\mathbb{R}^{}_{+}\) & nonnegative real \\
 \(\mathbb{R}^{}_{++}\) & positive real \\
@@ -359,7 +359,6 @@ We will use the following standard notation throughout this book.
 \(\mathbb{R}^{n}_{++}\) & positive orthant \\
 \(e_i\) & standard basic vector \\
 \(\Delta_n := \{x \in \mathbb{R}^n_{+} \mid \sum x_i = 1 \}\) & standard simplex \\
-\bottomrule()
 \end{longtable}
 
 \textbf{Matrices}
@@ -367,8 +366,10 @@ We will use the following standard notation throughout this book.
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7083}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2917}}@{}}
-\toprule()
+\toprule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \(\mathbb{R}^{m \times n}\) & \(m \times n\) real matrices \\
 \(\mathbb{S}^{n}\) & \(n\times n\) symmetric matrices \\
 \(\mathbb{S}^{n}_{+}\) & \(n\times n\) positive semidefinite matrices \\
@@ -390,14 +391,15 @@ We will use the following standard notation throughout this book.
 \(\Vert A \Vert_\mathrm{F}\) & Frobenius norm \\
 \(\mathrm{Range}(A)\) & span of the column vectors \\
 \(\mathrm{ker}(A)\) & right null space \\
-\bottomrule()
 \end{longtable}
 
 \textbf{Geometry}
 
 \begin{longtable}[]{@{}ll@{}}
-\toprule()
+\toprule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \(\Vert a \Vert_{p}\) & \(p\)-norm \\
 \(\Vert a \Vert\) & \(2\)-norm \\
 \(B(o,r)\) & ball with center \(o\) and radius \(r\) \\
@@ -412,40 +414,39 @@ We will use the following standard notation throughout this book.
 \(\mathrm{O}(d)\) & orthogonal group of dimension \(d\) \\
 \(\mathrm{SO}(d)\) & special orthogonal group of dimension \(d\) \\
 \(\mathcal{S}^{d-1}\) & unit sphere in \(\mathbb{R}^{d}\) \\
-\bottomrule()
 \end{longtable}
 
 \textbf{Optimization}
 
 \begin{longtable}[]{@{}ll@{}}
-\toprule()
+\toprule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 KKT & Karush--Kuhn--Tucker \\
 LP & linear program \\
 QP & quadratic program \\
 SOCP & second-order cone program \\
 SDP & semidefinite program \\
-\bottomrule()
 \end{longtable}
 
 \textbf{Algebra}
 
 \begin{longtable}[]{@{}ll@{}}
-\toprule()
+\toprule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \(\mathbb{R}[x]\) & polynomial ring in \(x\) with real coefficients \\
 \(\deg\) & degree of a monomial / polynomial \\
 \(\mathbb{R}[x]_d\) & polynomials in \(x\) of degree up to \(d\) \\
 \([x]_d\) & vector of monomials of degree up to \(d\) \\
 \([\![x ]\!]_d\) & vector of monomials of degree \(d\) \\
-\bottomrule()
 \end{longtable}
 
-\hypertarget{background}{%
-\chapter{Mathematical Background}\label{background}}
+\chapter{Mathematical Background}\label{background}
 
-\hypertarget{background:convexity}{%
-\section{Convexity}\label{background:convexity}}
+\section{Convexity}\label{background:convexity}
 
 A very important notion in modern optimization is that of \emph{convexity}. To a large extent, an optimization problem is ``easy'' if it is convex, and ``difficult'' when convexity is lost, i.e., \emph{nonconvex}. We give a basic review of convexity here and refer the reader to \citep{rockafellar70-convexanalysis}, \citep{boyd04book-convex}, and \citep{bertsekas03book-convex} for comprehensive treatments.
 
@@ -510,11 +511,9 @@ Provide a constructive proof that the separation hyperplane exists in Theorem \r
 
 The intersection of convex sets is always convex (try to prove this).
 
-\hypertarget{background:convex:geometry}{%
-\section{Convex Geometry}\label{background:convex:geometry}}
+\section{Convex Geometry}\label{background:convex:geometry}
 
-\hypertarget{basic-facts}{%
-\subsection{Basic Facts}\label{basic-facts}}
+\subsection{Basic Facts}\label{basic-facts}
 
 Given a set \(S\), its \textbf{affine hull} is the set
 \[
@@ -551,8 +550,7 @@ Clearly, the empty set \(\emptyset\) and the entire set \(C\) are faces of \(C\)
 F = H \cap C.
 \]
 
-\hypertarget{cones-duality-polarity}{%
-\subsection{Cones, Duality, Polarity}\label{cones-duality-polarity}}
+\subsection{Cones, Duality, Polarity}\label{cones-duality-polarity}
 
 \begin{definition}[Polar]
 \protect\hypertarget{def:polar}{}\label{def:polar}For a nonempty set \(T \subseteq \mathbb{R}^{n}\), its polar is the set
@@ -653,8 +651,7 @@ K = \{ (x_1,x_2) \mid 2x_1 - x_2 \geq 0, 2x_2 - x_1 \geq 0 \}.
 Show that it is not self-dual.
 \end{exercise}
 
-\hypertarget{background:convex:optimization}{%
-\section{Convex Optimization}\label{background:convex:optimization}}
+\section{Convex Optimization}\label{background:convex:optimization}
 
 \begin{definition}[Convex Function]
 \protect\hypertarget{def:ConvexFun}{}\label{def:ConvexFun}A function \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^{}\) is a convex function if
@@ -715,8 +712,7 @@ Which one of the following functions \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}^
 
 \end{exercise}
 
-\hypertarget{minimax-theorem}{%
-\subsection{Minimax Theorem}\label{minimax-theorem}}
+\subsection{Minimax Theorem}\label{minimax-theorem}
 
 Given a function \(f: X \times Y \rightarrow \mathbb{R}^{}\), the following inequality always holds
 \begin{equation}
@@ -740,8 +736,7 @@ It is of interest to understand when equality holds in \eqref{eq:weak-minimax}.
 
 A special case of this theorem, used in game theory to prove the existence of equilibria for zero-sum games, is when \(X\) and \(Y\) are standard unit simplicies and the function \(f(x,y)\) is bilinear. In a research from our group \citep{tang23arxiv-uncertainty}, we used the minimax theorem to convert a minimax problem into a single-level minimization problem.
 
-\hypertarget{background:convex:optimization:Lagrangian}{%
-\subsection{Lagrangian Duality}\label{background:convex:optimization:Lagrangian}}
+\subsection{Lagrangian Duality}\label{background:convex:optimization:Lagrangian}
 
 Consider a nonlinear optimization problem
 \begin{equation}
@@ -788,8 +783,7 @@ Under these conditions, we have strong duality.
 \protect\hypertarget{thm:StrongDuality}{}\label{thm:StrongDuality}Consider the optimization \eqref{eq:background-nlp} and assume \(f,g_i\) are convex and \(h_j\) are affine. If Slater's constraint qualification holds, then the optimal value of the primal problem \eqref{eq:background-nlp} is the same as the optimal value of the dual problem \eqref{eq:background-Lagrangian-dual-problem}.
 \end{theorem}
 
-\hypertarget{kkt-optimality-conditions}{%
-\subsection{KKT Optimality Conditions}\label{kkt-optimality-conditions}}
+\subsection{KKT Optimality Conditions}\label{kkt-optimality-conditions}
 
 Consider the nonlinear optimization problem \eqref{eq:background-nlp}. A pair of primal and dual variables \((x^\star,\lambda^\star,\mu^\star)\) is said to satisfy the Karush-Kuhn-Tucker (KKT) optimality conditions if
 
@@ -826,11 +820,9 @@ On the other hand, for convex optimization problems, the KKT conditions are suff
 \protect\hypertarget{thm:KKTSufficient}{}\label{thm:KKTSufficient}Assume optimization \eqref{eq:background-nlp} is convex, i.e., \(f,g_i\) are convex and \(h_j\) are affine. Every point \(x^\star\) that satisfies the KKT conditions \eqref{eq:KKT-conditions} is a global minimizer.
 \end{theorem}
 
-\hypertarget{background:linear:optimization}{%
-\section{Linear Optimization}\label{background:linear:optimization}}
+\section{Linear Optimization}\label{background:linear:optimization}
 
-\hypertarget{polyhedra}{%
-\subsection{Polyhedra}\label{polyhedra}}
+\subsection{Polyhedra}\label{polyhedra}
 
 In \(\mathbb{R}^{n}\), a \textbf{polyhedron} is a set defined by finitely many linear inequalities, i.e.,
 \begin{equation}
@@ -867,8 +859,7 @@ Further, a bounded polyhedron is a polytope.
 
 An extreme point of a polytope is called a \textbf{vertex}. A \(1\)-dimensional face of a polytope is called an \textbf{edge}. A \(d-1\)-dimensional face of a \(d\)-dimensional polytope is called a \textbf{facet}.
 
-\hypertarget{linear-program}{%
-\subsection{Linear Program}\label{linear-program}}
+\subsection{Linear Program}\label{linear-program}
 
 We will now give a brief review of important results in linear programming (LP). The standard reference for linear programming is \citep{bertsimas97book-lp}. In some sense, the theory of semidefinite programming (SDP) has been developed in order to generalize those of LP to the setup where the decision variable becomes a symmetric matrix and the inequality is interpreted as being positive semidefinite.
 
@@ -1011,8 +1002,7 @@ It is important to note that both the primal and dual can be infeasible, as in t
 \end{cases}.
 \end{equation}
 
-\hypertarget{farkas-lemma}{%
-\subsection{Farkas Lemma}\label{farkas-lemma}}
+\subsection{Farkas Lemma}\label{farkas-lemma}
 
 A foundational result in linear programming is the Farkas Lemma.
 
@@ -1055,11 +1045,9 @@ is empty if and only if the following set
 is nonempty, with \(e\) being the vector of all ones.
 \end{theorem}
 
-\hypertarget{sdp}{%
-\chapter{Semidefinite Optimization}\label{sdp}}
+\chapter{Semidefinite Optimization}\label{sdp}
 
-\hypertarget{positive-semidefinite-matrices}{%
-\section{Positive Semidefinite Matrices}\label{positive-semidefinite-matrices}}
+\section{Positive Semidefinite Matrices}\label{positive-semidefinite-matrices}
 
 A real matrix \(A = (A_{ij}) \in \mathbb{R}^{n \times n}\) is symmetric if \(A = A^\top\), i.e., \(A_{ij} = A_{ji}\) for all \(i,j\). Let \(\mathbb{S}^{n}\) be the space of all real symmetric matrices.
 
@@ -1187,8 +1175,7 @@ Consider the block-partitioned matrix \(M\) in \eqref{eq:block-mat-M},
 
 \end{proposition}
 
-\hypertarget{geometric-properties}{%
-\subsection{Geometric Properties}\label{geometric-properties}}
+\subsection{Geometric Properties}\label{geometric-properties}
 
 The set \(\mathbb{S}^{n}_{+}\) is a proper cone (cf.~Definition \ref{def:ProperCone}). Its interior is \(\mathbb{S}^{n}_{++}\). Under the inner product
 \[
@@ -1371,11 +1358,9 @@ leading to \(A,B \in F\).
 The proof for the ``\textbf{Only If}'' direction can be found in Theorem 3.7.1 of \citep{wolkowicz12book-sdp}.
 \end{proof}
 
-\hypertarget{semidefinite-programming}{%
-\section{Semidefinite Programming}\label{semidefinite-programming}}
+\section{Semidefinite Programming}\label{semidefinite-programming}
 
-\hypertarget{spectrahedra}{%
-\subsection{Spectrahedra}\label{spectrahedra}}
+\subsection{Spectrahedra}\label{spectrahedra}
 
 Recall the definition of a polyhedron in \eqref{eq:polyhedron}, i.e., a vector \(x\) constrained by finitely many linear inequalities. The feasible set of a Linear Program is a polyhedron.
 
@@ -1489,8 +1474,7 @@ Using the Matlab script \href{https://github.com/ComputationalRobotics/Semidefin
 
 Another example is provided in Fig. \ref{fig:SpectrahedronStride}.
 
-\hypertarget{formulation-and-duality}{%
-\subsection{Formulation and Duality}\label{formulation-and-duality}}
+\subsection{Formulation and Duality}\label{formulation-and-duality}
 
 Semidefinite programs (SDPs) are linear optimization problems over spectrahedra. A standard SDP in \textbf{primal} form is written as
 \begin{equation}
@@ -1660,11 +1644,9 @@ we have
 and both \(X^\star\) and \(y^\star\) are optimal.
 \end{example}
 
-\hypertarget{geometric-properties-1}{%
-\subsection{Geometric Properties}\label{geometric-properties-1}}
+\subsection{Geometric Properties}\label{geometric-properties-1}
 
-\hypertarget{software-for-conic-optimization}{%
-\section{Software for Conic Optimization}\label{software-for-conic-optimization}}
+\section{Software for Conic Optimization}\label{software-for-conic-optimization}
 
 Linear optimization over the nonnegative orthant (\(\mathbb{R}^{n}_{+}\)), the second-order cone (\(\mathcal{Q}_{n}\)), and the positive semidefinite cone (\(\mathbb{S}^{n}_{+}\)) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+.
 
@@ -1801,8 +1783,7 @@ y^\star = (0,1,2).
 To run the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sedumi_example.m}{code}, make sure you download \href{https://github.com/sqlp/sedumi}{SeDuMi} and add that to your Matlab path.
 \end{example}
 
-\hypertarget{interior-point-algorithm}{%
-\section{Interior Point Algorithm}\label{interior-point-algorithm}}
+\section{Interior Point Algorithm}\label{interior-point-algorithm}
 
 A nice property of semidefinite optimization is that it can be solved in polynomial time. The algorithm of choice for solving SDPs is called an \textbf{interior point method} (IPM), which is also what popular SDP solvers like SeDuMI, MOSEK, and SDPT3 implement under the hood.
 
@@ -1923,8 +1904,7 @@ For more properties of symmetric vectorization and Kronecker product, see \citep
 
 Now we are ready to sketch the interior-point algorithm.
 
-\hypertarget{the-central-path}{%
-\subsection{The Central Path}\label{the-central-path}}
+\subsection{The Central Path}\label{the-central-path}
 
 Assuming strict feasibility, strong duality holds between the SDP primal \eqref{eq:SDP-P} and dual \eqref{eq:SDP-D}, then \((X,y,Z)\) is primal-dual optimal if and only if they satisfy the following KKT optimality conditions
 \begin{equation}
@@ -1965,8 +1945,7 @@ exists and solves \eqref{eq:SDP-P} and \eqref{eq:SDP-D}.
 
 Theorem \ref{thm:UniqueCentralPath} states that the limit of the central path leads to a solution of the SDP. Therefore, the basic concept of IPM is to follow the central path and converge to the optimal solution.
 
-\hypertarget{the-aho-newton-direction}{%
-\subsection{The AHO Newton Direction}\label{the-aho-newton-direction}}
+\subsection{The AHO Newton Direction}\label{the-aho-newton-direction}
 
 We will focus on the central path equation \eqref{eq:SDP-central-path} and for simplicity of notation, we will rename \((X^\mu,y^\mu,Z^\mu)\) as \((X,y,Z)\). Discarding the positive semidefiniteness condition for now, we can view \eqref{eq:SDP-central-path} as finding a root to the following function
 \begin{equation}
@@ -2072,8 +2051,7 @@ Then we are left with a single equation of \(\Delta y\):
 \end{equation}
 which is called the \textbf{Schur system}.
 
-\hypertarget{basic-algorithm}{%
-\subsection{Basic Algorithm}\label{basic-algorithm}}
+\subsection{Basic Algorithm}\label{basic-algorithm}
 
 With the AHO Newton direction worked out above, we can formulate the basic primal-dual path following interior point algorithm.
 
@@ -2120,8 +2098,7 @@ which does not change the eigenvalues of \(X + \bar{\alpha} \Delta X\). Therefor
 \]
 assuming \(\Delta X\) is not PSD.
 
-\hypertarget{nondegeneracy}{%
-\subsection{Nondegeneracy}\label{nondegeneracy}}
+\subsection{Nondegeneracy}\label{nondegeneracy}
 
 Since the algorithm above is an application of Newton's method to the system of equations \eqref{eq:central-path-F-3}, the key to understand its asymptotic behavior is to analyze the Jacobian \eqref{eq:aho-Jacobian} at the optimal solution. If the Jacobian at the optimal solution is nonsingular, then one can show that the algorithm above has asymptotic quadratic convergence rate.
 
@@ -2179,8 +2156,7 @@ where \(r^\Delta \leq m\) is due to \eqref{eq:dual-nondegeneracy} and \(m \leq r
 
 From \eqref{eq:sc-pn-dn-m}, we can understand that when \(m\) is very large, then primal nondegeneracy must fail and the dual solution must not be unique. This is a property we will see later when we study the moment-SOS hierarchy.
 
-\hypertarget{generalization}{%
-\subsection{Generalization}\label{generalization}}
+\subsection{Generalization}\label{generalization}
 
 The AHO Newton direction is obtained by symmetrizing the centrality condition \(XZ = \mu \mathrm{I}\) as
 \[
@@ -2215,11 +2191,9 @@ Two other most popular Newton directions are:
   This is the Newton method implemented by SDPT3 and MOSEK.
 \end{itemize}
 
-\hypertarget{applications}{%
-\section{Applications}\label{applications}}
+\section{Applications}\label{applications}
 
-\hypertarget{lyapunov-stability}{%
-\subsection{Lyapunov Stability}\label{lyapunov-stability}}
+\subsection{Lyapunov Stability}\label{lyapunov-stability}
 
 One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see \citep{boyd94book-lmi}.
 
@@ -2258,7 +2232,7 @@ Given \(A \in \mathbb{R}^{n \times n}\), the following statements are equivalent
 \end{lemma}
 
 \begin{proof}
-2 \(\Rightarrow\) 1: Let \(\lambda \in \mathbb{C}^{}\) and \(v \neq 0 \in \mathbb{C}^{n}\) be a pair of eigenvalue and eigenvector of \(A\) such that \(A v = \lambda v\). Since \(A^\top P A - P \prec 0\), we have
+2 \(\Rightarrow\) 1: Let \(\lambda \in \mathbb{C}^{}\) and \(v  \neq 0 \in \mathbb{C}^{n}\) be a pair of eigenvalue and eigenvector of \(A\) such that \(A v = \lambda v\). Since \(A^\top P A - P \prec 0\), we have
 \[
 v^* (A^\top P A - P) v < 0 \Rightarrow (\lambda v)^* P (\lambda v) - v^* P v < 0 \Rightarrow (|\lambda|^2 - 1) (v^* P v) < 0.
 \]
@@ -2323,8 +2297,7 @@ which is indeed a linear matrix inequality in the unknowns \((Q,Y)\). Solving th
 P = Q^{-1}, K = Y Q^{-1}.
 \]
 
-\hypertarget{linear-quadratic-regulator}{%
-\subsection{Linear Quadratic Regulator}\label{linear-quadratic-regulator}}
+\subsection{Linear Quadratic Regulator}\label{linear-quadratic-regulator}
 
 Another (somewhat surprising) application of semidefinite optimization is that it can be used to convexify the direct optimization of the linear quadratic regulator problem (one of the cornerstones in modern optimal control). In fact, such a convex formulation is the key to prove why \textbf{policy optimization} works in reinforcement learning, as least in the linear quadratic case \citep{hu23review-toward} \citep{mohammadi21tac-convergence}.
 
@@ -2508,20 +2481,17 @@ If we implement the SDP in \eqref{eq:lqr-directK-toX-2}, we also get \(K^\star =
 
 \end{example}
 
-\hypertarget{domain-adaptation}{%
-\subsection{Domain Adaptation}\label{domain-adaptation}}
+\subsection{Domain Adaptation}\label{domain-adaptation}
 
 \citep{mansour09arxiv-domain}
 
-\hypertarget{Shor}{%
-\chapter{Shor's Semidefinite Relaxation}\label{Shor}}
+\chapter{Shor's Semidefinite Relaxation}\label{Shor}
 
 In this Chapter, we introduce one of the most important and well-known applications of semidefinite optimization, namely its use in the formulation of \textbf{convex relaxations} of nonconvex optimization problems.
 
 We will focus on the so-called Shor's semidefinite relaxation \citep{shor87sjcss-quadratic}, which is particularly designed for quadratically constrained quadratic programs (QCQPs). Shor's semidefinite relaxation is relatively easy to formulate and understand, and as we will see later, is essentially the first-order relaxation in the moment-SOS hierarchy.
 
-\hypertarget{semidefinite-relaxation-of-qcqps}{%
-\section{Semidefinite Relaxation of QCQPs}\label{semidefinite-relaxation-of-qcqps}}
+\section{Semidefinite Relaxation of QCQPs}\label{semidefinite-relaxation-of-qcqps}
 
 Consider a quadratically constrained quadratic program (QCQP):
 \begin{equation}
@@ -2541,8 +2511,7 @@ x_i^2 = 1 \Leftrightarrow x_i \in \{+1,-1\},i=1,\dots,n.
 \]
 We will discuss a particular type of BQP known as the MAXCUT problem in more details later. From this simple example, since QCQP includes BQP, we know in general the problem \eqref{eq:qcqp} is nonconvex and it is NP-hard to compute \(f^\star\) and find a global optimizer.
 
-\hypertarget{lagrangian-dual-problem}{%
-\subsection{Lagrangian Dual Problem}\label{lagrangian-dual-problem}}
+\subsection{Lagrangian Dual Problem}\label{lagrangian-dual-problem}
 
 Since the original QCQP is hard to solve in general, we turn to computing a \textbf{lower bound} of \eqref{eq:qcqp}. The most natural way to find a lower bound, according to Section \ref{background:convex:optimization:Lagrangian}, is to derive its Lagrangian dual problem. Towards this goal, we associate a Lagrangian multipler \(-y_i\) with each equality constraint and obtain the Lagrangian
 \[
@@ -2597,8 +2566,7 @@ and \((x_\star, y_\star)\) is primal-dual feasible. Therefore, \((x_\star, y_\st
 
 The reason why Proposition \ref{prp:DualCertifier} can be quite useful is that it gives a very efficient algorithm to certify global optimality of a candidate (potentially locally) optimal solution \(x_\star\). In particular, in several practical applications in computer vision and robotics, the second equation in \eqref{eq:dual-optimality-condition} is a linear system of \(n\) equations in \(m\) variables with \(m\leq n\), and hence it has a unique solution. Therefore, one can first solve the linear system and obtain a candidate \(y_\star\), and then simply check the PSD condition \(C - \mathcal{A}^*(y_\star) \succeq 0\). This leads to optimality certifiers that can run in real time \citep{garcia21ivc-certifiable} \citep{holmes23ral-efficient}.
 
-\hypertarget{dual-of-the-dual-bidual}{%
-\subsection{Dual of the Dual (Bidual)}\label{dual-of-the-dual-bidual}}
+\subsection{Dual of the Dual (Bidual)}\label{dual-of-the-dual-bidual}
 
 The dual problem \eqref{eq:Lagrangian-dual-qcqp} should appear familiar to us at this moment -- it is simply a standard-form dual SDP \eqref{eq:SDP-D}. Therefore, we can write down the SDP dual of the QCQP dual \eqref{eq:Lagrangian-dual-qcqp}
 \begin{equation}
@@ -2699,8 +2667,7 @@ It is worth noting that, even when the relaxation is exact, i.e., \(p^\star = f^
   Clearly, \(\eta \approx 0\) certifies exactness of the SDP relaxation.
 \end{itemize}
 
-\hypertarget{maxcut}{%
-\subsection{MAXCUT}\label{maxcut}}
+\subsection{MAXCUT}\label{maxcut}
 
 We will now study binary quadratic optimization problems, in particular the MAXCUT problem. The original QCQP reads
 \begin{equation}
@@ -2787,8 +2754,7 @@ The best possible \(\alpha\) is \(0.878\), see Fig. \ref{fig:MAXCUTAlpha}.
 \caption{Best approximation ratio.}\label{fig:MAXCUTAlpha}
 \end{figure}
 
-\hypertarget{certifiably-optimal-rotation-averaging}{%
-\section{Certifiably Optimal Rotation Averaging}\label{certifiably-optimal-rotation-averaging}}
+\section{Certifiably Optimal Rotation Averaging}\label{certifiably-optimal-rotation-averaging}
 
 Consider a graph \(\mathcal{G}= (\mathcal{V},\mathcal{E})\) with node set \(\mathcal{V}= [N]\) and edge set \(\mathcal{E}= \{(i,j) \mid i,j \in \mathcal{V}\}\). Each node \(i\) is associated with an unknown rotation matrix \(R_i \in \mathrm{SO}(3)\), and each edge is associated with a relative rotation
 \begin{equation}
@@ -2966,11 +2932,9 @@ What if I set \(\beta = 120\)? The relaxation still remains exact with \(\eta = 
 Play with the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/rotation_averaging/example.m}{code} yourself to appreciate the power of this simple SDP relaxation. You can, for example, increase the number of nodes \(N\). What if you make the graph sparse (e.g., fewer edges but still a connected graph)?
 \end{example}
 
-\hypertarget{dual-optimality-certifier}{%
-\subsection{Dual Optimality Certifier}\label{dual-optimality-certifier}}
+\subsection{Dual Optimality Certifier}\label{dual-optimality-certifier}
 
-\hypertarget{stretch-to-high-degree-polynomial-optimization}{%
-\section{Stretch to High-Degree Polynomial Optimization}\label{stretch-to-high-degree-polynomial-optimization}}
+\section{Stretch to High-Degree Polynomial Optimization}\label{stretch-to-high-degree-polynomial-optimization}
 
 We have seen that Shor's semidefinite relaxation for QCQPs can be derived both using Lagrangian duality, or simply by dropping a rank constraint, both of which are straightforward to understand. When applied to the MAXCUT problem, it produces a provably good approximation ratio. When applied to the rotation averaging problem, it directly gives us the optimal solution without any approximation, and the optimality comes with a certificate.
 
@@ -3097,16 +3061,13 @@ where \(\lambda(x)\) is a monomial such that all the monomials of \(h_k(x) \cdot
 
 \citep{briales18cvpr-certifiably} called these constraints ``redundant'', are they? We will revisit this after we study the moment-SOS hierarchy!
 
-\hypertarget{SOS}{%
-\chapter{Sums of Squares Relaxation}\label{SOS}}
+\chapter{Sums of Squares Relaxation}\label{SOS}
 
-\hypertarget{basic-algebraic-geometry}{%
-\section{Basic Algebraic Geometry}\label{basic-algebraic-geometry}}
+\section{Basic Algebraic Geometry}\label{basic-algebraic-geometry}
 
 We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment \citep{bochnak13book-real}, \citep{cox13book-ideals}, \citep{dummit04book-abstract}, \citep{lang12book-algebra}.
 
-\hypertarget{groups-rings-fields}{%
-\subsection{Groups, Rings, Fields}\label{groups-rings-fields}}
+\subsection{Groups, Rings, Fields}\label{groups-rings-fields}
 
 \begin{definition}[Group]
 \protect\hypertarget{def:Group}{}\label{def:Group}
@@ -3179,8 +3140,7 @@ A \textbf{field} consists of a set \(S\) and two binary operations ``\(\cdot\)''
 
 Any field is obvious a commutative ring. Some commonly used fields are the rationals \(\mathbb{Q}\), the reals \(\mathbb{R}^{}\), and the complex numbers \(\mathbb{C}\). Another important field is given by \(k(x_1,\dots,x_n)\), the set of rational functions with coefficients in the field \(k\), with the natural operations.
 
-\hypertarget{polynomials-ideals-and-varieties}{%
-\subsection{Polynomials, Ideals, and Varieties}\label{polynomials-ideals-and-varieties}}
+\subsection{Polynomials, Ideals, and Varieties}\label{polynomials-ideals-and-varieties}
 
 We will use \(\mathbb{F}= \mathbb{R}\) or \(\mathbb{C}\) to denote the field of real or complex numbers from now on. Let \(x_1,\dots,x_n\) be indeterminates, we can define a polynomial.
 
@@ -3364,8 +3324,7 @@ The vanishing ideal of \(V\) is
 \]
 \end{example}
 
-\hypertarget{gruxf6bner-bases}{%
-\subsection{Gröbner Bases}\label{gruxf6bner-bases}}
+\subsection{Gröbner Bases}\label{gruxf6bner-bases}
 
 A polynomial ideal can have different ``descriptions'' in terms of its generators. We will now focus on a particular type of description that is better than the others.
 
@@ -3508,8 +3467,7 @@ The standard monomials are \(\{ 1,x,y,xy \}\).
 
 We will see that Grobner basis is a powerful tool with many applications in computational algebra. For a brief introduction to Grobner Basis, see \citep{sturmfels05notes-grobner}.
 
-\hypertarget{quotient-ring}{%
-\subsection{Quotient Ring}\label{quotient-ring}}
+\subsection{Quotient Ring}\label{quotient-ring}
 
 Given an ideal \(I\), we can immediately define a notion of \textbf{equivalence classess}, where we identify two elements in the ring if and only if their difference is in the ideal.
 
@@ -3571,8 +3529,7 @@ As a consequence, we can check the ideal membership of a given polynomial. Indee
 
 See an example of using Grobner basis to compute the normal form in the \href{https://www.maplesoft.com/support/help/maple/view.aspx?path=Groebner\%2FNormalForm}{Maple software}.
 
-\hypertarget{zero-dimensional-ideal}{%
-\subsection{Zero-dimensional Ideal}\label{zero-dimensional-ideal}}
+\subsection{Zero-dimensional Ideal}\label{zero-dimensional-ideal}
 
 In practice, we are often interested in polynomial systems that have only a finite number of solutions, in which case the associated ideal is called zero-dimensional.
 
@@ -3826,8 +3783,7 @@ x \\ y \\ z
 
 In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots \citep{corless97-reordered}. We will see that in the homework.
 
-\hypertarget{algebraic-and-semialgebraic-sets}{%
-\subsection{Algebraic and Semialgebraic Sets}\label{algebraic-and-semialgebraic-sets}}
+\subsection{Algebraic and Semialgebraic Sets}\label{algebraic-and-semialgebraic-sets}
 
 An \textbf{algebraic set} in \(\mathbb{R}^{n}\) is the set of common \textbf{real} roots of a set of polynomials. For instance, the unit sphere is an algebraic set because it is real zero set of the polynomial \(x_1^2 + \dots + x_n^2 - 1\).
 
@@ -3864,11 +3820,9 @@ Note that an algebraic set is not closed under projection. For example consider 
 
 Semialgebraic functions are similarly defined. Let \(f: D \rightarrow \mathbb{R}^{}\) be a real-valued function where the domain \(D\) is a semialgebraic set. Then \(f\) is called a \textbf{semialgebraic function} if the graph \(\{ (x,y) \mid x \in D, f(x)=y \}\) is a semialgebraic set.
 
-\hypertarget{sos-and-nonnegative-polynomials}{%
-\section{SOS and Nonnegative Polynomials}\label{sos-and-nonnegative-polynomials}}
+\section{SOS and Nonnegative Polynomials}\label{sos-and-nonnegative-polynomials}
 
-\hypertarget{nonnegative-polynomials}{%
-\subsection{Nonnegative polynomials}\label{nonnegative-polynomials}}
+\subsection{Nonnegative polynomials}\label{nonnegative-polynomials}
 
 Consider polynomials in \(n\) variables with real coefficients, i.e., the set \(\mathbb{R}[x]\). A polynomial \(p(x_1,\dots,x_n)\) is nonnegative if
 \[
@@ -3973,6 +3927,250 @@ Let \(\Delta = \det H_1(p) = p_1^2 - 4p_0\). The inertia of the Hermite matrix i
 \end{cases}
 \]
 Thus, \(p\) is strictly positive if and only if \(\Delta < 0\).
+\end{example}
+
+\textbf{Multivariate Polynomials}. Let us denote by \(P_{n,2d}\) the set of nonnegative polynomials in \(n\) variables with degree up to \(2d\), i.e.,
+\[
+P_{n,2d} = \{ f \in \mathbb{R}[x]_{2d} \mid f(x) \geq 0, \forall x \in \mathbb{R}^{n} \}.
+\]
+There are
+\[
+s(n,2d) = \begin{pmatrix} n + 2d \\ 2d \end{pmatrix}
+\]
+coefficients for \(f \in P_{n,2d}\). Notice that the constraint \(f(x) \geq 0\) when fixing \(x\) is an affine constraint in the coefficients of \(p\). Therefore, \(P_{n,2d}\) is in fact a convex set. Further, it is a proper cone.
+
+\begin{theorem}[Cone of Nonnegative Polynomials]
+\protect\hypertarget{thm:ConeNonnegative}{}\label{thm:ConeNonnegative}The set of nonnegative polynomials \(P_{n,2d}\) is a proper cone (i.e., closed, convex, pointed, and solid) in \(\mathbb{R}[x]_{2d} \sim \mathbb{R}^{s(n,2d)}\).
+\end{theorem}
+
+Let us see an example of quadratic polynomials.
+
+\begin{example}[Cone of Nonnegative Quadratic Polynomials]
+\protect\hypertarget{exm:ConeNonnegativeQuadratic}{}\label{exm:ConeNonnegativeQuadratic}Consider the cone \(P_{n,2}\), nonnegative polynomials in \(n\) variables of degree up to \(2\). Such polynomials can be written as
+\[
+p(x) = x^\top A x + 2 b^\top x + c,
+\]
+for some \(A \in \mathbb{S}^{n}\), \(b \in \mathbb{R}^{n}\), \(c \in \mathbb{R}^{}\). Observe that we can write
+\[
+p(x) = \begin{bmatrix} x \\ 1 \end{bmatrix}^\top\begin{bmatrix} A & b \\ b^\top& c \end{bmatrix} \begin{bmatrix} x \\ 1 \end{bmatrix},
+\]
+therefore \(p(x) \geq 0\) if and only if
+\[
+\begin{bmatrix} A & b \\ b^\top& 1 \end{bmatrix} \succeq 0.
+\]
+Thus, in this case the set \(P_{n,2}\) is isomorphic to the positive semidefinite cone \(\mathbb{S}^{n+1}_{+}\).
+\end{example}
+
+One may wonder is it the case that \(P_{n,2d}\), being a convex cone, will always have nice descriptions as in the previous example?
+
+Unfortunately the answer is no. In general the geometry of \(P_{n,2d}\) is extremely complicated. In Example \ref{exm:ConeNonnegativeQuadratic} we showed \(P_{n,2}\) is isomorphic to \(\mathbb{S}^{n+1}_{+}\) and hence it is \textbf{basic semialgebraic} (recall that the PSD cone can be described by a finite number of polynomial constraints). However, in general \(P_{n,2d}\) is semialgebraic but not basic semialgebraic.
+
+\begin{example}[Semialgebraic Set of Nonnegative Polynomials]
+\protect\hypertarget{exm:DegreeFourNonnegative}{}\label{exm:DegreeFourNonnegative}Consider the quartic univariate polynomial
+\[
+p(x) = x^4 + 2ax^2 + b, \quad a,b \in \mathbb{R}^{}.
+\]
+We are interested in finding conditions on \(a,b\) such that \(p(x) \geq 0\) for any \(x \in \mathbb{R}^{}\).
+
+A formal analysis can be done via the discriminant of \(p(x)\). But here we will leverage a powerful tool known as \textbf{quantifier elimination}, using cylindrical algebraic decomposition, to directly give us the answer. For example, we can use the quantifier elimination function in the Maple software.
+
+Fig. \ref{fig:QuantifierEliminationQuartic} shows my query to Maple. The quantifier elimination algorithm produces me a set of conditions on \(a,b\) such that \(p(x) \geq 0\).
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/quantifier_elimination_quartic} 
+
+}
+
+\caption{Quantifier elimination in Maple.}\label{fig:QuantifierEliminationQuartic}
+\end{figure}
+
+Plotting the conditions we get the blue region in Fig. \ref{fig:NonnegativeQuartic}. As we can see, the set of \((a,b)\) such that \(p(x)\) is nonnegative is indeed a convex set, but it is not a basic semialgebraic set in the sense that it cannot be written as the feasible set of a finite number of polynomial constraints. However, it is a semialgebraic set that can be described by the union of several basic semialgebraic sets.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{images/nonnegative_quartic} 
+
+}
+
+\caption{Set of coefficients such that the polynomial is nonnegative.}\label{fig:NonnegativeQuartic}
+\end{figure}
+
+Another issue with the convex set shown in Fig. \ref{fig:NonnegativeQuartic} is that there exists a zero-dimensional face (a vertex) that is not exposed, which is the point \((0,0)\). A non-exposed face is a known obstruction for a convex set to be the feasible set of a semidefinite program \citep{ramana95jgo-some}.
+\end{example}
+
+This shows the difficulty of working with nonnegative polynomials.
+
+From the computational complexity perspective, the difficulty of working with nonnegative polynomials is seen by the fact that deciding polynomial nonnegativity for \(2d \geq 4\) is known to be NP-hard in the worst case.
+
+However, we do know very well a special class of nonnegative polynomials, the nonnegative polynomials that can be written as a sum of squares.
+
+\subsection{Sums-of-Squares Polynomials}\label{sums-of-squares-polynomials}
+
+A multivariate polynomial \(p(x)\) is a \textbf{sum of squares} (SOS) if it can be written as the sum of squares of some other polynomials.
+
+\begin{definition}[Sum of Squares Polynomial]
+\protect\hypertarget{def:SumOfSquares}{}\label{def:SumOfSquares}A polynomial \(p(x) \in \mathbb{R}[x]_{2d}\) is a sum of squares if there exist \(q_1,\dots,q_m \in \mathbb{R}[x]_d\) such that
+\[
+p(x) = \sum_{k=1}^m q_k^2(x).
+\]
+\end{definition}
+
+We will use \(\Sigma_{n,2d}\) to denote the set of SOS polynomials in \(n\) variables of degree up to \(2d\). Clearly, we have
+\[
+\Sigma_{n,2d} \subseteq P_{n,2d},
+\]
+because any SOS polynomial is necessarily nonnegative.
+
+Similar to \(P_{n,2d}\), the set of SOS polynomials is also a convex proper cone.
+
+\begin{theorem}[Cone of SOS Polynomials]
+\protect\hypertarget{thm:ConeSOSPolynomial}{}\label{thm:ConeSOSPolynomial}The set of SOS polynomials \(\Sigma_{n,2d}\) is a proper cone (i.e., closed, convex, pointed, and solid) in \(\mathbb{R}[x]_{2d}\).
+\end{theorem}
+
+One of the central questions in convex algebraic geometry is to understand the relationships between \(P_{n,2d}\) and \(\Sigma_{n,2d}\).
+
+The first question is when is nonnegativity equal to sum of squares? David Hilbert showed that equality between \(\Sigma_{n,2d}\) and \(P_{n,2d}\) happens only in the following three cases:
+
+\begin{itemize}
+\item
+  Univariate polynomials, \(n=1\)
+\item
+  Quadratic polynomials, \(2d=2\)
+\item
+  Bivariate quartics, \(n=2, 2d=4\).
+\end{itemize}
+
+For all other cases, there always exist nonnegative polynomials that are not SOS. One of the most famous examples is the \textbf{Motzkin's polynomial} written as
+\[
+M(x,y) = x^4 y^2 + x^2 y^4 + 1 - 3 x^2 y^2.
+\]
+One can show that this polynomial is nonnegative but not SOS. Other examples of nonnegative but not SOS polynomials can be found in \citep{reznick00cm-some}.
+
+Let us show that univariate nonnegative polynomials can always be written as a sum of squares.
+
+\begin{theorem}[Univaraite Nonnegative Polynomials are SOS]
+\protect\hypertarget{thm:UnivaraiteNonSOS}{}\label{thm:UnivaraiteNonSOS}A univariate polynomial is nonnegative if and only if it is a sum of squares.
+\end{theorem}
+
+\begin{proof}
+Since \(p(x)\) is univariate, we can factorize it as
+\begin{equation}
+p(x) = p_n \prod_j (x - r_j)^{n_j} \prod_{k} (x - a_k + i b_k)^{m_k} (x - a_k - i b_k)^{m_k},
+\label{eq:proof-univariate-non-sos-factorization}
+\end{equation}
+where \(r_j\)'s are the real roots and \(a_k \pm i b_k\)'s are the complex roots. Because \(p(x)\) is nonnegative, then \(p_n > 0\) and the multiplicities of the real roots must be even, i.e., \(n_j = 2 s_j\).
+
+Also note that
+\[
+(x - a + ib)(x - a - ib) = (x-a)^2 + b^2.
+\]
+Consequently we can write \eqref{eq:proof-univariate-non-sos-factorization} as
+\[
+p(x) = p_n \prod_j (x - r_j)^{2 s_j} \prod_k ((x-a_k)^2 + b_k^2)^{m_k}.
+\]
+Since products of sums of squares are still sums of squares and all the factors in the above expression are SOS, it follows that \(p(x)\) is SOS.
+
+Furthermore, the two-squares identify
+\[
+(\alpha^2 + \beta^2)(\gamma^2 + \delta^2) = (\alpha \gamma - \beta \delta)^2 + (\alpha \delta + \beta \delta)^2
+\]
+allows us to combine very partial product as a sum of only two squares:
+\[
+p(x) = q_1^2(x) + q_2^2(x).
+\]
+Therefore, it suffices to write every nonnegative univariate polynomial as the sum of only two squares.
+\end{proof}
+
+In the next section, we focus on how to numerically compute SOS decompositions.
+
+\section{Compute SOS Decompositions}\label{compute-sos-decompositions}
+
+Given a polynomial \(p(x)\), how do we decide if \(p(x)\) is SOS? We knew that deciding if \(p(x)\) is nonnegative is generally NP-hard. The nice thing about SOS polynomials is that the decision problem is tractable and it is a convex semidefinite program.
+
+\subsection{Univaraite Polynomials}\label{univaraite-polynomials}
+
+Consider a univariate polynomial \(p(x)\) of degree \(2d\)
+\[
+p(x) = p_{2d} x^{2d} + p_{2d-1} x^{2d-1} + \cdots + p_1 x + p_0.
+\]
+Assume \(p(x)\) is SOS and can be written as
+\begin{equation}
+p(x) = q_1^2(x) + \dots + q_m^2(x).
+\label{eq:univariate-sos}
+\end{equation}
+Note that the degree of the polynomials \(q_k\) must be at most \(d\) since the leading term of \(q_k^2(x)\) must have positive coefficients and there cannot be any cancellation in the highest power of \(x\). Then, we can write
+\begin{equation}
+\begin{bmatrix} q_1(x) \\ q_2(x) \\ \vdots \\ q_m(x) \end{bmatrix} = V \begin{bmatrix} 1 \\ x \\ \vdots \\ x^d \end{bmatrix} = V [x]_d,
+\label{eq:univariate-q-V}
+\end{equation}
+where recall \([x]_d\) is the vector of monomials in \(x\) of degree up to \(d\). Plugging \eqref{eq:univariate-q-V} into \eqref{eq:univariate-sos}, we get
+\begin{equation}
+p(x) = \sum_{k=1}^m q_k^2 (x) = (V [x]_d)^\top(V [x]_d) = [x]_d^\top V^\top V [x]_d = [x]_d^\top Q [x]_d.
+\label{eq:univariate-sos-gram-Q}
+\end{equation}
+
+This suggests the following characterization of univariate SOS polynomials.
+
+\begin{lemma}[Characterization of Univaraite SOS Polynomials]
+\protect\hypertarget{lem:UnivaraiteSOS}{}\label{lem:UnivaraiteSOS}A univariate polynomial \(p(x) \in \mathbb{R}[x]_{2d}\) is SOS if and only if there exists a symmetric matrix \(Q \in \mathbb{S}^{d+1}\) that satisfies
+\[
+p(x) = [x]_d^\top Q [x]_d, \quad Q \succeq 0.
+\]
+\end{lemma}
+
+The matrix \(Q\) is typically called the \textbf{Gram matrix} of the SOS representation. Lemma \ref{lem:UnivaraiteSOS} can be easily verified: one direction is clear from \eqref{eq:univariate-sos-gram-Q} and the other direction can be shown by factorizing a positive semidefinite matrix \(Q = V^\top V\).
+
+Although it may not be immediately clear, but the nice property of Lemma \ref{lem:UnivaraiteSOS} is that it says deciding if a univariate polynomial is SOS (and finding its SOS decomposition) is in fact a convex semidefinite program!
+
+To see this, note that the constraint \(Q \succeq 0\) is a convex PSD constraint and the constraint \(p(x) = [x]_d^\top Q [x]_d\) leads to a finite number of affine constraints on the entries of \(Q\) by ``matching coefficients''. In particular, let us index the rows and columns of \(Q\) from \(0\) to \(d\), and expand
+\[
+[x]_d^\top Q [x]_d = \sum_{k=0}^{2d} \left( \sum_{i+j=k} Q_{ij} \right) x^k.
+\]
+It now becomes clear that \(p(x) = [x]_d^\top Q [x]_d\) simply askes
+\[
+\sum_{i+j=k} Q_{ij} = p_k, \quad k = 0, \dots, 2d.
+\]
+
+It is easier to work this out via an example.
+
+\begin{example}[SOS Decomposition of Univaraite Polynomials]
+\protect\hypertarget{exm:SOSDecompositionUnivariate}{}\label{exm:SOSDecompositionUnivariate}Consider the univariate polynomial
+\[
+p(x) = x^4 + 4 x^3 + 6 x^2 + 4 x + 5.
+\]
+To decide if this polynomial is SOS, we write the polynomial equality constraint
+\begin{equation}
+\begin{split}
+p(x) & = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \begin{bmatrix} Q_{00} & Q_{01} & Q_{02} \\
+Q_{01} & Q_{11} & Q_{12} \\
+Q_{02} & Q_{12} & Q_{22} 
+\end{bmatrix}  \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \\
+& = Q_{22} x^4 + 2 Q_{12} x^3 + (Q_{11} + 2 Q_{02}) x^2 + 2 Q_{01} x + Q_{00}.
+\end{split}
+\end{equation}
+Matching coefficients, we get the constraints
+\begin{equation}
+\begin{split}
+x^4: & \quad Q_{22} = 1\\
+x^3: & \quad 2 Q_{12} = 4\\
+x^2: & \quad Q_{11} + 2 Q_{02} = 6\\
+x: & \quad 2Q_{01} = 4\\
+1: & \quad Q_{00} = 5
+\end{split}
+\end{equation}
+We need to find a \(Q \succeq 0\) that satisfies the above constraints, which is clearly a convex SDP. In this case, the SDP is feasible and we can find a solution
+\[
+Q = \begin{bmatrix} 5 & 2 & 0 \\ 2 & 6 & 2 \\ 0 & 2 & 1 \end{bmatrix}.
+\]
+Factorizing \(Q=V^\top V\) with
+\[
+V = \begin{bmatrix} 0 & 2 & 1 \\ \sqrt{2} & \sqrt{2} & 0 \\ \sqrt{3} & 0 & 0 \end{bmatrix},
+\]
+we obtain the SOS decomposition
+\[
+p(x) = (x^2 + 2x)^2 + 2 (1+x)^2 + 3,
+\]
 \end{example}
 
   \bibliography{book.bib}

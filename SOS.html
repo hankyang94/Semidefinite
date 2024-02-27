@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-26" />
+<meta name="date" content="2024-02-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -56,7 +56,7 @@
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -128,6 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -245,6 +246,11 @@ div.csl-indent {
 <li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="SOS.html"><a href="SOS.html#nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2.1</b> Nonnegative polynomials</a></li>
+<li class="chapter" data-level="4.2.2" data-path="SOS.html"><a href="SOS.html#sums-of-squares-polynomials"><i class="fa fa-check"></i><b>4.2.2</b> Sums-of-Squares Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -272,7 +278,7 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 4</span> Sums of Squares Relaxation<a href="SOS.html#SOS" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="basic-algebraic-geometry" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Basic Algebraic Geometry<a href="SOS.html#basic-algebraic-geometry" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment <span class="citation">(<a href="#ref-bochnak13book-real" role="doc-biblioref">Bochnak, Coste, and Roy 2013</a>)</span>, <span class="citation">(<a href="#ref-cox13book-ideals" role="doc-biblioref">Cox, Little, and OShea 2013</a>)</span>, <span class="citation">(<a href="#ref-dummit04book-abstract" role="doc-biblioref">Dummit and Foote 2004</a>)</span>, <span class="citation">(<a href="#ref-lang12book-algebra" role="doc-biblioref">Lang 2012</a>)</span>.</p>
+<p>We first review several basic concepts in algebraic geometry. We refer to standard textbooks for a more comprehensive treatment <span class="citation">(<a href="#ref-bochnak13book-real">Bochnak, Coste, and Roy 2013</a>)</span>, <span class="citation">(<a href="#ref-cox13book-ideals">Cox, Little, and OShea 2013</a>)</span>, <span class="citation">(<a href="#ref-dummit04book-abstract">Dummit and Foote 2004</a>)</span>, <span class="citation">(<a href="#ref-lang12book-algebra">Lang 2012</a>)</span>.</p>
 <div id="groups-rings-fields" class="section level3 hasAnchor" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> Groups, Rings, Fields<a href="SOS.html#groups-rings-fields" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div class="definitionbox">
@@ -594,7 +600,7 @@ and clearly does not contain <span class="math inline">\(1\)</span>.</p>
 The standard monomials are <span class="math inline">\(\{ 1,x,y,xy \}\)</span>.</p>
 </div>
 </div>
-<p>We will see that Grobner basis is a powerful tool with many applications in computational algebra. For a brief introduction to Grobner Basis, see <span class="citation">(<a href="#ref-sturmfels05notes-grobner" role="doc-biblioref">Sturmfels 2005</a>)</span>.</p>
+<p>We will see that Grobner basis is a powerful tool with many applications in computational algebra. For a brief introduction to Grobner Basis, see <span class="citation">(<a href="#ref-sturmfels05notes-grobner">Sturmfels 2005</a>)</span>.</p>
 </div>
 <div id="quotient-ring" class="section level3 hasAnchor" number="4.1.4">
 <h3><span class="header-section-number">4.1.4</span> Quotient Ring<a href="SOS.html#quotient-ring" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -881,7 +887,7 @@ x \\ y \\ z
 \]</span></p>
 </div>
 </div>
-<p>In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots <span class="citation">(<a href="#ref-corless97-reordered" role="doc-biblioref">Corless, Gianni, and Trager 1997</a>)</span>. We will see that in the homework.</p>
+<p>In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots <span class="citation">(<a href="#ref-corless97-reordered">Corless, Gianni, and Trager 1997</a>)</span>. We will see that in the homework.</p>
 </div>
 <div id="algebraic-and-semialgebraic-sets" class="section level3 hasAnchor" number="4.1.6">
 <h3><span class="header-section-number">4.1.6</span> Algebraic and Semialgebraic Sets<a href="SOS.html#algebraic-and-semialgebraic-sets" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1013,12 +1019,230 @@ Let <span class="math inline">\(\Delta = \det H_1(p) = p_1^2 - 4p_0\)</span>. Th
 Thus, <span class="math inline">\(p\)</span> is strictly positive if and only if <span class="math inline">\(\Delta &lt; 0\)</span>.</p>
 </div>
 </div>
+<p><strong>Multivariate Polynomials</strong>. Let us denote by <span class="math inline">\(P_{n,2d}\)</span> the set of nonnegative polynomials in <span class="math inline">\(n\)</span> variables with degree up to <span class="math inline">\(2d\)</span>, i.e.,
+<span class="math display">\[
+P_{n,2d} = \{ f \in \mathbb{R}[x]_{2d} \mid f(x) \geq 0, \forall x \in \mathbb{R}^{n} \}.
+\]</span>
+There are
+<span class="math display">\[
+s(n,2d) = \begin{pmatrix} n + 2d \\ 2d \end{pmatrix}
+\]</span>
+coefficients for <span class="math inline">\(f \in P_{n,2d}\)</span>. Notice that the constraint <span class="math inline">\(f(x) \geq 0\)</span> when fixing <span class="math inline">\(x\)</span> is an affine constraint in the coefficients of <span class="math inline">\(p\)</span>. Therefore, <span class="math inline">\(P_{n,2d}\)</span> is in fact a convex set. Further, it is a proper cone.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ConeNonnegative" class="theorem"><strong>Theorem 4.11  (Cone of Nonnegative Polynomials) </strong></span>The set of nonnegative polynomials <span class="math inline">\(P_{n,2d}\)</span> is a proper cone (i.e., closed, convex, pointed, and solid) in <span class="math inline">\(\mathbb{R}[x]_{2d} \sim \mathbb{R}^{s(n,2d)}\)</span>.</p>
+</div>
+</div>
+<p>Let us see an example of quadratic polynomials.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:ConeNonnegativeQuadratic" class="example"><strong>Example 4.9  (Cone of Nonnegative Quadratic Polynomials) </strong></span>Consider the cone <span class="math inline">\(P_{n,2}\)</span>, nonnegative polynomials in <span class="math inline">\(n\)</span> variables of degree up to <span class="math inline">\(2\)</span>. Such polynomials can be written as
+<span class="math display">\[
+p(x) = x^\top A x + 2 b^\top x + c,
+\]</span>
+for some <span class="math inline">\(A \in \mathbb{S}^{n}\)</span>, <span class="math inline">\(b \in \mathbb{R}^{n}\)</span>, <span class="math inline">\(c \in \mathbb{R}^{}\)</span>. Observe that we can write
+<span class="math display">\[
+p(x) = \begin{bmatrix} x \\ 1 \end{bmatrix}^\top\begin{bmatrix} A &amp; b \\ b^\top&amp; c \end{bmatrix} \begin{bmatrix} x \\ 1 \end{bmatrix},
+\]</span>
+therefore <span class="math inline">\(p(x) \geq 0\)</span> if and only if
+<span class="math display">\[
+\begin{bmatrix} A &amp; b \\ b^\top&amp; 1 \end{bmatrix} \succeq 0.
+\]</span>
+Thus, in this case the set <span class="math inline">\(P_{n,2}\)</span> is isomorphic to the positive semidefinite cone <span class="math inline">\(\mathbb{S}^{n+1}_{+}\)</span>.</p>
+</div>
+</div>
+<p>One may wonder is it the case that <span class="math inline">\(P_{n,2d}\)</span>, being a convex cone, will always have nice descriptions as in the previous example?</p>
+<p>Unfortunately the answer is no. In general the geometry of <span class="math inline">\(P_{n,2d}\)</span> is extremely complicated. In Example <a href="SOS.html#exm:ConeNonnegativeQuadratic">4.9</a> we showed <span class="math inline">\(P_{n,2}\)</span> is isomorphic to <span class="math inline">\(\mathbb{S}^{n+1}_{+}\)</span> and hence it is <strong>basic semialgebraic</strong> (recall that the PSD cone can be described by a finite number of polynomial constraints). However, in general <span class="math inline">\(P_{n,2d}\)</span> is semialgebraic but not basic semialgebraic.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:DegreeFourNonnegative" class="example"><strong>Example 4.10  (Semialgebraic Set of Nonnegative Polynomials) </strong></span>Consider the quartic univariate polynomial
+<span class="math display">\[
+p(x) = x^4 + 2ax^2 + b, \quad a,b \in \mathbb{R}^{}.
+\]</span>
+We are interested in finding conditions on <span class="math inline">\(a,b\)</span> such that <span class="math inline">\(p(x) \geq 0\)</span> for any <span class="math inline">\(x \in \mathbb{R}^{}\)</span>.</p>
+<p>A formal analysis can be done via the discriminant of <span class="math inline">\(p(x)\)</span>. But here we will leverage a powerful tool known as <strong>quantifier elimination</strong>, using cylindrical algebraic decomposition, to directly give us the answer. For example, we can use the quantifier elimination function in the Maple software.</p>
+<p>Fig. <a href="SOS.html#fig:QuantifierEliminationQuartic">4.3</a> shows my query to Maple. The quantifier elimination algorithm produces me a set of conditions on <span class="math inline">\(a,b\)</span> such that <span class="math inline">\(p(x) \geq 0\)</span>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:QuantifierEliminationQuartic"></span>
+<img src="images/quantifier_elimination_quartic.png" alt="Quantifier elimination in Maple." width="60%" />
+<p class="caption">
+Figure 4.3: Quantifier elimination in Maple.
+</p>
+</div>
+<p>Plotting the conditions we get the blue region in Fig. <a href="SOS.html#fig:NonnegativeQuartic">4.4</a>. As we can see, the set of <span class="math inline">\((a,b)\)</span> such that <span class="math inline">\(p(x)\)</span> is nonnegative is indeed a convex set, but it is not a basic semialgebraic set in the sense that it cannot be written as the feasible set of a finite number of polynomial constraints. However, it is a semialgebraic set that can be described by the union of several basic semialgebraic sets.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:NonnegativeQuartic"></span>
+<img src="images/nonnegative_quartic.png" alt="Set of coefficients such that the polynomial is nonnegative." width="60%" />
+<p class="caption">
+Figure 4.4: Set of coefficients such that the polynomial is nonnegative.
+</p>
+</div>
+<p>Another issue with the convex set shown in Fig. <a href="SOS.html#fig:NonnegativeQuartic">4.4</a> is that there exists a zero-dimensional face (a vertex) that is not exposed, which is the point <span class="math inline">\((0,0)\)</span>. A non-exposed face is a known obstruction for a convex set to be the feasible set of a semidefinite program <span class="citation">(<a href="#ref-ramana95jgo-some">M. Ramana and Goldman 1995</a>)</span>.</p>
+</div>
+</div>
+<p>This shows the difficulty of working with nonnegative polynomials.</p>
+<p>From the computational complexity perspective, the difficulty of working with nonnegative polynomials is seen by the fact that deciding polynomial nonnegativity for <span class="math inline">\(2d \geq 4\)</span> is known to be NP-hard in the worst case.</p>
+<p>However, we do know very well a special class of nonnegative polynomials, the nonnegative polynomials that can be written as a sum of squares.</p>
+</div>
+<div id="sums-of-squares-polynomials" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Sums-of-Squares Polynomials<a href="SOS.html#sums-of-squares-polynomials" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A multivariate polynomial <span class="math inline">\(p(x)\)</span> is a <strong>sum of squares</strong> (SOS) if it can be written as the sum of squares of some other polynomials.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:SumOfSquares" class="definition"><strong>Definition 4.18  (Sum of Squares Polynomial) </strong></span>A polynomial <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span> is a sum of squares if there exist <span class="math inline">\(q_1,\dots,q_m \in \mathbb{R}[x]_d\)</span> such that
+<span class="math display">\[
+p(x) = \sum_{k=1}^m q_k^2(x).
+\]</span></p>
+</div>
+</div>
+<p>We will use <span class="math inline">\(\Sigma_{n,2d}\)</span> to denote the set of SOS polynomials in <span class="math inline">\(n\)</span> variables of degree up to <span class="math inline">\(2d\)</span>. Clearly, we have
+<span class="math display">\[
+\Sigma_{n,2d} \subseteq P_{n,2d},
+\]</span>
+because any SOS polynomial is necessarily nonnegative.</p>
+<p>Similar to <span class="math inline">\(P_{n,2d}\)</span>, the set of SOS polynomials is also a convex proper cone.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:ConeSOSPolynomial" class="theorem"><strong>Theorem 4.12  (Cone of SOS Polynomials) </strong></span>The set of SOS polynomials <span class="math inline">\(\Sigma_{n,2d}\)</span> is a proper cone (i.e., closed, convex, pointed, and solid) in <span class="math inline">\(\mathbb{R}[x]_{2d}\)</span>.</p>
+</div>
+</div>
+<p>One of the central questions in convex algebraic geometry is to understand the relationships between <span class="math inline">\(P_{n,2d}\)</span> and <span class="math inline">\(\Sigma_{n,2d}\)</span>.</p>
+<p>The first question is when is nonnegativity equal to sum of squares? David Hilbert showed that equality between <span class="math inline">\(\Sigma_{n,2d}\)</span> and <span class="math inline">\(P_{n,2d}\)</span> happens only in the following three cases:</p>
+<ul>
+<li><p>Univariate polynomials, <span class="math inline">\(n=1\)</span></p></li>
+<li><p>Quadratic polynomials, <span class="math inline">\(2d=2\)</span></p></li>
+<li><p>Bivariate quartics, <span class="math inline">\(n=2, 2d=4\)</span>.</p></li>
+</ul>
+<p>For all other cases, there always exist nonnegative polynomials that are not SOS. One of the most famous examples is the <strong>Motzkin’s polynomial</strong> written as
+<span class="math display">\[
+M(x,y) = x^4 y^2 + x^2 y^4 + 1 - 3 x^2 y^2.
+\]</span>
+One can show that this polynomial is nonnegative but not SOS. Other examples of nonnegative but not SOS polynomials can be found in <span class="citation">(<a href="#ref-reznick00cm-some">Reznick 2000</a>)</span>.</p>
+<p>Let us show that univariate nonnegative polynomials can always be written as a sum of squares.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:UnivaraiteNonSOS" class="theorem"><strong>Theorem 4.13  (Univaraite Nonnegative Polynomials are SOS) </strong></span>A univariate polynomial is nonnegative if and only if it is a sum of squares.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-15" class="proof"><em>Proof</em>. </span>Since <span class="math inline">\(p(x)\)</span> is univariate, we can factorize it as
+<span class="math display" id="eq:proof-univariate-non-sos-factorization">\[\begin{equation}
+p(x) = p_n \prod_j (x - r_j)^{n_j} \prod_{k} (x - a_k + i b_k)^{m_k} (x - a_k - i b_k)^{m_k},
+\tag{4.3}
+\end{equation}\]</span>
+where <span class="math inline">\(r_j\)</span>’s are the real roots and <span class="math inline">\(a_k \pm i b_k\)</span>’s are the complex roots. Because <span class="math inline">\(p(x)\)</span> is nonnegative, then <span class="math inline">\(p_n &gt; 0\)</span> and the multiplicities of the real roots must be even, i.e., <span class="math inline">\(n_j = 2 s_j\)</span>.</p>
+<p>Also note that
+<span class="math display">\[
+(x - a + ib)(x - a - ib) = (x-a)^2 + b^2.
+\]</span>
+Consequently we can write <a href="SOS.html#eq:proof-univariate-non-sos-factorization">(4.3)</a> as
+<span class="math display">\[
+p(x) = p_n \prod_j (x - r_j)^{2 s_j} \prod_k ((x-a_k)^2 + b_k^2)^{m_k}.
+\]</span>
+Since products of sums of squares are still sums of squares and all the factors in the above expression are SOS, it follows that <span class="math inline">\(p(x)\)</span> is SOS.</p>
+<p>Furthermore, the two-squares identify
+<span class="math display">\[
+(\alpha^2 + \beta^2)(\gamma^2 + \delta^2) = (\alpha \gamma - \beta \delta)^2 + (\alpha \delta + \beta \delta)^2
+\]</span>
+allows us to combine very partial product as a sum of only two squares:
+<span class="math display">\[
+p(x) = q_1^2(x) + q_2^2(x).
+\]</span>
+Therefore, it suffices to write every nonnegative univariate polynomial as the sum of only two squares.</p>
+</div>
+</div>
+<p>In the next section, we focus on how to numerically compute SOS decompositions.</p>
+</div>
+</div>
+<div id="compute-sos-decompositions" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Compute SOS Decompositions<a href="SOS.html#compute-sos-decompositions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Given a polynomial <span class="math inline">\(p(x)\)</span>, how do we decide if <span class="math inline">\(p(x)\)</span> is SOS? We knew that deciding if <span class="math inline">\(p(x)\)</span> is nonnegative is generally NP-hard. The nice thing about SOS polynomials is that the decision problem is tractable and it is a convex semidefinite program.</p>
+<div id="univaraite-polynomials" class="section level3 hasAnchor" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Univaraite Polynomials<a href="SOS.html#univaraite-polynomials" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a univariate polynomial <span class="math inline">\(p(x)\)</span> of degree <span class="math inline">\(2d\)</span>
+<span class="math display">\[
+p(x) = p_{2d} x^{2d} + p_{2d-1} x^{2d-1} + \cdots + p_1 x + p_0.
+\]</span>
+Assume <span class="math inline">\(p(x)\)</span> is SOS and can be written as
+<span class="math display" id="eq:univariate-sos">\[\begin{equation}
+p(x) = q_1^2(x) + \dots + q_m^2(x).
+\tag{4.4}
+\end{equation}\]</span>
+Note that the degree of the polynomials <span class="math inline">\(q_k\)</span> must be at most <span class="math inline">\(d\)</span> since the leading term of <span class="math inline">\(q_k^2(x)\)</span> must have positive coefficients and there cannot be any cancellation in the highest power of <span class="math inline">\(x\)</span>. Then, we can write
+<span class="math display" id="eq:univariate-q-V">\[\begin{equation}
+\begin{bmatrix} q_1(x) \\ q_2(x) \\ \vdots \\ q_m(x) \end{bmatrix} = V \begin{bmatrix} 1 \\ x \\ \vdots \\ x^d \end{bmatrix} = V [x]_d,
+\tag{4.5}
+\end{equation}\]</span>
+where recall <span class="math inline">\([x]_d\)</span> is the vector of monomials in <span class="math inline">\(x\)</span> of degree up to <span class="math inline">\(d\)</span>. Plugging <a href="SOS.html#eq:univariate-q-V">(4.5)</a> into <a href="SOS.html#eq:univariate-sos">(4.4)</a>, we get
+<span class="math display" id="eq:univariate-sos-gram-Q">\[\begin{equation}
+p(x) = \sum_{k=1}^m q_k^2 (x) = (V [x]_d)^\top(V [x]_d) = [x]_d^\top V^\top V [x]_d = [x]_d^\top Q [x]_d.
+\tag{4.6}
+\end{equation}\]</span></p>
+<p>This suggests the following characterization of univariate SOS polynomials.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:UnivaraiteSOS" class="lemma"><strong>Lemma 4.2  (Characterization of Univaraite SOS Polynomials) </strong></span>A univariate polynomial <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span> is SOS if and only if there exists a symmetric matrix <span class="math inline">\(Q \in \mathbb{S}^{d+1}\)</span> that satisfies
+<span class="math display">\[
+p(x) = [x]_d^\top Q [x]_d, \quad Q \succeq 0.
+\]</span></p>
+</div>
+</div>
+<p>The matrix <span class="math inline">\(Q\)</span> is typically called the <strong>Gram matrix</strong> of the SOS representation. Lemma <a href="SOS.html#lem:UnivaraiteSOS">4.2</a> can be easily verified: one direction is clear from <a href="SOS.html#eq:univariate-sos-gram-Q">(4.6)</a> and the other direction can be shown by factorizing a positive semidefinite matrix <span class="math inline">\(Q = V^\top V\)</span>.</p>
+<p>Although it may not be immediately clear, but the nice property of Lemma <a href="SOS.html#lem:UnivaraiteSOS">4.2</a> is that it says deciding if a univariate polynomial is SOS (and finding its SOS decomposition) is in fact a convex semidefinite program!</p>
+<p>To see this, note that the constraint <span class="math inline">\(Q \succeq 0\)</span> is a convex PSD constraint and the constraint <span class="math inline">\(p(x) = [x]_d^\top Q [x]_d\)</span> leads to a finite number of affine constraints on the entries of <span class="math inline">\(Q\)</span> by “matching coefficients”. In particular, let us index the rows and columns of <span class="math inline">\(Q\)</span> from <span class="math inline">\(0\)</span> to <span class="math inline">\(d\)</span>, and expand
+<span class="math display">\[
+[x]_d^\top Q [x]_d = \sum_{k=0}^{2d} \left( \sum_{i+j=k} Q_{ij} \right) x^k.
+\]</span>
+It now becomes clear that <span class="math inline">\(p(x) = [x]_d^\top Q [x]_d\)</span> simply askes
+<span class="math display">\[
+\sum_{i+j=k} Q_{ij} = p_k, \quad k = 0, \dots, 2d.
+\]</span></p>
+<p>It is easier to work this out via an example.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SOSDecompositionUnivariate" class="example"><strong>Example 4.11  (SOS Decomposition of Univaraite Polynomials) </strong></span>Consider the univariate polynomial
+<span class="math display">\[
+p(x) = x^4 + 4 x^3 + 6 x^2 + 4 x + 5.
+\]</span>
+To decide if this polynomial is SOS, we write the polynomial equality constraint
+<span class="math display">\[\begin{equation}
+\begin{split}
+p(x) &amp; = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \begin{bmatrix} Q_{00} &amp; Q_{01} &amp; Q_{02} \\
+Q_{01} &amp; Q_{11} &amp; Q_{12} \\
+Q_{02} &amp; Q_{12} &amp; Q_{22}
+\end{bmatrix}  \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \\
+&amp; = Q_{22} x^4 + 2 Q_{12} x^3 + (Q_{11} + 2 Q_{02}) x^2 + 2 Q_{01} x + Q_{00}.
+\end{split}
+\end{equation}\]</span>
+Matching coefficients, we get the constraints
+<span class="math display">\[\begin{equation}
+\begin{split}
+x^4: &amp; \quad Q_{22} = 1\\
+x^3: &amp; \quad 2 Q_{12} = 4\\
+x^2: &amp; \quad Q_{11} + 2 Q_{02} = 6\\
+x: &amp; \quad 2Q_{01} = 4\\
+1: &amp; \quad Q_{00} = 5
+\end{split}
+\end{equation}\]</span>
+We need to find a <span class="math inline">\(Q \succeq 0\)</span> that satisfies the above constraints, which is clearly a convex SDP. In this case, the SDP is feasible and we can find a solution
+<span class="math display">\[
+Q = \begin{bmatrix} 5 &amp; 2 &amp; 0 \\ 2 &amp; 6 &amp; 2 \\ 0 &amp; 2 &amp; 1 \end{bmatrix}.
+\]</span>
+Factorizing <span class="math inline">\(Q=V^\top V\)</span> with
+<span class="math display">\[
+V = \begin{bmatrix} 0 &amp; 2 &amp; 1 \\ \sqrt{2} &amp; \sqrt{2} &amp; 0 \\ \sqrt{3} &amp; 0 &amp; 0 \end{bmatrix},
+\]</span>
+we obtain the SOS decomposition
+<span class="math display">\[
+p(x) = (x^2 + 2x)^2 + 2 (1+x)^2 + 3,
+\]</span></p>
+</div>
+</div>
 
 </div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-bochnak13book-real" class="csl-entry">
 Bochnak, Jacek, Michel Coste, and Marie-Françoise Roy. 2013. <em>Real Algebraic Geometry</em>. Vol. 36. Springer Science &amp; Business Media.
 </div>
@@ -1033,6 +1257,12 @@ Dummit, David Steven, and Richard M Foote. 2004. <em>Abstract Algebra</em>. Vol.
 </div>
 <div id="ref-lang12book-algebra" class="csl-entry">
 Lang, Serge. 2012. <em>Algebra</em>. Vol. 211. Springer Science &amp; Business Media.
+</div>
+<div id="ref-ramana95jgo-some" class="csl-entry">
+Ramana, Motakuri, and Alan J Goldman. 1995. <span>“Some Geometric Results in Semidefinite Programming.”</span> <em>Journal of Global Optimization</em> 7 (1): 33–50.
+</div>
+<div id="ref-reznick00cm-some" class="csl-entry">
+Reznick, Bruce. 2000. <span>“Some Concrete Aspects of Hilbert’s 17th Problem.”</span> <em>Contemporary Mathematics</em> 253: 251–72.
 </div>
 <div id="ref-sturmfels05notes-grobner" class="csl-entry">
 Sturmfels, Bernd. 2005. <span>“What Is... A Grobner Basis?”</span> <em>Notices-American Mathematical Society</em> 52 (10): 1199.
