@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-02-27}
+\date{2024-03-04}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -195,6 +195,7 @@ arc=4pt}
 \newcommand{\calG}{\mathcal{G}}
 \newcommand{\calV}{\mathcal{V}}
 \newcommand{\calE}{\mathcal{E}}
+\newcommand{\calF}{\mathcal{F}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
@@ -279,6 +280,7 @@ arc=4pt}
 \newcommand{\abs}[1]{|#1|}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
+\newcommand{\ceil}[1]{\lceil #1 \rceil}
 
 \chapter*{Preface}\label{preface}
 \addcontentsline{toc}{chapter}{Preface}
@@ -3956,7 +3958,7 @@ p(x) = \begin{bmatrix} x \\ 1 \end{bmatrix}^\top\begin{bmatrix} A & b \\ b^\top&
 \]
 therefore \(p(x) \geq 0\) if and only if
 \[
-\begin{bmatrix} A & b \\ b^\top& 1 \end{bmatrix} \succeq 0.
+\begin{bmatrix} A & b \\ b^\top& c \end{bmatrix} \succeq 0.
 \]
 Thus, in this case the set \(P_{n,2}\) is isomorphic to the positive semidefinite cone \(\mathbb{S}^{n+1}_{+}\).
 \end{example}
@@ -4142,7 +4144,7 @@ p(x) = x^4 + 4 x^3 + 6 x^2 + 4 x + 5.
 To decide if this polynomial is SOS, we write the polynomial equality constraint
 \begin{equation}
 \begin{split}
-p(x) & = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \begin{bmatrix} Q_{00} & Q_{01} & Q_{02} \\
+p(x) & = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}^\top\begin{bmatrix} Q_{00} & Q_{01} & Q_{02} \\
 Q_{01} & Q_{11} & Q_{12} \\
 Q_{02} & Q_{12} & Q_{22} 
 \end{bmatrix}  \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \\
@@ -4172,6 +4174,321 @@ we obtain the SOS decomposition
 p(x) = (x^2 + 2x)^2 + 2 (1+x)^2 + 3,
 \]
 \end{example}
+
+\subsection{Multivariate Polynomials}\label{multivariate-polynomials}
+
+Deciding if a multivariate polynomial is SOS is almost identical to what we have shown for univariate polynomials. Consider a multivariate polynomial \(p(x)\) in \(n\) variables of degree \(2d\):
+\[
+p(x) = \sum_{\alpha} p_{\alpha} x^{\alpha}, \quad \alpha \in \mathcal{F}_{n,2d} := \{ (\alpha_1,\dots,\alpha_n) \in \mathbb{N}^n \mid \alpha_1 + \cdots + \alpha_n \leq 2d \}.
+\]
+Let
+\begin{equation}
+[x]_d := \begin{bmatrix} 1 \\ x_1 \\ \vdots \\ x_n \\ x_1^2 \\ x_1 x_2 \\ \vdots \\ x_n^d \end{bmatrix} = [x^\alpha]_{\alpha \in \mathcal{F}_{n,d}}
+\label{eq:SOS-standard-basis}
+\end{equation}
+be the standard basis of monomials with degree up to \(d\). Then in parallel to Lemma \ref{lem:UnivaraiteSOS}, we have that \(p(x)\) is SOS if and only if there exists a positive semidefinite Gram matrix.
+
+\begin{lemma}[Characterization of Multivariate SOS Polynomials]
+\protect\hypertarget{lem:MultivariateSOS}{}\label{lem:MultivariateSOS}A multivariate polynomial \(p(x) \in \mathbb{R}[x]_{2d}\) is SOS if and only if there exists a symmetric matrix \(Q \in \mathbb{S}^{s(n,d)}\) that satisfies
+\[
+p(x) = [x]_d^\top Q [x]_d, \quad Q \succeq 0.
+\]
+\end{lemma}
+
+Let us index the monomials in the basis \eqref{eq:SOS-standard-basis}, as well as the rows and columns of \(Q\), using their exponents. Then by matching coefficients of the polynomial equation \(p(x) = [x]_d^\top Q [x]_d\), Lemma \ref{lem:MultivariateSOS} is equivalent to finding \(Q \in \mathbb{S}^{s(n,d)}\) that satisfies
+\begin{equation}
+p_\alpha = \sum_{\beta + \gamma = \alpha} Q_{\beta\gamma}, \forall \alpha \in \mathcal{F}_{n,2d}, \quad Q \succeq 0.
+\label{eq:multivariate-SOS-SDP-formulation}
+\end{equation}
+That is, for every \(\alpha \in \mathcal{F}_{n,2d}\), we search for all possible pairs of \(\beta,\gamma \in \mathcal{F}_{n,d}\) such that \(\beta + \gamma = \alpha\), the sum of \(Q_{\beta \gamma}\) should be equal to \(p_{\alpha}\) by the virtue of matching coefficients. \textbf{Note that \eqref{eq:multivariate-SOS-SDP-formulation} boils down to solving an SDP with matrix size \(s(n,d) \times s(n,d)\) and \(s(n,2d)\) affine constraints.} Therefore, it grows quickly with \(n\) and \(d\).
+
+Let us work out a simple example.
+
+\begin{example}[SOS Decomposition of a Multivariate Polynomial]
+\protect\hypertarget{exm:SOSDecompositionMultivariate}{}\label{exm:SOSDecompositionMultivariate}We want to check if the following polynomial in two variables is SOS:
+\[
+p(x) = 2 x_1^4 + 5 x_2^4 - x_1^2 x_2^2 + 2 x_1^3 x_2 + 2 x_1 + 2.
+\]
+Since \(\deg(p) = 4\), we pick the standard monomial basis of degree up to \(2\)
+\[
+[x]_2 = \begin{bmatrix} 1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 \end{bmatrix},
+\]
+and write down the polynomial equality constraint
+\[
+p(x) = [x]_2^\top Q [x]_2 = 
+[x]_2^\top\begin{bmatrix}
+Q_{00,00} & Q_{00,10} & Q_{00,01} & Q_{00,20} & Q_{00,11} & Q_{00,02} \\
+* & Q_{10,10} & Q_{10,01} & Q_{10,20} & Q_{10,11} & Q_{10,02} \\
+* & * & Q_{01,01} & Q_{01,20} & Q_{01,11} & Q_{01,02} \\
+* & * & * & Q_{20,20} & Q_{20,11} & Q_{20,02} \\
+* & * & * & * & Q_{11,11} & Q_{11,02} \\
+* & * & * & * & * & Q_{02,02}
+\end{bmatrix}
+[x]_2
+\]
+By matching coefficients, we obtain
+\[
+s(n,2d) = s(2,4) = \begin{pmatrix} 2 + 4 \\ 4 \end{pmatrix} = 15
+\]
+affine constraints on the entries of \(Q\), which has size \(6 \times 6\).
+
+Solving the SDP, we obtain a solution
+\[
+Q = \frac{1}{3} \begin{bmatrix} 6 & 3 & 0 & -2 & 0 & -2 \\
+3 & 4 & 0 & 0 & 0 & 0 \\
+0 & 0 & 4 & 0 & 0 & 0 \\
+-2 & 0 & 0 & 6 & 3 & -4 \\
+0 & 0 & 0 & 3 & 5 & 0 \\
+-2 & 0 & 0 & -4 & 0 & 15
+\end{bmatrix}.
+\]
+\end{example}
+
+\textbf{Choice of Basis}. It is worth noting that so far, when computing SOS decompositions, we have been using the standard monomial basis \([x]_d\). This is the most popular choice in practice, but it is not necessarily the only choice. See Chapter 3.1.5 of \citep{blekherman12book-semidefinite} for other basis choices.
+
+\section{SOS Programming}\label{sos-programming}
+
+We have seen that finding SOS decompositions of given polynomials can be written as semidefinite programs. It is clear to see that we can do more than just finding SOS decompositions -- we can also formulate optimization problems subject to SOS constraints, known as SOS programming.
+
+\begin{definition}[SOS Program]
+\protect\hypertarget{def:SOSProgram}{}\label{def:SOSProgram}An SOS optimization problem or SOS program is a convex optimization problem of the form
+\begin{equation}
+\begin{split}
+\max_y & \quad b_1 y_1 + \cdots + b_m y_m \\
+\mathrm{s.t.}& \quad p_i(x;y) \text{ is SOS in } \mathbb{R}[x], \quad i=1,\dots,k.
+\end{split}
+\label{eq:SOS-program}
+\end{equation}
+where \(b = (b_1,\dots,b_m) \in \mathbb{R}^{m}\) is a given constant vector, \(y= (y_1,\dots,y_m)\) is the unknown variable to be optimized, and
+\[
+p_i(x;y) = a_{i0}(x) + y_1 a_{i1}(x) + \cdots + y_m a_{im}(x), \quad i=1,\dots,k,
+\]
+are polynomials in \(x\) with coefficientss affine in \(y\), with \(a_{ij}(x),i=1,\dots,k, j=0,\dots,m\) given polynomials.
+\end{definition}
+
+For readers seeing SOS programs for the first time, it is critical to realize that \textbf{the variable \(x\) in an SOS program \eqref{eq:SOS-program} is ``dummy''}, in the sense that it is only used to formulate the problem, but not really being optimized. The variable \(y \in \mathbb{R}^{m}\) is the optimization variable.
+
+To see this point more clearly, we will show that the SOS program \eqref{eq:SOS-program} can be reformulated as a convex semidefinite program (or in general a conic optimization problem). Let
+\[
+d_i = \lceil \deg(p_i)/2 \rceil, \quad i=1,\dots,k,
+\]
+where importantly, the degree of \(p_i\) is taken w. r. t. \(x\) (but not \(y\)). Then we can clearly see that the constraint ``\(p_i(x;y)\) is SOS in \(\mathbb{R}[x]\)'' is equivalent to
+\begin{equation}
+p_i(x;y) = [x]_{d_i}^\top Q_i [x]_{d_i}, \quad Q_i \in \mathbb{S}^{s(n,d_i)}_{+}, \quad i=1,\dots,k,
+\label{eq:SOS-program-expand}
+\end{equation}
+where recall \([x]_{d_i}\) is the standard monomial basis in \(x\) of degree up to \(d_i\). By matching coefficients in equation \eqref{eq:SOS-program-expand}, we obtain a set of affine constraints in \(y\) and \(Q_i\), while the variable \(x\) is simply removed! Therefore, the SOS program \eqref{eq:SOS-program} is equivalent to a conic optimization in the variable
+\[
+(y,Q_1,\dots,Q_k) \in \mathbb{R}^{m} \times \mathbb{S}^{s(n,d_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,d_k)}_{+}.
+\]
+The number of affine constraints is
+\[
+s(n,2d_1) + \cdots + s(n,2d_k).
+\]
+
+Let us make this observation concrete using a simple example.
+
+\begin{example}[SOS Programming]
+\protect\hypertarget{exm:SOSProgram}{}\label{exm:SOSProgram}Consider the following SOS program
+\begin{equation}
+\begin{split} 
+\max_y & \quad y_1 + y_2 \\
+\mathrm{s.t.}& \quad x^4 + y_1 x + (2+y_2) \text{ is SOS}\\
+& \quad (y_1 - y_2 + 1) x^2 + y_2 x + 1 \text{ is SOS}
+\end{split}
+\label{eq:SOS-program-example}
+\end{equation}
+The first SOS constraint is equivalent to
+\[
+x^4 + y_1 x + (2 + y_2) = [x]_2^\top Q_1 [x]_2 = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}^\top
+\underbrace{\begin{bmatrix}
+Q_{1,00} & Q_{1,01} & Q_{1,02} \\
+Q_{1,01} & Q_{1,11} & Q_{1,12} \\
+Q_{1,02} & Q_{1,12} & Q_{1,22}
+\end{bmatrix}}_{Q_1}
+\begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}.
+\]
+Matching coefficients, we obtain
+\begin{equation}
+\begin{split}
+x^4: & \quad 1 = Q_{1,22} \\
+x^3: & \quad 0 = 2 Q_{1,12} \\
+x^2: & \quad 0 = Q_{1,11} + 2 Q_{1,02} \\
+x: & \quad y_1 = 2 Q_{1,01} \\
+1: & \quad 2 + y_2 = Q_{1,00}
+\end{split}
+\label{eq:SOS-program-constraint-1}
+\end{equation}
+The second SOS constraint is equivalent to
+\[
+(y_1 - y_2 + 1)x^2 + y_2 x + 1 = [x]_1^\top Q_2 [x]_1 = \begin{bmatrix} 1 \\ x \end{bmatrix}^\top
+\underbrace{\begin{bmatrix} Q_{2,00} & Q_{2,01} \\
+Q_{2,01} & Q_{2,11} \end{bmatrix}}_{Q_2}
+\begin{bmatrix} 1 \\ x \end{bmatrix}.
+\]
+Matching coefficients, we obtain
+\begin{equation}
+\begin{split}
+x^2: & \quad y_1 - y_2 + 1 = Q_{2,11} \\
+x: & \quad y_2 = 2 Q_{2,01} \\
+1: & \quad 1 = Q_{2,00}
+\end{split}
+\label{eq:SOS-program-constraint-2}
+\end{equation}
+Therefore, we obtain a conic optimization in
+\[
+(y_1,y_2,Q_1,Q_2)
+\]
+subject to the affine constraints in \eqref{eq:SOS-program-constraint-1} and \eqref{eq:SOS-program-constraint-2}, plus \(Q_1 \succeq 0, Q_2 \succeq 0\).
+
+For this simple example, it is tractable to collect the linear constraints by hand. When the SOS program grows larger, we can use existing software packages to perform the conversion for us.
+
+In the next, we show how to use the software package SOSTOOLS \citep{prajna02cdc-sostools} to implement SOS programming in Matlab.
+
+I first create the dummy polynomial variable \(x\) and the decision variable \(y\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\VariableTok{dim\_y} \OperatorTok{=} \FloatTok{2}\OperatorTok{;}
+\VariableTok{dim\_x} \OperatorTok{=} \FloatTok{1}\OperatorTok{;}
+\VariableTok{x} \OperatorTok{=} \VariableTok{mpvar}\NormalTok{(}\SpecialStringTok{\textquotesingle{}x\textquotesingle{}}\OperatorTok{,}\FloatTok{1}\NormalTok{)}\OperatorTok{;} \CommentTok{\% dummy x }
+\VariableTok{prog} \OperatorTok{=} \VariableTok{sosprogram}\NormalTok{(}\VariableTok{x}\NormalTok{)}\OperatorTok{;}
+\VariableTok{y\_name} \OperatorTok{=}\NormalTok{ \{\}}\OperatorTok{;} \CommentTok{\% decision variable y}
+\KeywordTok{for} \VariableTok{i} \OperatorTok{=} \FloatTok{1}\OperatorTok{:}\VariableTok{dim\_y}
+    \VariableTok{y\_name}\NormalTok{\{}\VariableTok{i}\NormalTok{\} }\OperatorTok{=} \VariableTok{sprintf}\NormalTok{(}\SpecialStringTok{\textquotesingle{}y\_\%d\textquotesingle{}}\OperatorTok{,}\VariableTok{i}\NormalTok{)}\OperatorTok{;}
+\KeywordTok{end}
+\VariableTok{y} \OperatorTok{=} \VariableTok{dpvar}\NormalTok{(}\VariableTok{y\_name}\NormalTok{)}\OperatorTok{;}
+\VariableTok{y} \OperatorTok{=} \VariableTok{y}\NormalTok{(}\OperatorTok{:}\NormalTok{)}\OperatorTok{;}
+\VariableTok{prog} \OperatorTok{=} \VariableTok{sosdecvar}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{y}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+I then define the two polynomials in the SOS constraints, two SOS polynomials, and enforce them to the equal.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% two polynomials}
+\VariableTok{p1} \OperatorTok{=} \VariableTok{x}\OperatorTok{\^{}}\FloatTok{4} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{*}\VariableTok{x} \OperatorTok{+}\NormalTok{ (}\FloatTok{2} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{))}\OperatorTok{;}
+\VariableTok{p2} \OperatorTok{=}\NormalTok{ (}\VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{{-}}\VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{)}\OperatorTok{+}\FloatTok{1}\NormalTok{)}\OperatorTok{*}\VariableTok{x}\OperatorTok{\^{}}\FloatTok{2} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{)}\OperatorTok{*}\VariableTok{x} \OperatorTok{+} \FloatTok{1}\OperatorTok{;}
+\CommentTok{\% two SOS polynomials}
+\NormalTok{[}\VariableTok{prog}\OperatorTok{,} \VariableTok{sig1}\NormalTok{] }\OperatorTok{=} \VariableTok{sossosvar}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{monomials}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{0}\OperatorTok{:}\FloatTok{2}\NormalTok{))}\OperatorTok{;}
+\NormalTok{[}\VariableTok{prog}\OperatorTok{,} \VariableTok{sig2}\NormalTok{] }\OperatorTok{=} \VariableTok{sossosvar}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{monomials}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{0}\OperatorTok{:}\FloatTok{1}\NormalTok{))}\OperatorTok{;}
+\CommentTok{\% matching coefficients}
+\VariableTok{prog} \OperatorTok{=} \VariableTok{soseq}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{p1}\OperatorTok{{-}}\VariableTok{sig1}\NormalTok{)}\OperatorTok{;}
+\VariableTok{prog} \OperatorTok{=} \VariableTok{soseq}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{p2}\OperatorTok{{-}}\VariableTok{sig2}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+Finally, I set the objective function, choose a solver, and solve the SOS program.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% objective}
+\VariableTok{prog} \OperatorTok{=} \VariableTok{sossetobj}\NormalTok{(}\VariableTok{prog}\OperatorTok{,{-}}\NormalTok{(}\VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{+}\VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{)))}\OperatorTok{;}
+\CommentTok{\% choose solver}
+\VariableTok{options}\NormalTok{.}\VariableTok{solver} \OperatorTok{=} \SpecialStringTok{\textquotesingle{}mosek\textquotesingle{}}\OperatorTok{;}
+\VariableTok{prog} \OperatorTok{=} \VariableTok{sossolve}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{options}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+After solving the SOS program, I extract the optimal solution
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% get solution}
+\VariableTok{ystar} \OperatorTok{=} \VariableTok{double}\NormalTok{(}\VariableTok{sosgetsol}\NormalTok{(}\VariableTok{prog}\OperatorTok{,}\VariableTok{y}\NormalTok{))}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+which produces
+\[
+y_{\star} = (6.6189, 3.8716).
+\]
+
+How do I get the solutions to \(Q_1\) and \(Q_2\)? If I go to the field \texttt{prog.solinfo.x}, I see a vector of dimension \(15\), which is \(2 + 3^2 + 2^2\). Therefore, I can extract \(Q_{1\star}\) and \(Q_{2\star}\) with
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\VariableTok{Q1star} \OperatorTok{=} \VariableTok{reshape}\NormalTok{(}\VariableTok{prog}\NormalTok{.}\VariableTok{solinfo}\NormalTok{.}\VariableTok{x}\NormalTok{(}\FloatTok{2}\OperatorTok{+}\FloatTok{1}\OperatorTok{:}\FloatTok{2}\OperatorTok{+}\FloatTok{9}\NormalTok{)}\OperatorTok{,}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Q2star} \OperatorTok{=} \VariableTok{reshape}\NormalTok{(}\VariableTok{prog}\NormalTok{.}\VariableTok{solinfo}\NormalTok{.}\VariableTok{x}\NormalTok{(}\FloatTok{2}\OperatorTok{+}\FloatTok{9}\OperatorTok{+}\FloatTok{1}\OperatorTok{:}\KeywordTok{end}\NormalTok{)}\OperatorTok{,}\FloatTok{2}\OperatorTok{,}\FloatTok{2}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+which produces
+\[
+Q_{1\star} = \begin{bmatrix} 5.8716 & 3.3095 & -1.3990 \\
+3.3095 & 2.7980 & 0 \\-1.3990 & 0 & 1 \end{bmatrix}, \quad 
+Q_{2\star} = \begin{bmatrix} 1 & 1.9358 \\ 1.9358 & 3.7473 \end{bmatrix}.
+\]
+
+The implementation can be found \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sos_program_example_sostools.m}{here}.
+
+The implementation in SOSTOOLS is a bit unsatisfying because (i) one needs to separately define \(x\) and \(y\), (ii) the extraction of \(Q_1\) and \(Q_2\) is not very intuitive. The following implementation shows how to solve the same SOS program using YALMIP \citep{lofberg04icra-yalmip}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\% define all variables}
+\VariableTok{x} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{;}
+\VariableTok{y} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{2}\OperatorTok{,}\FloatTok{1}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Q1} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{3}\OperatorTok{,}\FloatTok{3}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Q2} \OperatorTok{=} \VariableTok{sdpvar}\NormalTok{(}\FloatTok{2}\OperatorTok{,}\FloatTok{2}\NormalTok{)}\OperatorTok{;}
+\CommentTok{\% define polynomials}
+\VariableTok{p1} \OperatorTok{=} \VariableTok{x}\OperatorTok{\^{}}\FloatTok{4} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{*}\VariableTok{x} \OperatorTok{+}\NormalTok{ (}\FloatTok{2} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{))}\OperatorTok{;}
+\VariableTok{p2} \OperatorTok{=}\NormalTok{ (}\VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{{-}}\VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{)}\OperatorTok{+}\FloatTok{1}\NormalTok{)}\OperatorTok{*}\VariableTok{x}\OperatorTok{\^{}}\FloatTok{2} \OperatorTok{+} \VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{)}\OperatorTok{*}\VariableTok{x} \OperatorTok{+} \FloatTok{1}\OperatorTok{;}
+\CommentTok{\% SOS polynomials}
+\VariableTok{sig1} \OperatorTok{=} \VariableTok{monolist}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{2}\NormalTok{)}\OperatorTok{\textquotesingle{}} \OperatorTok{*} \VariableTok{Q1} \OperatorTok{*} \VariableTok{monolist}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{2}\NormalTok{)}\OperatorTok{;}
+\VariableTok{sig2} \OperatorTok{=} \VariableTok{monolist}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{1}\NormalTok{)}\OperatorTok{\textquotesingle{}} \OperatorTok{*} \VariableTok{Q2} \OperatorTok{*} \VariableTok{monolist}\NormalTok{(}\VariableTok{x}\OperatorTok{,}\FloatTok{1}\NormalTok{)}\OperatorTok{;}
+\CommentTok{\% define all constraints}
+\VariableTok{F} \OperatorTok{=}\NormalTok{ [}\VariableTok{Q1}\OperatorTok{\textgreater{}=}\FloatTok{0}\OperatorTok{,} \VariableTok{Q2}\OperatorTok{\textgreater{}=}\FloatTok{0}\OperatorTok{,...}
+    \VariableTok{coefficients}\NormalTok{(}\VariableTok{p1}\OperatorTok{{-}}\VariableTok{sig1}\OperatorTok{,}\VariableTok{x}\NormalTok{)}\OperatorTok{==}\FloatTok{0}\OperatorTok{,...}
+    \VariableTok{coefficients}\NormalTok{(}\VariableTok{p2}\OperatorTok{{-}}\VariableTok{sig2}\OperatorTok{,}\VariableTok{x}\NormalTok{)}\OperatorTok{==}\FloatTok{0}\NormalTok{]}\OperatorTok{;}
+\CommentTok{\% objective}
+\VariableTok{obj} \OperatorTok{=} \OperatorTok{{-}}\NormalTok{(}\VariableTok{y}\NormalTok{(}\FloatTok{1}\NormalTok{)}\OperatorTok{+}\VariableTok{y}\NormalTok{(}\FloatTok{2}\NormalTok{))}\OperatorTok{;}
+\CommentTok{\% solve}
+\VariableTok{options} \OperatorTok{=} \VariableTok{sdpsettings}\NormalTok{(}\SpecialStringTok{\textquotesingle{}solver\textquotesingle{}}\OperatorTok{,}\SpecialStringTok{\textquotesingle{}mosek\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+\VariableTok{optimize}\NormalTok{(}\VariableTok{F}\OperatorTok{,}\VariableTok{obj}\OperatorTok{,}\VariableTok{options}\NormalTok{)}\OperatorTok{;}
+\CommentTok{\% extract solution}
+\VariableTok{ystar} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{y}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Q1star} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{Q1}\NormalTok{)}\OperatorTok{;}
+\VariableTok{Q2star} \OperatorTok{=} \VariableTok{value}\NormalTok{(}\VariableTok{Q2}\NormalTok{)}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+We get the same solution as using SOSTOOLS. The implementation in YALMIP can be found \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sos_program_example_yalmip.m}{here}.
+\end{example}
+
+\section{Positivstellensatz}\label{positivstellensatz}
+
+We have seen that in the univariate case, a polynomial is nonnegative if and only if it is SOS; while in the multivariate case, being SOS is a sufficient but not necessary condition for nonnegativity in general (e.g., think of the Motzkin's polynomial). Those characterizations are stated with respect to \(\mathbb{R}^{n}\). What if we are interested in nonnegativity over only a subset of \(\mathbb{R}^{n}\)?
+
+\subsection{Univaraite Intervals}\label{univaraite-intervals}
+
+The first result we present here is w.r.t. univariate intervals.
+
+\begin{theorem}[Nonnegativity Over Univaraite Intervals]
+\protect\hypertarget{thm:SOSUnivariateInterval}{}\label{thm:SOSUnivariateInterval}A univariate polynomial \(p(x)\) is nonnegative on \([0,\infty]\) if and only if it can be written as
+\begin{equation}
+p(x) = s(x) + x \cdot t(x)
+\label{eq:SOS-univariate-interval-1}
+\end{equation}
+where \(s(x)\) and \(t(x)\) are both SOS polynomials. If \(\deg(p) = 2d\), then we have \(\deg(s) \leq 2d\) and \(\deg(t) \leq 2d -2\), while if \(\deg(p) = 2d+1\), then \(\deg(s) \leq 2d, \deg(t) \leq 2d\).
+
+Similarly, a univariate polynomial \(p(x)\) is nonnegative on the interval \([a,b]\) with \(a < b\) if and only if it can be written as
+\begin{equation}
+\begin{cases}
+p(x) = s(x) + (x-a)(b-x) \cdot t(x) & \text{if } \deg(p) = 2d, \\
+p(x) = (x-a)\cdot s(x) + (b-x) \cdot t(x) & \text{if } \deg(p) = 2d + 1
+\end{cases}
+\label{eq:SOS-univariate-interval-2}
+\end{equation}
+where both \(s(x),t(x)\) are SOS polynomials. In the first case, \(\deg(s) \leq 2d\), \(\deg(t) \leq 2d -2\). In the second case, \(\deg(s) \leq 2d, \deg(t) \leq 2d\).
+\end{theorem}
+
+A simple example of the above theorem is that the polynomial \(p(x)=x^3\) is nonnegative on the interval \([0,\infty]\) (but not on \(\mathbb{R}^{}\)) because we can write \(p(x) = x \cdot x^2\) where \(x^2\) is SOS.
+
+It should be noted that the ``if'' direction is clear, i.e., when \(p(x)\) can be written as in \eqref{eq:SOS-univariate-interval-1} and \eqref{eq:SOS-univariate-interval-2}, it certifies nonnegativity because the polynomials \(x, x-a, b-x, (x-a)(b-x)\) are all nonnegative on the respective intervals. The ``only if'' direction is nontrivial and it states that it is sufficient to consider the decompositions in \eqref{eq:SOS-univariate-interval-1} and \eqref{eq:SOS-univariate-interval-2} with bounded degrees on \(s(x)\) and \(t(x)\). It should also be noted that finding \(s(x)\) and \(t(x)\) can be done using SOS programming as introduced above.
+
+\subsection{Affine Variety}\label{affine-variety}
 
   \bibliography{book.bib}
 

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 Sums of Squares Relaxation | Semidefinite Optimization and Relaxation</title>
   <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
-  <meta name="generator" content="bookdown 0.37 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.38 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 Sums of Squares Relaxation | Semidefinite Optimization and Relaxation" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-02-27" />
+<meta name="date" content="2024-03-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -251,6 +251,13 @@ div.csl-indent {
 <li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
 <ul>
 <li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
+<li class="chapter" data-level="4.3.2" data-path="SOS.html"><a href="SOS.html#multivariate-polynomials"><i class="fa fa-check"></i><b>4.3.2</b> Multivariate Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="SOS.html"><a href="SOS.html#sos-programming"><i class="fa fa-check"></i><b>4.4</b> SOS Programming</a></li>
+<li class="chapter" data-level="4.5" data-path="SOS.html"><a href="SOS.html#positivstellensatz"><i class="fa fa-check"></i><b>4.5</b> Positivstellensatz</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="SOS.html"><a href="SOS.html#univaraite-intervals"><i class="fa fa-check"></i><b>4.5.1</b> Univaraite Intervals</a></li>
+<li class="chapter" data-level="4.5.2" data-path="SOS.html"><a href="SOS.html#affine-variety"><i class="fa fa-check"></i><b>4.5.2</b> Affine Variety</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -1046,7 +1053,7 @@ p(x) = \begin{bmatrix} x \\ 1 \end{bmatrix}^\top\begin{bmatrix} A &amp; b \\ b^\
 \]</span>
 therefore <span class="math inline">\(p(x) \geq 0\)</span> if and only if
 <span class="math display">\[
-\begin{bmatrix} A &amp; b \\ b^\top&amp; 1 \end{bmatrix} \succeq 0.
+\begin{bmatrix} A &amp; b \\ b^\top&amp; c \end{bmatrix} \succeq 0.
 \]</span>
 Thus, in this case the set <span class="math inline">\(P_{n,2}\)</span> is isomorphic to the positive semidefinite cone <span class="math inline">\(\mathbb{S}^{n+1}_{+}\)</span>.</p>
 </div>
@@ -1206,7 +1213,7 @@ p(x) = x^4 + 4 x^3 + 6 x^2 + 4 x + 5.
 To decide if this polynomial is SOS, we write the polynomial equality constraint
 <span class="math display">\[\begin{equation}
 \begin{split}
-p(x) &amp; = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \begin{bmatrix} Q_{00} &amp; Q_{01} &amp; Q_{02} \\
+p(x) &amp; = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}^\top\begin{bmatrix} Q_{00} &amp; Q_{01} &amp; Q_{02} \\
 Q_{01} &amp; Q_{11} &amp; Q_{12} \\
 Q_{02} &amp; Q_{12} &amp; Q_{22}
 \end{bmatrix}  \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix} \\
@@ -1237,12 +1244,284 @@ p(x) = (x^2 + 2x)^2 + 2 (1+x)^2 + 3,
 \]</span></p>
 </div>
 </div>
+</div>
+<div id="multivariate-polynomials" class="section level3 hasAnchor" number="4.3.2">
+<h3><span class="header-section-number">4.3.2</span> Multivariate Polynomials<a href="SOS.html#multivariate-polynomials" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Deciding if a multivariate polynomial is SOS is almost identical to what we have shown for univariate polynomials. Consider a multivariate polynomial <span class="math inline">\(p(x)\)</span> in <span class="math inline">\(n\)</span> variables of degree <span class="math inline">\(2d\)</span>:
+<span class="math display">\[
+p(x) = \sum_{\alpha} p_{\alpha} x^{\alpha}, \quad \alpha \in \mathcal{F}_{n,2d} := \{ (\alpha_1,\dots,\alpha_n) \in \mathbb{N}^n \mid \alpha_1 + \cdots + \alpha_n \leq 2d \}.
+\]</span>
+Let
+<span class="math display" id="eq:SOS-standard-basis">\[\begin{equation}
+[x]_d := \begin{bmatrix} 1 \\ x_1 \\ \vdots \\ x_n \\ x_1^2 \\ x_1 x_2 \\ \vdots \\ x_n^d \end{bmatrix} = [x^\alpha]_{\alpha \in \mathcal{F}_{n,d}}
+\tag{4.7}
+\end{equation}\]</span>
+be the standard basis of monomials with degree up to <span class="math inline">\(d\)</span>. Then in parallel to Lemma <a href="SOS.html#lem:UnivaraiteSOS">4.2</a>, we have that <span class="math inline">\(p(x)\)</span> is SOS if and only if there exists a positive semidefinite Gram matrix.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:MultivariateSOS" class="lemma"><strong>Lemma 4.3  (Characterization of Multivariate SOS Polynomials) </strong></span>A multivariate polynomial <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span> is SOS if and only if there exists a symmetric matrix <span class="math inline">\(Q \in \mathbb{S}^{s(n,d)}\)</span> that satisfies
+<span class="math display">\[
+p(x) = [x]_d^\top Q [x]_d, \quad Q \succeq 0.
+\]</span></p>
+</div>
+</div>
+<p>Let us index the monomials in the basis <a href="SOS.html#eq:SOS-standard-basis">(4.7)</a>, as well as the rows and columns of <span class="math inline">\(Q\)</span>, using their exponents. Then by matching coefficients of the polynomial equation <span class="math inline">\(p(x) = [x]_d^\top Q [x]_d\)</span>, Lemma <a href="SOS.html#lem:MultivariateSOS">4.3</a> is equivalent to finding <span class="math inline">\(Q \in \mathbb{S}^{s(n,d)}\)</span> that satisfies
+<span class="math display" id="eq:multivariate-SOS-SDP-formulation">\[\begin{equation}
+p_\alpha = \sum_{\beta + \gamma = \alpha} Q_{\beta\gamma}, \forall \alpha \in \mathcal{F}_{n,2d}, \quad Q \succeq 0.
+\tag{4.8}
+\end{equation}\]</span>
+That is, for every <span class="math inline">\(\alpha \in \mathcal{F}_{n,2d}\)</span>, we search for all possible pairs of <span class="math inline">\(\beta,\gamma \in \mathcal{F}_{n,d}\)</span> such that <span class="math inline">\(\beta + \gamma = \alpha\)</span>, the sum of <span class="math inline">\(Q_{\beta \gamma}\)</span> should be equal to <span class="math inline">\(p_{\alpha}\)</span> by the virtue of matching coefficients. <strong>Note that <a href="SOS.html#eq:multivariate-SOS-SDP-formulation">(4.8)</a> boils down to solving an SDP with matrix size <span class="math inline">\(s(n,d) \times s(n,d)\)</span> and <span class="math inline">\(s(n,2d)\)</span> affine constraints.</strong> Therefore, it grows quickly with <span class="math inline">\(n\)</span> and <span class="math inline">\(d\)</span>.</p>
+<p>Let us work out a simple example.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SOSDecompositionMultivariate" class="example"><strong>Example 4.12  (SOS Decomposition of a Multivariate Polynomial) </strong></span>We want to check if the following polynomial in two variables is SOS:
+<span class="math display">\[
+p(x) = 2 x_1^4 + 5 x_2^4 - x_1^2 x_2^2 + 2 x_1^3 x_2 + 2 x_1 + 2.
+\]</span>
+Since <span class="math inline">\(\deg(p) = 4\)</span>, we pick the standard monomial basis of degree up to <span class="math inline">\(2\)</span>
+<span class="math display">\[
+[x]_2 = \begin{bmatrix} 1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 \end{bmatrix},
+\]</span>
+and write down the polynomial equality constraint
+<span class="math display">\[
+p(x) = [x]_2^\top Q [x]_2 =
+[x]_2^\top\begin{bmatrix}
+Q_{00,00} &amp; Q_{00,10} &amp; Q_{00,01} &amp; Q_{00,20} &amp; Q_{00,11} &amp; Q_{00,02} \\
+* &amp; Q_{10,10} &amp; Q_{10,01} &amp; Q_{10,20} &amp; Q_{10,11} &amp; Q_{10,02} \\
+* &amp; * &amp; Q_{01,01} &amp; Q_{01,20} &amp; Q_{01,11} &amp; Q_{01,02} \\
+* &amp; * &amp; * &amp; Q_{20,20} &amp; Q_{20,11} &amp; Q_{20,02} \\
+* &amp; * &amp; * &amp; * &amp; Q_{11,11} &amp; Q_{11,02} \\
+* &amp; * &amp; * &amp; * &amp; * &amp; Q_{02,02}
+\end{bmatrix}
+[x]_2
+\]</span>
+By matching coefficients, we obtain
+<span class="math display">\[
+s(n,2d) = s(2,4) = \begin{pmatrix} 2 + 4 \\ 4 \end{pmatrix} = 15
+\]</span>
+affine constraints on the entries of <span class="math inline">\(Q\)</span>, which has size <span class="math inline">\(6 \times 6\)</span>.</p>
+<p>Solving the SDP, we obtain a solution
+<span class="math display">\[
+Q = \frac{1}{3} \begin{bmatrix} 6 &amp; 3 &amp; 0 &amp; -2 &amp; 0 &amp; -2 \\
+3 &amp; 4 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 4 &amp; 0 &amp; 0 &amp; 0 \\
+-2 &amp; 0 &amp; 0 &amp; 6 &amp; 3 &amp; -4 \\
+0 &amp; 0 &amp; 0 &amp; 3 &amp; 5 &amp; 0 \\
+-2 &amp; 0 &amp; 0 &amp; -4 &amp; 0 &amp; 15
+\end{bmatrix}.
+\]</span></p>
+</div>
+</div>
+<p><strong>Choice of Basis</strong>. It is worth noting that so far, when computing SOS decompositions, we have been using the standard monomial basis <span class="math inline">\([x]_d\)</span>. This is the most popular choice in practice, but it is not necessarily the only choice. See Chapter 3.1.5 of <span class="citation">(<a href="#ref-blekherman12book-semidefinite">Blekherman, Parrilo, and Thomas 2012</a>)</span> for other basis choices.</p>
+</div>
+</div>
+<div id="sos-programming" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> SOS Programming<a href="SOS.html#sos-programming" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We have seen that finding SOS decompositions of given polynomials can be written as semidefinite programs. It is clear to see that we can do more than just finding SOS decompositions – we can also formulate optimization problems subject to SOS constraints, known as SOS programming.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:SOSProgram" class="definition"><strong>Definition 4.19  (SOS Program) </strong></span>An SOS optimization problem or SOS program is a convex optimization problem of the form
+<span class="math display" id="eq:SOS-program">\[\begin{equation}
+\begin{split}
+\max_y &amp; \quad b_1 y_1 + \cdots + b_m y_m \\
+\mathrm{s.t.}&amp; \quad p_i(x;y) \text{ is SOS in } \mathbb{R}[x], \quad i=1,\dots,k.
+\end{split}
+\tag{4.9}
+\end{equation}\]</span>
+where <span class="math inline">\(b = (b_1,\dots,b_m) \in \mathbb{R}^{m}\)</span> is a given constant vector, <span class="math inline">\(y= (y_1,\dots,y_m)\)</span> is the unknown variable to be optimized, and
+<span class="math display">\[
+p_i(x;y) = a_{i0}(x) + y_1 a_{i1}(x) + \cdots + y_m a_{im}(x), \quad i=1,\dots,k,
+\]</span>
+are polynomials in <span class="math inline">\(x\)</span> with coefficientss affine in <span class="math inline">\(y\)</span>, with <span class="math inline">\(a_{ij}(x),i=1,\dots,k, j=0,\dots,m\)</span> given polynomials.</p>
+</div>
+</div>
+<p>For readers seeing SOS programs for the first time, it is critical to realize that <strong>the variable <span class="math inline">\(x\)</span> in an SOS program <a href="SOS.html#eq:SOS-program">(4.9)</a> is “dummy”</strong>, in the sense that it is only used to formulate the problem, but not really being optimized. The variable <span class="math inline">\(y \in \mathbb{R}^{m}\)</span> is the optimization variable.</p>
+<p>To see this point more clearly, we will show that the SOS program <a href="SOS.html#eq:SOS-program">(4.9)</a> can be reformulated as a convex semidefinite program (or in general a conic optimization problem). Let
+<span class="math display">\[
+d_i = \lceil \deg(p_i)/2 \rceil, \quad i=1,\dots,k,
+\]</span>
+where importantly, the degree of <span class="math inline">\(p_i\)</span> is taken w. r. t. <span class="math inline">\(x\)</span> (but not <span class="math inline">\(y\)</span>). Then we can clearly see that the constraint “<span class="math inline">\(p_i(x;y)\)</span> is SOS in <span class="math inline">\(\mathbb{R}[x]\)</span>” is equivalent to
+<span class="math display" id="eq:SOS-program-expand">\[\begin{equation}
+p_i(x;y) = [x]_{d_i}^\top Q_i [x]_{d_i}, \quad Q_i \in \mathbb{S}^{s(n,d_i)}_{+}, \quad i=1,\dots,k,
+\tag{4.10}
+\end{equation}\]</span>
+where recall <span class="math inline">\([x]_{d_i}\)</span> is the standard monomial basis in <span class="math inline">\(x\)</span> of degree up to <span class="math inline">\(d_i\)</span>. By matching coefficients in equation <a href="SOS.html#eq:SOS-program-expand">(4.10)</a>, we obtain a set of affine constraints in <span class="math inline">\(y\)</span> and <span class="math inline">\(Q_i\)</span>, while the variable <span class="math inline">\(x\)</span> is simply removed! Therefore, the SOS program <a href="SOS.html#eq:SOS-program">(4.9)</a> is equivalent to a conic optimization in the variable
+<span class="math display">\[
+(y,Q_1,\dots,Q_k) \in \mathbb{R}^{m} \times \mathbb{S}^{s(n,d_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,d_k)}_{+}.
+\]</span>
+The number of affine constraints is
+<span class="math display">\[
+s(n,2d_1) + \cdots + s(n,2d_k).
+\]</span></p>
+<p>Let us make this observation concrete using a simple example.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SOSProgram" class="example"><strong>Example 4.13  (SOS Programming) </strong></span>Consider the following SOS program
+<span class="math display" id="eq:SOS-program-example">\[\begin{equation}
+\begin{split}
+\max_y &amp; \quad y_1 + y_2 \\
+\mathrm{s.t.}&amp; \quad x^4 + y_1 x + (2+y_2) \text{ is SOS}\\
+&amp; \quad (y_1 - y_2 + 1) x^2 + y_2 x + 1 \text{ is SOS}
+\end{split}
+\tag{4.11}
+\end{equation}\]</span>
+The first SOS constraint is equivalent to
+<span class="math display">\[
+x^4 + y_1 x + (2 + y_2) = [x]_2^\top Q_1 [x]_2 = \begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}^\top
+\underbrace{\begin{bmatrix}
+Q_{1,00} &amp; Q_{1,01} &amp; Q_{1,02} \\
+Q_{1,01} &amp; Q_{1,11} &amp; Q_{1,12} \\
+Q_{1,02} &amp; Q_{1,12} &amp; Q_{1,22}
+\end{bmatrix}}_{Q_1}
+\begin{bmatrix} 1 \\ x \\ x^2 \end{bmatrix}.
+\]</span>
+Matching coefficients, we obtain
+<span class="math display" id="eq:SOS-program-constraint-1">\[\begin{equation}
+\begin{split}
+x^4: &amp; \quad 1 = Q_{1,22} \\
+x^3: &amp; \quad 0 = 2 Q_{1,12} \\
+x^2: &amp; \quad 0 = Q_{1,11} + 2 Q_{1,02} \\
+x: &amp; \quad y_1 = 2 Q_{1,01} \\
+1: &amp; \quad 2 + y_2 = Q_{1,00}
+\end{split}
+\tag{4.12}
+\end{equation}\]</span>
+The second SOS constraint is equivalent to
+<span class="math display">\[
+(y_1 - y_2 + 1)x^2 + y_2 x + 1 = [x]_1^\top Q_2 [x]_1 = \begin{bmatrix} 1 \\ x \end{bmatrix}^\top
+\underbrace{\begin{bmatrix} Q_{2,00} &amp; Q_{2,01} \\
+Q_{2,01} &amp; Q_{2,11} \end{bmatrix}}_{Q_2}
+\begin{bmatrix} 1 \\ x \end{bmatrix}.
+\]</span>
+Matching coefficients, we obtain
+<span class="math display" id="eq:SOS-program-constraint-2">\[\begin{equation}
+\begin{split}
+x^2: &amp; \quad y_1 - y_2 + 1 = Q_{2,11} \\
+x: &amp; \quad y_2 = 2 Q_{2,01} \\
+1: &amp; \quad 1 = Q_{2,00}
+\end{split}
+\tag{4.13}
+\end{equation}\]</span>
+Therefore, we obtain a conic optimization in
+<span class="math display">\[
+(y_1,y_2,Q_1,Q_2)
+\]</span>
+subject to the affine constraints in <a href="SOS.html#eq:SOS-program-constraint-1">(4.12)</a> and <a href="SOS.html#eq:SOS-program-constraint-2">(4.13)</a>, plus <span class="math inline">\(Q_1 \succeq 0, Q_2 \succeq 0\)</span>.</p>
+<p>For this simple example, it is tractable to collect the linear constraints by hand. When the SOS program grows larger, we can use existing software packages to perform the conversion for us.</p>
+<p>In the next, we show how to use the software package SOSTOOLS <span class="citation">(<a href="#ref-prajna02cdc-sostools">Prajna, Papachristodoulou, and Parrilo 2002</a>)</span> to implement SOS programming in Matlab.</p>
+<p>I first create the dummy polynomial variable <span class="math inline">\(x\)</span> and the decision variable <span class="math inline">\(y\)</span>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb6-1"><a href="SOS.html#cb6-1" tabindex="-1"></a><span class="va">dim_y</span> <span class="op">=</span> <span class="fl">2</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="SOS.html#cb6-2" tabindex="-1"></a><span class="va">dim_x</span> <span class="op">=</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="SOS.html#cb6-3" tabindex="-1"></a><span class="va">x</span> <span class="op">=</span> <span class="va">mpvar</span>(<span class="ss">&#39;x&#39;</span><span class="op">,</span><span class="fl">1</span>)<span class="op">;</span> <span class="co">% dummy x </span></span>
+<span id="cb6-4"><a href="SOS.html#cb6-4" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">sosprogram</span>(<span class="va">x</span>)<span class="op">;</span></span>
+<span id="cb6-5"><a href="SOS.html#cb6-5" tabindex="-1"></a><span class="va">y_name</span> <span class="op">=</span> {}<span class="op">;</span> <span class="co">% decision variable y</span></span>
+<span id="cb6-6"><a href="SOS.html#cb6-6" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">dim_y</span></span>
+<span id="cb6-7"><a href="SOS.html#cb6-7" tabindex="-1"></a>    <span class="va">y_name</span>{<span class="va">i</span>} <span class="op">=</span> <span class="va">sprintf</span>(<span class="ss">&#39;y_%d&#39;</span><span class="op">,</span><span class="va">i</span>)<span class="op">;</span></span>
+<span id="cb6-8"><a href="SOS.html#cb6-8" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-9"><a href="SOS.html#cb6-9" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="va">dpvar</span>(<span class="va">y_name</span>)<span class="op">;</span></span>
+<span id="cb6-10"><a href="SOS.html#cb6-10" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="va">y</span>(<span class="op">:</span>)<span class="op">;</span></span>
+<span id="cb6-11"><a href="SOS.html#cb6-11" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">sosdecvar</span>(<span class="va">prog</span><span class="op">,</span><span class="va">y</span>)<span class="op">;</span></span></code></pre></div>
+<p>I then define the two polynomials in the SOS constraints, two SOS polynomials, and enforce them to the equal.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb7-1"><a href="SOS.html#cb7-1" tabindex="-1"></a><span class="co">% two polynomials</span></span>
+<span id="cb7-2"><a href="SOS.html#cb7-2" tabindex="-1"></a><span class="va">p1</span> <span class="op">=</span> <span class="va">x</span><span class="op">^</span><span class="fl">4</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">1</span>)<span class="op">*</span><span class="va">x</span> <span class="op">+</span> (<span class="fl">2</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">2</span>))<span class="op">;</span></span>
+<span id="cb7-3"><a href="SOS.html#cb7-3" tabindex="-1"></a><span class="va">p2</span> <span class="op">=</span> (<span class="va">y</span>(<span class="fl">1</span>)<span class="op">-</span><span class="va">y</span>(<span class="fl">2</span>)<span class="op">+</span><span class="fl">1</span>)<span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">2</span>)<span class="op">*</span><span class="va">x</span> <span class="op">+</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="SOS.html#cb7-4" tabindex="-1"></a><span class="co">% two SOS polynomials</span></span>
+<span id="cb7-5"><a href="SOS.html#cb7-5" tabindex="-1"></a>[<span class="va">prog</span><span class="op">,</span> <span class="va">sig1</span>] <span class="op">=</span> <span class="va">sossosvar</span>(<span class="va">prog</span><span class="op">,</span><span class="va">monomials</span>(<span class="va">x</span><span class="op">,</span><span class="fl">0</span><span class="op">:</span><span class="fl">2</span>))<span class="op">;</span></span>
+<span id="cb7-6"><a href="SOS.html#cb7-6" tabindex="-1"></a>[<span class="va">prog</span><span class="op">,</span> <span class="va">sig2</span>] <span class="op">=</span> <span class="va">sossosvar</span>(<span class="va">prog</span><span class="op">,</span><span class="va">monomials</span>(<span class="va">x</span><span class="op">,</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>))<span class="op">;</span></span>
+<span id="cb7-7"><a href="SOS.html#cb7-7" tabindex="-1"></a><span class="co">% matching coefficients</span></span>
+<span id="cb7-8"><a href="SOS.html#cb7-8" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">soseq</span>(<span class="va">prog</span><span class="op">,</span><span class="va">p1</span><span class="op">-</span><span class="va">sig1</span>)<span class="op">;</span></span>
+<span id="cb7-9"><a href="SOS.html#cb7-9" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">soseq</span>(<span class="va">prog</span><span class="op">,</span><span class="va">p2</span><span class="op">-</span><span class="va">sig2</span>)<span class="op">;</span></span></code></pre></div>
+<p>Finally, I set the objective function, choose a solver, and solve the SOS program.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb8-1"><a href="SOS.html#cb8-1" tabindex="-1"></a><span class="co">% objective</span></span>
+<span id="cb8-2"><a href="SOS.html#cb8-2" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">sossetobj</span>(<span class="va">prog</span><span class="op">,-</span>(<span class="va">y</span>(<span class="fl">1</span>)<span class="op">+</span><span class="va">y</span>(<span class="fl">2</span>)))<span class="op">;</span></span>
+<span id="cb8-3"><a href="SOS.html#cb8-3" tabindex="-1"></a><span class="co">% choose solver</span></span>
+<span id="cb8-4"><a href="SOS.html#cb8-4" tabindex="-1"></a><span class="va">options</span>.<span class="va">solver</span> <span class="op">=</span> <span class="ss">&#39;mosek&#39;</span><span class="op">;</span></span>
+<span id="cb8-5"><a href="SOS.html#cb8-5" tabindex="-1"></a><span class="va">prog</span> <span class="op">=</span> <span class="va">sossolve</span>(<span class="va">prog</span><span class="op">,</span><span class="va">options</span>)<span class="op">;</span></span></code></pre></div>
+<p>After solving the SOS program, I extract the optimal solution</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb9-1"><a href="SOS.html#cb9-1" tabindex="-1"></a><span class="co">% get solution</span></span>
+<span id="cb9-2"><a href="SOS.html#cb9-2" tabindex="-1"></a><span class="va">ystar</span> <span class="op">=</span> <span class="va">double</span>(<span class="va">sosgetsol</span>(<span class="va">prog</span><span class="op">,</span><span class="va">y</span>))<span class="op">;</span></span></code></pre></div>
+<p>which produces
+<span class="math display">\[
+y_{\star} = (6.6189, 3.8716).
+\]</span></p>
+<p>How do I get the solutions to <span class="math inline">\(Q_1\)</span> and <span class="math inline">\(Q_2\)</span>? If I go to the field <code>prog.solinfo.x</code>, I see a vector of dimension <span class="math inline">\(15\)</span>, which is <span class="math inline">\(2 + 3^2 + 2^2\)</span>. Therefore, I can extract <span class="math inline">\(Q_{1\star}\)</span> and <span class="math inline">\(Q_{2\star}\)</span> with</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb10-1"><a href="SOS.html#cb10-1" tabindex="-1"></a><span class="va">Q1star</span> <span class="op">=</span> <span class="va">reshape</span>(<span class="va">prog</span>.<span class="va">solinfo</span>.<span class="va">x</span>(<span class="fl">2</span><span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">+</span><span class="fl">9</span>)<span class="op">,</span><span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb10-2"><a href="SOS.html#cb10-2" tabindex="-1"></a><span class="va">Q2star</span> <span class="op">=</span> <span class="va">reshape</span>(<span class="va">prog</span>.<span class="va">solinfo</span>.<span class="va">x</span>(<span class="fl">2</span><span class="op">+</span><span class="fl">9</span><span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="kw">end</span>)<span class="op">,</span><span class="fl">2</span><span class="op">,</span><span class="fl">2</span>)<span class="op">;</span></span></code></pre></div>
+<p>which produces
+<span class="math display">\[
+Q_{1\star} = \begin{bmatrix} 5.8716 &amp; 3.3095 &amp; -1.3990 \\
+3.3095 &amp; 2.7980 &amp; 0 \\-1.3990 &amp; 0 &amp; 1 \end{bmatrix}, \quad
+Q_{2\star} = \begin{bmatrix} 1 &amp; 1.9358 \\ 1.9358 &amp; 3.7473 \end{bmatrix}.
+\]</span></p>
+<p>The implementation can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sos_program_example_sostools.m">here</a>.</p>
+<p>The implementation in SOSTOOLS is a bit unsatisfying because (i) one needs to separately define <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, (ii) the extraction of <span class="math inline">\(Q_1\)</span> and <span class="math inline">\(Q_2\)</span> is not very intuitive. The following implementation shows how to solve the same SOS program using YALMIP <span class="citation">(<a href="#ref-lofberg04icra-yalmip">Lofberg 2004</a>)</span>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb11-1"><a href="SOS.html#cb11-1" tabindex="-1"></a><span class="co">% define all variables</span></span>
+<span id="cb11-2"><a href="SOS.html#cb11-2" tabindex="-1"></a><span class="va">x</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb11-3"><a href="SOS.html#cb11-3" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">2</span><span class="op">,</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb11-4"><a href="SOS.html#cb11-4" tabindex="-1"></a><span class="va">Q1</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">3</span><span class="op">,</span><span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb11-5"><a href="SOS.html#cb11-5" tabindex="-1"></a><span class="va">Q2</span> <span class="op">=</span> <span class="va">sdpvar</span>(<span class="fl">2</span><span class="op">,</span><span class="fl">2</span>)<span class="op">;</span></span>
+<span id="cb11-6"><a href="SOS.html#cb11-6" tabindex="-1"></a><span class="co">% define polynomials</span></span>
+<span id="cb11-7"><a href="SOS.html#cb11-7" tabindex="-1"></a><span class="va">p1</span> <span class="op">=</span> <span class="va">x</span><span class="op">^</span><span class="fl">4</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">1</span>)<span class="op">*</span><span class="va">x</span> <span class="op">+</span> (<span class="fl">2</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">2</span>))<span class="op">;</span></span>
+<span id="cb11-8"><a href="SOS.html#cb11-8" tabindex="-1"></a><span class="va">p2</span> <span class="op">=</span> (<span class="va">y</span>(<span class="fl">1</span>)<span class="op">-</span><span class="va">y</span>(<span class="fl">2</span>)<span class="op">+</span><span class="fl">1</span>)<span class="op">*</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">y</span>(<span class="fl">2</span>)<span class="op">*</span><span class="va">x</span> <span class="op">+</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb11-9"><a href="SOS.html#cb11-9" tabindex="-1"></a><span class="co">% SOS polynomials</span></span>
+<span id="cb11-10"><a href="SOS.html#cb11-10" tabindex="-1"></a><span class="va">sig1</span> <span class="op">=</span> <span class="va">monolist</span>(<span class="va">x</span><span class="op">,</span><span class="fl">2</span>)<span class="op">&#39;</span> <span class="op">*</span> <span class="va">Q1</span> <span class="op">*</span> <span class="va">monolist</span>(<span class="va">x</span><span class="op">,</span><span class="fl">2</span>)<span class="op">;</span></span>
+<span id="cb11-11"><a href="SOS.html#cb11-11" tabindex="-1"></a><span class="va">sig2</span> <span class="op">=</span> <span class="va">monolist</span>(<span class="va">x</span><span class="op">,</span><span class="fl">1</span>)<span class="op">&#39;</span> <span class="op">*</span> <span class="va">Q2</span> <span class="op">*</span> <span class="va">monolist</span>(<span class="va">x</span><span class="op">,</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb11-12"><a href="SOS.html#cb11-12" tabindex="-1"></a><span class="co">% define all constraints</span></span>
+<span id="cb11-13"><a href="SOS.html#cb11-13" tabindex="-1"></a><span class="va">F</span> <span class="op">=</span> [<span class="va">Q1</span><span class="op">&gt;=</span><span class="fl">0</span><span class="op">,</span> <span class="va">Q2</span><span class="op">&gt;=</span><span class="fl">0</span><span class="op">,...</span></span>
+<span id="cb11-14"><a href="SOS.html#cb11-14" tabindex="-1"></a>    <span class="va">coefficients</span>(<span class="va">p1</span><span class="op">-</span><span class="va">sig1</span><span class="op">,</span><span class="va">x</span>)<span class="op">==</span><span class="fl">0</span><span class="op">,...</span></span>
+<span id="cb11-15"><a href="SOS.html#cb11-15" tabindex="-1"></a>    <span class="va">coefficients</span>(<span class="va">p2</span><span class="op">-</span><span class="va">sig2</span><span class="op">,</span><span class="va">x</span>)<span class="op">==</span><span class="fl">0</span>]<span class="op">;</span></span>
+<span id="cb11-16"><a href="SOS.html#cb11-16" tabindex="-1"></a><span class="co">% objective</span></span>
+<span id="cb11-17"><a href="SOS.html#cb11-17" tabindex="-1"></a><span class="va">obj</span> <span class="op">=</span> <span class="op">-</span>(<span class="va">y</span>(<span class="fl">1</span>)<span class="op">+</span><span class="va">y</span>(<span class="fl">2</span>))<span class="op">;</span></span>
+<span id="cb11-18"><a href="SOS.html#cb11-18" tabindex="-1"></a><span class="co">% solve</span></span>
+<span id="cb11-19"><a href="SOS.html#cb11-19" tabindex="-1"></a><span class="va">options</span> <span class="op">=</span> <span class="va">sdpsettings</span>(<span class="ss">&#39;solver&#39;</span><span class="op">,</span><span class="ss">&#39;mosek&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-20"><a href="SOS.html#cb11-20" tabindex="-1"></a><span class="va">optimize</span>(<span class="va">F</span><span class="op">,</span><span class="va">obj</span><span class="op">,</span><span class="va">options</span>)<span class="op">;</span></span>
+<span id="cb11-21"><a href="SOS.html#cb11-21" tabindex="-1"></a><span class="co">% extract solution</span></span>
+<span id="cb11-22"><a href="SOS.html#cb11-22" tabindex="-1"></a><span class="va">ystar</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">y</span>)<span class="op">;</span></span>
+<span id="cb11-23"><a href="SOS.html#cb11-23" tabindex="-1"></a><span class="va">Q1star</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Q1</span>)<span class="op">;</span></span>
+<span id="cb11-24"><a href="SOS.html#cb11-24" tabindex="-1"></a><span class="va">Q2star</span> <span class="op">=</span> <span class="va">value</span>(<span class="va">Q2</span>)<span class="op">;</span></span></code></pre></div>
+<p>We get the same solution as using SOSTOOLS. The implementation in YALMIP can be found <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/sos_program_example_yalmip.m">here</a>.</p>
+</div>
+</div>
+</div>
+<div id="positivstellensatz" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Positivstellensatz<a href="SOS.html#positivstellensatz" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We have seen that in the univariate case, a polynomial is nonnegative if and only if it is SOS; while in the multivariate case, being SOS is a sufficient but not necessary condition for nonnegativity in general (e.g., think of the Motzkin’s polynomial). Those characterizations are stated with respect to <span class="math inline">\(\mathbb{R}^{n}\)</span>. What if we are interested in nonnegativity over only a subset of <span class="math inline">\(\mathbb{R}^{n}\)</span>?</p>
+<div id="univaraite-intervals" class="section level3 hasAnchor" number="4.5.1">
+<h3><span class="header-section-number">4.5.1</span> Univaraite Intervals<a href="SOS.html#univaraite-intervals" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The first result we present here is w.r.t. univariate intervals.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SOSUnivariateInterval" class="theorem"><strong>Theorem 4.14  (Nonnegativity Over Univaraite Intervals) </strong></span>A univariate polynomial <span class="math inline">\(p(x)\)</span> is nonnegative on <span class="math inline">\([0,\infty]\)</span> if and only if it can be written as
+<span class="math display" id="eq:SOS-univariate-interval-1">\[\begin{equation}
+p(x) = s(x) + x \cdot t(x)
+\tag{4.14}
+\end{equation}\]</span>
+where <span class="math inline">\(s(x)\)</span> and <span class="math inline">\(t(x)\)</span> are both SOS polynomials. If <span class="math inline">\(\deg(p) = 2d\)</span>, then we have <span class="math inline">\(\deg(s) \leq 2d\)</span> and <span class="math inline">\(\deg(t) \leq 2d -2\)</span>, while if <span class="math inline">\(\deg(p) = 2d+1\)</span>, then <span class="math inline">\(\deg(s) \leq 2d, \deg(t) \leq 2d\)</span>.</p>
+<p>Similarly, a univariate polynomial <span class="math inline">\(p(x)\)</span> is nonnegative on the interval <span class="math inline">\([a,b]\)</span> with <span class="math inline">\(a &lt; b\)</span> if and only if it can be written as
+<span class="math display" id="eq:SOS-univariate-interval-2">\[\begin{equation}
+\begin{cases}
+p(x) = s(x) + (x-a)(b-x) \cdot t(x) &amp; \text{if } \deg(p) = 2d, \\
+p(x) = (x-a)\cdot s(x) + (b-x) \cdot t(x) &amp; \text{if } \deg(p) = 2d + 1
+\end{cases}
+\tag{4.15}
+\end{equation}\]</span>
+where both <span class="math inline">\(s(x),t(x)\)</span> are SOS polynomials. In the first case, <span class="math inline">\(\deg(s) \leq 2d\)</span>, <span class="math inline">\(\deg(t) \leq 2d -2\)</span>. In the second case, <span class="math inline">\(\deg(s) \leq 2d, \deg(t) \leq 2d\)</span>.</p>
+</div>
+</div>
+<p>A simple example of the above theorem is that the polynomial <span class="math inline">\(p(x)=x^3\)</span> is nonnegative on the interval <span class="math inline">\([0,\infty]\)</span> (but not on <span class="math inline">\(\mathbb{R}^{}\)</span>) because we can write <span class="math inline">\(p(x) = x \cdot x^2\)</span> where <span class="math inline">\(x^2\)</span> is SOS.</p>
+<p>It should be noted that the “if” direction is clear, i.e., when <span class="math inline">\(p(x)\)</span> can be written as in <a href="SOS.html#eq:SOS-univariate-interval-1">(4.14)</a> and <a href="SOS.html#eq:SOS-univariate-interval-2">(4.15)</a>, it certifies nonnegativity because the polynomials <span class="math inline">\(x, x-a, b-x, (x-a)(b-x)\)</span> are all nonnegative on the respective intervals. The “only if” direction is nontrivial and it states that it is sufficient to consider the decompositions in <a href="SOS.html#eq:SOS-univariate-interval-1">(4.14)</a> and <a href="SOS.html#eq:SOS-univariate-interval-2">(4.15)</a> with bounded degrees on <span class="math inline">\(s(x)\)</span> and <span class="math inline">\(t(x)\)</span>. It should also be noted that finding <span class="math inline">\(s(x)\)</span> and <span class="math inline">\(t(x)\)</span> can be done using SOS programming as introduced above.</p>
+</div>
+<div id="affine-variety" class="section level3 hasAnchor" number="4.5.2">
+<h3><span class="header-section-number">4.5.2</span> Affine Variety<a href="SOS.html#affine-variety" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 </div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-blekherman12book-semidefinite" class="csl-entry">
+Blekherman, Grigoriy, Pablo A Parrilo, and Rekha R Thomas. 2012. <em>Semidefinite Optimization and Convex Algebraic Geometry</em>. SIAM.
+</div>
 <div id="ref-bochnak13book-real" class="csl-entry">
 Bochnak, Jacek, Michel Coste, and Marie-Françoise Roy. 2013. <em>Real Algebraic Geometry</em>. Vol. 36. Springer Science &amp; Business Media.
 </div>
@@ -1257,6 +1536,12 @@ Dummit, David Steven, and Richard M Foote. 2004. <em>Abstract Algebra</em>. Vol.
 </div>
 <div id="ref-lang12book-algebra" class="csl-entry">
 Lang, Serge. 2012. <em>Algebra</em>. Vol. 211. Springer Science &amp; Business Media.
+</div>
+<div id="ref-lofberg04icra-yalmip" class="csl-entry">
+Lofberg, Johan. 2004. <span>“YALMIP: A Toolbox for Modeling and Optimization in MATLAB.”</span> In <em>2004 IEEE International Conference on Robotics and Automation (IEEE Cat. No. 04CH37508)</em>, 284–89. IEEE.
+</div>
+<div id="ref-prajna02cdc-sostools" class="csl-entry">
+Prajna, Stephen, Antonis Papachristodoulou, and Pablo A Parrilo. 2002. <span>“Introducing SOSTOOLS: A General Purpose Sum of Squares Programming Solver.”</span> In <em>Proceedings of the 41st IEEE Conference on Decision and Control, 2002.</em>, 1:741–46. IEEE.
 </div>
 <div id="ref-ramana95jgo-some" class="csl-entry">
 Ramana, Motakuri, and Alan J Goldman. 1995. <span>“Some Geometric Results in Semidefinite Programming.”</span> <em>Journal of Global Optimization</em> 7 (1): 33–50.
