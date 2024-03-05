@@ -102,6 +102,8 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 \newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\qmodule}{\mathrm{Qmodule}}
+\newcommand{\preorder}{\mathrm{Preorder}}
 
 
 
