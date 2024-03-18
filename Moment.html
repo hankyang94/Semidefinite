@@ -674,7 +674,23 @@ for some <span class="math inline">\(\kappa_0 \in \mathbb{N}\)</span>. For any <
 <span class="math display">\[
 \lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
 \]</span></p></li>
+<li><p>If <span class="math inline">\(g\)</span> includes a ball constraint <span class="math inline">\(R - \Vert x \Vert^2\)</span>, and the POP feasible set <span class="math inline">\(S\)</span> is nonempty, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is solvable (i.e., the minimum is attained).</p></li>
 </ul>
+</div>
+</div>
+<p>The last point in Theorem <a href="Moment.html#thm:MomentSOSHierarchy">5.6</a> is particularly useful for numerical computation. It suggests that adding a redundant ball constraint is always encouraged for strong duality to hold. In addition, an appropriate scaling technique is needed so that all scaled variables belong to the unit ball. Without scaling, numerical troubles can occur.</p>
+<p>Without these assumptions and conditions, it is possible that strong duality fails.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:FailureStrongDualityMomentSOS" class="example"><strong>Example 5.2  (Failure of Strong Duality in Moment-SOS Hierarchy) </strong></span>Consider the following POP
+<span class="math display">\[\begin{equation}
+\begin{split}
+p^\star = \min_{x \in \mathbb{R}^{2}} &amp; \quad x_1 x_2 \\
+\mathrm{s.t.}&amp; \quad -1 \leq x_1 \leq 1 \\
+&amp; \quad x_2^2 \leq 0
+\end{split}
+\end{equation}\]</span>
+Clearly, the global minimum <span class="math inline">\(p^\star = 0\)</span> and it is attained at <span class="math inline">\((\alpha,0)\)</span> for any <span class="math inline">\(\alpha \in [-1,1]\)</span>.</p>
 </div>
 </div>
 <div id="conversion-to-standard-sdp" class="section level3 hasAnchor" number="5.3.1">

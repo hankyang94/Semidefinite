@@ -5269,9 +5269,27 @@ and both sequences \(\{ \gamma_{\kappa}^\star \}_{\kappa=1}^{\infty}\), \(\{ \be
   \[
   \lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
   \]
+\item
+  If \(g\) includes a ball constraint \(R - \Vert x \Vert^2\), and the POP feasible set \(S\) is nonempty, then \(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\) for any \(\kappa\), and the moment relaxation \eqref{eq:moment-Putinar} is solvable (i.e., the minimum is attained).
 \end{itemize}
 
 \end{theorem}
+
+The last point in Theorem \ref{thm:MomentSOSHierarchy} is particularly useful for numerical computation. It suggests that adding a redundant ball constraint is always encouraged for strong duality to hold. In addition, an appropriate scaling technique is needed so that all scaled variables belong to the unit ball. Without scaling, numerical troubles can occur.
+
+Without these assumptions and conditions, it is possible that strong duality fails.
+
+\begin{example}[Failure of Strong Duality in Moment-SOS Hierarchy]
+\protect\hypertarget{exm:FailureStrongDualityMomentSOS}{}\label{exm:FailureStrongDualityMomentSOS}Consider the following POP
+\begin{equation}
+\begin{split}
+p^\star = \min_{x \in \mathbb{R}^{2}} & \quad x_1 x_2 \\
+\mathrm{s.t.}& \quad -1 \leq x_1 \leq 1 \\
+& \quad x_2^2 \leq 0
+\end{split}
+\end{equation}
+Clearly, the global minimum \(p^\star = 0\) and it is attained at \((\alpha,0)\) for any \(\alpha \in [-1,1]\).
+\end{example}
 
 \subsection{Conversion to Standard SDP}\label{conversion-to-standard-sdp}
 
