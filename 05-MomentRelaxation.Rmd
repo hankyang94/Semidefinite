@@ -408,6 +408,27 @@ for some $\kappa_0 \in \bbN$. For any $\kappa \geq \kappa_0$, if the moment rela
 $$
 \lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
 $$
+
+- If $g$ includes a ball constraint $R - \norm{x}^2$, and the POP feasible set $S$ is nonempty, then $\gamma_{\kappa}^\star = \beta_{\kappa}^\star$ for any $\kappa$, and the moment relaxation \@ref(eq:moment-Putinar) is solvable (i.e., the minimum is attained).
+:::
+:::
+
+The last point in Theorem \@ref(thm:MomentSOSHierarchy) is particularly useful for numerical computation. It suggests that adding a redundant ball constraint is always encouraged for strong duality to hold. In addition, an appropriate scaling technique is needed so that all scaled variables belong to the unit ball. Without scaling, numerical troubles can occur.
+
+Without these assumptions and conditions, it is possible that strong duality fails.
+
+::: {.examplebox}
+::: {.example #FailureStrongDualityMomentSOS name="Failure of Strong Duality in Moment-SOS Hierarchy"}
+Consider the following POP 
+\begin{equation}
+\begin{split}
+p^\star = \min_{x \in \Real{2}} & \quad x_1 x_2 \\
+\subject & \quad -1 \leq x_1 \leq 1 \\
+& \quad x_2^2 \leq 0
+\end{split}
+\end{equation}
+Clearly, the global minimum $p^\star = 0$ and it is attained at $(\alpha,0)$ for any $\alpha \in [-1,1]$.
+
 :::
 :::
 
