@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-03-05}
+\date{2024-03-18}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -202,6 +202,8 @@ arc=4pt}
 \newcommand{\calS}{\mathcal{S}}
 \newcommand{\calM}{\mathcal{M}}
 \newcommand{\calI}{\mathcal{I}}
+\newcommand{\calR}{\mathcal{R}}
+\newcommand{\calZ}{\mathcal{Z}}
 \newcommand{\mathx}{\mathrm{x}}
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
@@ -2197,7 +2199,7 @@ Two other most popular Newton directions are:
 
 \section{Applications}\label{applications}
 
-\subsection{Lyapunov Stability}\label{lyapunov-stability}
+\subsection{Lyapunov Stability}\label{LyapunovLinearSystem}
 
 One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see \citep{boyd94book-lmi}.
 
@@ -4623,6 +4625,14 @@ What is the corresponding notion of an ideal when we have inequalities \(g_1,\do
 \[
 \mathrm{Qmodule}[g_1,\dots,g_{\ell_g}] =  \left\{  \sigma_0(x) + \sigma_1(x)g_1(x) + \cdots + \sigma_{\ell_g}(x) g_{\ell_g}(x) \mid \sigma_0,\dots,\sigma_{\ell_g} \text{ are SOS}  \right\} .
 \]
+
+The \(2d\)-th order truncated quadratic module is
+\begin{equation}
+\begin{split}
+\mathrm{Qmodule}[g_1,\dots,g_{\ell_g}]_{2d} = \\
+ \left\{  \sigma_0(x) + \sum_{i=1}^{\ell_g} \sigma_i(x)g_i(x) \mid \sigma_0,\dots,\sigma_{\ell_g} \text{ are SOS}, \deg(\sigma_0) \leq 2d, \deg(\sigma_i g_i) \leq 2d,i=1,\dots,\ell_g \right\} .
+\end{split}
+\end{equation}
 \end{definition}
 
 For any polynomial \(g\) in the quadratic module, and any \(x\) such that \(g_i(x) \geq 0,i=1,\dots,\ell_g\), we have \(g(x) \geq 0\) due to the fact that \(\sigma_i(x)\) are SOS polynomials.
@@ -4777,7 +4787,7 @@ It is important to recognize that searching for positivity certifcates in the fo
 
 The Positivstellensatz results stated above are extremely powerful tools and they have a broad set of applications due to their connections with semidefinite programming.
 
-\subsection{Polynomial Optimization}\label{polynomial-optimization}
+\subsection{Polynomial Optimization}\label{SOS:POP}
 
 Consider the polynomial optimization problem (POP)
 \begin{equation}
@@ -4801,6 +4811,11 @@ Since it is challenging to handle the nonnegativity constraint, we can relax it 
 \label{eq:pop-gamma-nonnegative-Putinar}
 \end{equation}
 To make \eqref{eq:pop-gamma-nonnegative-Putinar} computationally tractable, we can bound the degree of the terms and formulate the following optimization problem
+\begin{equation}
+\max \quad \gamma \quad \mathrm{s.t.}\quad p(x) - \gamma \in \mathrm{Ideal}[h_1,\dots,h_{\ell_h}]_{2\kappa} + \mathrm{Qmodule}[g_1,\dots,g_{\ell_g}]_{2\kappa},
+\label{eq:pop-gamma-nonnegative-Putinar-truncated}
+\end{equation}
+where the subscript \(2\kappa\) indicates the ideal and the quadratic module are truncated at degree \(2\kappa\). Problem \eqref{eq:pop-gamma-nonnegative-Putinar-truncated} can be explicitly written as
 \begin{equation}
 \begin{split}
 \gamma^\star_{\kappa}=\max & \quad \gamma\\
@@ -4836,6 +4851,429 @@ Solving \eqref{eq:pop-gamma-nonnegative-Putinar-bound} at \(\kappa=2\), we obtai
 
 Make sure you check out the \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/example_pop.m}{code}.
 \end{example}
+
+\subsection{Lyapunov Certificates}\label{lyapunov-certificates}
+
+In Chapter \ref{LyapunovLinearSystem} we have seen the application of SDP in certifying stability of linear systems via the notion of a Lyapunov function. With sums of squares, we can generalize Lyapunov certifcates to nonlinear systems, in particular systems whose dynamics can be written as polynomials. You can find more information in this webpage.
+
+\chapter{Moment Relaxation}\label{Moment}
+
+In the last Chapter, we have learned a lot about polynomials, and in particular, the cone of nonnegative polynomials \(P_{n,2d}\), and the cone of SOS polynomials \(\Sigma_{n,2d}\), with the key inclusion relationship
+\[
+\Sigma_{n,2d} \subseteq P_{n,2d}.
+\]
+
+A natural question is then to characterize the dual of \(P_{n,2d}\) and \(\Sigma_{n,2d}\). Let me first restate the dual of a convex set here from Definition \ref{def:Dual}.
+
+\begin{definition}[Dual Cone]
+\protect\hypertarget{def:DualConeRestate}{}\label{def:DualConeRestate}The dual of a convex cone \(S\) is
+\[
+S^* := \{ y \mid \langle y, x \rangle \geq 0, \forall x \in S \}.
+\]
+\end{definition}
+
+\section{Dual Cones of Polynomials}\label{dual-cones-of-polynomials}
+
+What are the dual cones of \(P_{n,2d}\) and \(\Sigma_{n,2d}\)?
+
+For a cone of polynomials, we will first need to define the notion of an inner product in Definition \ref{def:DualConeRestate}, i.e., a map that takes in a polynomial and returns a real number. The space of all such maps is the dual space of \(\mathbb{R}[x]_{2d}\), which we denote \(\mathbb{R}[x]^*_{2d}\). The elements of this vector space are \textbf{linear functionals of polynomials}
+\begin{equation}
+\ell: \mathbb{R}[x]_{2d} \rightarrow \mathbb{R}^{}.
+\label{eq:linear-functional-poly}
+\end{equation}
+There are many such functionals and they can superficially look quite different. Given \(p(x) \in \mathbb{R}[x]_{2d}\), here are some examples of linear functionals:
+
+\begin{itemize}
+\item
+  Evaluation of \(p(x)\) at a point \(x_0 \in \mathbb{R}^{n}\), i.e., \(p \mapsto p(x_0)\)
+\item
+  Integration of \(p(x)\) over a subset \(S \subset \mathbb{R}^{n}\), i.e., \(p \mapsto \int_S p(x) dx\)
+\item
+  Evaluation of derivatives of \(p\) at a point \(x_0 \in \mathbb{R}^{n}\), i.e., \(p \mapsto \frac{\partial p}{\partial x_i \cdots \partial x_k} (x_0)\)
+\item
+  Extraction of coefficients, i.e., \(p \mapsto p_{\alpha}\), where \(p_{\alpha}\) is the coefficient corresponding to the monomial \(x^{\alpha}\)
+\end{itemize}
+
+For all the examples above, it is easy to verify linearity
+\[
+\ell(p_1 + p_2) = \ell(p_1) + \ell(p_2), \quad \langle \ell, p_1 + p_2 \rangle = \langle \ell, p_1 \rangle + \langle \ell, p_2 \rangle.
+\]
+
+A distinguished class of linear functionals are the point evaluations (our first example above): given any point \(v \in \mathbb{R}^{n}\), we can generate a linear functional
+\[
+\ell_v \in \mathbb{R}[x]^*_{2d}: \ell_v(p) = p(x), \forall p \in \mathbb{R}[x]_{2d}.
+\]
+Then, we can generate additional linear functionals by taking linear combinations of point evaluations, i.e., maps of the form
+\[
+p \mapsto \sum_{i} \lambda_i \ell_{v_i} (p) = \sum_{i} \lambda_i p(v_i), \quad \lambda_i \in \mathbb{R}^{}, v_i \in \mathbb{R}^{n}, \forall i.
+\]
+It turns out that \emph{all} linear functionals can be generated in such form.
+
+\begin{theorem}[Dual Space of Polynomials]
+\protect\hypertarget{thm:DualSpacePoly}{}\label{thm:DualSpacePoly}Every linear functional in \(\mathbb{R}[x]^*_{2d}\) is a linear combination of point evaluations, i.e., for any \(\ell \in \mathbb{R}[x]^*_{2d}\), there exists \(\lambda_1,\dots,\lambda_K\) and \(v_1,\dots,v_K\) such that
+\[
+\ell_{p} = \sum_{i=1}^K \lambda_i p(v_i).
+\]
+\end{theorem}
+
+\textbf{Truncated Multi-Sequence (TMS)}. The above characterization of \(\mathbb{R}[x]^*_{2d}\) is purely geometric and coordinate-free. Now we are going to fix the basis of \(\mathbb{R}[x]_{2d}\) to be the standard monomial basis \([x]_{2d}\) with length \(s(n,2d)\). In this coordinate, any linear functional \(\ell\) in \eqref{eq:linear-functional-poly} can be equivalently identified by its values at the monomial basis, this is
+\[
+\ell: \mathbb{R}[x]_{2d} \rightarrow \mathbb{R}^{}, \quad x^{\alpha} \mapsto y_{\alpha}, \alpha \in \mathcal{F}_{n,2d}.
+\]
+This set of real numbers
+\[
+y:=(y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}} \in \mathbb{R}^{s(n,2d)}
+\] is called a \textbf{truncated multi-sequences} (TMS) of degree \(2d\). Using this TMS \(y\), and denote the linear functional associated with \(y\) as \(\ell_y \in \mathbb{R}[x]^*_{2d}\), then applying \(\ell_y\) to any polynomial \(p \in \mathbb{R}[x]_{2d}\) is simply
+\[
+\ell_y(p) = \langle \ell_y, p \rangle = \langle y, \mathrm{vec}(p) \rangle = \sum_{\alpha \in \mathcal{F}_{n,2d}} p_\alpha y_\alpha
+\]
+i.e., the inner product between the TMS \(y\) and the vector of coefficients of \(p\):
+\[
+\mathrm{vec}(p) = (p_\alpha)_{\alpha \in \mathcal{F}_{n,2d}}.
+\]
+
+\textbf{Moment Matrix}. We now assemble the TMS \(y \in \mathbb{R}^{s(n,2d)}\) into symmetric matrices. In particular, for any nonnegative integer \(\kappa \in [0,d]\), the \textbf{\(\kappa\)-th order moment matrix} of the TMS \(y\) is a symmetric matrix
+\[
+M_\kappa[y]:= [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{n,\kappa}} \in \mathbb{S}^{s(n,\kappa)},
+\]
+whose rows and columns are indexed by the exponents \(\alpha\) and \(\beta\), according to the graded lexicographic monomial ordering. Clearly, if \(\kappa_1 \leq \kappa_2\), then \(M_{\kappa_1}[y]\) is a leading principal submatrix of \(M_{\kappa_2}[y]\). Another perspective for looking at the moment matrix is that
+\[
+M_{\kappa}[y] = \ell_y ([x]_{\kappa} [x]_{\kappa}^\top) = \langle \ell_y, [x]_{\kappa} [x]_{\kappa}^\top \rangle,
+\]
+where applying the linear functional \(\ell_y\) to the polynomial matrix \([x]_{\kappa} [x]_{\kappa}^\top\) is equivalent to element-wise application.
+
+Let's see some examples.
+
+\begin{example}[Moment Matrix]
+\protect\hypertarget{exm:MomentMatrix}{}\label{exm:MomentMatrix}Consider the univariate case \(n=1\), and a TMS
+\[
+y = (y_0,y_1,\dots,y_{2d}),
+\]
+the \(d\)-th order moment matrix of \(y\) is the following matrix
+\[
+M_d[y] = \begin{bmatrix}
+y_0 & y_1 & y_2 & y_3 & \cdots & y_d \\
+y_1 & y_2 & y_3 & y_4 & \cdots & y_{d+1} \\
+y_2 & y_3 & y_4 & y_5 & \cdots & y_{d+2} \\
+y_3 & y_4 & y_5 & y_6 & \cdots & y_{d+3} \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+y_d & y_{d+1} & y_{d+2} & y_{d+3} & \cdots & y_{2d}
+\end{bmatrix},
+\]
+which is also a Hankel matrix.
+
+For the binary case \(n=2\) and \(d=2\), we have
+\[
+\mathcal{F}_{2,2} = \{ (00),(10),(01),(20),(11),(02) \},
+\]
+and hence the second-order moment matrix is
+\[
+M_2[y] = [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{2,2}} = \begin{bmatrix}
+y_{00} & y_{10} & y_{01} & y_{20} & y_{11} & y_{02} \\
+y_{10} & y_{20} & y_{11} & y_{30} & y_{21} & y_{12} \\
+y_{01} & y_{11} & y_{02} & y_{21} & y_{12} & y_{03} \\
+y_{20} & y_{30} & y_{21} & y_{40} & y_{31} & y_{22} \\
+y_{11} & y_{21} & y_{12} & y_{31} & y_{22} & y_{13} \\
+y_{02} & y_{12} & y_{03} & y_{22} & y_{13} & y_{04}
+\end{bmatrix}.
+\]
+Equivalently, one can check that \(M_2[y]\) is equivalent to applying \(\ell_y\) to the polynomial matrix \([x]_2 [x]_2^\top\).
+\end{example}
+
+In general, the moment matrix \(M_d[y]\) (given a TMS \(y \in \mathbb{R}^{s(n,2d)}\)) defines a \textbf{bilinear form} \(\langle \cdot, \cdot \rangle_y\) on \(\mathbb{R}[x]_d\). In particular, given any two polynomials \(p,q \in \mathbb{R}[x]_d\), we have
+\begin{equation}
+\langle p, q \rangle_y := \ell_y(p q) = \langle \mathrm{vec}(p), M_d[y] \mathrm{vec}(q) \rangle = \mathrm{vec}(p)^\top M_d[y] \mathrm{vec}(q).
+\label{eq:moment-matrix-bilinear}
+\end{equation}
+To see why the equation above is true, note that \(p(x) = \mathrm{vec}(p)^\top[x]_d\), \(q(x) = \mathrm{vec}(q)^\top[x]_d\), so
+\[
+\ell_y(pq) = \ell_y(\mathrm{vec}(p)^\top[x]_d [x]_d^\top\mathrm{vec}(q)) = \mathrm{vec}(p)^\top\left( \ell_y ([x]_d [x]_d^\top) \right) \mathrm{vec}(q) = \mathrm{vec}(p)^\top M_d[y] \mathrm{vec}(q).
+\]
+
+\textbf{Dual Cone of SOS Polynomials}. With the moment matrix, we can characterize the dual cone of SOS polynomials. Recall that every SOS polynomial of degree up to \(2d\) can be written as
+\[
+p = [x]_d^\top Q [x]_d,
+\]
+where \(Q \in \mathbb{S}^{s(n,d)}_{+}\) is the associated gram matrix. The dual cone of \(\Sigma_{n,d}\) is therefore
+\[
+\Sigma_{n,d}^* =  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid \ell_y (p) \geq 0, \forall p \in \Sigma_{n,2d} \right\} .
+\]
+Now observe that
+\[
+\ell_y (p) \geq 0, \forall p \in \Sigma_{n,2d} \Leftrightarrow \ell_y ([x]_d^\top Q [x]_d) \geq 0, \forall Q \succeq 0 \Leftrightarrow \langle Q, M_d[y] \rangle \geq 0, \forall Q \succeq 0 \Leftrightarrow M_d[y] \succeq 0.
+\]
+Therefore, we conclude that the dual cone to \(\Sigma_{n,2d}\) is the moment cone.
+
+\begin{theorem}[Moment Cone]
+\protect\hypertarget{thm:MomentCone}{}\label{thm:MomentCone}The dual cone to the cone of SOS polynomials is the moment cone
+\[
+\Sigma_{n,2d}^* = \mathcal{M}_{n,2d} :=  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid M_d[y] \succeq 0 \right\} .
+\]
+\end{theorem}
+
+\textbf{Dual Cone of Nonnegative Polynomials}. The dual cone to the cone of nonnegative polynomials is
+\[
+P_{n,2d}^* =  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid \langle \mathrm{vec}(p), y \rangle \geq 0, \forall p \in P_{n,2d} \right\} .
+\]
+To describe the dual cone, we consider the conic hull
+\begin{equation}
+\mathcal{R}_{n,2d} =  \left\{  \sum_{i=1}^K \lambda_i [v_i]_{2d} \mid \lambda_i \geq 0, v_i \in \mathbb{R}^{n}, K \in \mathbb{N} \right\} .
+\label{eq:dual-cone-nonnegative}
+\end{equation}
+We can clearly see that
+\[
+\mathcal{R}_{n,2d} \subseteq P_{n,2d}^*,
+\]
+because for any \(p \in P_{n,2d}\), we have
+\[
+\left\langle \mathrm{vec}(p), \sum_{i=1}^K \lambda_i [v_i]_{2d} \right\rangle = \sum_{i=1}^K \lambda_i \langle \mathrm{vec}(p), [v_i]_{2d} \rangle = \sum_{i=1}^K \lambda_i p(v_i) \geq 0.
+\]
+It turns out the closure of \(\mathcal{R}_{n,2d}\) is the dual cone of nonnegative polynomials.
+
+\begin{theorem}[Dual Cone of Nonnegative Polynomials]
+\protect\hypertarget{thm:DualConeNonnegative}{}\label{thm:DualConeNonnegative}The dual cone of \(P_{n,2d}\) is the closure of \(\mathcal{R}_{n,2d}\):
+\[
+P_{n,2d}^* = \mathrm{cl}(\mathcal{R}_{n,2d}), \quad \mathcal{R}_{n,2d}^* = P_{n,2d}.
+\]
+\end{theorem}
+
+The closure is needed can be seen from the following exercise.
+
+\begin{exercise}
+
+Consider the vector space of univariate quadratic polynomials
+\[
+\mathbb{R}[x]_2 =  \left\{ p_2 x^2 + p_1 x + p_0 \mid (p_2,p_1,p_0) \in \mathbb{R}^{3} \right\} .
+\]
+
+\begin{itemize}
+\item
+  Express the linear functional
+  \[
+  p_2 x^2 + p_1 x + p_0 \mapsto p_2
+  \]
+  as a linear combination of point evaluations. (Hint: consider \(p(0) = p_0\), \(p(1)=p_2 + p_1 + p_0\), \(p(-1) = p_2 - p_1 + p_0\). )
+\item
+  Show that this linear functional is in the dual cone \(P^*_{1,2}\) but cannot be written as a conic combination of point evaluations.
+\end{itemize}
+
+\end{exercise}
+
+\section{Dual of Quadratic Modules and Ideals}\label{dual-of-quadratic-modules-and-ideals}
+
+\textbf{Localizing Matrix}. Let \(y \in \mathbb{R}^{s(n,2d)}\) be a truncated multi-sequence (TMS) and \(g(x) \in \mathbb{R}[x]_{2d}\) be a given polynomial. Let \(s\) be the maximum integer such that \(2s + \deg(g) \leq 2d\), then the \(d\)-th order \textbf{localizing matrix} of \(g\) generated by \(y\) is the following symmetric matrix
+\begin{equation}
+L_{g}^d [y] = \ell_y\left( g(x)\cdot [x]_s [x]_s^\top\right),
+\label{eq:localizing-matrix}
+\end{equation}
+where the application of the linear functional \(\ell_y\) to the symmetric polynomial matrix \(g(x) \cdot [x]_s [x]_s^\top\) is element-wise. For example, let \(g = 1- x_1^2 - x_2^2\), then
+\begin{equation}
+\begin{split}
+g\cdot [x]_1 [x]_1^\top=&  (1-x_1^2 - x_2^2) \begin{bmatrix} 1 & x_1 & x_2 \\ 
+x_1 & x_1^2 & x_1 x_2 \\
+x_2 & x_1 x_2 & x_2^2 \end{bmatrix} \\
+= & \begin{bmatrix} 1 - x_1^2 - x_2^2 & x_1 - x_1^3 - x_1 x_2^2 & x_2 - x_1^2 x_2 - x_2^3 \\
+x_1 - x_1^3 - x_1 x_2^2 & x_1^2 - x_1^4 - x_1^2 x_2^2 & x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 \\
+x_2 - x_1^2 x_2 - x_2^3 & x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 & x_2^2 - x_1^2 x_2^2 - x_2^4
+\end{bmatrix}
+\end{split}
+\end{equation}
+and
+\[
+L_g^d[y] = \ell_y (g\cdot [x]_1 [x]_1^\top) = \begin{bmatrix}
+1 - y_{20} - y_{02} & y_{10} - y_{30} - y_{12} & y_{01} - y_{21} - y_{03} \\
+y_{10} - y_{30} - y_{12} & y_{20} - y_{40} - y_{22} & y_{11} - y_{31} - y_{13} \\
+y_{01} - y_{21} - y_{03} &  y_{11} - y_{31} - y_{13} & y_{02} - y_{22} - y_{04}
+\end{bmatrix}.
+\]
+A key observation is that the entries of \(L_g^d[y]\) are affine functions of the TMS \(y\).
+
+\textbf{Dual of Quadratic Module}. Given a tuple of polynomials \(g = (g_1,\dots,g_{l_g})\), recall (from Definition \ref{def:QuadraticModule}) that the quadratic module associated with \(g\) is
+\[
+\mathrm{Qmodule}[g] :=  \left\{  \sum_{i=0}^{l_g} \sigma_i g_i \mid \sigma_i \in \Sigma[x],i=0,\dots,l_g  \right\} 
+\]
+where \(g_0(x):=1\) and \(\Sigma[x]\) denotes the set of SOS polynomials. The degree-\(2d\) truncation of the quadratic module is
+\begin{equation}
+\mathrm{Qmodule}[g]_{2d} :=  \left\{  \sum_{i=0}^{l_g} \sigma_i g_i \mid \sigma_i \in \Sigma[x], \deg(\sigma_i g_i) \leq 2d, i=0,\dots,l_g  \right\} .
+\label{eq:quadratic-module-truncated}
+\end{equation}
+Now consider the convex cone defined by the PSD conditions of the localizing matrices:
+\begin{equation}
+\mathcal{M}[g]_{2d} :=  \left\{  y \in \mathbb{R}^{s(n,2d)} \mid M_d[y] \succeq 0, L_{g_i}^d[y] \succeq 0, i=1,\dots,l_g \right\} .
+\label{eq:tms-cone-dual-qmodule}
+\end{equation}
+The following result shows that \(\mathcal{M}[g]_{2d}\) is the dual cone of \(\mathrm{Qmodule}[g]_{2d}\).
+
+\begin{theorem}[Dual of Quadratic Module]
+\protect\hypertarget{thm:DualQuadratedModule}{}\label{thm:DualQuadratedModule}
+
+Given a set of polynomials \(g=(g_1,\dots,g_{l_g})\), we have
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The cone \(\mathcal{M}[g]_{2d}\) is closed and convex, and it is dual to \(\mathrm{Qmodule}[g]_{2d}\), i.e.,
+  \[
+  \langle f, y \rangle \geq 0, \quad \forall f \in \mathrm{Qmodule}[g]_{2d}, y \in \mathcal{M}[g]_{2d}.
+  \]
+\item
+  If the set \(S_{\geq 0} := \{ x \in \mathbb{R}^{n} \mid g_i(x) \geq 0, i=1,\dots,l_g \}\) has nonempty interior, then both \(\mathcal{M}[g]_{2d}\) and \(\mathrm{Qmodule}[g]_{2d}\) are proper cones (i.e., closed and convex) and they are dual to each other.
+  \[
+  (\mathcal{M}[g]_{2d})^* = \mathrm{Qmodule}[g]_{2d}, \quad (\mathrm{Qmodule}[g]_{2d})^* = \mathcal{M}[g]_{2d}.
+  \]
+\end{enumerate}
+
+\end{theorem}
+
+To see 1 of Theorem \ref{thm:DualQuadratedModule}, pick any \(f \in \mathrm{Qmodule}[g]_{2d}\) from \eqref{eq:quadratic-module-truncated}, and any \(y \in \mathcal{M}[g]_{2d}\) from \eqref{eq:tms-cone-dual-qmodule}, we have
+\begin{equation}
+\begin{split}
+\langle f, y \rangle = & \langle \sigma_0, y \rangle + \sum_{i=1}^{l_g} \langle \sigma_i g_i, y \rangle \\
+= & \left\langle [x]_d^\top Q_0 [x]_d, y \right\rangle + \sum_{i=1}^{l_g} \left\langle g_i \cdot [x]_{s_i}^\top Q_i [x]_{s_i}, y \right\rangle \\
+= & \left\langle M_d[y], Q_0 \right\rangle + \sum_{i=1}^{l_g} \left\langle L^d_{g_i}[y], Q_i \right\rangle \geq 0
+\end{split}
+\end{equation}
+where \(Q_0,Q_1,\dots,Q_{l_g}\) are the Gram matrices associated with the SOS multipliers \(\sigma_0,\sigma_1,\dots,\sigma_{l_g}\), and \(s_i\) is the maximum integer such that \(2 s_i + \deg (g_i) \leq 2d\). The equation above also shows that, in order for any TMS \(y\) to be in the dual cone of \(\mathrm{Qmodule}[y]_{2d}\), it must hold that \(M_d[y] \succeq 0, L^d_{g_i}[y] \succeq 0,i=1,\dots,l_g\), and hence \(y\) must belong to \(\mathcal{M}_d[y]\).
+
+To see 2 of Theorem \ref{thm:DualQuadratedModule}, note that when \(S_{\geq 0}\) has empty interior, the cone \(\mathrm{Qmodule}[g]_{2d}\) may not be closed. For example, consider \(g = -x^2\), the set \(S_{\geq 0}\) is the singleton \(\{ 0 \}\) and has empty interior. The polynomial \(x + \epsilon\), for any \(\epsilon > 0\), is in \(\mathrm{Qmodule}[g]_2\) because
+\[
+x + \epsilon = \left( \sqrt{\epsilon} + \frac{x}{2 \sqrt{\epsilon}} \right)^2 + (-x^2) \left( \frac{1}{2 \sqrt{\epsilon}} \right)^2.
+\]
+However, when \(\epsilon = 0\), the polynomial \(x \not\in \mathrm{Qmodule}[x]_{2}\).
+
+\textbf{Dual of the Sum of Ideal and Quadratic Module}. Recall that given a tuple of polynomials \(h=(h_1,\dots,h_{l_h})\), the ideal generated by \(h\) is
+\[
+\mathrm{Ideal}[h] =  \left\{ \sum_{i=1}^{l_h} \lambda_i h_i \mid \lambda_i \in \mathbb{R}[x],i=1,\dots,l_h \right\} ,
+\]
+where \(\lambda_i\) are the polynomial multipliers. Similarly, the degree-\(2d\) truncation of \(\mathrm{Ideal}[h]\) is
+\begin{equation}
+\mathrm{Ideal}[h]_{2d} =  \left\{  \sum_{i=1}^{l_h} \lambda_i h_i \mid \lambda_i \in \mathbb{R}[x], \deg(\lambda_i h_i) \leq 2d,i=1,\dots,l_h \right\} .
+\label{eq:ideal-truncated-2d}
+\end{equation}
+For each \(\lambda_i \in \mathbb{R}[x]_{2d - \deg(h_i)}\) such that \(\deg(\lambda_i h_i) \leq 2d\), the coefficients of \((\lambda_i h_i\) are linear in that of \(\lambda_i\)
+\[
+\mathrm{vec}(\lambda_i h_i) = H_i^{2d} \mathrm{vec}(\lambda_i),
+\]
+where \(\mathrm{vec}(\cdot)\) denotes the coefficients vector of a polynomial. For example, suppose \(h = x^2-1\) and \(d = 2\), then \(\lambda(x) = \lambda_2 x^2 + \lambda_1 x + \lambda_0\), and
+\[
+\lambda(x) h(x) = (\lambda_2 x^2 + \lambda_1 x + \lambda_0)(x^2 - 1) = \lambda_2 x^4 + \lambda_1 x^3 + (\lambda_0 - \lambda_2) x^2 - \lambda_1 x - \lambda_0.
+\]
+Then,
+\[
+\mathrm{vec}(\lambda h) = \begin{bmatrix}
+- \lambda_0 \\
+- \lambda_1 \\
+\lambda_0 - \lambda_2 \\
+\lambda_1 \\
+\lambda_2 \end{bmatrix} = 
+\underbrace{\begin{bmatrix}
+-1 & 0 & 0 \\
+0 & -1 & 0 \\
+1 & 0 & -1 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}}_{H^4}
+\begin{bmatrix}
+\lambda_0 \\ \lambda_1 \\ \lambda_2 \end{bmatrix}
+\]
+
+\textbf{Localizing Vector}. Given a TMS \(y \in \mathbb{R}^{s(n,2d)}\) and its associated linear functional \(\ell_y\), applying \(\ell_y\) to \(\lambda_i h_i\) with \(\deg(\lambda_i h_i) \leq 2d\) can be written as
+\[
+\ell_y(\lambda_i h_i) = \langle y, \mathrm{vec}(\lambda_i h_i) \rangle = \langle y, H_i^{2d} \mathrm{vec}(\lambda_i) \rangle = \left\langle (H_i^{2d})^\top y, \mathrm{vec}(\lambda_i) \right\rangle,
+\]
+and the vector
+\begin{equation}
+L_{h_i}^{2d}[y] := (H_i^{2d})^\top y
+\label{eq:localizing-vector}
+\end{equation}
+is called the \textbf{localizing vector} of \(h_i\) generated by the TMS \(y\). We are interested in linear functionals that vanish on \(\mathrm{Ideal}[h]_{2d}\). Clearly, this is the subspace
+\begin{equation}
+\mathcal{Z}[h]_{2d} :=  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid L_{h_i}^{2d}[y] = 0,i=1,\dots,l_h  \right\} .
+\label{eq:linear-subspace-tms}
+\end{equation}
+
+The next result gives the dual of the sum of ideal and quadratic module.
+
+\begin{theorem}[Dual of the Sum of Ideal and Quadratic Module]
+\protect\hypertarget{thm:DualSumIdealQuadraticModule}{}\label{thm:DualSumIdealQuadraticModule}Let \(g=(g_1,\dots,g_{l_g})\) and \(h=(h_1,\dots,l_h)\) be tuples of polynomials, for any \(2d > 0\), we have
+\[
+\left( \mathrm{Ideal}[h]_{2d} + \mathrm{Qmodule}[g]_{2d} \right)^* = \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}
+\]
+where \(\mathcal{Z}[h]_{2d}\) is the linear subspace in \eqref{eq:linear-subspace-tms} and \(\mathcal{M}[g]_{2d}\) is the convex cone in \eqref{eq:tms-cone-dual-qmodule}.
+\end{theorem}
+
+\section{The Moment-SOS Hierarchy}\label{the-moment-sos-hierarchy}
+
+In Chapter \ref{SOS:POP}, we introduced an SOS relaxation for solving polynomial optimization problems (POPs). In particular, we consider the following POP, restated from \eqref{eq:pop}
+\begin{equation}
+\begin{split}
+p^\star = \min_{x \in \mathbb{R}^{n}} & \quad p(x) \\
+\mathrm{s.t.}& \quad h_i(x) = 0, i=1,\dots,l_h \\
+& \quad g_i(x) \geq 0, i=1,\dots,l_g
+\end{split}
+\label{eq:pop-restate}
+\end{equation}
+Using Putinar's Positivstellensatz, for any \(\kappa \in \mathbb{N}\), we have the following SOS program
+\begin{equation}
+\boxed{
+\begin{split}
+\gamma_{\kappa}^\star = \max & \quad \gamma \\
+ \mathrm{s.t.}& \quad p(x) - \gamma \in \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}
+\end{split}
+}
+\label{eq:SOS-Putinar-restate}
+\end{equation}
+whose optimal value produces a lower bound to \(p^\star\), i.e., \(\gamma_{\kappa}^\star \leq p^\star\).
+
+With the machinery introduced above on the dual of the cone of polynomials, we can write down the dual problem of the SOS program \eqref{eq:SOS-Putinar-restate}
+\begin{equation}
+\boxed{
+\begin{split}
+\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2d)}} & \quad \langle \ell_y, p \rangle \\
+\mathrm{s.t.}& \quad y \in \mathcal{Z}[h]_{2\kappa} \cap \mathcal{M}[g]_{2\kappa} \\
+& \quad \langle \ell_y, 1 \rangle = 1
+\end{split}
+}
+\label{eq:moment-Putinar}
+\end{equation}
+In problem \eqref{eq:moment-Putinar}, \(\langle \ell_y, p \rangle\) and \(\langle \ell_y, 1 \rangle\) should be interpreted as applying the linear functional associated with the TMS \(y\) to the polynomial \(p\) and the polynomial ``\(1\)''. As a result, the constraint \(\langle \ell_y, 1 \rangle=1\) implies \(y_0 = 1\). To see why \eqref{eq:moment-Putinar} is the dual of \eqref{eq:SOS-Putinar-restate}, pick any \(\gamma\) that is feasible for \eqref{eq:SOS-Putinar-restate} and any \(y\) that is feasible for \eqref{eq:moment-Putinar}, we have
+\[
+\langle \ell_y, p \rangle - \gamma = \langle \ell_y, p \rangle - \langle \ell_y, \gamma \rangle = \langle \ell_y, p - \gamma \rangle \geq 0,
+\]
+where, again, \(\langle \ell_y, \gamma \rangle\) should be interpreted as applying \(\ell_y\) to the degree-\(0\) polynomial ``\(\gamma\)''. The last inequality holds because \(y\) and \(p - \gamma\) live in two cones that are dual to each other. Consequently, we have the weak duality
+\[
+\gamma_{\kappa}^\star \leq \beta_{\kappa}^\star, \quad \forall \kappa \in \mathbb{N}.
+\]
+The pair of SDPs \eqref{eq:moment-Putinar} and \eqref{eq:SOS-Putinar-restate} is called the moment-SOS hierarchy and is first proposed in \citep{lasserre01siopt-global}. The next theorem formalizes the notion of a hierarchy.
+
+\begin{theorem}[Moment-SOS Hierarchy]
+\protect\hypertarget{thm:MomentSOSHierarchy}{}\label{thm:MomentSOSHierarchy}
+
+Consider the POP \eqref{eq:pop-restate} and the primal-dual pair \eqref{eq:moment-Putinar} and \eqref{eq:SOS-Putinar-restate}, we have
+\[
+\gamma_{\kappa}^\star \leq \beta_{\kappa}^\star \leq p^\star, \quad \forall \kappa \in \mathbb{N},
+\]
+and both sequences \(\{ \gamma_{\kappa}^\star \}_{\kappa=1}^{\infty}\), \(\{ \beta_{\kappa}^\star \}_{\kappa=1}^{\infty}\) are monotonically increasing. Moreover, let the feasible set of the POP \eqref{eq:pop-restate} be \(S\),
+
+\begin{itemize}
+\item
+  Suppose all equality constraints are linear or there are no equality constraints. If there exists \(x_0 \in S\) such that \(g_i(x_0) > 0, i=1,\dots,l_g\), then \(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\) for any \(\kappa\), and the dual problem \eqref{eq:SOS-Putinar-restate} is solvable (i.e., the maximum is attained).
+\item
+  Suppose there exists a scalar \(R > 0\) such that
+  \[
+  R - \Vert x \Vert^{2\kappa_0} \in \mathrm{Ideal}[h]_{2\kappa_0} + \mathrm{Qmodule}[g]_{2\kappa_0}
+  \]
+  for some \(\kappa_0 \in \mathbb{N}\). For any \(\kappa \geq \kappa_0\), if the moment relaxation \eqref{eq:moment-Putinar} is feasible, then it is solvable (i.e., the minimum is attained).
+\item
+  If the constraint set is Archimedean, then the moment-SOS hierarchy has asymptotic convergence, i.e.,
+  \[
+  \lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
+  \]
+\end{itemize}
+
+\end{theorem}
+
+\subsection{Conversion to Standard SDP}\label{conversion-to-standard-sdp}
 
   \bibliography{book.bib}
 

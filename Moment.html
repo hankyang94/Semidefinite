@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Moment Relaxation | Semidefinite Optimization and Relaxation</title>
+  <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="generator" content="bookdown 0.38 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Moment Relaxation | Semidefinite Optimization and Relaxation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="github-repo" content="hankyang94/Semidefinite" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Moment Relaxation | Semidefinite Optimization and Relaxation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2024-03-18" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="SOS.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Semidefinite Optimization and Relaxation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#feedback"><i class="fa fa-check"></i>Feedback</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#offerings"><i class="fa fa-check"></i>Offerings</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#background:convex:optimization:Lagrangian"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
+<li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+<li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="sdp.html"><a href="sdp.html#positive-semidefinite-matrices"><i class="fa fa-check"></i><b>2.1</b> Positive Semidefinite Matrices</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="sdp.html"><a href="sdp.html#geometric-properties"><i class="fa fa-check"></i><b>2.1.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="sdp.html"><a href="sdp.html#semidefinite-programming"><i class="fa fa-check"></i><b>2.2</b> Semidefinite Programming</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="sdp.html"><a href="sdp.html#spectrahedra"><i class="fa fa-check"></i><b>2.2.1</b> Spectrahedra</a></li>
+<li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
+<li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#LyapunovLinearSystem"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="Shor.html"><a href="Shor.html#certifiably-optimal-rotation-averaging"><i class="fa fa-check"></i><b>3.2</b> Certifiably Optimal Rotation Averaging</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="Shor.html"><a href="Shor.html#dual-optimality-certifier"><i class="fa fa-check"></i><b>3.2.1</b> Dual Optimality Certifier</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="Shor.html"><a href="Shor.html#stretch-to-high-degree-polynomial-optimization"><i class="fa fa-check"></i><b>3.3</b> Stretch to High-Degree Polynomial Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="SOS.html"><a href="SOS.html"><i class="fa fa-check"></i><b>4</b> Sums of Squares Relaxation</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="SOS.html"><a href="SOS.html#basic-algebraic-geometry"><i class="fa fa-check"></i><b>4.1</b> Basic Algebraic Geometry</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="SOS.html"><a href="SOS.html#groups-rings-fields"><i class="fa fa-check"></i><b>4.1.1</b> Groups, Rings, Fields</a></li>
+<li class="chapter" data-level="4.1.2" data-path="SOS.html"><a href="SOS.html#polynomials-ideals-and-varieties"><i class="fa fa-check"></i><b>4.1.2</b> Polynomials, Ideals, and Varieties</a></li>
+<li class="chapter" data-level="4.1.3" data-path="SOS.html"><a href="SOS.html#gröbner-bases"><i class="fa fa-check"></i><b>4.1.3</b> Gröbner Bases</a></li>
+<li class="chapter" data-level="4.1.4" data-path="SOS.html"><a href="SOS.html#quotient-ring"><i class="fa fa-check"></i><b>4.1.4</b> Quotient Ring</a></li>
+<li class="chapter" data-level="4.1.5" data-path="SOS.html"><a href="SOS.html#zero-dimensional-ideal"><i class="fa fa-check"></i><b>4.1.5</b> Zero-dimensional Ideal</a></li>
+<li class="chapter" data-level="4.1.6" data-path="SOS.html"><a href="SOS.html#algebraic-and-semialgebraic-sets"><i class="fa fa-check"></i><b>4.1.6</b> Algebraic and Semialgebraic Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="SOS.html"><a href="SOS.html#nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2.1</b> Nonnegative polynomials</a></li>
+<li class="chapter" data-level="4.2.2" data-path="SOS.html"><a href="SOS.html#sums-of-squares-polynomials"><i class="fa fa-check"></i><b>4.2.2</b> Sums-of-Squares Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
+<li class="chapter" data-level="4.3.2" data-path="SOS.html"><a href="SOS.html#multivariate-polynomials"><i class="fa fa-check"></i><b>4.3.2</b> Multivariate Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="SOS.html"><a href="SOS.html#sos-programming"><i class="fa fa-check"></i><b>4.4</b> SOS Programming</a></li>
+<li class="chapter" data-level="4.5" data-path="SOS.html"><a href="SOS.html#positivstellensatz"><i class="fa fa-check"></i><b>4.5</b> Positivstellensatz</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="SOS.html"><a href="SOS.html#univaraite-intervals"><i class="fa fa-check"></i><b>4.5.1</b> Univaraite Intervals</a></li>
+<li class="chapter" data-level="4.5.2" data-path="SOS.html"><a href="SOS.html#affine-variety"><i class="fa fa-check"></i><b>4.5.2</b> Affine Variety</a></li>
+<li class="chapter" data-level="4.5.3" data-path="SOS.html"><a href="SOS.html#basic-semialgebraic-sets"><i class="fa fa-check"></i><b>4.5.3</b> Basic Semialgebraic Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="SOS.html"><a href="SOS.html#applications-1"><i class="fa fa-check"></i><b>4.6</b> Applications</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="SOS.html"><a href="SOS.html#SOS:POP"><i class="fa fa-check"></i><b>4.6.1</b> Polynomial Optimization</a></li>
+<li class="chapter" data-level="4.6.2" data-path="SOS.html"><a href="SOS.html#lyapunov-certificates"><i class="fa fa-check"></i><b>4.6.2</b> Lyapunov Certificates</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Moment.html"><a href="Moment.html"><i class="fa fa-check"></i><b>5</b> Moment Relaxation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="Moment.html"><a href="Moment.html#dual-cones-of-polynomials"><i class="fa fa-check"></i><b>5.1</b> Dual Cones of Polynomials</a></li>
+<li class="chapter" data-level="5.2" data-path="Moment.html"><a href="Moment.html#dual-of-quadratic-modules-and-ideals"><i class="fa fa-check"></i><b>5.2</b> Dual of Quadratic Modules and Ideals</a></li>
+<li class="chapter" data-level="5.3" data-path="Moment.html"><a href="Moment.html#the-moment-sos-hierarchy"><i class="fa fa-check"></i><b>5.3</b> The Moment-SOS Hierarchy</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.3.1</b> Conversion to Standard SDP</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Semidefinite Optimization and Relaxation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="Moment" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Moment Relaxation<a href="Moment.html#Moment" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In the last Chapter, we have learned a lot about polynomials, and in particular, the cone of nonnegative polynomials <span class="math inline">\(P_{n,2d}\)</span>, and the cone of SOS polynomials <span class="math inline">\(\Sigma_{n,2d}\)</span>, with the key inclusion relationship
+<span class="math display">\[
+\Sigma_{n,2d} \subseteq P_{n,2d}.
+\]</span></p>
+<p>A natural question is then to characterize the dual of <span class="math inline">\(P_{n,2d}\)</span> and <span class="math inline">\(\Sigma_{n,2d}\)</span>. Let me first restate the dual of a convex set here from Definition <a href="background.html#def:Dual">1.4</a>.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:DualConeRestate" class="definition"><strong>Definition 5.1  (Dual Cone) </strong></span>The dual of a convex cone <span class="math inline">\(S\)</span> is
+<span class="math display">\[
+S^* := \{ y \mid \langle y, x \rangle \geq 0, \forall x \in S \}.
+\]</span></p>
+</div>
+</div>
+<div id="dual-cones-of-polynomials" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Dual Cones of Polynomials<a href="Moment.html#dual-cones-of-polynomials" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>What are the dual cones of <span class="math inline">\(P_{n,2d}\)</span> and <span class="math inline">\(\Sigma_{n,2d}\)</span>?</p>
+<p>For a cone of polynomials, we will first need to define the notion of an inner product in Definition <a href="Moment.html#def:DualConeRestate">5.1</a>, i.e., a map that takes in a polynomial and returns a real number. The space of all such maps is the dual space of <span class="math inline">\(\mathbb{R}[x]_{2d}\)</span>, which we denote <span class="math inline">\(\mathbb{R}[x]^*_{2d}\)</span>. The elements of this vector space are <strong>linear functionals of polynomials</strong>
+<span class="math display" id="eq:linear-functional-poly">\[\begin{equation}
+\ell: \mathbb{R}[x]_{2d} \rightarrow \mathbb{R}^{}.
+\tag{5.1}
+\end{equation}\]</span>
+There are many such functionals and they can superficially look quite different. Given <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span>, here are some examples of linear functionals:</p>
+<ul>
+<li><p>Evaluation of <span class="math inline">\(p(x)\)</span> at a point <span class="math inline">\(x_0 \in \mathbb{R}^{n}\)</span>, i.e., <span class="math inline">\(p \mapsto p(x_0)\)</span></p></li>
+<li><p>Integration of <span class="math inline">\(p(x)\)</span> over a subset <span class="math inline">\(S \subset \mathbb{R}^{n}\)</span>, i.e., <span class="math inline">\(p \mapsto \int_S p(x) dx\)</span></p></li>
+<li><p>Evaluation of derivatives of <span class="math inline">\(p\)</span> at a point <span class="math inline">\(x_0 \in \mathbb{R}^{n}\)</span>, i.e., <span class="math inline">\(p \mapsto \frac{\partial p}{\partial x_i \cdots \partial x_k} (x_0)\)</span></p></li>
+<li><p>Extraction of coefficients, i.e., <span class="math inline">\(p \mapsto p_{\alpha}\)</span>, where <span class="math inline">\(p_{\alpha}\)</span> is the coefficient corresponding to the monomial <span class="math inline">\(x^{\alpha}\)</span></p></li>
+</ul>
+<p>For all the examples above, it is easy to verify linearity
+<span class="math display">\[
+\ell(p_1 + p_2) = \ell(p_1) + \ell(p_2), \quad \langle \ell, p_1 + p_2 \rangle = \langle \ell, p_1 \rangle + \langle \ell, p_2 \rangle.
+\]</span></p>
+<p>A distinguished class of linear functionals are the point evaluations (our first example above): given any point <span class="math inline">\(v \in \mathbb{R}^{n}\)</span>, we can generate a linear functional
+<span class="math display">\[
+\ell_v \in \mathbb{R}[x]^*_{2d}: \ell_v(p) = p(x), \forall p \in \mathbb{R}[x]_{2d}.
+\]</span>
+Then, we can generate additional linear functionals by taking linear combinations of point evaluations, i.e., maps of the form
+<span class="math display">\[
+p \mapsto \sum_{i} \lambda_i \ell_{v_i} (p) = \sum_{i} \lambda_i p(v_i), \quad \lambda_i \in \mathbb{R}^{}, v_i \in \mathbb{R}^{n}, \forall i.
+\]</span>
+It turns out that <em>all</em> linear functionals can be generated in such form.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DualSpacePoly" class="theorem"><strong>Theorem 5.1  (Dual Space of Polynomials) </strong></span>Every linear functional in <span class="math inline">\(\mathbb{R}[x]^*_{2d}\)</span> is a linear combination of point evaluations, i.e., for any <span class="math inline">\(\ell \in \mathbb{R}[x]^*_{2d}\)</span>, there exists <span class="math inline">\(\lambda_1,\dots,\lambda_K\)</span> and <span class="math inline">\(v_1,\dots,v_K\)</span> such that
+<span class="math display">\[
+\ell_{p} = \sum_{i=1}^K \lambda_i p(v_i).
+\]</span></p>
+</div>
+</div>
+<p><strong>Truncated Multi-Sequence (TMS)</strong>. The above characterization of <span class="math inline">\(\mathbb{R}[x]^*_{2d}\)</span> is purely geometric and coordinate-free. Now we are going to fix the basis of <span class="math inline">\(\mathbb{R}[x]_{2d}\)</span> to be the standard monomial basis <span class="math inline">\([x]_{2d}\)</span> with length <span class="math inline">\(s(n,2d)\)</span>. In this coordinate, any linear functional <span class="math inline">\(\ell\)</span> in <a href="Moment.html#eq:linear-functional-poly">(5.1)</a> can be equivalently identified by its values at the monomial basis, this is
+<span class="math display">\[
+\ell: \mathbb{R}[x]_{2d} \rightarrow \mathbb{R}^{}, \quad x^{\alpha} \mapsto y_{\alpha}, \alpha \in \mathcal{F}_{n,2d}.
+\]</span>
+This set of real numbers
+<span class="math display">\[
+y:=(y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}} \in \mathbb{R}^{s(n,2d)}
+\]</span> is called a <strong>truncated multi-sequences</strong> (TMS) of degree <span class="math inline">\(2d\)</span>. Using this TMS <span class="math inline">\(y\)</span>, and denote the linear functional associated with <span class="math inline">\(y\)</span> as <span class="math inline">\(\ell_y \in \mathbb{R}[x]^*_{2d}\)</span>, then applying <span class="math inline">\(\ell_y\)</span> to any polynomial <span class="math inline">\(p \in \mathbb{R}[x]_{2d}\)</span> is simply
+<span class="math display">\[
+\ell_y(p) = \langle \ell_y, p \rangle = \langle y, \mathrm{vec}(p) \rangle = \sum_{\alpha \in \mathcal{F}_{n,2d}} p_\alpha y_\alpha
+\]</span>
+i.e., the inner product between the TMS <span class="math inline">\(y\)</span> and the vector of coefficients of <span class="math inline">\(p\)</span>:
+<span class="math display">\[
+\mathrm{vec}(p) = (p_\alpha)_{\alpha \in \mathcal{F}_{n,2d}}.
+\]</span></p>
+<p><strong>Moment Matrix</strong>. We now assemble the TMS <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> into symmetric matrices. In particular, for any nonnegative integer <span class="math inline">\(\kappa \in [0,d]\)</span>, the <strong><span class="math inline">\(\kappa\)</span>-th order moment matrix</strong> of the TMS <span class="math inline">\(y\)</span> is a symmetric matrix
+<span class="math display">\[
+M_\kappa[y]:= [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{n,\kappa}} \in \mathbb{S}^{s(n,\kappa)},
+\]</span>
+whose rows and columns are indexed by the exponents <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>, according to the graded lexicographic monomial ordering. Clearly, if <span class="math inline">\(\kappa_1 \leq \kappa_2\)</span>, then <span class="math inline">\(M_{\kappa_1}[y]\)</span> is a leading principal submatrix of <span class="math inline">\(M_{\kappa_2}[y]\)</span>. Another perspective for looking at the moment matrix is that
+<span class="math display">\[
+M_{\kappa}[y] = \ell_y ([x]_{\kappa} [x]_{\kappa}^\top) = \langle \ell_y, [x]_{\kappa} [x]_{\kappa}^\top \rangle,
+\]</span>
+where applying the linear functional <span class="math inline">\(\ell_y\)</span> to the polynomial matrix <span class="math inline">\([x]_{\kappa} [x]_{\kappa}^\top\)</span> is equivalent to element-wise application.</p>
+<p>Let’s see some examples.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:MomentMatrix" class="example"><strong>Example 5.1  (Moment Matrix) </strong></span>Consider the univariate case <span class="math inline">\(n=1\)</span>, and a TMS
+<span class="math display">\[
+y = (y_0,y_1,\dots,y_{2d}),
+\]</span>
+the <span class="math inline">\(d\)</span>-th order moment matrix of <span class="math inline">\(y\)</span> is the following matrix
+<span class="math display">\[
+M_d[y] = \begin{bmatrix}
+y_0 &amp; y_1 &amp; y_2 &amp; y_3 &amp; \cdots &amp; y_d \\
+y_1 &amp; y_2 &amp; y_3 &amp; y_4 &amp; \cdots &amp; y_{d+1} \\
+y_2 &amp; y_3 &amp; y_4 &amp; y_5 &amp; \cdots &amp; y_{d+2} \\
+y_3 &amp; y_4 &amp; y_5 &amp; y_6 &amp; \cdots &amp; y_{d+3} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+y_d &amp; y_{d+1} &amp; y_{d+2} &amp; y_{d+3} &amp; \cdots &amp; y_{2d}
+\end{bmatrix},
+\]</span>
+which is also a Hankel matrix.</p>
+<p>For the binary case <span class="math inline">\(n=2\)</span> and <span class="math inline">\(d=2\)</span>, we have
+<span class="math display">\[
+\mathcal{F}_{2,2} = \{ (00),(10),(01),(20),(11),(02) \},
+\]</span>
+and hence the second-order moment matrix is
+<span class="math display">\[
+M_2[y] = [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{2,2}} = \begin{bmatrix}
+y_{00} &amp; y_{10} &amp; y_{01} &amp; y_{20} &amp; y_{11} &amp; y_{02} \\
+y_{10} &amp; y_{20} &amp; y_{11} &amp; y_{30} &amp; y_{21} &amp; y_{12} \\
+y_{01} &amp; y_{11} &amp; y_{02} &amp; y_{21} &amp; y_{12} &amp; y_{03} \\
+y_{20} &amp; y_{30} &amp; y_{21} &amp; y_{40} &amp; y_{31} &amp; y_{22} \\
+y_{11} &amp; y_{21} &amp; y_{12} &amp; y_{31} &amp; y_{22} &amp; y_{13} \\
+y_{02} &amp; y_{12} &amp; y_{03} &amp; y_{22} &amp; y_{13} &amp; y_{04}
+\end{bmatrix}.
+\]</span>
+Equivalently, one can check that <span class="math inline">\(M_2[y]\)</span> is equivalent to applying <span class="math inline">\(\ell_y\)</span> to the polynomial matrix <span class="math inline">\([x]_2 [x]_2^\top\)</span>.</p>
+</div>
+</div>
+<p>In general, the moment matrix <span class="math inline">\(M_d[y]\)</span> (given a TMS <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span>) defines a <strong>bilinear form</strong> <span class="math inline">\(\langle \cdot, \cdot \rangle_y\)</span> on <span class="math inline">\(\mathbb{R}[x]_d\)</span>. In particular, given any two polynomials <span class="math inline">\(p,q \in \mathbb{R}[x]_d\)</span>, we have
+<span class="math display" id="eq:moment-matrix-bilinear">\[\begin{equation}
+\langle p, q \rangle_y := \ell_y(p q) = \langle \mathrm{vec}(p), M_d[y] \mathrm{vec}(q) \rangle = \mathrm{vec}(p)^\top M_d[y] \mathrm{vec}(q).
+\tag{5.2}
+\end{equation}\]</span>
+To see why the equation above is true, note that <span class="math inline">\(p(x) = \mathrm{vec}(p)^\top[x]_d\)</span>, <span class="math inline">\(q(x) = \mathrm{vec}(q)^\top[x]_d\)</span>, so
+<span class="math display">\[
+\ell_y(pq) = \ell_y(\mathrm{vec}(p)^\top[x]_d [x]_d^\top\mathrm{vec}(q)) = \mathrm{vec}(p)^\top\left( \ell_y ([x]_d [x]_d^\top) \right) \mathrm{vec}(q) = \mathrm{vec}(p)^\top M_d[y] \mathrm{vec}(q).
+\]</span></p>
+<p><strong>Dual Cone of SOS Polynomials</strong>. With the moment matrix, we can characterize the dual cone of SOS polynomials. Recall that every SOS polynomial of degree up to <span class="math inline">\(2d\)</span> can be written as
+<span class="math display">\[
+p = [x]_d^\top Q [x]_d,
+\]</span>
+where <span class="math inline">\(Q \in \mathbb{S}^{s(n,d)}_{+}\)</span> is the associated gram matrix. The dual cone of <span class="math inline">\(\Sigma_{n,d}\)</span> is therefore
+<span class="math display">\[
+\Sigma_{n,d}^* =  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid \ell_y (p) \geq 0, \forall p \in \Sigma_{n,2d} \right\} .
+\]</span>
+Now observe that
+<span class="math display">\[
+\ell_y (p) \geq 0, \forall p \in \Sigma_{n,2d} \Leftrightarrow \ell_y ([x]_d^\top Q [x]_d) \geq 0, \forall Q \succeq 0 \Leftrightarrow \langle Q, M_d[y] \rangle \geq 0, \forall Q \succeq 0 \Leftrightarrow M_d[y] \succeq 0.
+\]</span>
+Therefore, we conclude that the dual cone to <span class="math inline">\(\Sigma_{n,2d}\)</span> is the moment cone.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:MomentCone" class="theorem"><strong>Theorem 5.2  (Moment Cone) </strong></span>The dual cone to the cone of SOS polynomials is the moment cone
+<span class="math display">\[
+\Sigma_{n,2d}^* = \mathcal{M}_{n,2d} :=  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid M_d[y] \succeq 0 \right\} .
+\]</span></p>
+</div>
+</div>
+<p><strong>Dual Cone of Nonnegative Polynomials</strong>. The dual cone to the cone of nonnegative polynomials is
+<span class="math display">\[
+P_{n,2d}^* =  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid \langle \mathrm{vec}(p), y \rangle \geq 0, \forall p \in P_{n,2d} \right\} .
+\]</span>
+To describe the dual cone, we consider the conic hull
+<span class="math display" id="eq:dual-cone-nonnegative">\[\begin{equation}
+\mathcal{R}_{n,2d} =  \left\{  \sum_{i=1}^K \lambda_i [v_i]_{2d} \mid \lambda_i \geq 0, v_i \in \mathbb{R}^{n}, K \in \mathbb{N} \right\} .
+\tag{5.3}
+\end{equation}\]</span>
+We can clearly see that
+<span class="math display">\[
+\mathcal{R}_{n,2d} \subseteq P_{n,2d}^*,
+\]</span>
+because for any <span class="math inline">\(p \in P_{n,2d}\)</span>, we have
+<span class="math display">\[
+\left\langle \mathrm{vec}(p), \sum_{i=1}^K \lambda_i [v_i]_{2d} \right\rangle = \sum_{i=1}^K \lambda_i \langle \mathrm{vec}(p), [v_i]_{2d} \rangle = \sum_{i=1}^K \lambda_i p(v_i) \geq 0.
+\]</span>
+It turns out the closure of <span class="math inline">\(\mathcal{R}_{n,2d}\)</span> is the dual cone of nonnegative polynomials.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DualConeNonnegative" class="theorem"><strong>Theorem 5.3  (Dual Cone of Nonnegative Polynomials) </strong></span>The dual cone of <span class="math inline">\(P_{n,2d}\)</span> is the closure of <span class="math inline">\(\mathcal{R}_{n,2d}\)</span>:
+<span class="math display">\[
+P_{n,2d}^* = \mathrm{cl}(\mathcal{R}_{n,2d}), \quad \mathcal{R}_{n,2d}^* = P_{n,2d}.
+\]</span></p>
+</div>
+</div>
+<p>The closure is needed can be seen from the following exercise.</p>
+<div class="exercisebox">
+<div class="exercise">
+<p><span id="exr:unlabeled-div-17" class="exercise"><strong>Exercise 5.1  </strong></span>Consider the vector space of univariate quadratic polynomials
+<span class="math display">\[
+\mathbb{R}[x]_2 =  \left\{ p_2 x^2 + p_1 x + p_0 \mid (p_2,p_1,p_0) \in \mathbb{R}^{3} \right\} .
+\]</span></p>
+<ul>
+<li><p>Express the linear functional
+<span class="math display">\[
+p_2 x^2 + p_1 x + p_0 \mapsto p_2
+\]</span>
+as a linear combination of point evaluations. (Hint: consider <span class="math inline">\(p(0) = p_0\)</span>, <span class="math inline">\(p(1)=p_2 + p_1 + p_0\)</span>, <span class="math inline">\(p(-1) = p_2 - p_1 + p_0\)</span>. )</p></li>
+<li><p>Show that this linear functional is in the dual cone <span class="math inline">\(P^*_{1,2}\)</span> but cannot be written as a conic combination of point evaluations.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="dual-of-quadratic-modules-and-ideals" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Dual of Quadratic Modules and Ideals<a href="Moment.html#dual-of-quadratic-modules-and-ideals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Localizing Matrix</strong>. Let <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> be a truncated multi-sequence (TMS) and <span class="math inline">\(g(x) \in \mathbb{R}[x]_{2d}\)</span> be a given polynomial. Let <span class="math inline">\(s\)</span> be the maximum integer such that <span class="math inline">\(2s + \deg(g) \leq 2d\)</span>, then the <span class="math inline">\(d\)</span>-th order <strong>localizing matrix</strong> of <span class="math inline">\(g\)</span> generated by <span class="math inline">\(y\)</span> is the following symmetric matrix
+<span class="math display" id="eq:localizing-matrix">\[\begin{equation}
+L_{g}^d [y] = \ell_y\left( g(x)\cdot [x]_s [x]_s^\top\right),
+\tag{5.4}
+\end{equation}\]</span>
+where the application of the linear functional <span class="math inline">\(\ell_y\)</span> to the symmetric polynomial matrix <span class="math inline">\(g(x) \cdot [x]_s [x]_s^\top\)</span> is element-wise. For example, let <span class="math inline">\(g = 1- x_1^2 - x_2^2\)</span>, then
+<span class="math display">\[\begin{equation}
+\begin{split}
+g\cdot [x]_1 [x]_1^\top=&amp;  (1-x_1^2 - x_2^2) \begin{bmatrix} 1 &amp; x_1 &amp; x_2 \\
+x_1 &amp; x_1^2 &amp; x_1 x_2 \\
+x_2 &amp; x_1 x_2 &amp; x_2^2 \end{bmatrix} \\
+= &amp; \begin{bmatrix} 1 - x_1^2 - x_2^2 &amp; x_1 - x_1^3 - x_1 x_2^2 &amp; x_2 - x_1^2 x_2 - x_2^3 \\
+x_1 - x_1^3 - x_1 x_2^2 &amp; x_1^2 - x_1^4 - x_1^2 x_2^2 &amp; x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 \\
+x_2 - x_1^2 x_2 - x_2^3 &amp; x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 &amp; x_2^2 - x_1^2 x_2^2 - x_2^4
+\end{bmatrix}
+\end{split}
+\end{equation}\]</span>
+and
+<span class="math display">\[
+L_g^d[y] = \ell_y (g\cdot [x]_1 [x]_1^\top) = \begin{bmatrix}
+1 - y_{20} - y_{02} &amp; y_{10} - y_{30} - y_{12} &amp; y_{01} - y_{21} - y_{03} \\
+y_{10} - y_{30} - y_{12} &amp; y_{20} - y_{40} - y_{22} &amp; y_{11} - y_{31} - y_{13} \\
+y_{01} - y_{21} - y_{03} &amp;  y_{11} - y_{31} - y_{13} &amp; y_{02} - y_{22} - y_{04}
+\end{bmatrix}.
+\]</span>
+A key observation is that the entries of <span class="math inline">\(L_g^d[y]\)</span> are affine functions of the TMS <span class="math inline">\(y\)</span>.</p>
+<p><strong>Dual of Quadratic Module</strong>. Given a tuple of polynomials <span class="math inline">\(g = (g_1,\dots,g_{l_g})\)</span>, recall (from Definition <a href="SOS.html#def:QuadraticModule">4.20</a>) that the quadratic module associated with <span class="math inline">\(g\)</span> is
+<span class="math display">\[
+\mathrm{Qmodule}[g] :=  \left\{  \sum_{i=0}^{l_g} \sigma_i g_i \mid \sigma_i \in \Sigma[x],i=0,\dots,l_g  \right\}
+\]</span>
+where <span class="math inline">\(g_0(x):=1\)</span> and <span class="math inline">\(\Sigma[x]\)</span> denotes the set of SOS polynomials. The degree-<span class="math inline">\(2d\)</span> truncation of the quadratic module is
+<span class="math display" id="eq:quadratic-module-truncated">\[\begin{equation}
+\mathrm{Qmodule}[g]_{2d} :=  \left\{  \sum_{i=0}^{l_g} \sigma_i g_i \mid \sigma_i \in \Sigma[x], \deg(\sigma_i g_i) \leq 2d, i=0,\dots,l_g  \right\} .
+\tag{5.5}
+\end{equation}\]</span>
+Now consider the convex cone defined by the PSD conditions of the localizing matrices:
+<span class="math display" id="eq:tms-cone-dual-qmodule">\[\begin{equation}
+\mathcal{M}[g]_{2d} :=  \left\{  y \in \mathbb{R}^{s(n,2d)} \mid M_d[y] \succeq 0, L_{g_i}^d[y] \succeq 0, i=1,\dots,l_g \right\} .
+\tag{5.6}
+\end{equation}\]</span>
+The following result shows that <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is the dual cone of <span class="math inline">\(\mathrm{Qmodule}[g]_{2d}\)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DualQuadratedModule" class="theorem"><strong>Theorem 5.4  (Dual of Quadratic Module) </strong></span>Given a set of polynomials <span class="math inline">\(g=(g_1,\dots,g_{l_g})\)</span>, we have</p>
+<ol style="list-style-type: decimal">
+<li><p>The cone <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is closed and convex, and it is dual to <span class="math inline">\(\mathrm{Qmodule}[g]_{2d}\)</span>, i.e.,
+<span class="math display">\[
+\langle f, y \rangle \geq 0, \quad \forall f \in \mathrm{Qmodule}[g]_{2d}, y \in \mathcal{M}[g]_{2d}.
+\]</span></p></li>
+<li><p>If the set <span class="math inline">\(S_{\geq 0} := \{ x \in \mathbb{R}^{n} \mid g_i(x) \geq 0, i=1,\dots,l_g \}\)</span> has nonempty interior, then both <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> and <span class="math inline">\(\mathrm{Qmodule}[g]_{2d}\)</span> are proper cones (i.e., closed and convex) and they are dual to each other.
+<span class="math display">\[
+(\mathcal{M}[g]_{2d})^* = \mathrm{Qmodule}[g]_{2d}, \quad (\mathrm{Qmodule}[g]_{2d})^* = \mathcal{M}[g]_{2d}.
+\]</span></p></li>
+</ol>
+</div>
+</div>
+<p>To see 1 of Theorem <a href="Moment.html#thm:DualQuadratedModule">5.4</a>, pick any <span class="math inline">\(f \in \mathrm{Qmodule}[g]_{2d}\)</span> from <a href="Moment.html#eq:quadratic-module-truncated">(5.5)</a>, and any <span class="math inline">\(y \in \mathcal{M}[g]_{2d}\)</span> from <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.6)</a>, we have
+<span class="math display">\[\begin{equation}
+\begin{split}
+\langle f, y \rangle = &amp; \langle \sigma_0, y \rangle + \sum_{i=1}^{l_g} \langle \sigma_i g_i, y \rangle \\
+= &amp; \left\langle [x]_d^\top Q_0 [x]_d, y \right\rangle + \sum_{i=1}^{l_g} \left\langle g_i \cdot [x]_{s_i}^\top Q_i [x]_{s_i}, y \right\rangle \\
+= &amp; \left\langle M_d[y], Q_0 \right\rangle + \sum_{i=1}^{l_g} \left\langle L^d_{g_i}[y], Q_i \right\rangle \geq 0
+\end{split}
+\end{equation}\]</span>
+where <span class="math inline">\(Q_0,Q_1,\dots,Q_{l_g}\)</span> are the Gram matrices associated with the SOS multipliers <span class="math inline">\(\sigma_0,\sigma_1,\dots,\sigma_{l_g}\)</span>, and <span class="math inline">\(s_i\)</span> is the maximum integer such that <span class="math inline">\(2 s_i + \deg (g_i) \leq 2d\)</span>. The equation above also shows that, in order for any TMS <span class="math inline">\(y\)</span> to be in the dual cone of <span class="math inline">\(\mathrm{Qmodule}[y]_{2d}\)</span>, it must hold that <span class="math inline">\(M_d[y] \succeq 0, L^d_{g_i}[y] \succeq 0,i=1,\dots,l_g\)</span>, and hence <span class="math inline">\(y\)</span> must belong to <span class="math inline">\(\mathcal{M}_d[y]\)</span>.</p>
+<p>To see 2 of Theorem <a href="Moment.html#thm:DualQuadratedModule">5.4</a>, note that when <span class="math inline">\(S_{\geq 0}\)</span> has empty interior, the cone <span class="math inline">\(\mathrm{Qmodule}[g]_{2d}\)</span> may not be closed. For example, consider <span class="math inline">\(g = -x^2\)</span>, the set <span class="math inline">\(S_{\geq 0}\)</span> is the singleton <span class="math inline">\(\{ 0 \}\)</span> and has empty interior. The polynomial <span class="math inline">\(x + \epsilon\)</span>, for any <span class="math inline">\(\epsilon &gt; 0\)</span>, is in <span class="math inline">\(\mathrm{Qmodule}[g]_2\)</span> because
+<span class="math display">\[
+x + \epsilon = \left( \sqrt{\epsilon} + \frac{x}{2 \sqrt{\epsilon}} \right)^2 + (-x^2) \left( \frac{1}{2 \sqrt{\epsilon}} \right)^2.
+\]</span>
+However, when <span class="math inline">\(\epsilon = 0\)</span>, the polynomial <span class="math inline">\(x \not\in \mathrm{Qmodule}[x]_{2}\)</span>.</p>
+<p><strong>Dual of the Sum of Ideal and Quadratic Module</strong>. Recall that given a tuple of polynomials <span class="math inline">\(h=(h_1,\dots,h_{l_h})\)</span>, the ideal generated by <span class="math inline">\(h\)</span> is
+<span class="math display">\[
+\mathrm{Ideal}[h] =  \left\{ \sum_{i=1}^{l_h} \lambda_i h_i \mid \lambda_i \in \mathbb{R}[x],i=1,\dots,l_h \right\} ,
+\]</span>
+where <span class="math inline">\(\lambda_i\)</span> are the polynomial multipliers. Similarly, the degree-<span class="math inline">\(2d\)</span> truncation of <span class="math inline">\(\mathrm{Ideal}[h]\)</span> is
+<span class="math display" id="eq:ideal-truncated-2d">\[\begin{equation}
+\mathrm{Ideal}[h]_{2d} =  \left\{  \sum_{i=1}^{l_h} \lambda_i h_i \mid \lambda_i \in \mathbb{R}[x], \deg(\lambda_i h_i) \leq 2d,i=1,\dots,l_h \right\} .
+\tag{5.7}
+\end{equation}\]</span>
+For each <span class="math inline">\(\lambda_i \in \mathbb{R}[x]_{2d - \deg(h_i)}\)</span> such that <span class="math inline">\(\deg(\lambda_i h_i) \leq 2d\)</span>, the coefficients of <span class="math inline">\((\lambda_i h_i\)</span> are linear in that of <span class="math inline">\(\lambda_i\)</span>
+<span class="math display">\[
+\mathrm{vec}(\lambda_i h_i) = H_i^{2d} \mathrm{vec}(\lambda_i),
+\]</span>
+where <span class="math inline">\(\mathrm{vec}(\cdot)\)</span> denotes the coefficients vector of a polynomial. For example, suppose <span class="math inline">\(h = x^2-1\)</span> and <span class="math inline">\(d = 2\)</span>, then <span class="math inline">\(\lambda(x) = \lambda_2 x^2 + \lambda_1 x + \lambda_0\)</span>, and
+<span class="math display">\[
+\lambda(x) h(x) = (\lambda_2 x^2 + \lambda_1 x + \lambda_0)(x^2 - 1) = \lambda_2 x^4 + \lambda_1 x^3 + (\lambda_0 - \lambda_2) x^2 - \lambda_1 x - \lambda_0.
+\]</span>
+Then,
+<span class="math display">\[
+\mathrm{vec}(\lambda h) = \begin{bmatrix}
+- \lambda_0 \\
+- \lambda_1 \\
+\lambda_0 - \lambda_2 \\
+\lambda_1 \\
+\lambda_2 \end{bmatrix} =
+\underbrace{\begin{bmatrix}
+-1 &amp; 0 &amp; 0 \\
+0 &amp; -1 &amp; 0 \\
+1 &amp; 0 &amp; -1 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}}_{H^4}
+\begin{bmatrix}
+\lambda_0 \\ \lambda_1 \\ \lambda_2 \end{bmatrix}
+\]</span></p>
+<p><strong>Localizing Vector</strong>. Given a TMS <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> and its associated linear functional <span class="math inline">\(\ell_y\)</span>, applying <span class="math inline">\(\ell_y\)</span> to <span class="math inline">\(\lambda_i h_i\)</span> with <span class="math inline">\(\deg(\lambda_i h_i) \leq 2d\)</span> can be written as
+<span class="math display">\[
+\ell_y(\lambda_i h_i) = \langle y, \mathrm{vec}(\lambda_i h_i) \rangle = \langle y, H_i^{2d} \mathrm{vec}(\lambda_i) \rangle = \left\langle (H_i^{2d})^\top y, \mathrm{vec}(\lambda_i) \right\rangle,
+\]</span>
+and the vector
+<span class="math display" id="eq:localizing-vector">\[\begin{equation}
+L_{h_i}^{2d}[y] := (H_i^{2d})^\top y
+\tag{5.8}
+\end{equation}\]</span>
+is called the <strong>localizing vector</strong> of <span class="math inline">\(h_i\)</span> generated by the TMS <span class="math inline">\(y\)</span>. We are interested in linear functionals that vanish on <span class="math inline">\(\mathrm{Ideal}[h]_{2d}\)</span>. Clearly, this is the subspace
+<span class="math display" id="eq:linear-subspace-tms">\[\begin{equation}
+\mathcal{Z}[h]_{2d} :=  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid L_{h_i}^{2d}[y] = 0,i=1,\dots,l_h  \right\} .
+\tag{5.9}
+\end{equation}\]</span></p>
+<p>The next result gives the dual of the sum of ideal and quadratic module.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DualSumIdealQuadraticModule" class="theorem"><strong>Theorem 5.5  (Dual of the Sum of Ideal and Quadratic Module) </strong></span>Let <span class="math inline">\(g=(g_1,\dots,g_{l_g})\)</span> and <span class="math inline">\(h=(h_1,\dots,l_h)\)</span> be tuples of polynomials, for any <span class="math inline">\(2d &gt; 0\)</span>, we have
+<span class="math display">\[
+\left( \mathrm{Ideal}[h]_{2d} + \mathrm{Qmodule}[g]_{2d} \right)^* = \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}
+\]</span>
+where <span class="math inline">\(\mathcal{Z}[h]_{2d}\)</span> is the linear subspace in <a href="Moment.html#eq:linear-subspace-tms">(5.9)</a> and <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is the convex cone in <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.6)</a>.</p>
+</div>
+</div>
+</div>
+<div id="the-moment-sos-hierarchy" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> The Moment-SOS Hierarchy<a href="Moment.html#the-moment-sos-hierarchy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In Chapter <a href="SOS.html#SOS:POP">4.6.1</a>, we introduced an SOS relaxation for solving polynomial optimization problems (POPs). In particular, we consider the following POP, restated from <a href="SOS.html#eq:pop">(4.19)</a>
+<span class="math display" id="eq:pop-restate">\[\begin{equation}
+\begin{split}
+p^\star = \min_{x \in \mathbb{R}^{n}} &amp; \quad p(x) \\
+\mathrm{s.t.}&amp; \quad h_i(x) = 0, i=1,\dots,l_h \\
+&amp; \quad g_i(x) \geq 0, i=1,\dots,l_g
+\end{split}
+\tag{5.10}
+\end{equation}\]</span>
+Using Putinar’s Positivstellensatz, for any <span class="math inline">\(\kappa \in \mathbb{N}\)</span>, we have the following SOS program
+<span class="math display" id="eq:SOS-Putinar-restate">\[\begin{equation}
+\boxed{
+\begin{split}
+\gamma_{\kappa}^\star = \max &amp; \quad \gamma \\
+\mathrm{s.t.}&amp; \quad p(x) - \gamma \in \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}
+\end{split}
+}
+\tag{5.11}
+\end{equation}\]</span>
+whose optimal value produces a lower bound to <span class="math inline">\(p^\star\)</span>, i.e., <span class="math inline">\(\gamma_{\kappa}^\star \leq p^\star\)</span>.</p>
+<p>With the machinery introduced above on the dual of the cone of polynomials, we can write down the dual problem of the SOS program <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>
+<span class="math display" id="eq:moment-Putinar">\[\begin{equation}
+\boxed{
+\begin{split}
+\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2d)}} &amp; \quad \langle \ell_y, p \rangle \\
+\mathrm{s.t.}&amp; \quad y \in \mathcal{Z}[h]_{2\kappa} \cap \mathcal{M}[g]_{2\kappa} \\
+&amp; \quad \langle \ell_y, 1 \rangle = 1
+\end{split}
+}
+\tag{5.12}
+\end{equation}\]</span>
+In problem <a href="Moment.html#eq:moment-Putinar">(5.12)</a>, <span class="math inline">\(\langle \ell_y, p \rangle\)</span> and <span class="math inline">\(\langle \ell_y, 1 \rangle\)</span> should be interpreted as applying the linear functional associated with the TMS <span class="math inline">\(y\)</span> to the polynomial <span class="math inline">\(p\)</span> and the polynomial “<span class="math inline">\(1\)</span>”. As a result, the constraint <span class="math inline">\(\langle \ell_y, 1 \rangle=1\)</span> implies <span class="math inline">\(y_0 = 1\)</span>. To see why <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is the dual of <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>, pick any <span class="math inline">\(\gamma\)</span> that is feasible for <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> and any <span class="math inline">\(y\)</span> that is feasible for <a href="Moment.html#eq:moment-Putinar">(5.12)</a>, we have
+<span class="math display">\[
+\langle \ell_y, p \rangle - \gamma = \langle \ell_y, p \rangle - \langle \ell_y, \gamma \rangle = \langle \ell_y, p - \gamma \rangle \geq 0,
+\]</span>
+where, again, <span class="math inline">\(\langle \ell_y, \gamma \rangle\)</span> should be interpreted as applying <span class="math inline">\(\ell_y\)</span> to the degree-<span class="math inline">\(0\)</span> polynomial “<span class="math inline">\(\gamma\)</span>”. The last inequality holds because <span class="math inline">\(y\)</span> and <span class="math inline">\(p - \gamma\)</span> live in two cones that are dual to each other. Consequently, we have the weak duality
+<span class="math display">\[
+\gamma_{\kappa}^\star \leq \beta_{\kappa}^\star, \quad \forall \kappa \in \mathbb{N}.
+\]</span>
+The pair of SDPs <a href="Moment.html#eq:moment-Putinar">(5.12)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> is called the moment-SOS hierarchy and is first proposed in <span class="citation">(<a href="#ref-lasserre01siopt-global">Lasserre 2001</a>)</span>. The next theorem formalizes the notion of a hierarchy.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:MomentSOSHierarchy" class="theorem"><strong>Theorem 5.6  (Moment-SOS Hierarchy) </strong></span>Consider the POP <a href="Moment.html#eq:pop-restate">(5.10)</a> and the primal-dual pair <a href="Moment.html#eq:moment-Putinar">(5.12)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>, we have
+<span class="math display">\[
+\gamma_{\kappa}^\star \leq \beta_{\kappa}^\star \leq p^\star, \quad \forall \kappa \in \mathbb{N},
+\]</span>
+and both sequences <span class="math inline">\(\{ \gamma_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span>, <span class="math inline">\(\{ \beta_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span> are monotonically increasing. Moreover, let the feasible set of the POP <a href="Moment.html#eq:pop-restate">(5.10)</a> be <span class="math inline">\(S\)</span>,</p>
+<ul>
+<li><p>Suppose all equality constraints are linear or there are no equality constraints. If there exists <span class="math inline">\(x_0 \in S\)</span> such that <span class="math inline">\(g_i(x_0) &gt; 0, i=1,\dots,l_g\)</span>, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the dual problem <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> is solvable (i.e., the maximum is attained).</p></li>
+<li><p>Suppose there exists a scalar <span class="math inline">\(R &gt; 0\)</span> such that
+<span class="math display">\[
+R - \Vert x \Vert^{2\kappa_0} \in \mathrm{Ideal}[h]_{2\kappa_0} + \mathrm{Qmodule}[g]_{2\kappa_0}
+\]</span>
+for some <span class="math inline">\(\kappa_0 \in \mathbb{N}\)</span>. For any <span class="math inline">\(\kappa \geq \kappa_0\)</span>, if the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is feasible, then it is solvable (i.e., the minimum is attained).</p></li>
+<li><p>If the constraint set is Archimedean, then the moment-SOS hierarchy has asymptotic convergence, i.e.,
+<span class="math display">\[
+\lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="conversion-to-standard-sdp" class="section level3 hasAnchor" number="5.3.1">
+<h3><span class="header-section-number">5.3.1</span> Conversion to Standard SDP<a href="Moment.html#conversion-to-standard-sdp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-lasserre01siopt-global" class="csl-entry">
+Lasserre, Jean B. 2001. <span>“Global Optimization with Polynomials and the Problem of Moments.”</span> <em>SIAM Journal on Optimization</em> 11 (3): 796–817.
+</div>
+</div>
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://semidefinite.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="SOS.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/Semidefinite/blob/main/05-MomentRelaxation.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["semidefinite-optimization-relaxation.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
