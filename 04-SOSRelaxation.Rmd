@@ -1551,6 +1551,15 @@ Given a set of multivariate polynomials $\cbrace{g_1(x),\dots,g_{\ell_g}(x)}$, t
 $$
 \qmodule[g_1,\dots,g_{\ell_g}] = \lcbrace{ \sigma_0(x) + \sigma_1(x)g_1(x) + \cdots + \sigma_{\ell_g}(x) g_{\ell_g}(x) \mid \sigma_0,\dots,\sigma_{\ell_g} \text{ are SOS} }.
 $$
+
+The $2d$-th order truncated quadratic module is 
+\begin{equation}
+\begin{split}
+\qmodule[g_1,\dots,g_{\ell_g}]_{2d} = \\
+\lcbrace{ \sigma_0(x) + \sum_{i=1}^{\ell_g} \sigma_i(x)g_i(x) \mid \sigma_0,\dots,\sigma_{\ell_g} \text{ are SOS}, \deg(\sigma_0) \leq 2d, \deg(\sigma_i g_i) \leq 2d,i=1,\dots,\ell_g}.
+\end{split}
+\end{equation}
+
 :::
 :::
 
@@ -1713,7 +1722,7 @@ It is important to recognize that searching for positivity certifcates in the fo
 
 The Positivstellensatz results stated above are extremely powerful tools and they have a broad set of applications due to their connections with semidefinite programming. 
 
-### Polynomial Optimization 
+### Polynomial Optimization {#SOS:POP}
 
 Consider the polynomial optimization problem (POP)
 \begin{equation}
@@ -1737,6 +1746,11 @@ Since it is challenging to handle the nonnegativity constraint, we can relax it 
 (\#eq:pop-gamma-nonnegative-Putinar)
 \end{equation}
 To make \@ref(eq:pop-gamma-nonnegative-Putinar) computationally tractable, we can bound the degree of the terms and formulate the following optimization problem 
+\begin{equation}
+\max \quad \gamma \quad \subject \quad p(x) - \gamma \in \Ideal[h_1,\dots,h_{\ell_h}]_{2\kappa} + \qmodule[g_1,\dots,g_{\ell_g}]_{2\kappa},
+(\#eq:pop-gamma-nonnegative-Putinar-truncated)
+\end{equation}
+where the subscript $2\kappa$ indicates the ideal and the quadratic module are truncated at degree $2\kappa$. Problem \@ref(eq:pop-gamma-nonnegative-Putinar-truncated) can be explicitly written as 
 \begin{equation}
 \begin{split}
 \gamma^\star_{\kappa}=\max & \quad \gamma\\
@@ -1776,7 +1790,9 @@ Make sure you check out the [code](https://github.com/ComputationalRobotics/Semi
 :::
 
 
+### Lyapunov Certificates
 
+In Chapter \@ref(LyapunovLinearSystem) we have seen the application of SDP in certifying stability of linear systems via the notion of a Lyapunov function. With sums of squares, we can generalize Lyapunov certifcates to nonlinear systems, in particular systems whose dynamics can be written as polynomials. You can find more information in this webpage.
 
 
 

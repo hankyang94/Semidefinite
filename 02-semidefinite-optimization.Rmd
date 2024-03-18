@@ -1143,7 +1143,7 @@ This is the Newton method implemented by SDPT3 and MOSEK.
 
 ## Applications
 
-### Lyapunov Stability
+### Lyapunov Stability {#LyapunovLinearSystem}
 
 One of the earliest and most important applications of semidefinite optimization is in the context of dynamical systems and control theory. The main reason is that it is possible to characterize the dynamical properties of a system (e.g., stability, contraction) in terms of algebraic statements such as the feasibility of specific forms of inequalities. We provide a simple example in the case of Lyapunov stability for linear dynamical systems. For a comprehensive overview, see [@boyd94book-lmi].
 

@@ -22,6 +22,8 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\calS}{\mathcal{S}}
 \newcommand{\calM}{\mathcal{M}}
 \newcommand{\calI}{\mathcal{I}}
+\newcommand{\calR}{\mathcal{R}}
+\newcommand{\calZ}{\mathcal{Z}}
 \newcommand{\mathx}{\mathrm{x}}
 \newcommand{\mathy}{\mathrm{y}}
 \newcommand{\bbE}{\mathbb{E}}
