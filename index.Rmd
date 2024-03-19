@@ -16,6 +16,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\calV}{\mathcal{V}}
 \newcommand{\calE}{\mathcal{E}}
 \newcommand{\calF}{\mathcal{F}}
+\newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calK}{\mathcal{K}}
@@ -105,6 +106,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 \newcommand{\ceil}[1]{\lceil #1 \rceil}
 \newcommand{\qmodule}{\mathrm{Qmodule}}
+\newcommand{\mom}{\mathrm{mom}}
 \newcommand{\preorder}{\mathrm{Preorder}}
 
 

@@ -1792,7 +1792,7 @@ Make sure you check out the [code](https://github.com/ComputationalRobotics/Semi
 
 ### Lyapunov Certificates
 
-In Chapter \@ref(LyapunovLinearSystem) we have seen the application of SDP in certifying stability of linear systems via the notion of a Lyapunov function. With sums of squares, we can generalize Lyapunov certifcates to nonlinear systems, in particular systems whose dynamics can be written as polynomials. You can find more information in this webpage.
+In Chapter \@ref(LyapunovLinearSystem) we have seen the application of SDP in certifying stability of linear systems via the notion of a Lyapunov function. With sums of squares, we can generalize Lyapunov certifcates to nonlinear systems, in particular systems whose dynamics can be written as polynomials. You can [find more information in this webpage](https://hankyang.seas.harvard.edu/OptimalControlEstimation/stability.html#computing-lyapunov-certificates).
 
 
 
