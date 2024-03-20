@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-03-19}
+\date{2024-03-20}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -5581,6 +5581,41 @@ As a result, \(\rho^\star = p^\star\).
 \end{proof}
 
 The proof shows that, if \(x_\star\) is a global optimizer of the POP, then the Dirac measure \(\mu_\star = \delta_{x_\star}\) is an optimal solution to \eqref{eq:measure-opt}.
+
+Now let us inspect the objective function of \eqref{eq:measure-opt}. Suppose \(p(x) \in \mathbb{R}[x]_{2d}\), then
+\[
+p(x) = \sum_{\alpha \in \mathcal{F}_{n,2d}} p_{\alpha} x^{\alpha} = \langle \mathrm{vec}(p), [x]_{2d} \rangle.
+\]
+Plugging this to the objective function, we see
+\[
+\int_S p(x) d \mu(x) = \int_S \left(\sum_{\alpha} p_{\alpha} x^{\alpha}\right) d \mu(x) = \sum_{\alpha} p_{\alpha} \left(\int_S x^{\alpha} d \mu(x)\right).
+\]
+Denoting
+\[
+y_{\alpha} = \int_S x^{\alpha} d \mu(x), 
+\]
+as the \(\alpha\) moment of \(\mu\) on \(S\), and
+\begin{equation}
+y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}} = \int_S [x]_{2d} d \mu(x)
+\label{eq:representing-measure}
+\end{equation}
+as the truncated moment sequence of degree up to \(2d\), we can see that problem \eqref{eq:measure-opt} is a linear optimization over the moments of \(\mu\):
+\begin{equation}
+\begin{split}
+\min_{\mu \in \mathcal{P}(S)} & \quad \langle \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}& \quad y_0 = 1
+\end{split}
+\label{eq:measure-opt-moments}
+\end{equation}
+where \(y_0\) is the zero-order moment.
+
+Now in order to solve problem \eqref{eq:measure-opt-moments}, the key question boils down to: given a TMS \(y = (y_{\alpha})\), under what conditions can we ensure that \(y\) has a \textbf{representing measure} supported on \(S\), i.e., equation \eqref{eq:representing-measure} holds for some measure \(\mu\)?
+
+As we will introduce soon, we will derive \textbf{necessary conditions} on the TMS \(y\) for it to admit a representing measure, which surprisingly and not surprisingly, is exactly the dual conic constraint \(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\) we introduced in Theorem \ref{thm:DualSumIdealQuadraticModule}! Therefore, the moment relaxation can be derived by solving \eqref{eq:measure-opt-moments} with necessary conditions on \(y\) admitting a representing measure.
+
+However, the measure-theoretic perspective gives us one advantage, i.e., via checkable \textbf{sufficient conditions} for \(y\) to admit a representing measure, we can \textbf{certify} convergence of the moment-SOS hierarchy and extract global minimizers of the original POP!
+
+\section{Truncated Moment Problem}\label{truncated-moment-problem}
 
   \bibliography{book.bib}
 

@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-03-19" />
+<meta name="date" content="2024-03-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -275,6 +275,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.3.1" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.3.1</b> Conversion to Standard SDP</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="Moment.html"><a href="Moment.html#measure-theoretic-interpretation"><i class="fa fa-check"></i><b>5.4</b> Measure-Theoretic Interpretation</a></li>
+<li class="chapter" data-level="5.5" data-path="Moment.html"><a href="Moment.html#truncated-moment-problem"><i class="fa fa-check"></i><b>5.5</b> Truncated Moment Problem</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -941,6 +942,38 @@ As a result, <span class="math inline">\(\rho^\star = p^\star\)</span>.</p>
 </div>
 </div>
 <p>The proof shows that, if <span class="math inline">\(x_\star\)</span> is a global optimizer of the POP, then the Dirac measure <span class="math inline">\(\mu_\star = \delta_{x_\star}\)</span> is an optimal solution to <a href="Moment.html#eq:measure-opt">(5.16)</a>.</p>
+<p>Now let us inspect the objective function of <a href="Moment.html#eq:measure-opt">(5.16)</a>. Suppose <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span>, then
+<span class="math display">\[
+p(x) = \sum_{\alpha \in \mathcal{F}_{n,2d}} p_{\alpha} x^{\alpha} = \langle \mathrm{vec}(p), [x]_{2d} \rangle.
+\]</span>
+Plugging this to the objective function, we see
+<span class="math display">\[
+\int_S p(x) d \mu(x) = \int_S \left(\sum_{\alpha} p_{\alpha} x^{\alpha}\right) d \mu(x) = \sum_{\alpha} p_{\alpha} \left(\int_S x^{\alpha} d \mu(x)\right).
+\]</span>
+Denoting
+<span class="math display">\[
+y_{\alpha} = \int_S x^{\alpha} d \mu(x),
+\]</span>
+as the <span class="math inline">\(\alpha\)</span> moment of <span class="math inline">\(\mu\)</span> on <span class="math inline">\(S\)</span>, and
+<span class="math display" id="eq:representing-measure">\[\begin{equation}
+y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}} = \int_S [x]_{2d} d \mu(x)
+\tag{5.17}
+\end{equation}\]</span>
+as the truncated moment sequence of degree up to <span class="math inline">\(2d\)</span>, we can see that problem <a href="Moment.html#eq:measure-opt">(5.16)</a> is a linear optimization over the moments of <span class="math inline">\(\mu\)</span>:
+<span class="math display" id="eq:measure-opt-moments">\[\begin{equation}
+\begin{split}
+\min_{\mu \in \mathcal{P}(S)} &amp; \quad \langle \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}&amp; \quad y_0 = 1
+\end{split}
+\tag{5.18}
+\end{equation}\]</span>
+where <span class="math inline">\(y_0\)</span> is the zero-order moment.</p>
+<p>Now in order to solve problem <a href="Moment.html#eq:measure-opt-moments">(5.18)</a>, the key question boils down to: given a TMS <span class="math inline">\(y = (y_{\alpha})\)</span>, under what conditions can we ensure that <span class="math inline">\(y\)</span> has a <strong>representing measure</strong> supported on <span class="math inline">\(S\)</span>, i.e., equation <a href="Moment.html#eq:representing-measure">(5.17)</a> holds for some measure <span class="math inline">\(\mu\)</span>?</p>
+<p>As we will introduce soon, we will derive <strong>necessary conditions</strong> on the TMS <span class="math inline">\(y\)</span> for it to admit a representing measure, which surprisingly and not surprisingly, is exactly the dual conic constraint <span class="math inline">\(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\)</span> we introduced in Theorem <a href="Moment.html#thm:DualSumIdealQuadraticModule">5.5</a>! Therefore, the moment relaxation can be derived by solving <a href="Moment.html#eq:measure-opt-moments">(5.18)</a> with necessary conditions on <span class="math inline">\(y\)</span> admitting a representing measure.</p>
+<p>However, the measure-theoretic perspective gives us one advantage, i.e., via checkable <strong>sufficient conditions</strong> for <span class="math inline">\(y\)</span> to admit a representing measure, we can <strong>certify</strong> convergence of the moment-SOS hierarchy and extract global minimizers of the original POP!</p>
+</div>
+<div id="truncated-moment-problem" class="section level2 hasAnchor" number="5.5">
+<h2><span class="header-section-number">5.5</span> Truncated Moment Problem<a href="Moment.html#truncated-moment-problem" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 </div>
 </div>
