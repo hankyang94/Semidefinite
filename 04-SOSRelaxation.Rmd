@@ -458,7 +458,7 @@ As a consequence, we can check the ideal membership of a given polynomial. Indee
 See an example of using Grobner basis to compute the normal form in the [Maple software](https://www.maplesoft.com/support/help/maple/view.aspx?path=Groebner%2FNormalForm).
 
 
-### Zero-dimensional Ideal
+### Zero-dimensional Ideal {#ZeroDimIdeal}
 
 In practice, we are often interested in polynomial systems that have only a finite number of solutions, in which case the associated ideal is called zero-dimensional.
 
