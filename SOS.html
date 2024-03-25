@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-03-20" />
+<meta name="date" content="2024-03-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -240,7 +240,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.1.2" data-path="SOS.html"><a href="SOS.html#polynomials-ideals-and-varieties"><i class="fa fa-check"></i><b>4.1.2</b> Polynomials, Ideals, and Varieties</a></li>
 <li class="chapter" data-level="4.1.3" data-path="SOS.html"><a href="SOS.html#gröbner-bases"><i class="fa fa-check"></i><b>4.1.3</b> Gröbner Bases</a></li>
 <li class="chapter" data-level="4.1.4" data-path="SOS.html"><a href="SOS.html#quotient-ring"><i class="fa fa-check"></i><b>4.1.4</b> Quotient Ring</a></li>
-<li class="chapter" data-level="4.1.5" data-path="SOS.html"><a href="SOS.html#zero-dimensional-ideal"><i class="fa fa-check"></i><b>4.1.5</b> Zero-dimensional Ideal</a></li>
+<li class="chapter" data-level="4.1.5" data-path="SOS.html"><a href="SOS.html#ZeroDimIdeal"><i class="fa fa-check"></i><b>4.1.5</b> Zero-dimensional Ideal</a></li>
 <li class="chapter" data-level="4.1.6" data-path="SOS.html"><a href="SOS.html#algebraic-and-semialgebraic-sets"><i class="fa fa-check"></i><b>4.1.6</b> Algebraic and Semialgebraic Sets</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
@@ -276,6 +276,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="Moment.html"><a href="Moment.html#measure-theoretic-interpretation"><i class="fa fa-check"></i><b>5.4</b> Measure-Theoretic Interpretation</a></li>
 <li class="chapter" data-level="5.5" data-path="Moment.html"><a href="Moment.html#truncated-moment-problem"><i class="fa fa-check"></i><b>5.5</b> Truncated Moment Problem</a></li>
+<li class="chapter" data-level="5.6" data-path="Moment.html"><a href="Moment.html#flat-extension-detecting-global-optimality-and-extracting-solutions"><i class="fa fa-check"></i><b>5.6</b> Flat Extension: Detecting Global Optimality and Extracting Solutions</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -677,8 +678,8 @@ Therefore, the normal form <span class="math inline">\(\bar{p}\)</span> can be i
 <p>As a consequence, we can check the ideal membership of a given polynomial. Indeed, a polynomial <span class="math inline">\(p\)</span> belongs to the ideal <span class="math inline">\(I\)</span> if and only if its normal form is the zero polynomial.</p>
 <p>See an example of using Grobner basis to compute the normal form in the <a href="https://www.maplesoft.com/support/help/maple/view.aspx?path=Groebner%2FNormalForm">Maple software</a>.</p>
 </div>
-<div id="zero-dimensional-ideal" class="section level3 hasAnchor" number="4.1.5">
-<h3><span class="header-section-number">4.1.5</span> Zero-dimensional Ideal<a href="SOS.html#zero-dimensional-ideal" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="ZeroDimIdeal" class="section level3 hasAnchor" number="4.1.5">
+<h3><span class="header-section-number">4.1.5</span> Zero-dimensional Ideal<a href="SOS.html#ZeroDimIdeal" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In practice, we are often interested in polynomial systems that have only a finite number of solutions, in which case the associated ideal is called zero-dimensional.</p>
 <div class="definitionbox">
 <div class="definition">
@@ -911,7 +912,7 @@ x \\ y \\ z
 \]</span></p>
 </div>
 </div>
-<p>In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots <span class="citation">(<a href="#ref-corless97-reordered">Corless, Gianni, and Trager 1997</a>)</span>. We will see that in the homework.</p>
+<p>In practice, instead of simultaneously diagonalizing the companion matrices, a Schur decomposition type method is used to compute the roots <span class="citation">(<a href="#ref-corless97-reordered">Corless, Gianni, and Trager 1997a</a>)</span>. We will see that in the homework.</p>
 </div>
 <div id="algebraic-and-semialgebraic-sets" class="section level3 hasAnchor" number="4.1.6">
 <h3><span class="header-section-number">4.1.6</span> Algebraic and Semialgebraic Sets<a href="SOS.html#algebraic-and-semialgebraic-sets" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1875,7 +1876,7 @@ Blekherman, Grigoriy, Pablo A Parrilo, and Rekha R Thomas. 2012. <em>Semidefinit
 Bochnak, Jacek, Michel Coste, and Marie-Françoise Roy. 2013. <em>Real Algebraic Geometry</em>. Vol. 36. Springer Science &amp; Business Media.
 </div>
 <div id="ref-corless97-reordered" class="csl-entry">
-Corless, Robert M, Patrizia M Gianni, and Barry M Trager. 1997. <span>“A Reordered Schur Factorization Method for Zero-Dimensional Polynomial Systems with Multiple Roots.”</span> In <em>Proceedings of the 1997 International Symposium on Symbolic and Algebraic Computation</em>, 133–40.
+Corless, Robert M, Patrizia M Gianni, and Barry M Trager. 1997a. <span>“A Reordered Schur Factorization Method for Zero-Dimensional Polynomial Systems with Multiple Roots.”</span> In <em>Proceedings of the 1997 International Symposium on Symbolic and Algebraic Computation</em>, 133–40.
 </div>
 <div id="ref-cox13book-ideals" class="csl-entry">
 Cox, David, John Little, and Donal OShea. 2013. <em>Ideals, Varieties, and Algorithms: An Introduction to Computational Algebraic Geometry and Commutative Algebra</em>. Springer Science &amp; Business Media.

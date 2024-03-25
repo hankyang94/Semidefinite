@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-03-20}
+\date{2024-03-25}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -284,9 +284,11 @@ arc=4pt}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 \newcommand{\ceil}[1]{\lceil #1 \rceil}
+
 \newcommand{\qmodule}{\mathrm{Qmodule}}
 \newcommand{\mom}{\mathrm{mom}}
 \newcommand{\preorder}{\mathrm{Preorder}}
+\newcommand{\supp}{\mathrm{supp}}
 
 \chapter*{Preface}\label{preface}
 \addcontentsline{toc}{chapter}{Preface}
@@ -3537,7 +3539,7 @@ As a consequence, we can check the ideal membership of a given polynomial. Indee
 
 See an example of using Grobner basis to compute the normal form in the \href{https://www.maplesoft.com/support/help/maple/view.aspx?path=Groebner\%2FNormalForm}{Maple software}.
 
-\subsection{Zero-dimensional Ideal}\label{zero-dimensional-ideal}
+\subsection{Zero-dimensional Ideal}\label{ZeroDimIdeal}
 
 In practice, we are often interested in polynomial systems that have only a finite number of solutions, in which case the associated ideal is called zero-dimensional.
 
@@ -5613,9 +5615,311 @@ Now in order to solve problem \eqref{eq:measure-opt-moments}, the key question b
 
 As we will introduce soon, we will derive \textbf{necessary conditions} on the TMS \(y\) for it to admit a representing measure, which surprisingly and not surprisingly, is exactly the dual conic constraint \(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\) we introduced in Theorem \ref{thm:DualSumIdealQuadraticModule}! Therefore, the moment relaxation can be derived by solving \eqref{eq:measure-opt-moments} with necessary conditions on \(y\) admitting a representing measure.
 
-However, the measure-theoretic perspective gives us one advantage, i.e., via checkable \textbf{sufficient conditions} for \(y\) to admit a representing measure, we can \textbf{certify} convergence of the moment-SOS hierarchy and extract global minimizers of the original POP!
+However, the measure-theoretic perspective will give us one advantage, i.e., via checkable \textbf{sufficient conditions} for \(y\) to admit a representing measure, we can \textbf{certify} convergence of the moment-SOS hierarchy and extract global minimizers of the original POP!
 
 \section{Truncated Moment Problem}\label{truncated-moment-problem}
+
+Given a truncated multi-sequence \(y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}}\), it is said to admit a Borel measure if \eqref{eq:representing-measure} holds for some measure \(\mu\) supported on \(S\) (the support of a measure on \(\mathbb{R}^{n}\) is the smallest closed set \(T \subseteq \mathbb{R}^{n}\) such that \(\mu(\mathbb{R}^{n} \backslash T) = 0\)), in which case \(\mu\) is called a \textbf{\(S\)-representing measure} of \(y\).
+
+A measure \(\mu\) whose support is a finite set is called \textbf{finitely atomic}. A measure is called \(r\)-atomic if its support has cardinality \(r\).
+
+The following result, due to \citep{bayer06ams-proof}, shows that a representing measure can always be chosen to be finitely atomic if it exists.
+
+\begin{theorem}[Representing Measure]
+\protect\hypertarget{thm:RepresentingMeasure}{}\label{thm:RepresentingMeasure}If a TMS \(y \in \mathbb{R}^{s(n,2d)}\) admits a representing measure, then it also admits a
+finitely atomic representing measure \(\nu\) such that
+\[
+\mathrm{supp}(\nu) \subseteq \mathrm{supp}(\mu), \quad \left\vert \mathrm{supp}(\nu) \right\vert \leq s(n,2d).
+\]
+\end{theorem}
+
+The \textbf{truncated \(S\)-moment problem} concerns the following: given a TMS \(y\), does it admit a representing measure \(\mu\) supported on \(S\)?
+
+To answer this question, let us pick any polynomial \(p(x) \in \mathbb{R}[x]_{2d}\) that is SOS, then it is easy to see that, for any measure \(\mu\),
+\[
+\int_S p(x) d\mu(x) \geq 0
+\]
+must hold. Using the fact that \(p(x)\) is SOS, we can write
+\[
+p(x) = [x]_d^\top Q [x]_d = \left\langle Q, [x]_d [x]_d^\top \right\rangle, \quad Q \succeq 0
+\]
+and therefore
+\begin{equation}
+\int_S p(x) d\mu(x) = \int_S \left\langle Q, [x]_d [x]_d^\top \right\rangle d \mu(x) = \left\langle Q,  \int_S [x]_d [x]_d^\top d \mu(x)  \right\rangle = \langle Q, M_d[y] \rangle
+\label{eq:integral-to-moment-matrix}
+\end{equation}
+where \(M_d[y] \in \mathbb{S}^{s(n,d)}\) is the moment matrix of \(\mu\)'s truncated moment sequence \(y \in \mathbb{R}^{s(n,2d)}\). In order for \eqref{eq:integral-to-moment-matrix} to be nonnegative for any \(Q \succeq 0\), the moment matrix \(M_d[y]\) must be positive semidefinite.
+
+We can keep doing this using the defining polynomials of \(S\). Pick any \(g_i(x) \geq 0\) constraint that defines \(S\), and any SOS polynomial \(\sigma_i(x)\) whose degree \(2s_i\) is chosen such that \(2 s_i + \deg(g) \leq 2d\), then
+\[
+\int_S g_i(x) \sigma_i(x) d\mu(x) \geq 0
+\]
+must hold. Since \(\sigma_i(x)\) is SOS, it can be written as \(\sigma_i(x) = [x]_{s_i}^\top Q_i [x]_{s_i}\) for some \(Q_i \succeq 0\). Then we have
+\[
+\int_S g_i(x) \sigma_i(x) d\mu(x) = \int_S g_i(x) [x]_{s_i}^\top Q_i [x]_{s_i} d\mu(x) = \left\langle Q_i,  \int_S g_i(x) [x]_{s_i}[x]_{s_i}^\top d\mu(x)  \right\rangle = \langle Q_i,  L_{g_i}^d[y] \rangle
+\]
+where \(L_{g_i}^d [y]\) is the localizing matrix of \(g_i(x)\) generated by the moment vector \(y\). In order for the above equation to be nonnegative for any \(Q_i \succeq 0\), we must have \(L_{g_i}^d[y] \succeq 0\) for any \(g_i\).
+
+Similarly, we can pick any equality constraint \(h_i(x) = 0\) that defines \(S\) and any polynomial \(\lambda_i(x)\) whose degree is chosen such that \(\deg(\lambda_i) + \deg(h_i) \leq 2d\), then
+\[
+\int_S h_i(x) \lambda_i(x) d\mu(x) = 0.
+\]
+In order for this equation to hold for any multiplier \(\lambda_i(x)\), one can verify that we must have the localizing vector \(L_{h_i}^{2d}[y] = 0\). This gives us a set of necessary conditions for \(y\) to admit a representing measure.
+
+\begin{proposition}[Necessary Condition for Existence of Representing Measure]
+\protect\hypertarget{prp:NecessaryConditionRepresentingMeasure}{}\label{prp:NecessaryConditionRepresentingMeasure}Let \(y \in \mathbb{R}^{s(n,2d)}\) be a truncated multi-sequence. If \(y\) admits an \(S\)-representing measure, i.e., \eqref{eq:representing-measure} holds for some measure \(\mu\) supported on \(S\), then \(y\) must satisfy
+\[
+M_d[y] \succeq 0, \quad L_{g_i}^d[y] \succeq 0, i=1,\dots,l_g, \quad L_{h_i}^{2d}[y] = 0, i=1,\dots,l_h.
+\]
+This is equivalent to \(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\).
+\end{proposition}
+
+The first corollary of Proposition \ref{prp:NecessaryConditionRepresentingMeasure} is that problem \eqref{eq:moment-Putinar} is a convex relaxation for the infinite-dimensional problem \eqref{eq:measure-opt}.
+
+\begin{corollary}[Moment Relaxation]
+\protect\hypertarget{cor:MomentRelaxation}{}\label{cor:MomentRelaxation}The convex optimization problem \eqref{eq:moment-Putinar} is a convex relaxation of problem \eqref{eq:measure-opt} (and hence is also a relaxation of the original POP):
+\[
+\beta^\star_\kappa \leq \rho^\star = p^\star.
+\]
+\end{corollary}
+
+The second corollary of Proposition \ref{prp:NecessaryConditionRepresentingMeasure}, which is the extra advantage offered via this measure-theoretic interpretation, is that if we solve the moment relaxation \eqref{eq:moment-Putinar} and obtain an optimal solution \(y_\star\) that indeed admits a representing measure \(\mu_\star\), then \(\mu_\star\) is in fact a global optimal solution to problem \eqref{eq:measure-opt}. Moreover, if \(y_\star\) admits a representing measure \(\mu_\star\), then by Theorem \ref{thm:RepresentingMeasure} it also admits a finitely atomic measure \(\nu_\star\) and every point in the support of \(\nu_\star\) is a global optimal solution to the POP. In this case, we say the moment-SOS relaxation is \textbf{exact} or \textbf{tight}.
+
+\begin{corollary}[Exactness of Moment Relaxation]
+\protect\hypertarget{cor:ExactnessOfRelaxation}{}\label{cor:ExactnessOfRelaxation}Let the moment relaxation \eqref{eq:moment-Putinar} be solvable and \(y_\star\) be an optimal solution. If \(y_\star\) admits an \(r\)-atomic representing measure \(\nu_\star\) supported on \(S\), then every point \(x_\star \in \mathrm{supp}(\nu_\star)\) is a globally optimal solution to the POP \eqref{eq:pop-with-S}.
+\end{corollary}
+
+\begin{proof}
+Since \(y_\star\) admits an \(r\)-atomic representing measure \(\nu_\star\) we have
+\[
+\nu_\star = \lambda_1 \delta_{u_1} + \dots + \lambda_r \delta_{u_r}, \quad \lambda_i \geq 0, i=1,\dots,r,
+\]
+where \(\mathrm{supp}(\nu_\star) = \{ u_1,\dots,u_r \} \subset S\). This is equivalent to
+\[
+y_\star = \lambda_1 [u_1]_{2\kappa} + \cdots + \lambda_r [u_r]_{2\kappa}, \quad \lambda_i \geq 0, i=1,\dots,r.
+\]
+The fact that \(y_\star\) needs to satisfy the constraint \(y_0 = 1\) implies \(\sum_{i=1}^r \lambda_i = 1\).
+
+By the nature of relaxation,
+\begin{equation}
+\langle \ell_{y_\star}, p(x) \rangle \leq p^\star \Rightarrow \sum_{i=1}^r \lambda_i p(u_i) \leq p^\star.
+\label{eq:measure-proof-lower-bound}
+\end{equation}
+However, since each \(u_i\) is a feasible point to the POP, we have
+\begin{equation}
+p(u_i) \geq p^\star \Rightarrow \sum_{i=1}^r \lambda_i p(u_i) \geq p^\star.
+\label{eq:measure-proof-upper-bound}
+\end{equation}
+Combing \eqref{eq:measure-proof-lower-bound} and \eqref{eq:measure-proof-upper-bound}, we have
+\[
+p(u_i) = p^\star, \quad \forall i=1,\dots,r,
+\]
+and every \(u_i\) is globally optimal for the POP.
+\end{proof}
+
+This is an extremely powerful result. It shows that, if given a TMS \(y\) one can check sufficient conditions on \(y\) admitting an \(r\)-atomic representing measure \(\nu_\star\), then it \textbf{certifies convergence and exactness of the moment-SOS hierarchy}. Moreover, every point in the support of \(\nu_\star\) is a globally optimal solution of the original POP.
+
+\section{Flat Extension: Detecting Global Optimality and Extracting Solutions}\label{flat-extension-detecting-global-optimality-and-extracting-solutions}
+
+Fortunately, there exist sufficient conditions for a TMS \(y \in \mathbb{R}^{s(n,2d)}\) to admit an \(r\)-atomic representing measure.
+Suppose we solve the moment relaxation at order \(\kappa\) and let \(y_\star = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2\kappa}}\) be an optimal solution. Denote
+\[
+d_c := \max  \left\{ 1, \lceil \frac{\deg(h_i)}{2} \rceil,i=1,\dots,l_h, \lceil \frac{\deg(g_i)}{2} \rceil,i=1,\dots,l_g \right\} 
+\]
+and
+\[
+d_0 := \max  \left\{ d_c, \lceil  \frac{\deg(f)}{2}  \rceil \right\} .
+\]
+Clearly we have \(\kappa \geq d_0\), because otherwise the TMS \(y\) does not have enough degree to include all monomials in the objective and constraint polynomials.
+
+The following result gives a sufficient condition for the exactness of the moment-SOS relaxation.
+
+\begin{theorem}[Flat Truncation]
+\protect\hypertarget{thm:FlatTruncation}{}\label{thm:FlatTruncation}Suppose there exists \(t \in [d_0, \kappa]\) such that
+\begin{equation}
+\mathrm{rank}(M_t[y_\star]) = \mathrm{rank}(M_{t-d_c}[y_\star]) = r,
+\label{eq:flat-extension}
+\end{equation}
+then the truncated optimal solution \(y_{\star,2t}:=(y_\alpha)_{\alpha \in \mathcal{F}_{n,2t}}\) admits an \(r\)-atomic representing measure \(\nu\) such that each point in \(\mathrm{supp}(\nu)\) is a global optimizer of the original POP.
+\end{theorem}
+
+Condition \eqref{eq:flat-extension} is called \textbf{flat extension} for the truncated TMS \(y_{\star,2t}\). The proof that the flat extension condition is sufficient for an \(r\)-atomic representing measure is due to \citep{curto05jot-truncated}. The proof of exactness given an \(r\)-atomic representing measure of \(y_{\star,2t}\) is given by Corollary \ref{cor:ExactnessOfRelaxation}.
+
+In the next, we will present an algorithm that can find the \(r\)-atomic representing measure of \(y_{\star,2t}\) when it satisfies the flat extension condition \eqref{eq:flat-extension}, which was first proposed in \citep{henrion05ppc-detecting}. For ease of notation, I will remove the ``\(\star\)'' subscript in the TMS \(y_{\star,2t}\). Given \(y \in \mathbb{R}^{s(n,2t)}\), the goal is to extract \(r = \mathrm{rank}(M_t[y])\) optimal solutions of the POP.
+
+Since \(y\) admits an \(r\)-atomic representing measure \(\nu\), we have
+\[
+\nu = \lambda_1 \delta_{x_1} + \dots + \lambda_r \delta_{x_r}, \quad \lambda_i \geq 0, x_i \in S, i=1,\dots,r.
+\]
+This implies
+\begin{equation}
+\begin{split}
+M_t[y] & = \lambda_1 [x_1]_t [x_1]_t^\top+ \dots + \lambda_r [x_r]_t [x_r]_t^\top\\
+& = \underbrace{\begin{pmatrix} [x_1]_t & \dots & [x_r]_t \end{pmatrix}}_{:= V_\star \in \mathbb{R}^{s(n,t) \times r}}
+\underbrace{\begin{pmatrix} \lambda_1 &  &  \\
+ & \ddots & \\
+ &  & \lambda_r \end{pmatrix}}_{\in \mathbb{R}^{r \times r}}
+\underbrace{\begin{pmatrix}
+[x_1]_t^\top\\
+\vdots \\
+[x_r]_t^\top
+ \end{pmatrix}}_{:= V_\star^\top\in \mathbb{R}^{r \times s(n,t)}}
+\end{split}
+\end{equation}
+On the other hand, we can perform a rank-\(r\) factorization of the moment matrix \(M_t[y]\)
+\[
+M_t[y] = V V^\top,
+\]
+for some \(V \in \mathbb{R}^{s(n,t) \times r}\). For example, this can be done by eigen decomposition or Cholesky factorization. Clearly, \(V\) and \(V_\star\) span the same linear subspace (the orthogonal complement of the kernel of the moment matrix \(M_t[y]\), also we know the space spanned by \(V_\star\) has the basis \([x_1]_t,\dots,[x_r]_t\)). So the general ideal here is to find a set of basis of the space spanned by \(V\) first and then establish connections between the that set of basis with another set of basis \([x_1]_t,\dots,[x_r]_t\).
+
+We can first reduce \(V\) to column echelon form:
+\[
+U = \begin{bmatrix}
+1 & & & & \\
+* & & & & \\
+0 & 1 & & & \\
+0 & 0 & 1 & & \\
+* & * & * & & \\
+ & \vdots & & \ddots & \\
+ 0 & 0 & 0 & \cdots & 1 \\
+ * & * & * & \cdots & * \\
+ * & \vdots & & & \vdots \\
+ * & * & * & \cdots & *  
+\end{bmatrix} \in \mathbb{R}^{s(n,t) \times r}
+\]
+where each ``\(*\)'' indicates a nonzero element. By construction of the moment matrix, each row of \(V\) and \(U\) is indexed by a monomial \(x^{\alpha} \in [x]_t\). Pivot elements in \(U\), i.e., the first nonzero element in each column of \(U\), correspond to monomials \(x^{\beta_j},j=1,\dots,r\). Let these monomials form a basis
+\[
+w(x) = \begin{bmatrix}
+x^{\beta_1} \\ \vdots \\ x^{\beta_r},
+\end{bmatrix}
+\]
+then we have
+\begin{equation}
+[x]_t = U w(x)
+\label{eq:extract-solution-polynomial-system}
+\end{equation}
+for all \(x_i,i=1,\dots,r\). This is a system of \(s(n,t)\) polynomial equations.
+
+Our goal now becomes to find all the roots of the system \eqref{eq:extract-solution-polynomial-system}. This is something we learned how to solve in Chapter \ref{ZeroDimIdeal}! Specifically, the basic strategy is to first find the multiplication matrices, and then simultaneously diagonalize them, or use a more robust procedure suggested in \citep{corless1997reordered}, which I asked you to practice in one of the problem sets.
+
+Let us make this solution extraction procedure concrete by going through an example.
+
+\begin{example}[Solution Extraction from Moment Matrix]
+\protect\hypertarget{exm:SolutionExtraction}{}\label{exm:SolutionExtraction}Consider the polynomial optimization problem
+\begin{equation}
+\begin{split}
+\min_{x \in \mathbb{R}^{2}} & \quad (x_1 - 1)^2 + (x_1 - x_2)^2 + (x_2 - 3)^2 \\
+\mathrm{s.t.}& \quad 1 - (x_1 - 1)^2 \geq 0 \\
+& \quad 1 - (x_1 - x_2)^2 \geq 0 \\
+& \quad 1 - (x_2 - 3)^2 \geq 0
+\end{split}
+\end{equation}
+Solving the moment relaxation with \(\kappa =2\), we obtain
+\[
+\mathrm{rank}(M_1[y]) = \mathrm{rank}(M_2[y]) = 3.
+\]
+Therefore, there exist three global optimizers. The moment matrix reads
+\[
+M_2[y] = \begin{bmatrix}
+1.0000 & 1.5868 & 2.2477 & 2.7603 & 3.6690 & 5.2387 \\
+1.5868 & 2.7603 & 3.6690 & 5.1073 & 6.5115 & 8.8245 \\
+2.2477 & 3.6690 & 5.2387 & 6.5115 & 8.8245 & 12.7072 \\
+2.7603 & 5.1073 & 6.5115 & 9.8013 & 12.1965 & 15.9960 \\
+3.6690 & 6.5115 & 8.8245 & 12.1965 & 15.9960 & 22.1084 \\
+5.2387 & 8.8245 & 12.7072 & 15.9960 & 22.1084 & 32.1036
+\end{bmatrix}
+\]
+whose rows and columns are indexed by the standard monomial basis
+\[
+[x]_2 = \begin{bmatrix}
+1 \\ x_1 \\ x_2 \\ x_1^2 \\ x_1 x_2 \\ x_2^2 
+\end{bmatrix}.
+\]
+We can factorize \(M_2[y]\) as \(VV^\top\) with
+\[
+V = \begin{bmatrix}
+-0.9384 & - 0.0247 & 0.3447 \\
+-1.6188 & 0.3036 & 0.2182 \\
+-2.2486 & -0.1822 & 0.3864 \\
+-2.9796 & 0.9603 & -0.0348 \\
+-3.9813 & 0.3417 & -0.1697 \\
+-5.6128 & -0.7627 & -0.1365
+\end{bmatrix}.
+\]
+Reduce \(V\) to column echelon form
+\[
+U = \begin{bmatrix}
+1 & & \\
+0 & 1 & \\
+0 & 0 & 1 \\
+-2 & 3 & 0 \\
+-4 & 2 & 2 \\
+-6 & 0 & 5 
+\end{bmatrix}.
+\]
+Pivot entries of \(U\) correspond to the following monomial basis
+\[
+w(x) = \begin{bmatrix} 1\\ x_1 \\ x_2 \end{bmatrix}.
+\]
+The polynomial system of equations \([x]_2 = U w(x)\) reads
+\begin{equation}
+\begin{split}
+x_1^2 &= -2 + 3x_1 \\
+x_1 x_2 &= -4 + 2x_1 + 2x_2 \\
+x_2^2 &= -6 + 5x_2
+\end{split}
+\end{equation}
+Multiplication matrices, by \(x_1\) and \(x_2\), can be extracted from \(U\):
+\[
+x_1 \cdot w(x) = \begin{bmatrix}
+0 & 1 & 0 \\
+-2 & 3 & 0 \\
+-4 & 2 & 2
+\end{bmatrix} w(x) = M_1 w(x)
+\]
+\[
+x_2 \cdot w(x) = \begin{bmatrix}
+0 & 0 & 1 \\
+-4 & 2 & 2\\
+-6 & 0 & 5
+\end{bmatrix} w(x) = M_2 w(x).
+\]
+Perform a generic linear combination of \(M_1\) and \(M_2\):
+\[
+M = 3 M_1 + 4 M_2,
+\]
+and then find its Schur decomposition
+\[
+U^* M U = T = \begin{bmatrix}
+18.0000  & -36.3731  & -30.0892\\
+0   & 11.0000   & -0.8018 \\
+0         & 0   & 14.0000
+\end{bmatrix}, \quad U = \begin{bmatrix}
+-0.2673   & -0.7715   & -0.5774\\
+-0.5345    & 0.6172   & -0.5774\\
+-0.8018   &-0.1543    & 0.5774
+\end{bmatrix}.
+\]
+Then we perform
+\[
+U^* M_1 U = \begin{bmatrix}
+2.0000  &  -5.1962   & -1.3887 \\
+    0.0000    & 1.0000   & -0.2673\\
+   0.0000    & 0.0000   & 2.0000
+\end{bmatrix}, \quad 
+U^* M_2 U = \begin{bmatrix}
+3.0000   & -5.1962   & -6.4807\\
+    0.0000    & 2.0000    & 0.0000\\
+    0.0000   & -0.0000    & 2.0000
+\end{bmatrix}
+\]
+from which the three global optimizers can be found:
+\[
+x(1) = \begin{bmatrix} 2 \\ 3 \end{bmatrix}, \quad 
+x(2) = \begin{bmatrix} 1 \\ 2 \end{bmatrix}, \quad 
+x(3) = \begin{bmatrix} 2 \\ 2 \end{bmatrix}.
+\]
+\end{example}
 
   \bibliography{book.bib}
 
