@@ -1113,39 +1113,91 @@ M_t[y] &amp; = \lambda_1 [x_1]_t [x_1]_t^\top+ \dots + \lambda_r [x_r]_t [x_r]_t
 [x_r]_t^\top
 \end{pmatrix}}_{:= V_\star^\top\in \mathbb{R}^{r \times s(n,t)}}
 \end{split}
-\end{equation}\]</span>
-On the other hand, we can perform a rank-<span class="math inline">\(r\)</span> factorization of the moment matrix <span class="math inline">\(M_t[y]\)</span>
+\end{equation}\]</span></p>
+<p>A polynomial <span class="math inline">\(p \in \mathbb{R}[x]_t\)</span> such that <span class="math inline">\(p \equiv 0\)</span> on <span class="math inline">\(\mathrm{supp}(\nu)\)</span> if and only if <span class="math inline">\(M_t[y] \mathrm{vec}(p) = 0\)</span> because
 <span class="math display">\[
-M_t[y] = V V^\top,
+0 = \int p(x)^2 d\nu(x) = \mathrm{vec}(p)^\top M_t[y] \mathrm{vec}(p).
 \]</span>
-for some <span class="math inline">\(V \in \mathbb{R}^{s(n,t) \times r}\)</span>. For example, this can be done by eigen decomposition or Cholesky factorization. Clearly, <span class="math inline">\(V\)</span> and <span class="math inline">\(V_\star\)</span> span the same linear subspace (the orthogonal complement of the kernel of the moment matrix <span class="math inline">\(M_t[y]\)</span>, also we know the space spanned by <span class="math inline">\(V_\star\)</span> has the basis <span class="math inline">\([x_1]_t,\dots,[x_r]_t\)</span>). So the general ideal here is to find a set of basis of the space spanned by <span class="math inline">\(V\)</span> first and then establish connections between the that set of basis with another set of basis <span class="math inline">\([x_1]_t,\dots,[x_r]_t\)</span>.</p>
-<p>We can first reduce <span class="math inline">\(V\)</span> to column echelon form:
+We now look for polynomials from the null space (or kernel) of <span class="math inline">\(M_t[y]\)</span>, for which we denote <span class="math inline">\(\mathrm{ker}(M_t[y])\)</span>. Consider the ideal
+<span class="math display">\[
+I := \mathrm{Ideal}[ \{ p \in \mathbb{R}[x]_t \mid \mathrm{vec}(p) \in \mathrm{ker}(M_t[y]) \} ].
+\]</span>
+We will show that we can construct a basis for the quotient space <span class="math inline">\(\mathbb{R}[x] / I\)</span>.</p>
+<p>Let the spectral decomposition of <span class="math inline">\(M_t[y]\)</span> be
+<span class="math display">\[
+M_t[y] = V \Lambda V^\top, \quad V \in \mathbb{R}^{s(n,t) \times r}.
+\]</span>
+Clearly, the kernel of <span class="math inline">\(M_t[y]\)</span> is the same as the null space of <span class="math inline">\(V^\top\)</span>:
+<span class="math display">\[
+\mathrm{ker}(M_t[y]) = \mathrm{ker}(V^\top).
+\]</span>
+Therefore, to get the kernel of <span class="math inline">\(M_t[y]\)</span>, we can first put <span class="math inline">\(V^\top\)</span> into <a href="https://en.wikipedia.org/wiki/Row_echelon_form#:~:text=row%20echelon%20form-,A%20matrix%20is%20in%20row%20echelon%20form%20if,entry%20of%20every%20row%20above.">reduced row echelon form</a> (RREF, for a square matrix, the RREF can be thought of as the upper triangular form), e.g., using the Matlab <a href="https://www.mathworks.com/help/matlab/ref/rref.html"><code>rref</code></a> function:
 <span class="math display">\[
 U = \begin{bmatrix}
-1 &amp; &amp; &amp; &amp; \\
-* &amp; &amp; &amp; &amp; \\
-0 &amp; 1 &amp; &amp; &amp; \\
-0 &amp; 0 &amp; 1 &amp; &amp; \\
-* &amp; * &amp; * &amp; &amp; \\
-&amp; \vdots &amp; &amp; \ddots &amp; \\
-0 &amp; 0 &amp; 0 &amp; \cdots &amp; 1 \\
-* &amp; * &amp; * &amp; \cdots &amp; * \\
-* &amp; \vdots &amp; &amp; &amp; \vdots \\
-* &amp; * &amp; * &amp; \cdots &amp; *  
-\end{bmatrix} \in \mathbb{R}^{s(n,t) \times r}
+1 &amp; * &amp; 0 &amp; 0 &amp; * &amp; \cdots &amp; 0 &amp; * &amp; * &amp; * \\
+&amp; &amp; 1 &amp; 0 &amp; * &amp; \cdots &amp; 0 &amp; * &amp; * &amp; * \\
+  &amp; &amp; &amp; 1 &amp; * &amp; \cdots &amp; 0 &amp; * &amp; * &amp; * \\
+    &amp; &amp; &amp;  &amp;  &amp; \cdots &amp; 0 &amp; * &amp; * &amp; * \\
+      &amp; &amp; &amp;  &amp;  &amp; \ddots &amp; 0 &amp; * &amp; * &amp; * \\
+      &amp; &amp; &amp;  &amp;  &amp;  &amp; 1 &amp; * &amp; * &amp; *
+\end{bmatrix} \in \mathbb{R}^{r \times s(n,t)}.
 \]</span>
-where each “<span class="math inline">\(*\)</span>” indicates a nonzero element. By construction of the moment matrix, each row of <span class="math inline">\(V\)</span> and <span class="math inline">\(U\)</span> is indexed by a monomial <span class="math inline">\(x^{\alpha} \in [x]_t\)</span>. Pivot elements in <span class="math inline">\(U\)</span>, i.e., the first nonzero element in each column of <span class="math inline">\(U\)</span>, correspond to monomials <span class="math inline">\(x^{\beta_j},j=1,\dots,r\)</span>. Let these monomials form a basis
+The columns of <span class="math inline">\(U\)</span> are labeled by the standard monomials <span class="math inline">\(x^{\alpha}, \alpha \in \mathcal{F}_{n,t}\)</span>. The RREF <span class="math inline">\(U\)</span> has <span class="math inline">\(r\)</span> pivot columns (columns having the first nonzero element in each row), say labelled by
 <span class="math display">\[
+B_0 = \{ \beta_1, \dots, \beta_r \}, \quad \beta_i \in \mathcal{F}_{n,t}, i=1,\dots,t.
+\]</span>
+Let <span class="math inline">\(e_i\)</span> be the standard basis vector with all zeros except <span class="math inline">\(1\)</span> at the <span class="math inline">\(i\)</span>-th row, form the new set
+<span class="math display">\[
+B_1 := (e_1 + B_0) \cup \dots \cup (e_n + B_0) \backslash B_0.
+\]</span></p>
+<p>The following result shows that we can obtain all the solutions <span class="math inline">\(x_1,\dots,x_r\)</span> by solving a system of polynomial equations.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:ExtractingSolutions" class="lemma"><strong>Lemma 5.1  (Extracting Solutions) </strong></span>Suppose the flat extension condition holds for <span class="math inline">\(y \in \mathbb{R}^{s(n,2t)}\)</span>, then,
+<span class="math display">\[
+\mathbb{R}[x]/I = \mathrm{span}\{ [x^{\beta_1}], \dots, [x^{\beta_r}] \},
+\]</span>
+and the points <span class="math inline">\(x_1,\dots,x_r\)</span> in <span class="math inline">\(\mathrm{supp}(\nu)\)</span> are precisely solutions to the following polynomial system of equations
+<span class="math display" id="eq:extract-solution-polynomial-system">\[\begin{equation}
+p_{\alpha}(x) = x^{\alpha} - \sum_{j=1}^r U(j,\alpha) x^{\beta_j} = 0, \quad \alpha \in B_1.
+\tag{5.23}
+\end{equation}\]</span></p>
+</div>
+</div>
+<p>The fact that all the polynomials <span class="math inline">\(p_{\alpha}(x), \alpha \in B_1\)</span> are in the null space of <span class="math inline">\(M_t[y]\)</span> can be deduced from the RREF <span class="math inline">\(U\)</span>, e.g., you can see <a href="https://people.math.carleton.ca/~kcheung/math/notes/MATH1107/wk09/09_basis_for_nullspace.html">this webpage about how to find the null space of an RREF</a>.</p>
+<!-- On the other hand, we can perform a rank-$r$ factorization of the moment matrix $M_t[y]$
+$$
+M_t[y] = V V\tran,
+$$
+for some $V \in \Real{s(n,t) \times r}$. For example, this can be done by eigen decomposition or Cholesky factorization. Clearly, $V$ and $V_\star$ span the same linear subspace (the orthogonal complement of the kernel of the moment matrix $M_t[y]$, also we know the space spanned by $V_\star$ has the basis $[x_1]_t,\dots,[x_r]_t$). So the general ideal here is to find a set of basis of the space spanned by $V$ first and then establish connections between the that set of basis with another set of basis $[x_1]_t,\dots,[x_r]_t$.
+
+We can first reduce $V$ to column echelon form:
+$$
+U = \begin{bmatrix}
+1 & & & & \\
+* & & & & \\
+0 & 1 & & & \\
+0 & 0 & 1 & & \\
+* & * & * & & \\
+ & \vdots & & \ddots & \\
+ 0 & 0 & 0 & \cdots & 1 \\
+ * & * & * & \cdots & * \\
+ * & \vdots & & & \vdots \\
+ * & * & * & \cdots & *  
+\end{bmatrix} \in \Real{s(n,t) \times r}
+$$
+where each "$*$" indicates a nonzero element. By construction of the moment matrix, each row of $V$ and $U$ is indexed by a monomial $x^{\alpha} \in [x]_t$. Pivot elements in $U$, i.e., the first nonzero element in each column of $U$, correspond to monomials $x^{\beta_j},j=1,\dots,r$. Let these monomials form a basis 
+$$
 w(x) = \begin{bmatrix}
 x^{\beta_1} \\ \vdots \\ x^{\beta_r},
 \end{bmatrix}
-\]</span>
-then we have
-<span class="math display" id="eq:extract-solution-polynomial-system">\[\begin{equation}
+$$
+then we have 
+\begin{equation}
 [x]_t = U w(x)
-\tag{5.23}
-\end{equation}\]</span>
-for all <span class="math inline">\(x_i,i=1,\dots,r\)</span>. This is a system of <span class="math inline">\(s(n,t)\)</span> polynomial equations.</p>
+(\#eq:extract-solution-polynomial-system)
+\end{equation}
+for all $x_i,i=1,\dots,r$. This is a system of $s(n,t)$ polynomial equations.  -->
 <p>Our goal now becomes to find all the roots of the system <a href="Moment.html#eq:extract-solution-polynomial-system">(5.23)</a>. This is something we learned how to solve in Chapter <a href="SOS.html#ZeroDimIdeal">4.1.5</a>! Specifically, the basic strategy is to first find the multiplication matrices, and then simultaneously diagonalize them, or use a more robust procedure suggested in <span class="citation">(<a href="#ref-corless1997reordered">Corless, Gianni, and Trager 1997b</a>)</span>, which I asked you to practice in one of the problem sets.</p>
 <p>Let us make this solution extraction procedure concrete by going through an example.</p>
 <div class="examplebox">
@@ -1191,7 +1243,7 @@ V = \begin{bmatrix}
 -5.6128 &amp; -0.7627 &amp; -0.1365
 \end{bmatrix}.
 \]</span>
-Reduce <span class="math inline">\(V\)</span> to column echelon form
+Reduce <span class="math inline">\(V\)</span> to column echelon form (which is equivalent to reduce <span class="math inline">\(V^\top\)</span> to row echelon form)
 <span class="math display">\[
 U = \begin{bmatrix}
 1 &amp; &amp; \\
