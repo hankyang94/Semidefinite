@@ -898,7 +898,65 @@ M_t[y] & = \lambda_1 [x_1]_t [x_1]_t\tran + \dots + \lambda_r [x_r]_t [x_r]_t\tr
  \end{pmatrix}}_{:= V_\star\tran \in \Real{r \times s(n,t)}}
 \end{split}
 \end{equation}
-On the other hand, we can perform a rank-$r$ factorization of the moment matrix $M_t[y]$
+
+A polynomial $p \in \poly{x}_t$ such that $p \equiv 0$ on $\supp(\nu)$ if and only if $M_t[y] \vectorize(p) = 0$ because
+$$
+0 = \int p(x)^2 d\nu(x) = \vectorize(p)\tran M_t[y] \vectorize(p).
+$$
+We now look for polynomials from the null space (or kernel) of $M_t[y]$, for which we denote $\ker (M_t[y])$. Consider the ideal 
+$$
+I := \Ideal[ \cbrace{p \in \poly{x}_t \mid \vectorize(p) \in \ker(M_t[y])} ].
+$$
+We will show that we can construct a basis for the quotient space $\poly{x} / I$.
+
+Let the spectral decomposition of $M_t[y]$ be 
+$$
+M_t[y] = V \Lambda V\tran, \quad V \in \Real{s(n,t) \times r}.
+$$
+Clearly, the kernel of $M_t[y]$ is the same as the null space of $V\tran$:
+$$
+\ker(M_t[y]) = \ker(V\tran).
+$$
+Therefore, to get the kernel of $M_t[y]$, we can first put $V\tran$ into [reduced row echelon form](https://en.wikipedia.org/wiki/Row_echelon_form#:~:text=row%20echelon%20form-,A%20matrix%20is%20in%20row%20echelon%20form%20if,entry%20of%20every%20row%20above.) (RREF, for a square matrix, the RREF can be thought of as the upper triangular form), e.g., using the Matlab [`rref`](https://www.mathworks.com/help/matlab/ref/rref.html) function:
+$$
+U = \begin{bmatrix}
+1 & * & 0 & 0 & * & \cdots & 0 & * & * & * \\
+ & & 1 & 0 & * & \cdots & 0 & * & * & * \\
+  & & & 1 & * & \cdots & 0 & * & * & * \\
+    & & &  &  & \cdots & 0 & * & * & * \\
+      & & &  &  & \ddots & 0 & * & * & * \\
+      & & &  &  &  & 1 & * & * & * 
+\end{bmatrix} \in \Real{r \times s(n,t)}.
+$$
+The columns of $U$ are labeled by the standard monomials $x^{\alpha}, \alpha \in \calF_{n,t}$. The RREF $U$ has $r$ pivot columns (columns having the first nonzero element in each row), say labelled by 
+$$
+B_0 = \cbrace{\beta_1, \dots, \beta_r}, \quad \beta_i \in \calF_{n,t}, i=1,\dots,t.
+$$
+Let $e_i$ be the standard basis vector with all zeros except $1$ at the $i$-th row, form the new set
+$$
+B_1 := (e_1 + B_0) \cup \dots \cup (e_n + B_0) \backslash B_0.
+$$
+
+The following result shows that we can obtain all the solutions $x_1,\dots,x_r$ by solving a system of polynomial equations.
+
+::: {.theorembox}
+::: {.lemma #ExtractingSolutions name="Extracting Solutions"}
+Suppose the flat extension condition holds for $y \in \Real{s(n,2t)}$, then,
+$$
+\poly{x}/I = \myspan\cbrace{[x^{\beta_1}], \dots, [x^{\beta_r}]},
+$$
+and the points $x_1,\dots,x_r$ in $\supp(\nu)$ are precisely solutions to the following polynomial system of equations 
+\begin{equation}
+p_{\alpha}(x) = x^{\alpha} - \sum_{j=1}^r U(j,\alpha) x^{\beta_j} = 0, \quad \alpha \in B_1.
+(\#eq:extract-solution-polynomial-system)
+\end{equation}
+:::
+:::
+
+The fact that all the polynomials $p_{\alpha}(x), \alpha \in B_1$ are in the null space of $M_t[y]$ can be deduced from the RREF $U$, e.g., you can see [this webpage about how to find the null space of an RREF](https://people.math.carleton.ca/~kcheung/math/notes/MATH1107/wk09/09_basis_for_nullspace.html).
+
+
+<!-- On the other hand, we can perform a rank-$r$ factorization of the moment matrix $M_t[y]$
 $$
 M_t[y] = V V\tran,
 $$
@@ -930,7 +988,7 @@ then we have
 [x]_t = U w(x)
 (\#eq:extract-solution-polynomial-system)
 \end{equation}
-for all $x_i,i=1,\dots,r$. This is a system of $s(n,t)$ polynomial equations. 
+for all $x_i,i=1,\dots,r$. This is a system of $s(n,t)$ polynomial equations.  -->
 
 Our goal now becomes to find all the roots of the system \@ref(eq:extract-solution-polynomial-system). This is something we learned how to solve in Chapter \@ref(ZeroDimIdeal)! Specifically, the basic strategy is to first find the multiplication matrices, and then simultaneously diagonalize them, or use a more robust procedure suggested in [@corless1997reordered], which I asked you to practice in one of the problem sets.
 
@@ -979,7 +1037,7 @@ V = \begin{bmatrix}
 -5.6128 & -0.7627 & -0.1365
 \end{bmatrix}.
 $$
-Reduce $V$ to column echelon form
+Reduce $V$ to column echelon form (which is equivalent to reduce $V\tran$ to row echelon form)
 $$
 U = \begin{bmatrix}
 1 & & \\

@@ -110,6 +110,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\mom}{\mathrm{mom}}
 \newcommand{\preorder}{\mathrm{Preorder}}
 \newcommand{\supp}{\mathrm{supp}}
+\newcommand{\myspan}{\mathrm{span}}
 
 
 <!-- \newcommand{\deg}{\mathrm{deg}} -->
