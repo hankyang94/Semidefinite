@@ -595,7 +595,7 @@ and both $X^\star$ and $y^\star$ are optimal.
 
 ### Geometric Properties 
 
-## Software for Conic Optimization
+## Software for Conic Optimization {#SoftwareConic}
 
 Linear optimization over the nonnegative orthant ($\Real{n}_{+}$), the second-order cone ($\calQ_{n}$), and the positive semidefinite cone ($\psd{n}$) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+. 
 

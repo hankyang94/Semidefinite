@@ -105,9 +105,11 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 \newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
 <!-- \newcommand{\lceil}[1]{\left\lceil #1 \right\rceil} -->
 \newcommand{\qmodule}{\mathrm{Qmodule}}
 \newcommand{\mom}{\mathrm{mom}}
+\newcommand{\loc}{\mathrm{loc}}
 \newcommand{\preorder}{\mathrm{Preorder}}
 \newcommand{\supp}{\mathrm{supp}}
 \newcommand{\myspan}{\mathrm{span}}
