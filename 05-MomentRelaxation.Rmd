@@ -999,12 +999,15 @@ Let us make this solution extraction procedure concrete by going through an exam
 Consider the polynomial optimization problem 
 \begin{equation}
 \begin{split}
-\min_{x \in \Real{2}} & \quad (x_1 - 1)^2 + (x_1 - x_2)^2 + (x_2 - 3)^2 \\
+\min_{x \in \Real{2}} & \quad -(x_1 - 1)^2 - (x_1 - x_2)^2 - (x_2 - 3)^2 \\
 \subject & \quad 1 - (x_1 - 1)^2 \geq 0 \\
 & \quad 1 - (x_1 - x_2)^2 \geq 0 \\
 & \quad 1 - (x_2 - 3)^2 \geq 0
 \end{split}
 \end{equation}
+
+We can implement the primal moment relaxation using the conversion approach in Chapter \@ref(SOSConversionSDPSecond) and solve the resulting SDP using MOSEK. You can check out [the code](https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/example_moment_sos.m), which is quite easy to use.
+
 Solving the moment relaxation with $\kappa =2$, we obtain 
 $$
 \rank(M_1[y]) = \rank(M_2[y]) = 3.
@@ -1242,7 +1245,7 @@ the primal conic form of \@ref(eq:moment-Putinar-dual-conic-form) reads
 It is not too difficult to observe that the primal conic form \@ref(eq:moment-Putinar-primal-conic-form) is just the conic representation of the dual SOS program \@ref(eq:SOS-Putinar-restate), because the linear constraints in \@ref(eq:moment-Putinar-primal-conic-form) are exactly those that match the coefficients of the two polynomials "$p(x)$" and "$\gamma + \Ideal[h]_{2\kappa} + \qmodule[g]_{2\kappa}$".
 
 
-### The Second Approach 
+### The Second Approach {#SOSConversionSDPSecond}
 
 The first conversion approach generates $X \in \calK$, which contains not only PSD variables but also free variables. In the second approach, we can generate a conic program with only PSD variables.
 
