@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-03-25}
+\date{2024-03-27}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -284,9 +284,11 @@ arc=4pt}
 \newcommand{\initial}[1]{\mathrm{in}(#1)}
 \newcommand{\NormalForm}{\mathrm{NormalForm}}
 \newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
 
 \newcommand{\qmodule}{\mathrm{Qmodule}}
 \newcommand{\mom}{\mathrm{mom}}
+\newcommand{\loc}{\mathrm{loc}}
 \newcommand{\preorder}{\mathrm{Preorder}}
 \newcommand{\supp}{\mathrm{supp}}
 \newcommand{\myspan}{\mathrm{span}}
@@ -1657,7 +1659,7 @@ and both \(X^\star\) and \(y^\star\) are optimal.
 
 \subsection{Geometric Properties}\label{geometric-properties-1}
 
-\section{Software for Conic Optimization}\label{software-for-conic-optimization}
+\section{Software for Conic Optimization}\label{SoftwareConic}
 
 Linear optimization over the nonnegative orthant (\(\mathbb{R}^{n}_{+}\)), the second-order cone (\(\mathcal{Q}_{n}\)), and the positive semidefinite cone (\(\mathbb{S}^{n}_{+}\)) forms the foundation of modern convex optimization, commonly referred to as conic optimization. These three types of cones are self-dual, and there exist efficient algorithms to solve the convex optimization problems. Popular solvers include SDPT3, SeDuMi, MOSEK, and SDPNAL+.
 
@@ -4972,7 +4974,7 @@ For the binary case \(n=2\) and \(d=2\), we have
 \mathcal{F}_{2,2} = \{ (00),(10),(01),(20),(11),(02) \},
 \]
 and hence the second-order moment matrix is
-\[
+\begin{equation}
 M_2[y] = [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{2,2}} = \begin{bmatrix}
 y_{00} & y_{10} & y_{01} & y_{20} & y_{11} & y_{02} \\
 y_{10} & y_{20} & y_{11} & y_{30} & y_{21} & y_{12} \\
@@ -4981,7 +4983,8 @@ y_{20} & y_{30} & y_{21} & y_{40} & y_{31} & y_{22} \\
 y_{11} & y_{21} & y_{12} & y_{31} & y_{22} & y_{13} \\
 y_{02} & y_{12} & y_{03} & y_{22} & y_{13} & y_{04}
 \end{bmatrix}.
-\]
+\label{eq:example-second-order-moment-mat}
+\end{equation}
 Equivalently, one can check that \(M_2[y]\) is equivalent to applying \(\ell_y\) to the polynomial matrix \([x]_2 [x]_2^\top\).
 \end{example}
 
@@ -5084,13 +5087,14 @@ x_2 - x_1^2 x_2 - x_2^3 & x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 & x_2^2 - x_1^2 x_2^2 
 \end{split}
 \end{equation}
 and
-\[
+\begin{equation}
 L_g^d[y] = \ell_y (g\cdot [x]_1 [x]_1^\top) = \begin{bmatrix}
-1 - y_{20} - y_{02} & y_{10} - y_{30} - y_{12} & y_{01} - y_{21} - y_{03} \\
+y_{00} - y_{20} - y_{02} & y_{10} - y_{30} - y_{12} & y_{01} - y_{21} - y_{03} \\
 y_{10} - y_{30} - y_{12} & y_{20} - y_{40} - y_{22} & y_{11} - y_{31} - y_{13} \\
 y_{01} - y_{21} - y_{03} &  y_{11} - y_{31} - y_{13} & y_{02} - y_{22} - y_{04}
 \end{bmatrix}.
-\]
+\label{eq:example-localizing-matrix}
+\end{equation}
 A key observation is that the entries of \(L_g^d[y]\) are affine functions of the TMS \(y\).
 
 \textbf{Dual of Quadratic Module}. Given a tuple of polynomials \(g = (g_1,\dots,g_{l_g})\), recall (from Definition \ref{def:QuadraticModule}) that the quadratic module associated with \(g\) is
@@ -5243,7 +5247,7 @@ With the machinery introduced above on the dual of the cone of polynomials, we c
 \begin{equation}
 \boxed{
 \begin{split}
-\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2d)}} & \quad \langle \ell_y, p \rangle \\
+\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2\kappa)}} & \quad \langle \ell_y, p \rangle \\
 \mathrm{s.t.}& \quad y \in \mathcal{Z}[h]_{2\kappa} \cap \mathcal{M}[g]_{2\kappa} \\
 & \quad \langle \ell_y, 1 \rangle = 1
 \end{split}
@@ -5530,8 +5534,6 @@ with optimal value numerically zero.
 
 In all three cases, the geometry of the feasible set never changes, what changed was the algebraic description of the same geometric set. This shows that the moment-SOS hierarchy can be sensitive to how the user describes the problem.
 \end{example}
-
-\subsection{Conversion to Standard SDP}\label{conversion-to-standard-sdp}
 
 \section{Measure-Theoretic Interpretation}\label{measure-theoretic-interpretation}
 
@@ -5942,6 +5944,237 @@ x(2) = \begin{bmatrix} 1 \\ 2 \end{bmatrix}, \quad
 x(3) = \begin{bmatrix} 2 \\ 2 \end{bmatrix}.
 \]
 \end{example}
+
+\section{Conversion to Standard SDP}\label{conversion-to-standard-sdp}
+
+\subsection{The First Approach}\label{the-first-approach}
+
+The moment relaxation \eqref{eq:moment-Putinar} at the \(\kappa\)-th relaxation order can be written as
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} & \quad \langle - \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}& \quad y_0 = 1 \\
+& \quad M_\kappa[y] \succeq 0 \\
+& \quad L_{g_i}^{\kappa}[y] \succeq 0, i=1,\dots,l_g \\
+& \quad L_{h_i}^{2\kappa}[y] = 0, i=1,\dots,l_h
+\end{split},
+\label{eq:moment-Putinar-y}
+\end{equation}
+where I have converted the \(\min\) to \(\max\). We now sketch how we can write problem \eqref{eq:moment-Putinar-y} as a standard conic optimization problem described in Chapter \ref{SoftwareConic}, in particular the dual conic problem \eqref{eq:dual-conic}.
+
+First, we can write the moment matrix as
+\[
+M_{\kappa}[y] = \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_{\alpha}, \quad B_{\alpha} \in \mathbb{S}^{s(n,\kappa)}, \forall \alpha \in \mathcal{F}_{n,2\kappa},
+\]
+where \(B_\alpha\) are constant (sparse) matrices. For example, for the moment matrix \eqref{eq:example-second-order-moment-mat} in Example \ref{exm:MomentMatrix}, \(B_\alpha\) corresponding to the exponent \((1,1)\) is
+\[
+B_{11} = \begin{bmatrix}
+0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+One interesting property is
+\[
+\langle B_\alpha, B_\beta \rangle = 0, \quad \forall \alpha \neq \beta,
+\]
+simply because \(y_\alpha\) and \(y_\beta\) does not appear in the same location of the moment matrix.
+
+Similarly, we can write each localizing matrix \(L_{g_i}^\kappa[y]\) as
+\[
+L_{g_i}^{\kappa}[y] = \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_{\alpha} B^{g_i}_\alpha, \quad B_{\alpha}^{g_i} \in \mathbb{S}^{s(n,s_i)}, s_i = \lfloor  (2\kappa - \deg(g_i))/2  \rfloor,i=1,\dots,l_g,
+\]
+where \(B_{\alpha}^{g_i}\) are constant matrices. For example, for the localizing matrix in \eqref{eq:example-localizing-matrix}, \(B_\alpha^g\) of the exponent \(\alpha = (2,2)\) is
+\[
+B_{22}^{g} = \begin{bmatrix}
+0 & 0 & 0 \\
+0 & -1 & 0 \\
+0 & 0 & -1
+\end{bmatrix}.
+\]
+
+Lastly, the localizing vector is simply
+\[
+L_{h_i}^{2\kappa}[y] = (H^{2\kappa}_i)^\top y, \quad H^{2\kappa}_i \in \mathbb{R}^{s(n,2\kappa) \times s(n,t_i)}, t_i = 2\kappa - \deg(h_i), i=1,\dots,l_h.
+\]
+
+With these, we can write problem \eqref{eq:moment-Putinar-y} as
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} & \quad \langle - \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}& \quad \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_\alpha \succeq 0 \\
+& \quad \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_\alpha^{g_i} \succeq 0, \quad i=1,\dots,l_g \\
+& \quad \underbrace{\begin{bmatrix} 1 \\
+0 \\ \vdots \\ 0 \end{bmatrix}}_{f} - \underbrace{\begin{bmatrix} 
+e_1^\top\\
+(H^{2\kappa}_1)^\top\\
+\vdots \\
+(H^{2\kappa}_{l_h})^\top
+\end{bmatrix}}_{F} y = 0
+\end{split}
+\label{eq:moment-Putinar-y-1}
+\end{equation}
+where \(e_1\) is the all-zero vector except the first entry equal to \(1\).
+
+Now consider the vector space
+\[
+\mathcal{V}= \mathbb{S}^{s(n,\kappa)} \times \mathbb{S}^{s(n,s_1)} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})} \times \mathbb{R}^{t}, \quad t:= 1 + s(n,t_1) + \dots + s(n,t_{l_h}),
+\]
+and the cone within \(\mathcal{V}\)
+\[
+\mathcal{K}= \mathbb{S}^{s(n,\kappa)}_{+} \times \mathbb{S}^{s(n,s_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})}_{+} \times 0^{t}.
+\]
+
+Consider the function \(\phi: \mathbb{R}^{s(n,2\kappa)} \rightarrow \mathcal{V}\) defined as
+\begin{equation}
+\phi(y) = \left( -\sum_{\alpha} y_\alpha B_\alpha, -\sum_{\alpha} y_\alpha B_\alpha^{g_1}, \cdots, -\sum_{\alpha} y_\alpha B_{\alpha}^{g_{l_g}}, Fy   \right) \in \mathcal{V}
+\label{eq:moment-Putinar-adjoint}
+\end{equation}
+and the vector
+\[
+C = \left(0,0,\cdots,0,f \right) \in \mathcal{V}.
+\]
+
+Observe that problem \eqref{eq:moment-Putinar-y-1} is now in standard dual conic form
+\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} & \quad \langle -\mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}& \quad C - \phi(y) \in \mathcal{K}.
+\end{split}
+\label{eq:moment-Putinar-dual-conic-form}
+\end{equation}
+
+We can also write the primal conic form of \eqref{eq:moment-Putinar-dual-conic-form} using standard conic duality. The linear map \(\phi(y)\) in \eqref{eq:moment-Putinar-adjoint} can be written as
+\[
+\phi(y) = \sum_{\alpha} y_{\alpha} A_{\alpha},
+\]
+with
+\[
+A_{\alpha} = \left( -B_{\alpha}, - B_{\alpha}^{g_1}, \cdots, - B_{\alpha}^{g_{l_g}}, f_{\alpha} \right) \in \mathcal{V}, \quad \alpha \in \mathcal{F}_{n,2\kappa},
+\]
+where \(f_{\alpha}\) is the column of \(F\) indexed by the exponent \(\alpha\). With the dual cone of \(\mathcal{K}\) being
+\[
+\mathcal{K}^* = \mathbb{S}^{s(n,\kappa)}_{+} \times \mathbb{S}^{s(n,s_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})}_{+} \times \mathbb{R}^{t},
+\]
+the primal conic form of \eqref{eq:moment-Putinar-dual-conic-form} reads
+\begin{equation}
+\begin{split}
+\min_{X \in \mathcal{V}} & \quad \langle C, X \rangle \\
+\mathrm{s.t.}& \quad \langle A_\alpha, X \rangle = - p_{\alpha}, \quad \alpha \in \mathcal{F}_{n,2\kappa} \\
+& \quad X \in \mathcal{K}^*
+\end{split}
+\label{eq:moment-Putinar-primal-conic-form}
+\end{equation}
+It is not too difficult to observe that the primal conic form \eqref{eq:moment-Putinar-primal-conic-form} is just the conic representation of the dual SOS program \eqref{eq:SOS-Putinar-restate}, because the linear constraints in \eqref{eq:moment-Putinar-primal-conic-form} are exactly those that match the coefficients of the two polynomials ``\(p(x)\)'' and ``\(\gamma + \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}\)''.
+
+\subsection{The Second Approach}\label{the-second-approach}
+
+The first conversion approach generates \(X \in \mathcal{K}\), which contains not only PSD variables but also free variables. In the second approach, we can generate a conic program with only PSD variables.
+
+\textbf{Rewriting the moment matrix}. To do so, I will first create a variable \(X_{\mathrm{mom}} \in \mathbb{S}^{s(n,\kappa)}\) and enforce it to be a valid moment matrix by using linear constraints. This is equivalent to saying
+\begin{equation}
+X_{\mathrm{mom}} = \sum_{\alpha} y_{\alpha} B_{\alpha},
+\label{eq:X-mom-decomposition}
+\end{equation}
+for some \(y \in \mathbb{R}^{s(n,2\kappa)}\), or in other words
+\[
+X_{\mathrm{mom}} \in B := \mathrm{span}\{ B_{\alpha} \}_{\alpha \in \mathcal{F}_{n,2\kappa}} \subset \mathbb{S}^{s(n,\kappa)}
+\]
+i.e., \(X_{\mathrm{mom}}\) lives in the subspace \(B\) of dimension/rank \(s(n,2\kappa)\). The dimension of \(\mathbb{S}^{s(n,\kappa)}\) is
+\[
+s(n,\kappa)^{\Delta} := \frac{s(n,\kappa) (s(n,\kappa) +1)}{2}.
+\]
+Therefore, denote the orthogonal complement of \(B\) as \(B^{\perp}\) with dimension
+\[
+d(n,\kappa) := \dim (B^{\perp}) = s(n,\kappa)^{\Delta} - s(n,2\kappa),
+\]
+and a (potentially orthonormal) set of basis of \(B^{\perp}\) as
+\[
+\{ B^{\perp}_{1}, \dots, B^{\perp}_{d(n,\kappa)}  \}.
+\]
+Then \(X_{\mathrm{mom}}\) admitting a moment matrix representation \eqref{eq:X-mom-decomposition} is equivalent to a set of linear constraints
+\begin{equation}
+\langle B^{\perp}_{i},  X_{\mathrm{mom}}  \rangle = 0, i=1,\dots, d(n,\kappa).
+\label{eq:moment-matrix-valid-constraints}
+\end{equation}
+In addition, we have
+\begin{equation}
+\langle B_{\alpha}, X_{\mathrm{mom}} \rangle = \left\langle B_{\alpha}, \sum_{\beta}y_{\beta} B_{\beta}  \right\rangle = c_{\alpha} y_{\alpha}, \quad \alpha \in \mathcal{F}_{n,2\kappa},
+\label{eq:from-X-mom-to-y-mom}
+\end{equation}
+where \(c_{\alpha} := \Vert B_{\alpha} \Vert_\mathrm{F}^2\) is a constant. Therefore, the constraint \(y_0 = 1\) can be easily written as
+\begin{equation}
+\langle B_0, X_{\mathrm{mom}} \rangle = 1
+\label{eq:moment-matrix-one-constraint}
+\end{equation}
+because \(\Vert B_0 \Vert_\mathrm{F}^2 = 1\).
+
+\textbf{Adding localizing vector constraints}. Next we look at the constraints that the localizing vectors must be zero:
+\[
+\bar{F}y =
+\begin{bmatrix}
+(H_1^{2\kappa})^\top\\
+\vdots \\
+(H_{l_h}^{2\kappa})^\top
+\end{bmatrix} y = 0, \quad \bar{F} \in \mathbb{R}^{\bar{t} \times s(n,2\kappa)}, \bar{t}:=t-1.
+\]
+Using \eqref{eq:from-X-mom-to-y-mom}, this is equivalent to another set of linear constraints on the moment matrix
+\begin{equation}
+\bar{F} \begin{bmatrix}
+\vdots \\
+\langle B_{\alpha}, X_{\mathrm{mom}} \rangle\\
+\vdots 
+\end{bmatrix} = 0 \quad \Leftrightarrow \quad \langle H_i, X_{\mathrm{mom}} \rangle = 0, i=1,\dots,\bar{t}
+\label{eq:moment-matrix-localizing-vector-constraints}
+\end{equation}
+with (if you want explict expressions of \(H_i\)'s)
+\[
+H_i := \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} \bar{F}_{i,\alpha} B_{\alpha}, \quad i=1,\dots,\bar{t}
+\]
+where \(\bar{F}_{i,\alpha}\) is the \((i,\alpha)\) entry of \(\bar{F}\).
+
+\textbf{Adding localizing matrices}. Finally, we create additional variables for the localizing matrices
+\[
+X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g},
+\]
+and enforce that their entries are linear combinations of the moments. Recall that a localizing matrix is
+\[
+L_{g_i}^{\kappa}[y] = \ell_y \left( g_i(x)\cdot [x]_{s_i}[x]_{s_i}^\top\right).
+\]
+Writing \(g_i(x) = \sum_\gamma g_{i,\gamma} x^{\gamma}\), this means the \((\alpha,\beta)\) entry of \(L_{g_i}^{\kappa}[y]\) is
+\[
+\sum_{\gamma} g_{i,\gamma} y_{\alpha+\beta+\gamma}, \quad \alpha,\beta \in \mathcal{F}_{n,s_i}.
+\]
+Therefore, for each localizing matrix, we have the constraint
+\begin{equation}
+\langle B_{i,\alpha,\beta}, X_{\mathrm{loc},i} \rangle = X_{\mathrm{loc},i,\alpha,\beta} = \langle G_{i,\alpha,\beta}, X_{\mathrm{mom}} \rangle, \quad i=1,\dots,l_g, \alpha,\beta \in \mathcal{F}_{n,s_i}, \alpha \succeq \beta,
+\label{eq:moment-matrix-localizing-matrix-constraints}
+\end{equation}
+where (if you want explict expressions of \(G_{i,\alpha,\beta}\))
+\[
+G_{i,\alpha,\beta} = \sum_{\gamma} \frac{1}{c_{\alpha+\beta+\gamma}} g_{i,\gamma} B_{\alpha+\beta+\gamma}.
+\]
+
+\textbf{The cost function}. Finally, the cost function is
+\[
+\sum_{\alpha} p_{\alpha} y_{\alpha} = \sum_{\alpha} \frac{p_{\alpha}}{c_{\alpha}} \langle B_{\alpha}, X_{\mathrm{mom}} \rangle = \left\langle \sum_{\alpha} \frac{p_{\alpha}}{c_{\alpha}} B_{\alpha} , X_{\mathrm{mom}} \right\rangle := \langle C_{\mathrm{mom}}, X_{\mathrm{mom}} \rangle.
+\]
+
+\textbf{Putting everything together}. The moment relaxation \eqref{eq:moment-Putinar-y} can be written as a standard primal SDP
+\begin{equation}
+\begin{split}
+\min_{\substack{X_{\mathrm{mom}} \\ X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g}} } & \quad \langle C_{\mathrm{mom}}, X_{\mathrm{mom}} \rangle \\
+\mathrm{s.t.}& \quad \langle B_0, X_{\mathrm{mom}} \rangle = 1 \\
+& \quad \langle B_i^{\perp}, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,d(n,\kappa) \\
+& \quad \langle H_i, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,\bar{t} \\
+& \quad \langle B_{i,\alpha,\beta}, X_{\mathrm{loc},i} \rangle - \langle G_{i,\alpha,\beta}, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,l_g, \alpha\succeq\beta \in \mathcal{F}_{n,s_i} \\
+& \quad X_{\mathrm{mom}},X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g} \succeq 0
+\end{split}
+\label{eq:moment-Putinar-standard-primal-SDP}
+\end{equation}
 
   \bibliography{book.bib}
 

@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-03-25" />
+<meta name="date" content="2024-03-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -202,7 +202,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
 <li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#software-for-conic-optimization"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#SoftwareConic"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
 <li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
 <ul>
 <li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
@@ -270,13 +270,15 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="5.1" data-path="Moment.html"><a href="Moment.html#dual-cones-of-polynomials"><i class="fa fa-check"></i><b>5.1</b> Dual Cones of Polynomials</a></li>
 <li class="chapter" data-level="5.2" data-path="Moment.html"><a href="Moment.html#dual-of-quadratic-modules-and-ideals"><i class="fa fa-check"></i><b>5.2</b> Dual of Quadratic Modules and Ideals</a></li>
-<li class="chapter" data-level="5.3" data-path="Moment.html"><a href="Moment.html#the-moment-sos-hierarchy"><i class="fa fa-check"></i><b>5.3</b> The Moment-SOS Hierarchy</a>
-<ul>
-<li class="chapter" data-level="5.3.1" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.3.1</b> Conversion to Standard SDP</a></li>
-</ul></li>
+<li class="chapter" data-level="5.3" data-path="Moment.html"><a href="Moment.html#the-moment-sos-hierarchy"><i class="fa fa-check"></i><b>5.3</b> The Moment-SOS Hierarchy</a></li>
 <li class="chapter" data-level="5.4" data-path="Moment.html"><a href="Moment.html#measure-theoretic-interpretation"><i class="fa fa-check"></i><b>5.4</b> Measure-Theoretic Interpretation</a></li>
 <li class="chapter" data-level="5.5" data-path="Moment.html"><a href="Moment.html#truncated-moment-problem"><i class="fa fa-check"></i><b>5.5</b> Truncated Moment Problem</a></li>
 <li class="chapter" data-level="5.6" data-path="Moment.html"><a href="Moment.html#flat-extension-detecting-global-optimality-and-extracting-solutions"><i class="fa fa-check"></i><b>5.6</b> Flat Extension: Detecting Global Optimality and Extracting Solutions</a></li>
+<li class="chapter" data-level="5.7" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.7</b> Conversion to Standard SDP</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="Moment.html"><a href="Moment.html#the-first-approach"><i class="fa fa-check"></i><b>5.7.1</b> The First Approach</a></li>
+<li class="chapter" data-level="5.7.2" data-path="Moment.html"><a href="Moment.html#the-second-approach"><i class="fa fa-check"></i><b>5.7.2</b> The Second Approach</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -398,7 +400,7 @@ which is also a Hankel matrix.</p>
 \mathcal{F}_{2,2} = \{ (00),(10),(01),(20),(11),(02) \},
 \]</span>
 and hence the second-order moment matrix is
-<span class="math display">\[
+<span class="math display" id="eq:example-second-order-moment-mat">\[\begin{equation}
 M_2[y] = [y_{\alpha + \beta}]_{\alpha,\beta \in \mathcal{F}_{2,2}} = \begin{bmatrix}
 y_{00} &amp; y_{10} &amp; y_{01} &amp; y_{20} &amp; y_{11} &amp; y_{02} \\
 y_{10} &amp; y_{20} &amp; y_{11} &amp; y_{30} &amp; y_{21} &amp; y_{12} \\
@@ -407,14 +409,15 @@ y_{20} &amp; y_{30} &amp; y_{21} &amp; y_{40} &amp; y_{31} &amp; y_{22} \\
 y_{11} &amp; y_{21} &amp; y_{12} &amp; y_{31} &amp; y_{22} &amp; y_{13} \\
 y_{02} &amp; y_{12} &amp; y_{03} &amp; y_{22} &amp; y_{13} &amp; y_{04}
 \end{bmatrix}.
-\]</span>
+\tag{5.2}
+\end{equation}\]</span>
 Equivalently, one can check that <span class="math inline">\(M_2[y]\)</span> is equivalent to applying <span class="math inline">\(\ell_y\)</span> to the polynomial matrix <span class="math inline">\([x]_2 [x]_2^\top\)</span>.</p>
 </div>
 </div>
 <p>In general, the moment matrix <span class="math inline">\(M_d[y]\)</span> (given a TMS <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span>) defines a <strong>bilinear form</strong> <span class="math inline">\(\langle \cdot, \cdot \rangle_y\)</span> on <span class="math inline">\(\mathbb{R}[x]_d\)</span>. In particular, given any two polynomials <span class="math inline">\(p,q \in \mathbb{R}[x]_d\)</span>, we have
 <span class="math display" id="eq:moment-matrix-bilinear">\[\begin{equation}
 \langle p, q \rangle_y := \ell_y(p q) = \langle \mathrm{vec}(p), M_d[y] \mathrm{vec}(q) \rangle = \mathrm{vec}(p)^\top M_d[y] \mathrm{vec}(q).
-\tag{5.2}
+\tag{5.3}
 \end{equation}\]</span>
 To see why the equation above is true, note that <span class="math inline">\(p(x) = \mathrm{vec}(p)^\top[x]_d\)</span>, <span class="math inline">\(q(x) = \mathrm{vec}(q)^\top[x]_d\)</span>, so
 <span class="math display">\[
@@ -448,7 +451,7 @@ P_{n,2d}^* =  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid \langle \mathrm{vec}(p), y
 To describe the dual cone, we consider the conic hull
 <span class="math display" id="eq:dual-cone-nonnegative">\[\begin{equation}
 \mathcal{R}_{n,2d} =  \left\{  \sum_{i=1}^K \lambda_i [v_i]_{2d} \mid \lambda_i \geq 0, v_i \in \mathbb{R}^{n}, K \in \mathbb{N} \right\} .
-\tag{5.3}
+\tag{5.4}
 \end{equation}\]</span>
 We can clearly see that
 <span class="math display">\[
@@ -490,7 +493,7 @@ as a linear combination of point evaluations. (Hint: consider <span class="math 
 <p><strong>Localizing Matrix</strong>. Let <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> be a truncated multi-sequence (TMS) and <span class="math inline">\(g(x) \in \mathbb{R}[x]_{2d}\)</span> be a given polynomial. Let <span class="math inline">\(s\)</span> be the maximum integer such that <span class="math inline">\(2s + \deg(g) \leq 2d\)</span>, then the <span class="math inline">\(d\)</span>-th order <strong>localizing matrix</strong> of <span class="math inline">\(g\)</span> generated by <span class="math inline">\(y\)</span> is the following symmetric matrix
 <span class="math display" id="eq:localizing-matrix">\[\begin{equation}
 L_{g}^d [y] = \ell_y\left( g(x)\cdot [x]_s [x]_s^\top\right),
-\tag{5.4}
+\tag{5.5}
 \end{equation}\]</span>
 where the application of the linear functional <span class="math inline">\(\ell_y\)</span> to the symmetric polynomial matrix <span class="math inline">\(g(x) \cdot [x]_s [x]_s^\top\)</span> is element-wise. For example, let <span class="math inline">\(g = 1- x_1^2 - x_2^2\)</span>, then
 <span class="math display">\[\begin{equation}
@@ -505,13 +508,14 @@ x_2 - x_1^2 x_2 - x_2^3 &amp; x_1 x_2 - x_1^3 x_2 - x_1 x_2^3 &amp; x_2^2 - x_1^
 \end{split}
 \end{equation}\]</span>
 and
-<span class="math display">\[
+<span class="math display" id="eq:example-localizing-matrix">\[\begin{equation}
 L_g^d[y] = \ell_y (g\cdot [x]_1 [x]_1^\top) = \begin{bmatrix}
-1 - y_{20} - y_{02} &amp; y_{10} - y_{30} - y_{12} &amp; y_{01} - y_{21} - y_{03} \\
+y_{00} - y_{20} - y_{02} &amp; y_{10} - y_{30} - y_{12} &amp; y_{01} - y_{21} - y_{03} \\
 y_{10} - y_{30} - y_{12} &amp; y_{20} - y_{40} - y_{22} &amp; y_{11} - y_{31} - y_{13} \\
 y_{01} - y_{21} - y_{03} &amp;  y_{11} - y_{31} - y_{13} &amp; y_{02} - y_{22} - y_{04}
 \end{bmatrix}.
-\]</span>
+\tag{5.6}
+\end{equation}\]</span>
 A key observation is that the entries of <span class="math inline">\(L_g^d[y]\)</span> are affine functions of the TMS <span class="math inline">\(y\)</span>.</p>
 <p><strong>Dual of Quadratic Module</strong>. Given a tuple of polynomials <span class="math inline">\(g = (g_1,\dots,g_{l_g})\)</span>, recall (from Definition <a href="SOS.html#def:QuadraticModule">4.20</a>) that the quadratic module associated with <span class="math inline">\(g\)</span> is
 <span class="math display">\[
@@ -520,12 +524,12 @@ A key observation is that the entries of <span class="math inline">\(L_g^d[y]\)<
 where <span class="math inline">\(g_0(x):=1\)</span> and <span class="math inline">\(\Sigma[x]\)</span> denotes the set of SOS polynomials. The degree-<span class="math inline">\(2d\)</span> truncation of the quadratic module is
 <span class="math display" id="eq:quadratic-module-truncated">\[\begin{equation}
 \mathrm{Qmodule}[g]_{2d} :=  \left\{  \sum_{i=0}^{l_g} \sigma_i g_i \mid \sigma_i \in \Sigma[x], \deg(\sigma_i g_i) \leq 2d, i=0,\dots,l_g  \right\} .
-\tag{5.5}
+\tag{5.7}
 \end{equation}\]</span>
 Now consider the convex cone defined by the PSD conditions of the localizing matrices:
 <span class="math display" id="eq:tms-cone-dual-qmodule">\[\begin{equation}
 \mathcal{M}[g]_{2d} :=  \left\{  y \in \mathbb{R}^{s(n,2d)} \mid M_d[y] \succeq 0, L_{g_i}^d[y] \succeq 0, i=1,\dots,l_g \right\} .
-\tag{5.6}
+\tag{5.8}
 \end{equation}\]</span>
 The following result shows that <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is the dual cone of <span class="math inline">\(\mathrm{Qmodule}[g]_{2d}\)</span>.</p>
 <div class="theorembox">
@@ -543,7 +547,7 @@ The following result shows that <span class="math inline">\(\mathcal{M}[g]_{2d}\
 </ol>
 </div>
 </div>
-<p>To see 1 of Theorem <a href="Moment.html#thm:DualQuadratedModule">5.4</a>, pick any <span class="math inline">\(f \in \mathrm{Qmodule}[g]_{2d}\)</span> from <a href="Moment.html#eq:quadratic-module-truncated">(5.5)</a>, and any <span class="math inline">\(y \in \mathcal{M}[g]_{2d}\)</span> from <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.6)</a>, we have
+<p>To see 1 of Theorem <a href="Moment.html#thm:DualQuadratedModule">5.4</a>, pick any <span class="math inline">\(f \in \mathrm{Qmodule}[g]_{2d}\)</span> from <a href="Moment.html#eq:quadratic-module-truncated">(5.7)</a>, and any <span class="math inline">\(y \in \mathcal{M}[g]_{2d}\)</span> from <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.8)</a>, we have
 <span class="math display">\[\begin{equation}
 \begin{split}
 \langle f, y \rangle = &amp; \langle \sigma_0, y \rangle + \sum_{i=1}^{l_g} \langle \sigma_i g_i, y \rangle \\
@@ -564,7 +568,7 @@ However, when <span class="math inline">\(\epsilon = 0\)</span>, the polynomial 
 where <span class="math inline">\(\lambda_i\)</span> are the polynomial multipliers. Similarly, the degree-<span class="math inline">\(2d\)</span> truncation of <span class="math inline">\(\mathrm{Ideal}[h]\)</span> is
 <span class="math display" id="eq:ideal-truncated-2d">\[\begin{equation}
 \mathrm{Ideal}[h]_{2d} =  \left\{  \sum_{i=1}^{l_h} \lambda_i h_i \mid \lambda_i \in \mathbb{R}[x], \deg(\lambda_i h_i) \leq 2d,i=1,\dots,l_h \right\} .
-\tag{5.7}
+\tag{5.9}
 \end{equation}\]</span>
 For each <span class="math inline">\(\lambda_i \in \mathbb{R}[x]_{2d - \deg(h_i)}\)</span> such that <span class="math inline">\(\deg(\lambda_i h_i) \leq 2d\)</span>, the coefficients of <span class="math inline">\((\lambda_i h_i\)</span> are linear in that of <span class="math inline">\(\lambda_i\)</span>
 <span class="math display">\[
@@ -599,12 +603,12 @@ Then,
 and the vector
 <span class="math display" id="eq:localizing-vector">\[\begin{equation}
 L_{h_i}^{2d}[y] := (H_i^{2d})^\top y
-\tag{5.8}
+\tag{5.10}
 \end{equation}\]</span>
 is called the <strong>localizing vector</strong> of <span class="math inline">\(h_i\)</span> generated by the TMS <span class="math inline">\(y\)</span>. We are interested in linear functionals that vanish on <span class="math inline">\(\mathrm{Ideal}[h]_{2d}\)</span>. Clearly, this is the subspace
 <span class="math display" id="eq:linear-subspace-tms">\[\begin{equation}
 \mathcal{Z}[h]_{2d} :=  \left\{ y \in \mathbb{R}^{s(n,2d)} \mid L_{h_i}^{2d}[y] = 0,i=1,\dots,l_h  \right\} .
-\tag{5.9}
+\tag{5.11}
 \end{equation}\]</span></p>
 <p>The next result gives the dual of the sum of ideal and quadratic module.</p>
 <div class="theorembox">
@@ -613,7 +617,7 @@ is called the <strong>localizing vector</strong> of <span class="math inline">\(
 <span class="math display">\[
 \left( \mathrm{Ideal}[h]_{2d} + \mathrm{Qmodule}[g]_{2d} \right)^* = \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}
 \]</span>
-where <span class="math inline">\(\mathcal{Z}[h]_{2d}\)</span> is the linear subspace in <a href="Moment.html#eq:linear-subspace-tms">(5.9)</a> and <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is the convex cone in <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.6)</a>.</p>
+where <span class="math inline">\(\mathcal{Z}[h]_{2d}\)</span> is the linear subspace in <a href="Moment.html#eq:linear-subspace-tms">(5.11)</a> and <span class="math inline">\(\mathcal{M}[g]_{2d}\)</span> is the convex cone in <a href="Moment.html#eq:tms-cone-dual-qmodule">(5.8)</a>.</p>
 </div>
 </div>
 <p>To see this, pick any element <span class="math inline">\(f \in \mathrm{Ideal}[h]_{2d} + \mathrm{Qmodule}[g]_{2d}\)</span> and any element <span class="math inline">\(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\)</span>, perform the inner product
@@ -634,7 +638,7 @@ p^\star = \min_{x \in \mathbb{R}^{n}} &amp; \quad p(x) \\
 \mathrm{s.t.}&amp; \quad h_i(x) = 0, i=1,\dots,l_h \\
 &amp; \quad g_i(x) \geq 0, i=1,\dots,l_g
 \end{split}
-\tag{5.10}
+\tag{5.12}
 \end{equation}\]</span>
 Using Putinar’s Positivstellensatz, for any <span class="math inline">\(\kappa \in \mathbb{N}\)</span>, we have the following SOS program
 <span class="math display" id="eq:SOS-Putinar-restate">\[\begin{equation}
@@ -644,21 +648,21 @@ Using Putinar’s Positivstellensatz, for any <span class="math inline">\(\kappa
 \mathrm{s.t.}&amp; \quad p(x) - \gamma \in \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}
 \end{split}
 }
-\tag{5.11}
+\tag{5.13}
 \end{equation}\]</span>
 whose optimal value produces a lower bound to <span class="math inline">\(p^\star\)</span>, i.e., <span class="math inline">\(\gamma_{\kappa}^\star \leq p^\star\)</span>.</p>
-<p>With the machinery introduced above on the dual of the cone of polynomials, we can write down the dual problem of the SOS program <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>
+<p>With the machinery introduced above on the dual of the cone of polynomials, we can write down the dual problem of the SOS program <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>
 <span class="math display" id="eq:moment-Putinar">\[\begin{equation}
 \boxed{
 \begin{split}
-\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2d)}} &amp; \quad \langle \ell_y, p \rangle \\
+\beta_{\kappa}^\star = \min_{y \in \mathbb{R}^{s(n,2\kappa)}} &amp; \quad \langle \ell_y, p \rangle \\
 \mathrm{s.t.}&amp; \quad y \in \mathcal{Z}[h]_{2\kappa} \cap \mathcal{M}[g]_{2\kappa} \\
 &amp; \quad \langle \ell_y, 1 \rangle = 1
 \end{split}
 }
-\tag{5.12}
+\tag{5.14}
 \end{equation}\]</span>
-In problem <a href="Moment.html#eq:moment-Putinar">(5.12)</a>, <span class="math inline">\(\langle \ell_y, p \rangle\)</span> and <span class="math inline">\(\langle \ell_y, 1 \rangle\)</span> should be interpreted as applying the linear functional associated with the TMS <span class="math inline">\(y\)</span> to the polynomial <span class="math inline">\(p\)</span> and the polynomial “<span class="math inline">\(1\)</span>”. As a result, the constraint <span class="math inline">\(\langle \ell_y, 1 \rangle=1\)</span> implies <span class="math inline">\(y_0 = 1\)</span>. To see why <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is the dual of <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>, pick any <span class="math inline">\(\gamma\)</span> that is feasible for <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> and any <span class="math inline">\(y\)</span> that is feasible for <a href="Moment.html#eq:moment-Putinar">(5.12)</a>, we have
+In problem <a href="Moment.html#eq:moment-Putinar">(5.14)</a>, <span class="math inline">\(\langle \ell_y, p \rangle\)</span> and <span class="math inline">\(\langle \ell_y, 1 \rangle\)</span> should be interpreted as applying the linear functional associated with the TMS <span class="math inline">\(y\)</span> to the polynomial <span class="math inline">\(p\)</span> and the polynomial “<span class="math inline">\(1\)</span>”. As a result, the constraint <span class="math inline">\(\langle \ell_y, 1 \rangle=1\)</span> implies <span class="math inline">\(y_0 = 1\)</span>. To see why <a href="Moment.html#eq:moment-Putinar">(5.14)</a> is the dual of <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>, pick any <span class="math inline">\(\gamma\)</span> that is feasible for <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a> and any <span class="math inline">\(y\)</span> that is feasible for <a href="Moment.html#eq:moment-Putinar">(5.14)</a>, we have
 <span class="math display">\[
 \langle \ell_y, p \rangle - \gamma = \langle \ell_y, p \rangle - \langle \ell_y, \gamma \rangle = \langle \ell_y, p - \gamma \rangle \geq 0,
 \]</span>
@@ -666,8 +670,8 @@ where, again, <span class="math inline">\(\langle \ell_y, \gamma \rangle\)</span
 <span class="math display">\[
 \gamma_{\kappa}^\star \leq \beta_{\kappa}^\star, \quad \forall \kappa \in \mathbb{N}.
 \]</span>
-The pair of SDPs <a href="Moment.html#eq:moment-Putinar">(5.12)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> is called the moment-SOS hierarchy and is first proposed in <span class="citation">(<a href="#ref-lasserre01siopt-global">Lasserre 2001</a>)</span>.</p>
-<p>One may wonder how to directly write down the primal problem <a href="Moment.html#eq:moment-Putinar">(5.12)</a> given the dual problem <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>, or vice versa? In the next we give a brief discussion about general conic duality, from which the primal-dual relationship shall be clear.</p>
+The pair of SDPs <a href="Moment.html#eq:moment-Putinar">(5.14)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a> is called the moment-SOS hierarchy and is first proposed in <span class="citation">(<a href="#ref-lasserre01siopt-global">Lasserre 2001</a>)</span>.</p>
+<p>One may wonder how to directly write down the primal problem <a href="Moment.html#eq:moment-Putinar">(5.14)</a> given the dual problem <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>, or vice versa? In the next we give a brief discussion about general conic duality, from which the primal-dual relationship shall be clear.</p>
 <div class="highlightbox">
 <p style="text-align: center;">
 <b>Conic Duality</b>
@@ -691,7 +695,7 @@ where the subscript <span class="math inline">\(V,T\)</span> implies the inner p
 \mathrm{s.t.}&amp; \quad \mathcal{A}x = b \\
 &amp; \quad x \in \mathcal{K}
 \end{split}}
-\tag{5.13}
+\tag{5.15}
 \end{equation}\]</span>
 and
 <span class="math display" id="eq:conic-dual">\[\begin{equation}
@@ -700,7 +704,7 @@ and
 \max_{y \in T^*} &amp; \quad \langle b, y \rangle_T \\
 \mathrm{s.t.}&amp; \quad c - \mathcal{A}^* y \in \mathcal{K}^*
 \end{split}}
-\tag{5.14}
+\tag{5.16}
 \end{equation}\]</span>
 where <span class="math inline">\(b \in T\)</span> and <span class="math inline">\(c \in V^*\)</span> are given. The proof of weak duality can be done by picking any <span class="math inline">\(x\)</span> feasible for the primal and <span class="math inline">\(y\)</span> feasible for the dual, leading to
 <span class="math display">\[\begin{equation}
@@ -712,7 +716,7 @@ where <span class="math inline">\(b \in T\)</span> and <span class="math inline"
 \end{split}
 \end{equation}\]</span>
 where the last inequality holds because <span class="math inline">\(x \in \mathcal{K}\)</span> and <span class="math inline">\(c - \mathcal{A}^* y \in \mathcal{K}^*\)</span>.</p>
-<p>We have seen three instantiations of <a href="Moment.html#eq:conic-primal">(5.13)</a> and <a href="Moment.html#eq:conic-dual">(5.14)</a> so far in the class.</p>
+<p>We have seen three instantiations of <a href="Moment.html#eq:conic-primal">(5.15)</a> and <a href="Moment.html#eq:conic-dual">(5.16)</a> so far in the class.</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>Linear programming</strong> (Chapter <a href="background.html#background:linear:optimization">1.4</a>). With <span class="math inline">\(V = V^* = \mathbb{R}^{n}\)</span>, <span class="math inline">\(T = T^* = \mathbb{R}^{m}\)</span>, <span class="math inline">\(\mathcal{K}= \mathcal{K}^* = \mathbb{R}^{n}_{+}\)</span>, we recover the standard LP pair <a href="background.html#eq:primal-lp">(1.15)</a> and <a href="background.html#eq:dual-lp">(1.16)</a>.</p></li>
 <li><p><strong>Semidefinite programming</strong> (Chapter <a href="sdp.html#sdp">2</a>). With <span class="math inline">\(V = V^* = \mathbb{S}^{n}\)</span>, <span class="math inline">\(T = T^* = \mathbb{R}^{m}\)</span>, <span class="math inline">\(\mathcal{K}= \mathcal{K}^* = \mathbb{S}^{n}_{+}\)</span>, we recover the standard SDP pair <a href="sdp.html#eq:SDP-P">(2.5)</a> and <a href="sdp.html#eq:SDP-D">(2.6)</a>.</p></li>
@@ -728,23 +732,23 @@ where the last inequality holds because <span class="math inline">\(x \in \mathc
 <p>The next theorem collects some known results about the moment-SOS hierarchy in terms of asymptotic convergence and strong duality.</p>
 <div class="theorembox">
 <div class="theorem">
-<p><span id="thm:MomentSOSHierarchy" class="theorem"><strong>Theorem 5.6  (Moment-SOS Hierarchy) </strong></span>Consider the POP <a href="Moment.html#eq:pop-restate">(5.10)</a> and the primal-dual pair <a href="Moment.html#eq:moment-Putinar">(5.12)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a>, we have
+<p><span id="thm:MomentSOSHierarchy" class="theorem"><strong>Theorem 5.6  (Moment-SOS Hierarchy) </strong></span>Consider the POP <a href="Moment.html#eq:pop-restate">(5.12)</a> and the primal-dual pair <a href="Moment.html#eq:moment-Putinar">(5.14)</a> and <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>, we have
 <span class="math display">\[
 \gamma_{\kappa}^\star \leq \beta_{\kappa}^\star \leq p^\star, \quad \forall \kappa \in \mathbb{N},
 \]</span>
-and both sequences <span class="math inline">\(\{ \gamma_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span>, <span class="math inline">\(\{ \beta_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span> are monotonically increasing. Moreover, let the feasible set of the POP <a href="Moment.html#eq:pop-restate">(5.10)</a> be <span class="math inline">\(S\)</span>,</p>
+and both sequences <span class="math inline">\(\{ \gamma_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span>, <span class="math inline">\(\{ \beta_{\kappa}^\star \}_{\kappa=1}^{\infty}\)</span> are monotonically increasing. Moreover, let the feasible set of the POP <a href="Moment.html#eq:pop-restate">(5.12)</a> be <span class="math inline">\(S\)</span>,</p>
 <ul>
-<li><p>Suppose all equality constraints are linear or there are no equality constraints. If there exists <span class="math inline">\(x_0 \in S\)</span> such that <span class="math inline">\(g_i(x_0) &gt; 0, i=1,\dots,l_g\)</span>, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the dual problem <a href="Moment.html#eq:SOS-Putinar-restate">(5.11)</a> is solvable (i.e., the maximum is attained).</p></li>
+<li><p>Suppose all equality constraints are linear or there are no equality constraints. If there exists <span class="math inline">\(x_0 \in S\)</span> such that <span class="math inline">\(g_i(x_0) &gt; 0, i=1,\dots,l_g\)</span>, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the dual problem <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a> is solvable (i.e., the maximum is attained).</p></li>
 <li><p>Suppose there exists a scalar <span class="math inline">\(R &gt; 0\)</span> such that
 <span class="math display">\[
 R - \Vert x \Vert^{2\kappa_0} \in \mathrm{Ideal}[h]_{2\kappa_0} + \mathrm{Qmodule}[g]_{2\kappa_0}
 \]</span>
-for some <span class="math inline">\(\kappa_0 \in \mathbb{N}\)</span>. For any <span class="math inline">\(\kappa \geq \kappa_0\)</span>, if the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is feasible, then it is solvable (i.e., the minimum is attained).</p></li>
+for some <span class="math inline">\(\kappa_0 \in \mathbb{N}\)</span>. For any <span class="math inline">\(\kappa \geq \kappa_0\)</span>, if the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.14)</a> is feasible, then it is solvable (i.e., the minimum is attained).</p></li>
 <li><p>If the constraint set is Archimedean, then the moment-SOS hierarchy has asymptotic convergence, i.e.,
 <span class="math display">\[
 \lim_{\kappa \rightarrow \infty} \gamma_{\kappa}^\star = \lim_{\kappa \rightarrow \infty} \beta_{\kappa}^\star = p^\star.
 \]</span></p></li>
-<li><p>If <span class="math inline">\(g\)</span> includes a ball constraint <span class="math inline">\(R - \Vert x \Vert^2\)</span>, and the POP feasible set <span class="math inline">\(S\)</span> is nonempty, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is solvable (i.e., the minimum is attained).</p></li>
+<li><p>If <span class="math inline">\(g\)</span> includes a ball constraint <span class="math inline">\(R - \Vert x \Vert^2\)</span>, and the POP feasible set <span class="math inline">\(S\)</span> is nonempty, then <span class="math inline">\(\gamma_{\kappa}^\star = \beta_{\kappa}^\star\)</span> for any <span class="math inline">\(\kappa\)</span>, and the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.14)</a> is solvable (i.e., the minimum is attained).</p></li>
 </ul>
 </div>
 </div>
@@ -890,24 +894,21 @@ Clearly, the global minimum <span class="math inline">\(p^\star = 0\)</span> and
 <p>In all three cases, the geometry of the feasible set never changes, what changed was the algebraic description of the same geometric set. This shows that the moment-SOS hierarchy can be sensitive to how the user describes the problem.</p>
 </div>
 </div>
-<div id="conversion-to-standard-sdp" class="section level3 hasAnchor" number="5.3.1">
-<h3><span class="header-section-number">5.3.1</span> Conversion to Standard SDP<a href="Moment.html#conversion-to-standard-sdp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-</div>
 </div>
 <div id="measure-theoretic-interpretation" class="section level2 hasAnchor" number="5.4">
 <h2><span class="header-section-number">5.4</span> Measure-Theoretic Interpretation<a href="Moment.html#measure-theoretic-interpretation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Let us zoom out a bit and see what we have done. We started with Putinar’s Positivstellensatz, applied it to polynomial optimization (POP) and obtained the SOS relaxation of POPs. Then, by taking the dual of <span class="math inline">\(\mathbb{R}[x]_{2d}\)</span> and <span class="math inline">\(\mathrm{Ideal}[h] + \mathrm{Qmodule}[g]\)</span>, and applying standard conic duality, we obtained the primal moment relaxation, which is an optimization over the truncated multi-sequence <span class="math inline">\(y\)</span>.</p>
 <p>However, recall in the discussion of Shor’s SDP relaxation, the dual of the dual can be directly obtained by first writing the QCQP as a rank-constrained matrix optimization problem and then dropping the rank constraint – an approach that gives us the primal relaxation without needing to go through the dual relaxation. Can we do the same for POPs, i.e., obtaining the moment relaxation without needing to go through the SOS relaxation? The answer is affirmative.</p>
-<p>Consider the polynomial optimization (POP) in <a href="Moment.html#eq:pop-restate">(5.10)</a> and denote its feasible set as
+<p>Consider the polynomial optimization (POP) in <a href="Moment.html#eq:pop-restate">(5.12)</a> and denote its feasible set as
 <span class="math display">\[
 S = \{ x \in \mathbb{R}^{n} \mid h_i(x)=0,i=1,\dots,l_h, g_i(x)\geq 0, i=1,\dots,l_g \}.
 \]</span>
-We assume <span class="math inline">\(S\)</span> is compact and Archimedean (e.g., there is a ball constraint <span class="math inline">\(R - x^\top x \geq 0\)</span> in <span class="math inline">\(g\)</span>). The POP <a href="Moment.html#eq:pop-restate">(5.10)</a> is equivalent to
+We assume <span class="math inline">\(S\)</span> is compact and Archimedean (e.g., there is a ball constraint <span class="math inline">\(R - x^\top x \geq 0\)</span> in <span class="math inline">\(g\)</span>). The POP <a href="Moment.html#eq:pop-restate">(5.12)</a> is equivalent to
 <span class="math display" id="eq:pop-with-S">\[\begin{equation}
 p^\star = \min_{x \in S} \quad p(x).
-\tag{5.15}
+\tag{5.17}
 \end{equation}\]</span></p>
-<p>A key observation is that problem <a href="Moment.html#eq:pop-with-S">(5.15)</a> is equivalent to an <strong>infinite-dimensional convex optimization problem</strong>! Let <span class="math inline">\(\mathcal{P}(S)\)</span> be the space of all possible measures supported on <span class="math inline">\(S\)</span>, the following result shows that the POP <a href="Moment.html#eq:pop-with-S">(5.15)</a> is equivalent to a linear optimization over <span class="math inline">\(\mathcal{P}(S)\)</span>.</p>
+<p>A key observation is that problem <a href="Moment.html#eq:pop-with-S">(5.17)</a> is equivalent to an <strong>infinite-dimensional convex optimization problem</strong>! Let <span class="math inline">\(\mathcal{P}(S)\)</span> be the space of all possible measures supported on <span class="math inline">\(S\)</span>, the following result shows that the POP <a href="Moment.html#eq:pop-with-S">(5.17)</a> is equivalent to a linear optimization over <span class="math inline">\(\mathcal{P}(S)\)</span>.</p>
 <div class="theorembox">
 <div class="theorem">
 <p><span id="thm:MeasureOpt" class="theorem"><strong>Theorem 5.7  (Optimization over Measures) </strong></span>The following optimization
@@ -916,9 +917,9 @@ p^\star = \min_{x \in S} \quad p(x).
 \rho^\star = \min_{ \mu \in \mathcal{P}(S)} &amp; \quad \int_S p(x) d \mu(x) \\
 \mathrm{s.t.}&amp; \quad \int_S 1 d \mu(x) = 1.
 \end{split}
-\tag{5.16}
+\tag{5.18}
 \end{equation}\]</span>
-is equivalent to the POP <a href="Moment.html#eq:pop-with-S">(5.15)</a>, i.e., <span class="math inline">\(p^\star = \rho^\star\)</span>.</p>
+is equivalent to the POP <a href="Moment.html#eq:pop-with-S">(5.17)</a>, i.e., <span class="math inline">\(p^\star = \rho^\star\)</span>.</p>
 </div>
 </div>
 <div class="proofbox">
@@ -935,15 +936,15 @@ This shows that
 <span class="math display">\[
 \rho^\star \geq p^\star.
 \]</span>
-Conversely, for any <span class="math inline">\(x \in S\)</span>, let <span class="math inline">\(\delta_{x}\)</span> be the Dirac measure. We have <span class="math inline">\(\delta_{x}\)</span> is feasible for problem <a href="Moment.html#eq:measure-opt">(5.16)</a> and attains the same cost as <span class="math inline">\(x\)</span> for the POP. This shows that
+Conversely, for any <span class="math inline">\(x \in S\)</span>, let <span class="math inline">\(\delta_{x}\)</span> be the Dirac measure. We have <span class="math inline">\(\delta_{x}\)</span> is feasible for problem <a href="Moment.html#eq:measure-opt">(5.18)</a> and attains the same cost as <span class="math inline">\(x\)</span> for the POP. This shows that
 <span class="math display">\[
 \rho^\star \leq p^\star.
 \]</span>
 As a result, <span class="math inline">\(\rho^\star = p^\star\)</span>.</p>
 </div>
 </div>
-<p>The proof shows that, if <span class="math inline">\(x_\star\)</span> is a global optimizer of the POP, then the Dirac measure <span class="math inline">\(\mu_\star = \delta_{x_\star}\)</span> is an optimal solution to <a href="Moment.html#eq:measure-opt">(5.16)</a>.</p>
-<p>Now let us inspect the objective function of <a href="Moment.html#eq:measure-opt">(5.16)</a>. Suppose <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span>, then
+<p>The proof shows that, if <span class="math inline">\(x_\star\)</span> is a global optimizer of the POP, then the Dirac measure <span class="math inline">\(\mu_\star = \delta_{x_\star}\)</span> is an optimal solution to <a href="Moment.html#eq:measure-opt">(5.18)</a>.</p>
+<p>Now let us inspect the objective function of <a href="Moment.html#eq:measure-opt">(5.18)</a>. Suppose <span class="math inline">\(p(x) \in \mathbb{R}[x]_{2d}\)</span>, then
 <span class="math display">\[
 p(x) = \sum_{\alpha \in \mathcal{F}_{n,2d}} p_{\alpha} x^{\alpha} = \langle \mathrm{vec}(p), [x]_{2d} \rangle.
 \]</span>
@@ -958,24 +959,24 @@ y_{\alpha} = \int_S x^{\alpha} d \mu(x),
 as the <span class="math inline">\(\alpha\)</span> moment of <span class="math inline">\(\mu\)</span> on <span class="math inline">\(S\)</span>, and
 <span class="math display" id="eq:representing-measure">\[\begin{equation}
 y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}} = \int_S [x]_{2d} d \mu(x)
-\tag{5.17}
+\tag{5.19}
 \end{equation}\]</span>
-as the truncated moment sequence of degree up to <span class="math inline">\(2d\)</span>, we can see that problem <a href="Moment.html#eq:measure-opt">(5.16)</a> is a linear optimization over the moments of <span class="math inline">\(\mu\)</span>:
+as the truncated moment sequence of degree up to <span class="math inline">\(2d\)</span>, we can see that problem <a href="Moment.html#eq:measure-opt">(5.18)</a> is a linear optimization over the moments of <span class="math inline">\(\mu\)</span>:
 <span class="math display" id="eq:measure-opt-moments">\[\begin{equation}
 \begin{split}
 \min_{\mu \in \mathcal{P}(S)} &amp; \quad \langle \mathrm{vec}(p), y \rangle \\
 \mathrm{s.t.}&amp; \quad y_0 = 1
 \end{split}
-\tag{5.18}
+\tag{5.20}
 \end{equation}\]</span>
 where <span class="math inline">\(y_0\)</span> is the zero-order moment.</p>
-<p>Now in order to solve problem <a href="Moment.html#eq:measure-opt-moments">(5.18)</a>, the key question boils down to: given a TMS <span class="math inline">\(y = (y_{\alpha})\)</span>, under what conditions can we ensure that <span class="math inline">\(y\)</span> has a <strong>representing measure</strong> supported on <span class="math inline">\(S\)</span>, i.e., equation <a href="Moment.html#eq:representing-measure">(5.17)</a> holds for some measure <span class="math inline">\(\mu\)</span>?</p>
-<p>As we will introduce soon, we will derive <strong>necessary conditions</strong> on the TMS <span class="math inline">\(y\)</span> for it to admit a representing measure, which surprisingly and not surprisingly, is exactly the dual conic constraint <span class="math inline">\(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\)</span> we introduced in Theorem <a href="Moment.html#thm:DualSumIdealQuadraticModule">5.5</a>! Therefore, the moment relaxation can be derived by solving <a href="Moment.html#eq:measure-opt-moments">(5.18)</a> with necessary conditions on <span class="math inline">\(y\)</span> admitting a representing measure.</p>
+<p>Now in order to solve problem <a href="Moment.html#eq:measure-opt-moments">(5.20)</a>, the key question boils down to: given a TMS <span class="math inline">\(y = (y_{\alpha})\)</span>, under what conditions can we ensure that <span class="math inline">\(y\)</span> has a <strong>representing measure</strong> supported on <span class="math inline">\(S\)</span>, i.e., equation <a href="Moment.html#eq:representing-measure">(5.19)</a> holds for some measure <span class="math inline">\(\mu\)</span>?</p>
+<p>As we will introduce soon, we will derive <strong>necessary conditions</strong> on the TMS <span class="math inline">\(y\)</span> for it to admit a representing measure, which surprisingly and not surprisingly, is exactly the dual conic constraint <span class="math inline">\(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\)</span> we introduced in Theorem <a href="Moment.html#thm:DualSumIdealQuadraticModule">5.5</a>! Therefore, the moment relaxation can be derived by solving <a href="Moment.html#eq:measure-opt-moments">(5.20)</a> with necessary conditions on <span class="math inline">\(y\)</span> admitting a representing measure.</p>
 <p>However, the measure-theoretic perspective will give us one advantage, i.e., via checkable <strong>sufficient conditions</strong> for <span class="math inline">\(y\)</span> to admit a representing measure, we can <strong>certify</strong> convergence of the moment-SOS hierarchy and extract global minimizers of the original POP!</p>
 </div>
 <div id="truncated-moment-problem" class="section level2 hasAnchor" number="5.5">
 <h2><span class="header-section-number">5.5</span> Truncated Moment Problem<a href="Moment.html#truncated-moment-problem" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Given a truncated multi-sequence <span class="math inline">\(y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}}\)</span>, it is said to admit a Borel measure if <a href="Moment.html#eq:representing-measure">(5.17)</a> holds for some measure <span class="math inline">\(\mu\)</span> supported on <span class="math inline">\(S\)</span> (the support of a measure on <span class="math inline">\(\mathbb{R}^{n}\)</span> is the smallest closed set <span class="math inline">\(T \subseteq \mathbb{R}^{n}\)</span> such that <span class="math inline">\(\mu(\mathbb{R}^{n} \backslash T) = 0\)</span>), in which case <span class="math inline">\(\mu\)</span> is called a <strong><span class="math inline">\(S\)</span>-representing measure</strong> of <span class="math inline">\(y\)</span>.</p>
+<p>Given a truncated multi-sequence <span class="math inline">\(y = (y_\alpha)_{\alpha \in \mathcal{F}_{n,2d}}\)</span>, it is said to admit a Borel measure if <a href="Moment.html#eq:representing-measure">(5.19)</a> holds for some measure <span class="math inline">\(\mu\)</span> supported on <span class="math inline">\(S\)</span> (the support of a measure on <span class="math inline">\(\mathbb{R}^{n}\)</span> is the smallest closed set <span class="math inline">\(T \subseteq \mathbb{R}^{n}\)</span> such that <span class="math inline">\(\mu(\mathbb{R}^{n} \backslash T) = 0\)</span>), in which case <span class="math inline">\(\mu\)</span> is called a <strong><span class="math inline">\(S\)</span>-representing measure</strong> of <span class="math inline">\(y\)</span>.</p>
 <p>A measure <span class="math inline">\(\mu\)</span> whose support is a finite set is called <strong>finitely atomic</strong>. A measure is called <span class="math inline">\(r\)</span>-atomic if its support has cardinality <span class="math inline">\(r\)</span>.</p>
 <p>The following result, due to <span class="citation">(<a href="#ref-bayer06ams-proof">Bayer and Teichmann 2006</a>)</span>, shows that a representing measure can always be chosen to be finitely atomic if it exists.</p>
 <div class="theorembox">
@@ -999,9 +1000,9 @@ p(x) = [x]_d^\top Q [x]_d = \left\langle Q, [x]_d [x]_d^\top \right\rangle, \qua
 and therefore
 <span class="math display" id="eq:integral-to-moment-matrix">\[\begin{equation}
 \int_S p(x) d\mu(x) = \int_S \left\langle Q, [x]_d [x]_d^\top \right\rangle d \mu(x) = \left\langle Q,  \int_S [x]_d [x]_d^\top d \mu(x)  \right\rangle = \langle Q, M_d[y] \rangle
-\tag{5.19}
+\tag{5.21}
 \end{equation}\]</span>
-where <span class="math inline">\(M_d[y] \in \mathbb{S}^{s(n,d)}\)</span> is the moment matrix of <span class="math inline">\(\mu\)</span>’s truncated moment sequence <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span>. In order for <a href="Moment.html#eq:integral-to-moment-matrix">(5.19)</a> to be nonnegative for any <span class="math inline">\(Q \succeq 0\)</span>, the moment matrix <span class="math inline">\(M_d[y]\)</span> must be positive semidefinite.</p>
+where <span class="math inline">\(M_d[y] \in \mathbb{S}^{s(n,d)}\)</span> is the moment matrix of <span class="math inline">\(\mu\)</span>’s truncated moment sequence <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span>. In order for <a href="Moment.html#eq:integral-to-moment-matrix">(5.21)</a> to be nonnegative for any <span class="math inline">\(Q \succeq 0\)</span>, the moment matrix <span class="math inline">\(M_d[y]\)</span> must be positive semidefinite.</p>
 <p>We can keep doing this using the defining polynomials of <span class="math inline">\(S\)</span>. Pick any <span class="math inline">\(g_i(x) \geq 0\)</span> constraint that defines <span class="math inline">\(S\)</span>, and any SOS polynomial <span class="math inline">\(\sigma_i(x)\)</span> whose degree <span class="math inline">\(2s_i\)</span> is chosen such that <span class="math inline">\(2 s_i + \deg(g) \leq 2d\)</span>, then
 <span class="math display">\[
 \int_S g_i(x) \sigma_i(x) d\mu(x) \geq 0
@@ -1018,26 +1019,26 @@ where <span class="math inline">\(L_{g_i}^d [y]\)</span> is the localizing matri
 In order for this equation to hold for any multiplier <span class="math inline">\(\lambda_i(x)\)</span>, one can verify that we must have the localizing vector <span class="math inline">\(L_{h_i}^{2d}[y] = 0\)</span>. This gives us a set of necessary conditions for <span class="math inline">\(y\)</span> to admit a representing measure.</p>
 <div class="theorembox">
 <div class="proposition">
-<p><span id="prp:NecessaryConditionRepresentingMeasure" class="proposition"><strong>Proposition 5.1  (Necessary Condition for Existence of Representing Measure) </strong></span>Let <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> be a truncated multi-sequence. If <span class="math inline">\(y\)</span> admits an <span class="math inline">\(S\)</span>-representing measure, i.e., <a href="Moment.html#eq:representing-measure">(5.17)</a> holds for some measure <span class="math inline">\(\mu\)</span> supported on <span class="math inline">\(S\)</span>, then <span class="math inline">\(y\)</span> must satisfy
+<p><span id="prp:NecessaryConditionRepresentingMeasure" class="proposition"><strong>Proposition 5.1  (Necessary Condition for Existence of Representing Measure) </strong></span>Let <span class="math inline">\(y \in \mathbb{R}^{s(n,2d)}\)</span> be a truncated multi-sequence. If <span class="math inline">\(y\)</span> admits an <span class="math inline">\(S\)</span>-representing measure, i.e., <a href="Moment.html#eq:representing-measure">(5.19)</a> holds for some measure <span class="math inline">\(\mu\)</span> supported on <span class="math inline">\(S\)</span>, then <span class="math inline">\(y\)</span> must satisfy
 <span class="math display">\[
 M_d[y] \succeq 0, \quad L_{g_i}^d[y] \succeq 0, i=1,\dots,l_g, \quad L_{h_i}^{2d}[y] = 0, i=1,\dots,l_h.
 \]</span>
 This is equivalent to <span class="math inline">\(y \in \mathcal{Z}[h]_{2d} \cap \mathcal{M}[g]_{2d}\)</span>.</p>
 </div>
 </div>
-<p>The first corollary of Proposition <a href="Moment.html#prp:NecessaryConditionRepresentingMeasure">5.1</a> is that problem <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is a convex relaxation for the infinite-dimensional problem <a href="Moment.html#eq:measure-opt">(5.16)</a>.</p>
+<p>The first corollary of Proposition <a href="Moment.html#prp:NecessaryConditionRepresentingMeasure">5.1</a> is that problem <a href="Moment.html#eq:moment-Putinar">(5.14)</a> is a convex relaxation for the infinite-dimensional problem <a href="Moment.html#eq:measure-opt">(5.18)</a>.</p>
 <div class="theorembox">
 <div class="corollary">
-<p><span id="cor:MomentRelaxation" class="corollary"><strong>Corollary 5.1  (Moment Relaxation) </strong></span>The convex optimization problem <a href="Moment.html#eq:moment-Putinar">(5.12)</a> is a convex relaxation of problem <a href="Moment.html#eq:measure-opt">(5.16)</a> (and hence is also a relaxation of the original POP):
+<p><span id="cor:MomentRelaxation" class="corollary"><strong>Corollary 5.1  (Moment Relaxation) </strong></span>The convex optimization problem <a href="Moment.html#eq:moment-Putinar">(5.14)</a> is a convex relaxation of problem <a href="Moment.html#eq:measure-opt">(5.18)</a> (and hence is also a relaxation of the original POP):
 <span class="math display">\[
 \beta^\star_\kappa \leq \rho^\star = p^\star.
 \]</span></p>
 </div>
 </div>
-<p>The second corollary of Proposition <a href="Moment.html#prp:NecessaryConditionRepresentingMeasure">5.1</a>, which is the extra advantage offered via this measure-theoretic interpretation, is that if we solve the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> and obtain an optimal solution <span class="math inline">\(y_\star\)</span> that indeed admits a representing measure <span class="math inline">\(\mu_\star\)</span>, then <span class="math inline">\(\mu_\star\)</span> is in fact a global optimal solution to problem <a href="Moment.html#eq:measure-opt">(5.16)</a>. Moreover, if <span class="math inline">\(y_\star\)</span> admits a representing measure <span class="math inline">\(\mu_\star\)</span>, then by Theorem <a href="Moment.html#thm:RepresentingMeasure">5.8</a> it also admits a finitely atomic measure <span class="math inline">\(\nu_\star\)</span> and every point in the support of <span class="math inline">\(\nu_\star\)</span> is a global optimal solution to the POP. In this case, we say the moment-SOS relaxation is <strong>exact</strong> or <strong>tight</strong>.</p>
+<p>The second corollary of Proposition <a href="Moment.html#prp:NecessaryConditionRepresentingMeasure">5.1</a>, which is the extra advantage offered via this measure-theoretic interpretation, is that if we solve the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.14)</a> and obtain an optimal solution <span class="math inline">\(y_\star\)</span> that indeed admits a representing measure <span class="math inline">\(\mu_\star\)</span>, then <span class="math inline">\(\mu_\star\)</span> is in fact a global optimal solution to problem <a href="Moment.html#eq:measure-opt">(5.18)</a>. Moreover, if <span class="math inline">\(y_\star\)</span> admits a representing measure <span class="math inline">\(\mu_\star\)</span>, then by Theorem <a href="Moment.html#thm:RepresentingMeasure">5.8</a> it also admits a finitely atomic measure <span class="math inline">\(\nu_\star\)</span> and every point in the support of <span class="math inline">\(\nu_\star\)</span> is a global optimal solution to the POP. In this case, we say the moment-SOS relaxation is <strong>exact</strong> or <strong>tight</strong>.</p>
 <div class="theorembox">
 <div class="corollary">
-<p><span id="cor:ExactnessOfRelaxation" class="corollary"><strong>Corollary 5.2  (Exactness of Moment Relaxation) </strong></span>Let the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.12)</a> be solvable and <span class="math inline">\(y_\star\)</span> be an optimal solution. If <span class="math inline">\(y_\star\)</span> admits an <span class="math inline">\(r\)</span>-atomic representing measure <span class="math inline">\(\nu_\star\)</span> supported on <span class="math inline">\(S\)</span>, then every point <span class="math inline">\(x_\star \in \mathrm{supp}(\nu_\star)\)</span> is a globally optimal solution to the POP <a href="Moment.html#eq:pop-with-S">(5.15)</a>.</p>
+<p><span id="cor:ExactnessOfRelaxation" class="corollary"><strong>Corollary 5.2  (Exactness of Moment Relaxation) </strong></span>Let the moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.14)</a> be solvable and <span class="math inline">\(y_\star\)</span> be an optimal solution. If <span class="math inline">\(y_\star\)</span> admits an <span class="math inline">\(r\)</span>-atomic representing measure <span class="math inline">\(\nu_\star\)</span> supported on <span class="math inline">\(S\)</span>, then every point <span class="math inline">\(x_\star \in \mathrm{supp}(\nu_\star)\)</span> is a globally optimal solution to the POP <a href="Moment.html#eq:pop-with-S">(5.17)</a>.</p>
 </div>
 </div>
 <div class="proofbox">
@@ -1054,14 +1055,14 @@ The fact that <span class="math inline">\(y_\star\)</span> needs to satisfy the 
 <p>By the nature of relaxation,
 <span class="math display" id="eq:measure-proof-lower-bound">\[\begin{equation}
 \langle \ell_{y_\star}, p(x) \rangle \leq p^\star \Rightarrow \sum_{i=1}^r \lambda_i p(u_i) \leq p^\star.
-\tag{5.20}
+\tag{5.22}
 \end{equation}\]</span>
 However, since each <span class="math inline">\(u_i\)</span> is a feasible point to the POP, we have
 <span class="math display" id="eq:measure-proof-upper-bound">\[\begin{equation}
 p(u_i) \geq p^\star \Rightarrow \sum_{i=1}^r \lambda_i p(u_i) \geq p^\star.
-\tag{5.21}
+\tag{5.23}
 \end{equation}\]</span>
-Combing <a href="Moment.html#eq:measure-proof-lower-bound">(5.20)</a> and <a href="Moment.html#eq:measure-proof-upper-bound">(5.21)</a>, we have
+Combing <a href="Moment.html#eq:measure-proof-lower-bound">(5.22)</a> and <a href="Moment.html#eq:measure-proof-upper-bound">(5.23)</a>, we have
 <span class="math display">\[
 p(u_i) = p^\star, \quad \forall i=1,\dots,r,
 \]</span>
@@ -1088,13 +1089,13 @@ Clearly we have <span class="math inline">\(\kappa \geq d_0\)</span>, because ot
 <p><span id="thm:FlatTruncation" class="theorem"><strong>Theorem 5.9  (Flat Truncation) </strong></span>Suppose there exists <span class="math inline">\(t \in [d_0, \kappa]\)</span> such that
 <span class="math display" id="eq:flat-extension">\[\begin{equation}
 \mathrm{rank}(M_t[y_\star]) = \mathrm{rank}(M_{t-d_c}[y_\star]) = r,
-\tag{5.22}
+\tag{5.24}
 \end{equation}\]</span>
 then the truncated optimal solution <span class="math inline">\(y_{\star,2t}:=(y_\alpha)_{\alpha \in \mathcal{F}_{n,2t}}\)</span> admits an <span class="math inline">\(r\)</span>-atomic representing measure <span class="math inline">\(\nu\)</span> such that each point in <span class="math inline">\(\mathrm{supp}(\nu)\)</span> is a global optimizer of the original POP.</p>
 </div>
 </div>
-<p>Condition <a href="Moment.html#eq:flat-extension">(5.22)</a> is called <strong>flat extension</strong> for the truncated TMS <span class="math inline">\(y_{\star,2t}\)</span>. The proof that the flat extension condition is sufficient for an <span class="math inline">\(r\)</span>-atomic representing measure is due to <span class="citation">(<a href="#ref-curto05jot-truncated">Curto and Fialkow 2005</a>)</span>. The proof of exactness given an <span class="math inline">\(r\)</span>-atomic representing measure of <span class="math inline">\(y_{\star,2t}\)</span> is given by Corollary <a href="Moment.html#cor:ExactnessOfRelaxation">5.2</a>.</p>
-<p>In the next, we will present an algorithm that can find the <span class="math inline">\(r\)</span>-atomic representing measure of <span class="math inline">\(y_{\star,2t}\)</span> when it satisfies the flat extension condition <a href="Moment.html#eq:flat-extension">(5.22)</a>, which was first proposed in <span class="citation">(<a href="#ref-henrion05ppc-detecting">Henrion and Lasserre 2005</a>)</span>. For ease of notation, I will remove the “<span class="math inline">\(\star\)</span>” subscript in the TMS <span class="math inline">\(y_{\star,2t}\)</span>. Given <span class="math inline">\(y \in \mathbb{R}^{s(n,2t)}\)</span>, the goal is to extract <span class="math inline">\(r = \mathrm{rank}(M_t[y])\)</span> optimal solutions of the POP.</p>
+<p>Condition <a href="Moment.html#eq:flat-extension">(5.24)</a> is called <strong>flat extension</strong> for the truncated TMS <span class="math inline">\(y_{\star,2t}\)</span>. The proof that the flat extension condition is sufficient for an <span class="math inline">\(r\)</span>-atomic representing measure is due to <span class="citation">(<a href="#ref-curto05jot-truncated">Curto and Fialkow 2005</a>)</span>. The proof of exactness given an <span class="math inline">\(r\)</span>-atomic representing measure of <span class="math inline">\(y_{\star,2t}\)</span> is given by Corollary <a href="Moment.html#cor:ExactnessOfRelaxation">5.2</a>.</p>
+<p>In the next, we will present an algorithm that can find the <span class="math inline">\(r\)</span>-atomic representing measure of <span class="math inline">\(y_{\star,2t}\)</span> when it satisfies the flat extension condition <a href="Moment.html#eq:flat-extension">(5.24)</a>, which was first proposed in <span class="citation">(<a href="#ref-henrion05ppc-detecting">Henrion and Lasserre 2005</a>)</span>. For ease of notation, I will remove the “<span class="math inline">\(\star\)</span>” subscript in the TMS <span class="math inline">\(y_{\star,2t}\)</span>. Given <span class="math inline">\(y \in \mathbb{R}^{s(n,2t)}\)</span>, the goal is to extract <span class="math inline">\(r = \mathrm{rank}(M_t[y])\)</span> optimal solutions of the POP.</p>
 <p>Since <span class="math inline">\(y\)</span> admits an <span class="math inline">\(r\)</span>-atomic representing measure <span class="math inline">\(\nu\)</span>, we have
 <span class="math display">\[
 \nu = \lambda_1 \delta_{x_1} + \dots + \lambda_r \delta_{x_r}, \quad \lambda_i \geq 0, x_i \in S, i=1,\dots,r.
@@ -1160,7 +1161,7 @@ B_1 := (e_1 + B_0) \cup \dots \cup (e_n + B_0) \backslash B_0.
 and the points <span class="math inline">\(x_1,\dots,x_r\)</span> in <span class="math inline">\(\mathrm{supp}(\nu)\)</span> are precisely solutions to the following polynomial system of equations
 <span class="math display" id="eq:extract-solution-polynomial-system">\[\begin{equation}
 p_{\alpha}(x) = x^{\alpha} - \sum_{j=1}^r U(j,\alpha) x^{\beta_j} = 0, \quad \alpha \in B_1.
-\tag{5.23}
+\tag{5.25}
 \end{equation}\]</span></p>
 </div>
 </div>
@@ -1198,7 +1199,7 @@ then we have
 (\#eq:extract-solution-polynomial-system)
 \end{equation}
 for all $x_i,i=1,\dots,r$. This is a system of $s(n,t)$ polynomial equations.  -->
-<p>Our goal now becomes to find all the roots of the system <a href="Moment.html#eq:extract-solution-polynomial-system">(5.23)</a>. This is something we learned how to solve in Chapter <a href="SOS.html#ZeroDimIdeal">4.1.5</a>! Specifically, the basic strategy is to first find the multiplication matrices, and then simultaneously diagonalize them, or use a more robust procedure suggested in <span class="citation">(<a href="#ref-corless1997reordered">Corless, Gianni, and Trager 1997b</a>)</span>, which I asked you to practice in one of the problem sets.</p>
+<p>Our goal now becomes to find all the roots of the system <a href="Moment.html#eq:extract-solution-polynomial-system">(5.25)</a>. This is something we learned how to solve in Chapter <a href="SOS.html#ZeroDimIdeal">4.1.5</a>! Specifically, the basic strategy is to first find the multiplication matrices, and then simultaneously diagonalize them, or use a more robust procedure suggested in <span class="citation">(<a href="#ref-corless1997reordered">Corless, Gianni, and Trager 1997b</a>)</span>, which I asked you to practice in one of the problem sets.</p>
 <p>Let us make this solution extraction procedure concrete by going through an example.</p>
 <div class="examplebox">
 <div class="example">
@@ -1318,7 +1319,226 @@ x(3) = \begin{bmatrix} 2 \\ 2 \end{bmatrix}.
 \]</span></p>
 </div>
 </div>
+</div>
+<div id="conversion-to-standard-sdp" class="section level2 hasAnchor" number="5.7">
+<h2><span class="header-section-number">5.7</span> Conversion to Standard SDP<a href="Moment.html#conversion-to-standard-sdp" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="the-first-approach" class="section level3 hasAnchor" number="5.7.1">
+<h3><span class="header-section-number">5.7.1</span> The First Approach<a href="Moment.html#the-first-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The moment relaxation <a href="Moment.html#eq:moment-Putinar">(5.14)</a> at the <span class="math inline">\(\kappa\)</span>-th relaxation order can be written as
+<span class="math display" id="eq:moment-Putinar-y">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} &amp; \quad \langle - \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}&amp; \quad y_0 = 1 \\
+&amp; \quad M_\kappa[y] \succeq 0 \\
+&amp; \quad L_{g_i}^{\kappa}[y] \succeq 0, i=1,\dots,l_g \\
+&amp; \quad L_{h_i}^{2\kappa}[y] = 0, i=1,\dots,l_h
+\end{split},
+\tag{5.26}
+\end{equation}\]</span>
+where I have converted the <span class="math inline">\(\min\)</span> to <span class="math inline">\(\max\)</span>. We now sketch how we can write problem <a href="Moment.html#eq:moment-Putinar-y">(5.26)</a> as a standard conic optimization problem described in Chapter <a href="sdp.html#SoftwareConic">2.3</a>, in particular the dual conic problem <a href="sdp.html#eq:dual-conic">(2.8)</a>.</p>
+<p>First, we can write the moment matrix as
+<span class="math display">\[
+M_{\kappa}[y] = \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_{\alpha}, \quad B_{\alpha} \in \mathbb{S}^{s(n,\kappa)}, \forall \alpha \in \mathcal{F}_{n,2\kappa},
+\]</span>
+where <span class="math inline">\(B_\alpha\)</span> are constant (sparse) matrices. For example, for the moment matrix <a href="Moment.html#eq:example-second-order-moment-mat">(5.2)</a> in Example <a href="Moment.html#exm:MomentMatrix">5.1</a>, <span class="math inline">\(B_\alpha\)</span> corresponding to the exponent <span class="math inline">\((1,1)\)</span> is
+<span class="math display">\[
+B_{11} = \begin{bmatrix}
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0
+\end{bmatrix}.
+\]</span>
+One interesting property is
+<span class="math display">\[
+\langle B_\alpha, B_\beta \rangle = 0, \quad \forall \alpha \neq \beta,
+\]</span>
+simply because <span class="math inline">\(y_\alpha\)</span> and <span class="math inline">\(y_\beta\)</span> does not appear in the same location of the moment matrix.</p>
+<p>Similarly, we can write each localizing matrix <span class="math inline">\(L_{g_i}^\kappa[y]\)</span> as
+<span class="math display">\[
+L_{g_i}^{\kappa}[y] = \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_{\alpha} B^{g_i}_\alpha, \quad B_{\alpha}^{g_i} \in \mathbb{S}^{s(n,s_i)}, s_i = \lfloor  (2\kappa - \deg(g_i))/2  \rfloor,i=1,\dots,l_g,
+\]</span>
+where <span class="math inline">\(B_{\alpha}^{g_i}\)</span> are constant matrices. For example, for the localizing matrix in <a href="Moment.html#eq:example-localizing-matrix">(5.6)</a>, <span class="math inline">\(B_\alpha^g\)</span> of the exponent <span class="math inline">\(\alpha = (2,2)\)</span> is
+<span class="math display">\[
+B_{22}^{g} = \begin{bmatrix}
+0 &amp; 0 &amp; 0 \\
+0 &amp; -1 &amp; 0 \\
+0 &amp; 0 &amp; -1
+\end{bmatrix}.
+\]</span></p>
+<p>Lastly, the localizing vector is simply
+<span class="math display">\[
+L_{h_i}^{2\kappa}[y] = (H^{2\kappa}_i)^\top y, \quad H^{2\kappa}_i \in \mathbb{R}^{s(n,2\kappa) \times s(n,t_i)}, t_i = 2\kappa - \deg(h_i), i=1,\dots,l_h.
+\]</span></p>
+<p>With these, we can write problem <a href="Moment.html#eq:moment-Putinar-y">(5.26)</a> as
+<span class="math display" id="eq:moment-Putinar-y-1">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} &amp; \quad \langle - \mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}&amp; \quad \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_\alpha \succeq 0 \\
+&amp; \quad \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} y_\alpha B_\alpha^{g_i} \succeq 0, \quad i=1,\dots,l_g \\
+&amp; \quad \underbrace{\begin{bmatrix} 1 \\
+0 \\ \vdots \\ 0 \end{bmatrix}}_{f} - \underbrace{\begin{bmatrix}
+e_1^\top\\
+(H^{2\kappa}_1)^\top\\
+\vdots \\
+(H^{2\kappa}_{l_h})^\top
+\end{bmatrix}}_{F} y = 0
+\end{split}
+\tag{5.27}
+\end{equation}\]</span>
+where <span class="math inline">\(e_1\)</span> is the all-zero vector except the first entry equal to <span class="math inline">\(1\)</span>.</p>
+<p>Now consider the vector space
+<span class="math display">\[
+\mathcal{V}= \mathbb{S}^{s(n,\kappa)} \times \mathbb{S}^{s(n,s_1)} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})} \times \mathbb{R}^{t}, \quad t:= 1 + s(n,t_1) + \dots + s(n,t_{l_h}),
+\]</span>
+and the cone within <span class="math inline">\(\mathcal{V}\)</span>
+<span class="math display">\[
+\mathcal{K}= \mathbb{S}^{s(n,\kappa)}_{+} \times \mathbb{S}^{s(n,s_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})}_{+} \times 0^{t}.
+\]</span></p>
+<p>Consider the function <span class="math inline">\(\phi: \mathbb{R}^{s(n,2\kappa)} \rightarrow \mathcal{V}\)</span> defined as
+<span class="math display" id="eq:moment-Putinar-adjoint">\[\begin{equation}
+\phi(y) = \left( -\sum_{\alpha} y_\alpha B_\alpha, -\sum_{\alpha} y_\alpha B_\alpha^{g_1}, \cdots, -\sum_{\alpha} y_\alpha B_{\alpha}^{g_{l_g}}, Fy   \right) \in \mathcal{V}
+\tag{5.28}
+\end{equation}\]</span>
+and the vector
+<span class="math display">\[
+C = \left(0,0,\cdots,0,f \right) \in \mathcal{V}.
+\]</span></p>
+<p>Observe that problem <a href="Moment.html#eq:moment-Putinar-y-1">(5.27)</a> is now in standard dual conic form
+<span class="math display" id="eq:moment-Putinar-dual-conic-form">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{s(n,2\kappa)}} &amp; \quad \langle -\mathrm{vec}(p), y \rangle \\
+\mathrm{s.t.}&amp; \quad C - \phi(y) \in \mathcal{K}.
+\end{split}
+\tag{5.29}
+\end{equation}\]</span></p>
+<p>We can also write the primal conic form of <a href="Moment.html#eq:moment-Putinar-dual-conic-form">(5.29)</a> using standard conic duality. The linear map <span class="math inline">\(\phi(y)\)</span> in <a href="Moment.html#eq:moment-Putinar-adjoint">(5.28)</a> can be written as
+<span class="math display">\[
+\phi(y) = \sum_{\alpha} y_{\alpha} A_{\alpha},
+\]</span>
+with
+<span class="math display">\[
+A_{\alpha} = \left( -B_{\alpha}, - B_{\alpha}^{g_1}, \cdots, - B_{\alpha}^{g_{l_g}}, f_{\alpha} \right) \in \mathcal{V}, \quad \alpha \in \mathcal{F}_{n,2\kappa},
+\]</span>
+where <span class="math inline">\(f_{\alpha}\)</span> is the column of <span class="math inline">\(F\)</span> indexed by the exponent <span class="math inline">\(\alpha\)</span>. With the dual cone of <span class="math inline">\(\mathcal{K}\)</span> being
+<span class="math display">\[
+\mathcal{K}^* = \mathbb{S}^{s(n,\kappa)}_{+} \times \mathbb{S}^{s(n,s_1)}_{+} \times \cdots \times \mathbb{S}^{s(n,s_{l_g})}_{+} \times \mathbb{R}^{t},
+\]</span>
+the primal conic form of <a href="Moment.html#eq:moment-Putinar-dual-conic-form">(5.29)</a> reads
+<span class="math display" id="eq:moment-Putinar-primal-conic-form">\[\begin{equation}
+\begin{split}
+\min_{X \in \mathcal{V}} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \langle A_\alpha, X \rangle = - p_{\alpha}, \quad \alpha \in \mathcal{F}_{n,2\kappa} \\
+&amp; \quad X \in \mathcal{K}^*
+\end{split}
+\tag{5.30}
+\end{equation}\]</span>
+It is not too difficult to observe that the primal conic form <a href="Moment.html#eq:moment-Putinar-primal-conic-form">(5.30)</a> is just the conic representation of the dual SOS program <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>, because the linear constraints in <a href="Moment.html#eq:moment-Putinar-primal-conic-form">(5.30)</a> are exactly those that match the coefficients of the two polynomials “<span class="math inline">\(p(x)\)</span>” and “<span class="math inline">\(\gamma + \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}\)</span>”.</p>
+</div>
+<div id="the-second-approach" class="section level3 hasAnchor" number="5.7.2">
+<h3><span class="header-section-number">5.7.2</span> The Second Approach<a href="Moment.html#the-second-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The first conversion approach generates <span class="math inline">\(X \in \mathcal{K}\)</span>, which contains not only PSD variables but also free variables. In the second approach, we can generate a conic program with only PSD variables.</p>
+<p><strong>Rewriting the moment matrix</strong>. To do so, I will first create a variable <span class="math inline">\(X_{\mathrm{mom}} \in \mathbb{S}^{s(n,\kappa)}\)</span> and enforce it to be a valid moment matrix by using linear constraints. This is equivalent to saying
+<span class="math display" id="eq:X-mom-decomposition">\[\begin{equation}
+X_{\mathrm{mom}} = \sum_{\alpha} y_{\alpha} B_{\alpha},
+\tag{5.31}
+\end{equation}\]</span>
+for some <span class="math inline">\(y \in \mathbb{R}^{s(n,2\kappa)}\)</span>, or in other words
+<span class="math display">\[
+X_{\mathrm{mom}} \in B := \mathrm{span}\{ B_{\alpha} \}_{\alpha \in \mathcal{F}_{n,2\kappa}} \subset \mathbb{S}^{s(n,\kappa)}
+\]</span>
+i.e., <span class="math inline">\(X_{\mathrm{mom}}\)</span> lives in the subspace <span class="math inline">\(B\)</span> of dimension/rank <span class="math inline">\(s(n,2\kappa)\)</span>. The dimension of <span class="math inline">\(\mathbb{S}^{s(n,\kappa)}\)</span> is
+<span class="math display">\[
+s(n,\kappa)^{\Delta} := \frac{s(n,\kappa) (s(n,\kappa) +1)}{2}.
+\]</span>
+Therefore, denote the orthogonal complement of <span class="math inline">\(B\)</span> as <span class="math inline">\(B^{\perp}\)</span> with dimension
+<span class="math display">\[
+d(n,\kappa) := \dim (B^{\perp}) = s(n,\kappa)^{\Delta} - s(n,2\kappa),
+\]</span>
+and a (potentially orthonormal) set of basis of <span class="math inline">\(B^{\perp}\)</span> as
+<span class="math display">\[
+\{ B^{\perp}_{1}, \dots, B^{\perp}_{d(n,\kappa)}  \}.
+\]</span>
+Then <span class="math inline">\(X_{\mathrm{mom}}\)</span> admitting a moment matrix representation <a href="Moment.html#eq:X-mom-decomposition">(5.31)</a> is equivalent to a set of linear constraints
+<span class="math display" id="eq:moment-matrix-valid-constraints">\[\begin{equation}
+\langle B^{\perp}_{i},  X_{\mathrm{mom}}  \rangle = 0, i=1,\dots, d(n,\kappa).
+\tag{5.32}
+\end{equation}\]</span>
+In addition, we have
+<span class="math display" id="eq:from-X-mom-to-y-mom">\[\begin{equation}
+\langle B_{\alpha}, X_{\mathrm{mom}} \rangle = \left\langle B_{\alpha}, \sum_{\beta}y_{\beta} B_{\beta}  \right\rangle = c_{\alpha} y_{\alpha}, \quad \alpha \in \mathcal{F}_{n,2\kappa},
+\tag{5.33}
+\end{equation}\]</span>
+where <span class="math inline">\(c_{\alpha} := \Vert B_{\alpha} \Vert_\mathrm{F}^2\)</span> is a constant. Therefore, the constraint <span class="math inline">\(y_0 = 1\)</span> can be easily written as
+<span class="math display" id="eq:moment-matrix-one-constraint">\[\begin{equation}
+\langle B_0, X_{\mathrm{mom}} \rangle = 1
+\tag{5.34}
+\end{equation}\]</span>
+because <span class="math inline">\(\Vert B_0 \Vert_\mathrm{F}^2 = 1\)</span>.</p>
+<p><strong>Adding localizing vector constraints</strong>. Next we look at the constraints that the localizing vectors must be zero:
+<span class="math display">\[
+\bar{F}y =
+\begin{bmatrix}
+(H_1^{2\kappa})^\top\\
+\vdots \\
+(H_{l_h}^{2\kappa})^\top
+\end{bmatrix} y = 0, \quad \bar{F} \in \mathbb{R}^{\bar{t} \times s(n,2\kappa)}, \bar{t}:=t-1.
+\]</span>
+Using <a href="Moment.html#eq:from-X-mom-to-y-mom">(5.33)</a>, this is equivalent to another set of linear constraints on the moment matrix
+<span class="math display" id="eq:moment-matrix-localizing-vector-constraints">\[\begin{equation}
+\bar{F} \begin{bmatrix}
+\vdots \\
+\langle B_{\alpha}, X_{\mathrm{mom}} \rangle\\
+\vdots
+\end{bmatrix} = 0 \quad \Leftrightarrow \quad \langle H_i, X_{\mathrm{mom}} \rangle = 0, i=1,\dots,\bar{t}
+\tag{5.35}
+\end{equation}\]</span>
+with (if you want explict expressions of <span class="math inline">\(H_i\)</span>’s)
+<span class="math display">\[
+H_i := \sum_{\alpha \in \mathcal{F}_{n,2\kappa}} \bar{F}_{i,\alpha} B_{\alpha}, \quad i=1,\dots,\bar{t}
+\]</span>
+where <span class="math inline">\(\bar{F}_{i,\alpha}\)</span> is the <span class="math inline">\((i,\alpha)\)</span> entry of <span class="math inline">\(\bar{F}\)</span>.</p>
+<p><strong>Adding localizing matrices</strong>. Finally, we create additional variables for the localizing matrices
+<span class="math display">\[
+X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g},
+\]</span>
+and enforce that their entries are linear combinations of the moments. Recall that a localizing matrix is
+<span class="math display">\[
+L_{g_i}^{\kappa}[y] = \ell_y \left( g_i(x)\cdot [x]_{s_i}[x]_{s_i}^\top\right).
+\]</span>
+Writing <span class="math inline">\(g_i(x) = \sum_\gamma g_{i,\gamma} x^{\gamma}\)</span>, this means the <span class="math inline">\((\alpha,\beta)\)</span> entry of <span class="math inline">\(L_{g_i}^{\kappa}[y]\)</span> is
+<span class="math display">\[
+\sum_{\gamma} g_{i,\gamma} y_{\alpha+\beta+\gamma}, \quad \alpha,\beta \in \mathcal{F}_{n,s_i}.
+\]</span>
+Therefore, for each localizing matrix, we have the constraint
+<span class="math display" id="eq:moment-matrix-localizing-matrix-constraints">\[\begin{equation}
+\langle B_{i,\alpha,\beta}, X_{\mathrm{loc},i} \rangle = X_{\mathrm{loc},i,\alpha,\beta} = \langle G_{i,\alpha,\beta}, X_{\mathrm{mom}} \rangle, \quad i=1,\dots,l_g, \alpha,\beta \in \mathcal{F}_{n,s_i}, \alpha \succeq \beta,
+\tag{5.36}
+\end{equation}\]</span>
+where (if you want explict expressions of <span class="math inline">\(G_{i,\alpha,\beta}\)</span>)
+<span class="math display">\[
+G_{i,\alpha,\beta} = \sum_{\gamma} \frac{1}{c_{\alpha+\beta+\gamma}} g_{i,\gamma} B_{\alpha+\beta+\gamma}.
+\]</span></p>
+<p><strong>The cost function</strong>. Finally, the cost function is
+<span class="math display">\[
+\sum_{\alpha} p_{\alpha} y_{\alpha} = \sum_{\alpha} \frac{p_{\alpha}}{c_{\alpha}} \langle B_{\alpha}, X_{\mathrm{mom}} \rangle = \left\langle \sum_{\alpha} \frac{p_{\alpha}}{c_{\alpha}} B_{\alpha} , X_{\mathrm{mom}} \right\rangle := \langle C_{\mathrm{mom}}, X_{\mathrm{mom}} \rangle.
+\]</span></p>
+<p><strong>Putting everything together</strong>. The moment relaxation <a href="Moment.html#eq:moment-Putinar-y">(5.26)</a> can be written as a standard primal SDP
+<span class="math display" id="eq:moment-Putinar-standard-primal-SDP">\[\begin{equation}
+\begin{split}
+\min_{\substack{X_{\mathrm{mom}} \\ X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g}} } &amp; \quad \langle C_{\mathrm{mom}}, X_{\mathrm{mom}} \rangle \\
+\mathrm{s.t.}&amp; \quad \langle B_0, X_{\mathrm{mom}} \rangle = 1 \\
+&amp; \quad \langle B_i^{\perp}, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,d(n,\kappa) \\
+&amp; \quad \langle H_i, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,\bar{t} \\
+&amp; \quad \langle B_{i,\alpha,\beta}, X_{\mathrm{loc},i} \rangle - \langle G_{i,\alpha,\beta}, X_{\mathrm{mom}} \rangle = 0, \quad i=1,\dots,l_g, \alpha\succeq\beta \in \mathcal{F}_{n,s_i} \\
+&amp; \quad X_{\mathrm{mom}},X_{\mathrm{loc},1},\dots,X_{\mathrm{loc},l_g} \succeq 0
+\end{split}
+\tag{5.37}
+\end{equation}\]</span></p>
 
+</div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
