@@ -5832,12 +5832,15 @@ Let us make this solution extraction procedure concrete by going through an exam
 \protect\hypertarget{exm:SolutionExtraction}{}\label{exm:SolutionExtraction}Consider the polynomial optimization problem
 \begin{equation}
 \begin{split}
-\min_{x \in \mathbb{R}^{2}} & \quad (x_1 - 1)^2 + (x_1 - x_2)^2 + (x_2 - 3)^2 \\
+\min_{x \in \mathbb{R}^{2}} & \quad -(x_1 - 1)^2 - (x_1 - x_2)^2 - (x_2 - 3)^2 \\
 \mathrm{s.t.}& \quad 1 - (x_1 - 1)^2 \geq 0 \\
 & \quad 1 - (x_1 - x_2)^2 \geq 0 \\
 & \quad 1 - (x_2 - 3)^2 \geq 0
 \end{split}
 \end{equation}
+
+We can implement the primal moment relaxation using the conversion approach in Chapter \ref{SOSConversionSDPSecond} and solve the resulting SDP using MOSEK. You can check out \href{https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/example_moment_sos.m}{the code}, which is quite easy to use.
+
 Solving the moment relaxation with \(\kappa =2\), we obtain
 \[
 \mathrm{rank}(M_1[y]) = \mathrm{rank}(M_2[y]) = 3.
@@ -6070,7 +6073,7 @@ the primal conic form of \eqref{eq:moment-Putinar-dual-conic-form} reads
 \end{equation}
 It is not too difficult to observe that the primal conic form \eqref{eq:moment-Putinar-primal-conic-form} is just the conic representation of the dual SOS program \eqref{eq:SOS-Putinar-restate}, because the linear constraints in \eqref{eq:moment-Putinar-primal-conic-form} are exactly those that match the coefficients of the two polynomials ``\(p(x)\)'' and ``\(\gamma + \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}\)''.
 
-\subsection{The Second Approach}\label{the-second-approach}
+\subsection{The Second Approach}\label{SOSConversionSDPSecond}
 
 The first conversion approach generates \(X \in \mathcal{K}\), which contains not only PSD variables but also free variables. In the second approach, we can generate a conic program with only PSD variables.
 

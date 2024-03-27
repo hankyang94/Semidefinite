@@ -277,7 +277,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.7" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.7</b> Conversion to Standard SDP</a>
 <ul>
 <li class="chapter" data-level="5.7.1" data-path="Moment.html"><a href="Moment.html#the-first-approach"><i class="fa fa-check"></i><b>5.7.1</b> The First Approach</a></li>
-<li class="chapter" data-level="5.7.2" data-path="Moment.html"><a href="Moment.html#the-second-approach"><i class="fa fa-check"></i><b>5.7.2</b> The Second Approach</a></li>
+<li class="chapter" data-level="5.7.2" data-path="Moment.html"><a href="Moment.html#SOSConversionSDPSecond"><i class="fa fa-check"></i><b>5.7.2</b> The Second Approach</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -1206,13 +1206,14 @@ for all $x_i,i=1,\dots,r$. This is a system of $s(n,t)$ polynomial equations.  -
 <p><span id="exm:SolutionExtraction" class="example"><strong>Example 5.3  (Solution Extraction from Moment Matrix) </strong></span>Consider the polynomial optimization problem
 <span class="math display">\[\begin{equation}
 \begin{split}
-\min_{x \in \mathbb{R}^{2}} &amp; \quad (x_1 - 1)^2 + (x_1 - x_2)^2 + (x_2 - 3)^2 \\
+\min_{x \in \mathbb{R}^{2}} &amp; \quad -(x_1 - 1)^2 - (x_1 - x_2)^2 - (x_2 - 3)^2 \\
 \mathrm{s.t.}&amp; \quad 1 - (x_1 - 1)^2 \geq 0 \\
 &amp; \quad 1 - (x_1 - x_2)^2 \geq 0 \\
 &amp; \quad 1 - (x_2 - 3)^2 \geq 0
 \end{split}
-\end{equation}\]</span>
-Solving the moment relaxation with <span class="math inline">\(\kappa =2\)</span>, we obtain
+\end{equation}\]</span></p>
+<p>We can implement the primal moment relaxation using the conversion approach in Chapter <a href="Moment.html#SOSConversionSDPSecond">5.7.2</a> and solve the resulting SDP using MOSEK. You can check out <a href="https://github.com/ComputationalRobotics/Semidefinite-Examples/blob/main/example_moment_sos.m">the code</a>, which is quite easy to use.</p>
+<p>Solving the moment relaxation with <span class="math inline">\(\kappa =2\)</span>, we obtain
 <span class="math display">\[
 \mathrm{rank}(M_1[y]) = \mathrm{rank}(M_2[y]) = 3.
 \]</span>
@@ -1437,8 +1438,8 @@ the primal conic form of <a href="Moment.html#eq:moment-Putinar-dual-conic-form"
 \end{equation}\]</span>
 It is not too difficult to observe that the primal conic form <a href="Moment.html#eq:moment-Putinar-primal-conic-form">(5.30)</a> is just the conic representation of the dual SOS program <a href="Moment.html#eq:SOS-Putinar-restate">(5.13)</a>, because the linear constraints in <a href="Moment.html#eq:moment-Putinar-primal-conic-form">(5.30)</a> are exactly those that match the coefficients of the two polynomials “<span class="math inline">\(p(x)\)</span>” and “<span class="math inline">\(\gamma + \mathrm{Ideal}[h]_{2\kappa} + \mathrm{Qmodule}[g]_{2\kappa}\)</span>”.</p>
 </div>
-<div id="the-second-approach" class="section level3 hasAnchor" number="5.7.2">
-<h3><span class="header-section-number">5.7.2</span> The Second Approach<a href="Moment.html#the-second-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="SOSConversionSDPSecond" class="section level3 hasAnchor" number="5.7.2">
+<h3><span class="header-section-number">5.7.2</span> The Second Approach<a href="Moment.html#SOSConversionSDPSecond" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The first conversion approach generates <span class="math inline">\(X \in \mathcal{K}\)</span>, which contains not only PSD variables but also free variables. In the second approach, we can generate a conic program with only PSD variables.</p>
 <p><strong>Rewriting the moment matrix</strong>. To do so, I will first create a variable <span class="math inline">\(X_{\mathrm{mom}} \in \mathbb{S}^{s(n,\kappa)}\)</span> and enforce it to be a valid moment matrix by using linear constraints. This is equivalent to saying
 <span class="math display" id="eq:X-mom-decomposition">\[\begin{equation}
