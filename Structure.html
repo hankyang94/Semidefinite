@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Exploit Structure | Semidefinite Optimization and Relaxation</title>
+  <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="generator" content="bookdown 0.38 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Exploit Structure | Semidefinite Optimization and Relaxation" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  <meta name="github-repo" content="hankyang94/Semidefinite" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Exploit Structure | Semidefinite Optimization and Relaxation" />
+  
+  <meta name="twitter:description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
+  
+
+<meta name="author" content="Heng Yang" />
+
+
+<meta name="date" content="2024-04-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Moment.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Semidefinite Optimization and Relaxation</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#feedback"><i class="fa fa-check"></i>Feedback</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#offerings"><i class="fa fa-check"></i>Offerings</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="notation.html"><a href="notation.html"><i class="fa fa-check"></i>Notation</a></li>
+<li class="chapter" data-level="1" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i><b>1</b> Mathematical Background</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="background.html"><a href="background.html#background:convexity"><i class="fa fa-check"></i><b>1.1</b> Convexity</a></li>
+<li class="chapter" data-level="1.2" data-path="background.html"><a href="background.html#background:convex:geometry"><i class="fa fa-check"></i><b>1.2</b> Convex Geometry</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="background.html"><a href="background.html#basic-facts"><i class="fa fa-check"></i><b>1.2.1</b> Basic Facts</a></li>
+<li class="chapter" data-level="1.2.2" data-path="background.html"><a href="background.html#cones-duality-polarity"><i class="fa fa-check"></i><b>1.2.2</b> Cones, Duality, Polarity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="background.html"><a href="background.html#background:convex:optimization"><i class="fa fa-check"></i><b>1.3</b> Convex Optimization</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="background.html"><a href="background.html#minimax-theorem"><i class="fa fa-check"></i><b>1.3.1</b> Minimax Theorem</a></li>
+<li class="chapter" data-level="1.3.2" data-path="background.html"><a href="background.html#background:convex:optimization:Lagrangian"><i class="fa fa-check"></i><b>1.3.2</b> Lagrangian Duality</a></li>
+<li class="chapter" data-level="1.3.3" data-path="background.html"><a href="background.html#kkt-optimality-conditions"><i class="fa fa-check"></i><b>1.3.3</b> KKT Optimality Conditions</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="background.html"><a href="background.html#background:linear:optimization"><i class="fa fa-check"></i><b>1.4</b> Linear Optimization</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="background.html"><a href="background.html#polyhedra"><i class="fa fa-check"></i><b>1.4.1</b> Polyhedra</a></li>
+<li class="chapter" data-level="1.4.2" data-path="background.html"><a href="background.html#linear-program"><i class="fa fa-check"></i><b>1.4.2</b> Linear Program</a></li>
+<li class="chapter" data-level="1.4.3" data-path="background.html"><a href="background.html#farkas-lemma"><i class="fa fa-check"></i><b>1.4.3</b> Farkas Lemma</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="sdp.html"><a href="sdp.html"><i class="fa fa-check"></i><b>2</b> Semidefinite Optimization</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="sdp.html"><a href="sdp.html#positive-semidefinite-matrices"><i class="fa fa-check"></i><b>2.1</b> Positive Semidefinite Matrices</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="sdp.html"><a href="sdp.html#geometric-properties"><i class="fa fa-check"></i><b>2.1.1</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="sdp.html"><a href="sdp.html#semidefinite-programming"><i class="fa fa-check"></i><b>2.2</b> Semidefinite Programming</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="sdp.html"><a href="sdp.html#spectrahedra"><i class="fa fa-check"></i><b>2.2.1</b> Spectrahedra</a></li>
+<li class="chapter" data-level="2.2.2" data-path="sdp.html"><a href="sdp.html#formulation-and-duality"><i class="fa fa-check"></i><b>2.2.2</b> Formulation and Duality</a></li>
+<li class="chapter" data-level="2.2.3" data-path="sdp.html"><a href="sdp.html#geometric-properties-1"><i class="fa fa-check"></i><b>2.2.3</b> Geometric Properties</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="sdp.html"><a href="sdp.html#SoftwareConic"><i class="fa fa-check"></i><b>2.3</b> Software for Conic Optimization</a></li>
+<li class="chapter" data-level="2.4" data-path="sdp.html"><a href="sdp.html#interior-point-algorithm"><i class="fa fa-check"></i><b>2.4</b> Interior Point Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="sdp.html"><a href="sdp.html#the-central-path"><i class="fa fa-check"></i><b>2.4.1</b> The Central Path</a></li>
+<li class="chapter" data-level="2.4.2" data-path="sdp.html"><a href="sdp.html#the-aho-newton-direction"><i class="fa fa-check"></i><b>2.4.2</b> The AHO Newton Direction</a></li>
+<li class="chapter" data-level="2.4.3" data-path="sdp.html"><a href="sdp.html#basic-algorithm"><i class="fa fa-check"></i><b>2.4.3</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.4.4" data-path="sdp.html"><a href="sdp.html#nondegeneracy"><i class="fa fa-check"></i><b>2.4.4</b> Nondegeneracy</a></li>
+<li class="chapter" data-level="2.4.5" data-path="sdp.html"><a href="sdp.html#generalization"><i class="fa fa-check"></i><b>2.4.5</b> Generalization</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="sdp.html"><a href="sdp.html#applications"><i class="fa fa-check"></i><b>2.5</b> Applications</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="sdp.html"><a href="sdp.html#LyapunovLinearSystem"><i class="fa fa-check"></i><b>2.5.1</b> Lyapunov Stability</a></li>
+<li class="chapter" data-level="2.5.2" data-path="sdp.html"><a href="sdp.html#linear-quadratic-regulator"><i class="fa fa-check"></i><b>2.5.2</b> Linear Quadratic Regulator</a></li>
+<li class="chapter" data-level="2.5.3" data-path="sdp.html"><a href="sdp.html#domain-adaptation"><i class="fa fa-check"></i><b>2.5.3</b> Domain Adaptation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Shor.html"><a href="Shor.html"><i class="fa fa-check"></i><b>3</b> Shor’s Semidefinite Relaxation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Shor.html"><a href="Shor.html#semidefinite-relaxation-of-qcqps"><i class="fa fa-check"></i><b>3.1</b> Semidefinite Relaxation of QCQPs</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="Shor.html"><a href="Shor.html#lagrangian-dual-problem"><i class="fa fa-check"></i><b>3.1.1</b> Lagrangian Dual Problem</a></li>
+<li class="chapter" data-level="3.1.2" data-path="Shor.html"><a href="Shor.html#dual-of-the-dual-bidual"><i class="fa fa-check"></i><b>3.1.2</b> Dual of the Dual (Bidual)</a></li>
+<li class="chapter" data-level="3.1.3" data-path="Shor.html"><a href="Shor.html#maxcut"><i class="fa fa-check"></i><b>3.1.3</b> MAXCUT</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="Shor.html"><a href="Shor.html#certifiably-optimal-rotation-averaging"><i class="fa fa-check"></i><b>3.2</b> Certifiably Optimal Rotation Averaging</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="Shor.html"><a href="Shor.html#dual-optimality-certifier"><i class="fa fa-check"></i><b>3.2.1</b> Dual Optimality Certifier</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="Shor.html"><a href="Shor.html#stretch-to-high-degree-polynomial-optimization"><i class="fa fa-check"></i><b>3.3</b> Stretch to High-Degree Polynomial Optimization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="SOS.html"><a href="SOS.html"><i class="fa fa-check"></i><b>4</b> Sums of Squares Relaxation</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="SOS.html"><a href="SOS.html#basic-algebraic-geometry"><i class="fa fa-check"></i><b>4.1</b> Basic Algebraic Geometry</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="SOS.html"><a href="SOS.html#groups-rings-fields"><i class="fa fa-check"></i><b>4.1.1</b> Groups, Rings, Fields</a></li>
+<li class="chapter" data-level="4.1.2" data-path="SOS.html"><a href="SOS.html#polynomials-ideals-and-varieties"><i class="fa fa-check"></i><b>4.1.2</b> Polynomials, Ideals, and Varieties</a></li>
+<li class="chapter" data-level="4.1.3" data-path="SOS.html"><a href="SOS.html#gröbner-bases"><i class="fa fa-check"></i><b>4.1.3</b> Gröbner Bases</a></li>
+<li class="chapter" data-level="4.1.4" data-path="SOS.html"><a href="SOS.html#quotient-ring"><i class="fa fa-check"></i><b>4.1.4</b> Quotient Ring</a></li>
+<li class="chapter" data-level="4.1.5" data-path="SOS.html"><a href="SOS.html#ZeroDimIdeal"><i class="fa fa-check"></i><b>4.1.5</b> Zero-dimensional Ideal</a></li>
+<li class="chapter" data-level="4.1.6" data-path="SOS.html"><a href="SOS.html#algebraic-and-semialgebraic-sets"><i class="fa fa-check"></i><b>4.1.6</b> Algebraic and Semialgebraic Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="SOS.html"><a href="SOS.html#sos-and-nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2</b> SOS and Nonnegative Polynomials</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="SOS.html"><a href="SOS.html#nonnegative-polynomials"><i class="fa fa-check"></i><b>4.2.1</b> Nonnegative polynomials</a></li>
+<li class="chapter" data-level="4.2.2" data-path="SOS.html"><a href="SOS.html#sums-of-squares-polynomials"><i class="fa fa-check"></i><b>4.2.2</b> Sums-of-Squares Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="SOS.html"><a href="SOS.html#compute-sos-decompositions"><i class="fa fa-check"></i><b>4.3</b> Compute SOS Decompositions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="SOS.html"><a href="SOS.html#univaraite-polynomials"><i class="fa fa-check"></i><b>4.3.1</b> Univaraite Polynomials</a></li>
+<li class="chapter" data-level="4.3.2" data-path="SOS.html"><a href="SOS.html#multivariate-polynomials"><i class="fa fa-check"></i><b>4.3.2</b> Multivariate Polynomials</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="SOS.html"><a href="SOS.html#sos-programming"><i class="fa fa-check"></i><b>4.4</b> SOS Programming</a></li>
+<li class="chapter" data-level="4.5" data-path="SOS.html"><a href="SOS.html#positivstellensatz"><i class="fa fa-check"></i><b>4.5</b> Positivstellensatz</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="SOS.html"><a href="SOS.html#univaraite-intervals"><i class="fa fa-check"></i><b>4.5.1</b> Univaraite Intervals</a></li>
+<li class="chapter" data-level="4.5.2" data-path="SOS.html"><a href="SOS.html#affine-variety"><i class="fa fa-check"></i><b>4.5.2</b> Affine Variety</a></li>
+<li class="chapter" data-level="4.5.3" data-path="SOS.html"><a href="SOS.html#basic-semialgebraic-sets"><i class="fa fa-check"></i><b>4.5.3</b> Basic Semialgebraic Sets</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="SOS.html"><a href="SOS.html#applications-1"><i class="fa fa-check"></i><b>4.6</b> Applications</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="SOS.html"><a href="SOS.html#SOS:POP"><i class="fa fa-check"></i><b>4.6.1</b> Polynomial Optimization</a></li>
+<li class="chapter" data-level="4.6.2" data-path="SOS.html"><a href="SOS.html#lyapunov-certificates"><i class="fa fa-check"></i><b>4.6.2</b> Lyapunov Certificates</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Moment.html"><a href="Moment.html"><i class="fa fa-check"></i><b>5</b> Moment Relaxation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="Moment.html"><a href="Moment.html#dual-cones-of-polynomials"><i class="fa fa-check"></i><b>5.1</b> Dual Cones of Polynomials</a></li>
+<li class="chapter" data-level="5.2" data-path="Moment.html"><a href="Moment.html#dual-of-quadratic-modules-and-ideals"><i class="fa fa-check"></i><b>5.2</b> Dual of Quadratic Modules and Ideals</a></li>
+<li class="chapter" data-level="5.3" data-path="Moment.html"><a href="Moment.html#the-moment-sos-hierarchy"><i class="fa fa-check"></i><b>5.3</b> The Moment-SOS Hierarchy</a></li>
+<li class="chapter" data-level="5.4" data-path="Moment.html"><a href="Moment.html#measure-theoretic-interpretation"><i class="fa fa-check"></i><b>5.4</b> Measure-Theoretic Interpretation</a></li>
+<li class="chapter" data-level="5.5" data-path="Moment.html"><a href="Moment.html#truncated-moment-problem"><i class="fa fa-check"></i><b>5.5</b> Truncated Moment Problem</a></li>
+<li class="chapter" data-level="5.6" data-path="Moment.html"><a href="Moment.html#flat-extension-detecting-global-optimality-and-extracting-solutions"><i class="fa fa-check"></i><b>5.6</b> Flat Extension: Detecting Global Optimality and Extracting Solutions</a></li>
+<li class="chapter" data-level="5.7" data-path="Moment.html"><a href="Moment.html#conversion-to-standard-sdp"><i class="fa fa-check"></i><b>5.7</b> Conversion to Standard SDP</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="Moment.html"><a href="Moment.html#the-first-approach"><i class="fa fa-check"></i><b>5.7.1</b> The First Approach</a></li>
+<li class="chapter" data-level="5.7.2" data-path="Moment.html"><a href="Moment.html#SOSConversionSDPSecond"><i class="fa fa-check"></i><b>5.7.2</b> The Second Approach</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="Structure.html"><a href="Structure.html"><i class="fa fa-check"></i><b>6</b> Exploit Structure</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="Structure.html"><a href="Structure.html#chordal-graphs-and-sparse-sdps"><i class="fa fa-check"></i><b>6.1</b> Chordal Graphs and Sparse SDPs</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Semidefinite Optimization and Relaxation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="Structure" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Exploit Structure<a href="Structure.html#Structure" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="chordal-graphs-and-sparse-sdps" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Chordal Graphs and Sparse SDPs<a href="Structure.html#chordal-graphs-and-sparse-sdps" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following discussion mostly follows <span class="citation">(<a href="#ref-zheng20mp-chordal">Zheng et al. 2020</a>)</span> and <span class="citation">(<a href="#ref-vandenberghe15fto-chordal">Vandenberghe, Andersen, et al. 2015</a>)</span>.</p>
+<p>Consider an undirected graph <span class="math inline">\(\mathcal{G}= (\mathcal{V},\mathcal{E})\)</span>, where <span class="math inline">\(\mathcal{V}=\{1,\dots,n \}\)</span> is the node set, and <span class="math inline">\(\mathcal{E}\subseteq \mathcal{V}\times \mathcal{V}\)</span> is the edge set. A graph <span class="math inline">\(\mathcal{G}\)</span> is called <strong>complete</strong>, or <strong>fully-connected</strong>, if any pair of nodes are connected by an edge.</p>
+<p>A subset <span class="math inline">\(\mathcal{C}\subseteq \mathcal{V}\)</span> is called a <strong>clique</strong> if the subgraph induced by <span class="math inline">\(\mathcal{C}\)</span> is complete, i.e., for any <span class="math inline">\(i \neq j \in \mathcal{C}\)</span>, <span class="math inline">\((i,j) \in \mathcal{E}\)</span> is connected. The number of nodes in <span class="math inline">\(\mathcal{C}\)</span> is denoted <span class="math inline">\(|\mathcal{C}|\)</span>. A clique <span class="math inline">\(\mathcal{C}\)</span> is called a <strong>maximal clique</strong> if <span class="math inline">\(\mathcal{C}\)</span> is not part of a larger clique.</p>
+<p>A <strong>cycle</strong> of length <span class="math inline">\(K\)</span> in a graph <span class="math inline">\(\mathcal{G}\)</span> is a set of distinct notes <span class="math inline">\(\{ v_1,v_2,\dots,v_K \}\)</span> such that <span class="math inline">\((v_K,v_1) \in \mathcal{E}\)</span> and <span class="math inline">\((v_i,v_{i+1}) \in \mathcal{E}\)</span> for any <span class="math inline">\(i=1,\dots,K-1\)</span>. A <strong>chord</strong> in a cycle is an edge joining two non-adjacent nodes.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:ChordalGraph" class="definition"><strong>Definition 6.1  (Chordal Graph) </strong></span>An undirected graph is called chordal if every cycle of length greater than or equal to <span class="math inline">\(4\)</span> has at least one chord.</p>
+</div>
+</div>
+<p>Given a graph, testing chordality can be done efficiently. If a graph is chordal, then all its maximal cliques can be enumerated in linear time in the number of nodes and edges <span class="citation">(<a href="#ref-gavril72sic-algorithms">Gavril 1972</a>)</span>.</p>
+<p>If a graph is not chordal, then it can be made chordal by adding edges, known as <strong>chordal extension</strong>. Finding the minimal chordal extension of a graph, i.e., making the graph chordal by adding the minimum number of edges, is NP-complete <span class="citation">(<a href="#ref-arnborg87siadm-complexity">Arnborg, Corneil, and Proskurowski 1987</a>)</span>. However, there exist good heuristics that can find a reasonably good chordal extension quickly <span class="citation">(<a href="#ref-vandenberghe15fto-chordal">Vandenberghe, Andersen, et al. 2015</a>)</span>.</p>
+<p>Given a symmetric matrix <span class="math inline">\(X \in \mathbb{S}^{n}\)</span>, the sparsity pattern of <span class="math inline">\(X\)</span> can be naturally represented as an undirected graph. To do so, we can have the node set <span class="math inline">\(\mathcal{V}= [n]\)</span> and connect the node <span class="math inline">\(i\)</span> and the node <span class="math inline">\(j\)</span> if and only if <span class="math inline">\(X_{ij} \neq 0\)</span>. Let <span class="math inline">\(\mathcal{G}= (\mathcal{V}, \mathcal{E})\)</span> be the graph created by such a procedure.</p>
+<p>Let <span class="math inline">\(\mathcal{C}\subset \mathcal{V}\)</span> be a clique of the graph, we can create a matrix <span class="math inline">\(E_{\mathcal{C}} \in \mathbb{R}^{|\mathcal{C}| \times n}\)</span> as follows
+<span class="math display">\[
+(E_{\mathcal{C}})_{ij} = \begin{cases}
+1 &amp; \text{if }\mathcal{C}(i) = j \\
+0 &amp; \text{otherwise}
+\end{cases},
+\]</span>
+where <span class="math inline">\(\mathcal{C}(i)\)</span> denotes the <span class="math inline">\(i\)</span>-th vertex in <span class="math inline">\(\mathcal{C}\)</span>. With this matrix <span class="math inline">\(E_{\mathcal{C}}\)</span>, we can perform two operations</p>
+<ul>
+<li><p>Given <span class="math inline">\(X \in \mathbb{S}^{n}\)</span>, <span class="math inline">\(E_{\mathcal{C}} X E_{\mathcal{C}}^\top\in \mathbb{S}^{|\mathcal{C}|}\)</span> extracts the principal submatrix of <span class="math inline">\(X\)</span> with rows and columns indexed by the vertices in <span class="math inline">\(\mathcal{C}\)</span>.</p></li>
+<li><p>Given <span class="math inline">\(Y \in \mathbb{S}^{|\mathcal{C}|}\)</span>, <span class="math inline">\(E_{\mathcal{C}}^\top Y E_{\mathcal{C}} \in \mathbb{S}^{n}\)</span> creates a larger matrix whose principal submatrix indexed by <span class="math inline">\(\mathcal{C}\)</span> are populated by the values of <span class="math inline">\(Y\)</span>, and zero everywhere else.</p></li>
+</ul>
+<p>Given <span class="math inline">\(\mathcal{G}= (\mathcal{V},\mathcal{E})\)</span>, let <span class="math inline">\(\mathcal{E}^* = \mathcal{E}\cup \{ (i,i), i \in \mathcal{V} \}\)</span> be the set of edges including self-loops. Consider the subspace of <span class="math inline">\(\mathbb{S}^{n}\)</span> defined as
+<span class="math display">\[
+\mathbb{S}^{n}(\mathcal{E},0) = \{  X \in \mathbb{S}^{n} \mid X_{ij}=X_{ji} = 0 \text{ if } (i,j) \neq \mathcal{E}^* \}.
+\]</span>
+In words, the subspace <span class="math inline">\(\mathbb{S}^{n}(\mathcal{E},0)\)</span> contains all symmetric matrices with non-zero entries corresponding to only the edges in <span class="math inline">\(\mathcal{E}^*\)</span>. This subspace is also called symmetric matrices with sparsity pattern <span class="math inline">\(\mathcal{G}\)</span>.</p>
+<p>We can then consider the PSD matrices with sparsity pattern <span class="math inline">\(\mathcal{G}\)</span> defined as
+<span class="math display" id="eq:psd-sparsity">\[\begin{equation}
+\mathbb{S}^{n}_{+}(\mathcal{E},0) = \{  X \in \mathbb{S}^{n}(\mathcal{E},0) \mid X \succeq 0 \}
+\tag{6.1}
+\end{equation}\]</span>
+which contains <span class="math inline">\(n \times n\)</span> PSD matrices with non-zero entries only in <span class="math inline">\(\mathcal{E}^*\)</span>. It is easy to check that <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},0)\)</span> is a proper cone.</p>
+<p>Correspondingly, we can consider another cone
+<span class="math display" id="eq:psd-sparsity-dual">\[\begin{equation}
+\mathbb{S}^{n}_{+}(\mathcal{E},?) = \Pi_{\mathbb{S}^{n}(\mathcal{E},0)}(\mathbb{S}^{n}_{+}),
+\tag{6.2}
+\end{equation}\]</span>
+where the projection is done according to the usual Frobenius norm. Clearly, given a PSD matrix <span class="math inline">\(X_+\)</span>, its projection onto <span class="math inline">\(\mathbb{S}^{n}(\mathcal{E},0)\)</span> is just setting the entries of <span class="math inline">\(X_+\)</span> not in <span class="math inline">\(\mathcal{E}^*\)</span> to zero. In other words, every element <span class="math inline">\(X \in \mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span>, while itself may not be PSD, must admit a <strong>positive semidefinite completion</strong>.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:SparsePSDCone" class="lemma"><strong>Lemma 6.1  (Sparse PSD Cones) </strong></span><span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},0)\)</span> and <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span> are dual to each other, i.e.,
+<span class="math display">\[
+\mathbb{S}^{n}_{+}(\mathcal{E},?) = \{ X \in \mathbb{S}^{n}(\mathcal{E},0)  \mid \langle X, Z \rangle \geq 0, \forall Z \in \mathbb{S}^{n}_{+}(\mathcal{E},0) \}.
+\]</span>
+<span class="math display">\[
+\mathbb{S}^{n}_{+}(\mathcal{E},0) = \{ X \in \mathbb{S}^{n}(\mathcal{E},0) \mid \langle X, Z \rangle \succeq 0, \forall Z \in \mathbb{S}^{n}_{+}(\mathcal{E},?) \}.
+\]</span></p>
+</div>
+</div>
+<p>When the graph <span class="math inline">\(\mathcal{G}= (\mathcal{V},\mathcal{E})\)</span> is chordal, the cones <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},0)\)</span> and <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span> can be efficiently decomposed into smaller PSD cones.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:DecomposeSparsePSDCones" class="theorem"><strong>Theorem 6.1  (Decomposition of Sparse PSD Cones) </strong></span>Suppose the graph <span class="math inline">\(\mathcal{G}= (\mathcal{V},\mathcal{E})\)</span> is chordal and let <span class="math inline">\(\{ \mathcal{C}_1,\dots,\mathcal{C}_p \}\)</span> be the set of maximal cliques of <span class="math inline">\(\mathcal{G}\)</span>. Then we have,</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(X \in \mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span> if and only if
+<span class="math display" id="eq:principal-submatrix-psd">\[\begin{equation}
+E_{\mathcal{C}_k} X E_{\mathcal{C}_k}^\top\in \mathbb{S}^{|\mathcal{C}_k|}_{+}, \quad k=1,\dots,p,
+\tag{6.3}
+\end{equation}\]</span>
+i.e., the principal submatrices of <span class="math inline">\(X\)</span> corresponding to the maximal cliques are PSD.</p></li>
+<li><p><span class="math inline">\(Z \in \mathbb{S}^{n}_{+}(\mathcal{E},0)\)</span> if and only if
+<span class="math display" id="eq:psd-decomposition">\[\begin{equation}
+Z = \sum_{k=1}^p E_{\mathcal{C}_k}^\top Z_k E_{\mathcal{C}_k},
+\tag{6.4}
+\end{equation}\]</span>
+for some PSD matrices
+<span class="math display">\[
+Z_k \in \mathbb{S}^{|\mathcal{C}_k|}_{+}, \quad k=1,\dots,p,
+\]</span>
+i.e., <span class="math inline">\(Z\)</span> admits a decomposition into smaller PSD matrices.</p></li>
+</ol>
+</div>
+</div>
+<p>You should verify that when <a href="Structure.html#eq:principal-submatrix-psd">(6.3)</a> and <a href="Structure.html#eq:psd-decomposition">(6.4)</a> hold, <span class="math inline">\(\langle X, Z \rangle\geq 0\)</span>.</p>
+<p>We now consider the standard SDP pair
+<span class="math display" id="eq:primal-sdp-sparse">\[\begin{equation}
+\begin{split}
+\min_{X \in \mathbb{S}^{n}} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \langle A_i, X \rangle = b_i, i=1,\dots,m \\
+&amp; \quad X \succeq 0
+\end{split}
+\tag{6.5}
+\end{equation}\]</span>
+and
+<span class="math display" id="eq:dual-sdp-sparse">\[\begin{equation}
+\begin{split}
+\max_{y \in \mathbb{R}^{m}, Z \in \mathbb{S}^{n}} &amp; \quad \langle b, y \rangle \\
+\mathrm{s.t.}&amp; \quad C - \sum_{i=1}^m y_i A_i = Z \\
+&amp; \quad Z \succeq 0
+\end{split}.
+\tag{6.6}
+\end{equation}\]</span>
+We say the SDP pair satisfies the <strong>aggregate sparsity pattern</strong> described by the graph <span class="math inline">\(\mathcal{G}=(\mathcal{V},\mathcal{E})\)</span> if
+<span class="math display" id="eq:aggregate-sparsity-pattern">\[\begin{equation}
+C \in \mathbb{S}^{n}(\mathcal{E},0), \quad A_i \in \mathbb{S}^{n}(\mathcal{E},0), i=1,\dots,m.
+\tag{6.7}
+\end{equation}\]</span>
+We assume the sparsity pattern <span class="math inline">\(\mathcal{G}\)</span> is chordal, or can be made chordal by some chordal extension. Note that under the sparsity pattern <a href="Structure.html#eq:aggregate-sparsity-pattern">(6.7)</a>, it is clear that
+<span class="math display">\[
+Z = C - \sum_{i=1}^m y_i A_i \in \mathbb{S}^{n}(\mathcal{E},0)
+\]</span>
+must also satisfy the sparsity pattern. Therefore, the dual SDP is equivalent to
+<span class="math display" id="eq:dual-sdp-sparse-rewritten">\[\begin{equation}
+\boxed{
+\begin{split}
+\max_{y,Z} &amp; \quad \langle b, y \rangle \\
+\mathrm{s.t.}&amp; \quad C - \sum_{i=1}^m y_i A_i = Z \\
+&amp; \quad Z \in \mathbb{S}^{n}_{+}(\mathcal{E},0)
+\end{split}
+}
+\tag{6.8}
+\end{equation}\]</span>
+By standard conic duality (again!), since the dual cone of <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},0)\)</span> is <span class="math inline">\(\mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span>, we know the primal SDP must be equivalent to
+<span class="math display" id="eq:primal-sdp-sparse-rewritten">\[\begin{equation}
+\boxed{
+\begin{split}
+\min_{X } &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \langle A_i, X \rangle = b_i, i=1,\dots,m \\
+&amp; \quad X \in \mathbb{S}^{n}_{+}(\mathcal{E},?)
+\end{split}
+}
+\tag{6.9}
+\end{equation}\]</span>
+This makes sense because even if the matrix <span class="math inline">\(X\)</span> is dense, since the cost matrix <span class="math inline">\(C\)</span> and the constraint matrices <span class="math inline">\(A_i\)</span> all satisfy the aggregate sparsity pattern, what matters in <span class="math inline">\(X\)</span> are only those belong to <span class="math inline">\(\mathcal{E}^*\)</span> as long as <span class="math inline">\(X\)</span> admits a positive semidefinite completion.</p>
+<p>The new conic pair <a href="Structure.html#eq:primal-sdp-sparse-rewritten">(6.9)</a> and <a href="Structure.html#eq:dual-sdp-sparse-rewritten">(6.8)</a> are not standard SDPs, we can convert them to standard SDPs, in two ways.</p>
+<p><strong>Convert the primal</strong>. From Theorem <a href="Structure.html#thm:DecomposeSparsePSDCones">6.1</a>, we know <span class="math inline">\(X \in \mathbb{S}^{n}_{+}(\mathcal{E},?)\)</span> if and only if <a href="Structure.html#eq:principal-submatrix-psd">(6.3)</a> holds. Therefore, we can create redundant variables <span class="math inline">\(X_1,\dots,X_p\)</span> such that
+<span class="math display">\[
+X \in \mathbb{S}^{n}_{+}(\mathcal{E},?) \quad \Leftrightarrow \begin{cases}
+E_{\mathcal{C}_k} X E_{\mathcal{C}_k}^\top= X_k \\
+X_k \succeq 0
+\end{cases}, k=1,\dots,p.
+\]</span>
+Therefore, the primal is equivalent to
+<span class="math display" id="eq:primal-sdp-sparse-rewritten-1">\[\begin{equation}
+\begin{split}
+\min_{X,X_1,\dots,X_p} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \langle A_i, X \rangle = b_i, i=1,\dots,m \\
+&amp; \quad E_{\mathcal{C}_k} X E_{\mathcal{C}_k}^\top= X_k, k=1,\dots,p \\
+&amp; \quad X_1,\dots,X_p \succeq 0
+\end{split}
+\tag{6.10}
+\end{equation}\]</span>
+This formulation, however, has free variables <span class="math inline">\(X\)</span>, which can be marginalized out, arriving the final form
+<span class="math display" id="eq:primal-sdp-sparse-rewritten-final">\[\begin{equation}
+\begin{split}
+\min_{X_1,\dots,X_p} &amp; \quad \sum_{k=1}^p \langle C_k, X_k \rangle \\
+\mathrm{s.t.}&amp; \quad \sum_{k=1}^p \langle A_{i,k}, X_k \rangle = b_i, i=1,\dots,m \\
+&amp; \quad E_{\mathcal{C}_k \cap \mathcal{C}_j} \left( E_{\mathcal{C}_k}^\top X_k E_{\mathcal{C}_k} - E_{\mathcal{C}_j}^\top X_j E_{\mathcal{C}_j} \right)E_{\mathcal{C}_k \cap \mathcal{C}_j}^\top= 0, \forall j \neq k, \mathcal{C}_j \cap \mathcal{C}_k \neq \emptyset \\
+&amp; \quad X_1,\dots,X_p \succeq 0
+\end{split}
+\tag{6.11}
+\end{equation}\]</span>
+This conversion was first proposed by <span class="citation">(<a href="#ref-fukuda01siopt-exploiting">Fukuda et al. 2001</a>)</span>.</p>
+<p><strong>Convert the dual</strong>. From Theorem <a href="Structure.html#thm:DecomposeSparsePSDCones">6.1</a>, we know <span class="math inline">\(Z \in \mathbb{S}^{\mathcal{E},0}_{+}\)</span> if and only if <a href="Structure.html#eq:psd-decomposition">(6.4)</a> holds. Therefore, the dual SDP can be equivalently written as
+<span class="math display" id="eq:dual-sdp-sparse-rewritten-final">\[\begin{equation}
+\begin{split}
+\max_{y,Z_1,\dots,Z_p} &amp; \quad \langle b, y \rangle \\
+\mathrm{s.t.}&amp; \quad C - \sum_{i=1}^m y_i A_i = \sum_{k=1}^p E_{\mathcal{C}_k}^\top Z_k E_{\mathcal{C}_k} \\
+&amp; \quad Z_1,\dots,Z_p \succeq 0
+\end{split}
+\tag{6.12}
+\end{equation}\]</span>
+which can be written as a standard SDP using a trick called dualization <span class="citation">(<a href="#ref-zhang2021sparse">R. Y. Zhang and Lavaei 2021</a>)</span>.</p>
+
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-arnborg87siadm-complexity" class="csl-entry">
+Arnborg, Stefan, Derek G Corneil, and Andrzej Proskurowski. 1987. <span>“Complexity of Finding Embeddings in Ak-Tree.”</span> <em>SIAM Journal on Algebraic Discrete Methods</em> 8 (2): 277–84.
+</div>
+<div id="ref-fukuda01siopt-exploiting" class="csl-entry">
+Fukuda, Mituhiro, Masakazu Kojima, Kazuo Murota, and Kazuhide Nakata. 2001. <span>“Exploiting Sparsity in Semidefinite Programming via Matrix Completion i: General Framework.”</span> <em>SIAM Journal on Optimization</em> 11 (3): 647–74.
+</div>
+<div id="ref-gavril72sic-algorithms" class="csl-entry">
+Gavril, Fănică. 1972. <span>“Algorithms for Minimum Coloring, Maximum Clique, Minimum Covering by Cliques, and Maximum Independent Set of a Chordal Graph.”</span> <em>SIAM Journal on Computing</em> 1 (2): 180–87.
+</div>
+<div id="ref-vandenberghe15fto-chordal" class="csl-entry">
+Vandenberghe, Lieven, Martin S Andersen, et al. 2015. <span>“Chordal Graphs and Semidefinite Optimization.”</span> <em>Foundations and Trends<span></span> in Optimization</em> 1 (4): 241–433.
+</div>
+<div id="ref-zhang2021sparse" class="csl-entry">
+Zhang, Richard Y, and Javad Lavaei. 2021. <span>“Sparse Semidefinite Programs with Guaranteed Near-Linear Time Complexity via Dualized Clique Tree Conversion.”</span> <em>Mathematical Programming</em> 188: 351–93.
+</div>
+<div id="ref-zheng20mp-chordal" class="csl-entry">
+Zheng, Yang, Giovanni Fantuzzi, Antonis Papachristodoulou, Paul Goulart, and Andrew Wynn. 2020. <span>“Chordal Decomposition in Operator-Splitting Methods for Sparse Semidefinite Programs.”</span> <em>Mathematical Programming</em> 180 (1): 489–532.
+</div>
+</div>
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://semidefinite.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Moment.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/hankyang94/Semidefinite/blob/main/06-ExploitStructure.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["semidefinite-optimization-relaxation.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
