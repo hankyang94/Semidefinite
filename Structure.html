@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-04-01" />
+<meta name="date" content="2024-04-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -283,6 +283,10 @@ div.csl-indent {
 <li class="chapter" data-level="6" data-path="Structure.html"><a href="Structure.html"><i class="fa fa-check"></i><b>6</b> Exploit Structure</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="Structure.html"><a href="Structure.html#chordal-graphs-and-sparse-sdps"><i class="fa fa-check"></i><b>6.1</b> Chordal Graphs and Sparse SDPs</a></li>
+<li class="chapter" data-level="6.2" data-path="Structure.html"><a href="Structure.html#sparse-polynomial-optimization"><i class="fa fa-check"></i><b>6.2</b> Sparse Polynomial Optimization</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="Structure.html"><a href="Structure.html#sparse-sos-representation"><i class="fa fa-check"></i><b>6.2.1</b> Sparse SOS Representation</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -475,7 +479,231 @@ This conversion was first proposed by <span class="citation">(<a href="#ref-fuku
 \tag{6.12}
 \end{equation}\]</span>
 which can be written as a standard SDP using a trick called dualization <span class="citation">(<a href="#ref-zhang2021sparse">R. Y. Zhang and Lavaei 2021</a>)</span>.</p>
+</div>
+<div id="sparse-polynomial-optimization" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Sparse Polynomial Optimization<a href="Structure.html#sparse-polynomial-optimization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider the basic closed semialgebraic set
+<span class="math display" id="eq:constraint-set-sparse">\[\begin{equation}
+S = \{ x \in \mathbb{R}^{n} \mid g_i(x) \geq 0, i=1,\dots,l \}.
+\tag{6.13}
+\end{equation}\]</span>
+If the set <span class="math inline">\(S\)</span> is Archimedean, then Putinar’s Positivstellensatz states that any polynomial <span class="math inline">\(p(x)\)</span> strictly positive on <span class="math inline">\(S\)</span> must admit an SOS representation
+<span class="math display" id="eq:Putinar-Psatz-restate">\[\begin{equation}
+p(x) = \sigma_0(x) + \sum_{i=1}^l \sigma_i(x) g_i(x), \quad \sigma_i(x) \in \Sigma[x], i=0,\dots,l
+\tag{6.14}
+\end{equation}\]</span>
+where the <span class="math inline">\(\sigma_i\)</span>’s are SOS polynomials in <span class="math inline">\(x\)</span>. Using this result, the moment-SOS hierarchy for polynomial optimization has been derived.</p>
+<p>It should be noted that, when the dimension <span class="math inline">\(n\)</span> of <span class="math inline">\(x\)</span> is large, the size of the gram matrix of <span class="math inline">\(\sigma_0(x)\)</span> grows very fast with the relaxation order, and hence quickly becomes too large to be solved by existing SDP solvers like MOSEK.</p>
+<p>In this section, we will show that when the polynomials <span class="math inline">\(p\)</span> and <span class="math inline">\(\{ g_i \}_{i=1}^l\)</span> are sparse in some sense, then the moment-SOS hierarchy can be made much more tractable. The discussion below easily generalizes to the case where <span class="math inline">\(S\)</span> also has equality constraints.</p>
+<div id="sparse-sos-representation" class="section level3 hasAnchor" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Sparse SOS Representation<a href="Structure.html#sparse-sos-representation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let us first consider the case with three sets of variables. Let <span class="math inline">\(\mathbb{R}[x,y,z]\)</span> be the ring of real polynomials in three sets of variables <span class="math inline">\(x \in \mathbb{R}^{n_x}\)</span>, <span class="math inline">\(y \in \mathbb{R}^{n_y}\)</span>, and <span class="math inline">\(z \in \mathbb{R}^{n_z}\)</span>. Let <span class="math inline">\(S_{xy} \subset \mathbb{R}^{n_x + n_y}\)</span>, <span class="math inline">\(S_{yz} \subset \mathbb{R}^{n_y + n_z}\)</span>, and <span class="math inline">\(S \subset \mathbb{R}^{n_x + n_y + n_z}\)</span> be the compact basic closed semialgebraic sets defined as follows
+<span class="math display" id="eq:three-sets-definition">\[\begin{equation}
+\begin{split}
+S_{xy} &amp;= \{ (x,y) \in \mathbb{R}^{n_x + n_y} \mid g_i(x,y) \geq 0, i \in I_{xy} \} \\
+S_{yz} &amp;= \{ (y,z) \in \mathbb{R}^{n_y + n_z} \mid h_i(y,z) \geq 0, i \in I_{yz} \} \\
+S &amp;= \{ (x,y,z) \in \mathbb{R}^{n_x + n_y + n_z} \mid (x,y) \in S_{xy}, (y,z) \in S_{yz} \}
+\end{split}
+\tag{6.15}
+\end{equation}\]</span>
+for some polynomials <span class="math inline">\(g_i \in \mathbb{R}[x,y]\)</span> and <span class="math inline">\(h_i \in \mathbb{R}[y,z]\)</span> and some index sets <span class="math inline">\(I_{xy}\)</span> and <span class="math inline">\(I_{yz}\)</span>. Denote by <span class="math inline">\(\Sigma[x,y]\)</span> and <span class="math inline">\(\Sigma[y,z]\)</span> to be the sets of SOS polynomials in <span class="math inline">\((x,y)\)</span> and <span class="math inline">\((y,z)\)</span>, respectively.</p>
+<p>Let us now consider the following two quadratic modules
+<span class="math display" id="eq:quadratic-modules-separate-three-sets">\[\begin{equation}
+\begin{split}
+\mathrm{Qmodule}[g] &amp;=  \left\{  \sigma_0 + \sum_{i \in I_{xy}} \sigma_i g_i \mid \sigma_i \in \Sigma[x,y], i\in \{ 0 \} \cup I_{xy}  \right\}  \\
+\mathrm{Qmodule}[h] &amp;=  \left\{  \sigma_0 + \sum_{i \in I_{yz}} \sigma_i h_i \mid \sigma_i \in \Sigma[y,z], i\in \{ 0 \} \cup I_{yz}  \right\}
+\end{split}.
+\tag{6.16}
+\end{equation}\]</span></p>
+<p>We have the following result that gives a sparse Putinar’s P-satz.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SparsePutinarThreeSets" class="theorem"><strong>Theorem 6.2  (Sparse Putinar's Positivstellensatz) </strong></span>Let <span class="math inline">\(S\)</span>, <span class="math inline">\(S_{xy}\)</span>, and <span class="math inline">\(S_{yz}\)</span> be as defined in <a href="Structure.html#eq:three-sets-definition">(6.15)</a>. Assume that both <span class="math inline">\(S_{xy}\)</span> and <span class="math inline">\(S_{yz}\)</span> are Archimedean (e.g., with a ball constraint <span class="math inline">\(M - \Vert (x,y) \Vert^2\)</span> and <span class="math inline">\(M - \Vert (y,z) \Vert^2\)</span>).</p>
+<p>Given any <span class="math inline">\(p \in \mathbb{R}[x,y] + \mathbb{R}[y,z]\)</span>, i.e., a polynomial <span class="math inline">\(p(x,y,z)\)</span> that can be decomposed as
+<span class="math display">\[
+p(x,y,z) = p_1(x,y) + p_2(y,z).
+\]</span>
+If <span class="math inline">\(p(x,y,z)\)</span> is strictly positive on <span class="math inline">\(S\)</span>, then
+<span class="math display">\[
+p \in \mathrm{Qmodule}[g] + \mathrm{Qmodule}[h].
+\]</span></p>
+</div>
+</div>
+<p>Let us contrast the sparse Putinar’s P-satz in Theorem <a href="Structure.html#thm:SparsePutinarThreeSets">6.2</a> with the dense version in <a href="Structure.html#eq:Putinar-Psatz-restate">(6.14)</a>.</p>
+<p>Invoking the dense version, we know that any <span class="math inline">\(p(x,y,z)\)</span> positive on <span class="math inline">\(S\)</span> has the decomposition
+<span class="math display" id="eq:dense-Putinar-three-sets">\[\begin{equation}
+p = \sigma_0(x,y,z) + \sum_{i \in I_{x,y}} \sigma_i(x,y,z) g_i(x,y) + \sum_{i \in I_{yz}} \sigma_i(x,y,z) h_i(y,z), \quad \sigma_i \in \Sigma[x,y,z].
+\tag{6.17}
+\end{equation}\]</span>
+For a fixed relaxation order, the gram matrix of the SOS polynomial <span class="math inline">\(\sigma_0(x,y,z)\)</span> has size
+<span class="math display">\[
+s(n_x + n_y + n_z + \kappa, \kappa).
+\]</span></p>
+<p>Invoking the sparse version in Theorem <a href="Structure.html#thm:SparsePutinarThreeSets">6.2</a>, we obtain the following decomposition
+<span class="math display" id="eq:sparse-Putinar-three-sets">\[\begin{equation}
+\begin{split}
+p = \sigma_0(x,y) + &amp; \sum_{i \in I_{xy}} \sigma_i(x,y) g_i(x,y) + \\ &amp; q_0(y,z) + \sum_{i \in I_{yz}} q_i(y,z) h_i(y,z), \quad \sigma_i \in \Sigma[x,y], q_i \in \Sigma[y,z].
+\end{split}
+\tag{6.18}
+\end{equation}\]</span>
+For the same relaxation order, the gram matrix of the SOS polynomial <span class="math inline">\(\sigma_0(x,y)\)</span> has size
+<span class="math display">\[
+s(n_x + n_y + \kappa,\kappa),
+\]</span>
+and the gram matrix of the SOS polynomial <span class="math inline">\(q_0(y,z)\)</span> has size
+<span class="math display">\[
+s(n_y + n_z + \kappa, \kappa).
+\]</span></p>
+<p>At the same relaxation order, the SOS program (conic optimization) <a href="Structure.html#eq:sparse-Putinar-three-sets">(6.18)</a> is much smaller than that in <a href="Structure.html#eq:dense-Putinar-three-sets">(6.17)</a>!</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SparseSOSThreeSets" class="example"><strong>Example 6.1  (Sparse SOS Representation) </strong></span>Consider
+<span class="math display">\[
+S = \{ (x,y,z) \mid g(x,y)= 1- x^2 - y^2 \geq 0, h(y,z) = 1 - y^2 - z^2 \geq 0 \},
+\]</span>
+and
+<span class="math display">\[
+p(x,y,z) = \underbrace{1 + x^2 y^2 - x^2 y^4}_{\in \mathbb{R}[x,y]} + \underbrace{y^2 + z^2 - y^2 z^4}_{ \in \mathbb{R}[y,z]}.
+\]</span></p>
+<p>We can find a sparse SOS representation of <span class="math inline">\(p(x,y,z)\)</span> as
+<span class="math display">\[
+p = \underbrace{1 + x^4 y^2 + x^2 y^2 (1 - x^2 - y^2)}_{\in \mathrm{Qmodule}[g]} + \underbrace{y^4 z^2  + y^2 z^2(1-y^2 - z^2)}_{\in \mathrm{Qmodule}[h]}.
+\]</span></p>
+</div>
+</div>
+<p>Let us generalize the result above to more than three sets of variables.</p>
+<p>Consider a constraint subset <span class="math inline">\(S \subset \mathbb{R}^{n}\)</span> as defined by <a href="Structure.html#eq:constraint-set-sparse">(6.13)</a>. Denote <span class="math inline">\(I_0 = [n] = \{ 1,\dots,n \}\)</span>. Assume <span class="math inline">\(I_0\)</span> can be written as the union of <span class="math inline">\(K\)</span> subsets
+<span class="math display">\[
+I_0 = \cup_{k=1}^K I_k, \quad I_k \subset I_0.
+\]</span>
+Let the size of <span class="math inline">\(I_k\)</span> be <span class="math inline">\(n_k &lt; n\)</span>. Denote
+<span class="math display">\[
+x(I_k) = \{ x_i \mid i \in I_k \}
+\]</span>
+as the subset of variables with indexes in <span class="math inline">\(I_k\)</span>. The dimension of <span class="math inline">\(x(I_k)\)</span> is <span class="math inline">\(n_k\)</span>. Denote by <span class="math inline">\(\mathbb{R}[x(I_k)]\)</span> be the ring of real polynomials in the <span class="math inline">\(n_k\)</span> variables <span class="math inline">\(x(I_k)\)</span>.</p>
+<p>With this setup, we will make the following definition about the sparsity of the set <span class="math inline">\(S\)</span> as defined in <a href="Structure.html#eq:constraint-set-sparse">(6.13)</a>.</p>
+<div class="definitionbox">
+<div class="definition">
+<p><span id="def:CorrelativeSparsity" class="definition"><strong>Definition 6.2  (Correlative Sparsity) </strong></span>Consider the constraint set <span class="math inline">\(S\)</span> defined in <a href="Structure.html#eq:constraint-set-sparse">(6.13)</a>, and a polynomial <span class="math inline">\(p \in \mathbb{R}[x]\)</span>. <span class="math inline">\(S\)</span> and <span class="math inline">\(p\)</span> are said to satisfy correlative sparsity, or chordal sparsity, if the following conditions hold:</p>
+<ol style="list-style-type: decimal">
+<li><p>For any constraint <span class="math inline">\(g_i(x),i=1,\dots,l\)</span>, there exists <span class="math inline">\(k \in [K]\)</span> such that <span class="math inline">\(g_i(x)\)</span> only involves variables <span class="math inline">\(x(I_k)\)</span>, i.e., <span class="math inline">\(g_i(x)\)</span> can be written as <span class="math inline">\(g_i(x(I_k))\)</span> for some <span class="math inline">\(I_k\)</span></p></li>
+<li><p>The polynomial <span class="math inline">\(p(x)\)</span> can be decomposed as
+<span class="math display">\[
+p = \sum_{k=1}^K p_k, \quad p_k \in \mathbb{R}[x(I_k)],k=1,\dots,K.
+\]</span></p></li>
+<li><p>The partition <span class="math inline">\(I_1,\dots,I_K\)</span> satisfies the running intersection property (RIP), i.e., for every <span class="math inline">\(k=1,\dots,K-1\)</span>
+<span class="math display">\[
+(\cup_{j=1}^k I_k ) \cap I_{k+1} \subseteq I_s, \quad \text{for some } s \leq k.
+\]</span></p></li>
+</ol>
+</div>
+</div>
+<p>When correlative sparsity holds, we can partition the set of all constraints <span class="math inline">\(\{ 1,\dots,l \}\)</span> into <span class="math inline">\(K\)</span> subsets <span class="math inline">\(J_k\)</span> such that
+<span class="math display" id="eq:partition-constraints">\[\begin{equation}
+\cup_{k=1}^K J_k = \{ 1,\dots,l \}, \quad g_i(x) \equiv g_i(x(I_k)), \forall i \in J_k, k=1,\dots,K
+\tag{6.19}
+\end{equation}\]</span>
+and every constraint <span class="math inline">\(g_i, i \in J_k\)</span> only involves variables <span class="math inline">\(x(I_k)\)</span>.</p>
+<p>We are now ready to state the sparse Putinar’s Positivstellensatz.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SparsePutinar" class="theorem"><strong>Theorem 6.3  (Sparse Putinar's Positivstellensatz) </strong></span>Let <span class="math inline">\(S\)</span> and <span class="math inline">\(p\)</span> satisfy correlative sparsity in Definition <a href="Structure.html#def:CorrelativeSparsity">6.2</a>, and <span class="math inline">\(J_1,\dots,J_K\)</span> be as in <a href="Structure.html#eq:partition-constraints">(6.19)</a>.</p>
+<p>Assume that
+<span class="math display">\[
+S_{x(I_k)} := \{  y \in \mathbb{R}^{n_k} \mid g_i(y) \geq 0, i \in J_k  \}
+\]</span>
+is Archimedean for every <span class="math inline">\(k=1,\dots,K\)</span>.</p>
+<p>Then, if <span class="math inline">\(p(x)\)</span> is strictly positive on <span class="math inline">\(S\)</span>, it admits a representation
+<span class="math display">\[
+p(x) = \sum_{k=1}^K \left( \sigma_k + \sum_{i \in J_k} \sigma_{ki} g_i  \right), \quad \sigma_k, \sigma_{ki} \in \Sigma[x(I_k)], k=1,\dots,K.
+\]</span></p>
+</div>
+</div>
+<p>A few remarks about the sparse Putinar’s Positivstellensatz:</p>
+<ul>
+<li><p>The sparse P-satz is more efficient than the dense P-satz, in the sense that every SOS multiplier <span class="math inline">\(\sigma_k, \sigma_{ki}\)</span> only involves the subset of variables <span class="math inline">\(x(I_k)\)</span> of dimension <span class="math inline">\(n_k &lt; n\)</span>.</p></li>
+<li><p>The running intersection property (RIP) in Definition <a href="Structure.html#def:CorrelativeSparsity">6.2</a> is important. Without RIP, the sparse Putinar’s P-satz in general fails to hold, and one can give counterexamples, such as Example 12.1.4 in <span class="citation">(<a href="#ref-nie23book-moment">Nie 2023</a>)</span>. For the special case of three sets of variables discussed above, one can easily check that RIP holds:
+<span class="math display">\[
+(x,y) \cap (y,z) = y \subset (x,y).
+\]</span></p></li>
+<li><p>The constraint index sets <span class="math inline">\(\{ J_1,\dots,J_K \}\)</span> can have intersections. For example, for certain <span class="math inline">\(g_i(x)\)</span>, if there exist both <span class="math inline">\(k_1\)</span> and <span class="math inline">\(k_2\)</span> such that <span class="math inline">\(g_i(x) \in \mathbb{R}[x(I_{k_1})]\)</span> and <span class="math inline">\(g_i(x) \in \mathbb{R}[x(I_{k_2})]\)</span> both hold, then <span class="math inline">\(J_{k_1}\)</span> and <span class="math inline">\(J_{k_2}\)</span> can have intersections.</p></li>
+<li><p>When the Archimedean condition does not hold, but correlative sparsity exists, one can derive a similar version of the sparse Schmudgen’s Positivstellensatz, where the quadratic modules are replaced with preorders.</p></li>
+</ul>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:SparsePutinar" class="example"><strong>Example 6.2  (Sparse Putinar's Positivstellensatz) </strong></span>Let <span class="math inline">\(x = (x_1,\dots,x_5)\)</span>, and
+<span class="math display">\[\begin{equation}
+\begin{split}
+g_1(x) &amp;= 1 - x_1^2 - x_2^2 \\
+g_2(x) &amp;= 1 - x_2^4 x_3^4 - x_3^2 \\
+g_3(x) &amp;= 1 - x_3^2 - x_4^2 - x_5^2
+\end{split}.
+\end{equation}\]</span>
+Consider the polynomial <span class="math inline">\(p(x)\)</span>
+<span class="math display">\[
+p(x) = 1 + x_1^2 x_2^2 + x_2^2 x_3^2 + x_3^2 - x_3^2 x_4^2 - x_3^2 x_5^2.
+\]</span>
+We can create the partition
+<span class="math display">\[
+I_1 = \{ 1,2 \}, \quad I_2 = \{ 2,3 \}, \quad I_3 = \{ 3,4,5 \},
+\]</span>
+and verify that they satisfy RIP:
+<span class="math display">\[
+I_1 \cap I_2 = \{ 2 \} \subset I_1, \quad (I_1 \cup I_2) \cap I_3 =\{ 3 \} \subset I_2.
+\]</span>
+Every polynomial <span class="math inline">\(g_i\)</span> only involves a subset of variables:
+<span class="math display">\[
+J_1 = {1}, \quad J_2 = {2}, \quad J_3 = {3}.
+\]</span>
+The polynomial <span class="math inline">\(p(x)\)</span> can be decomposed as
+<span class="math display">\[
+p(x) = \underbrace{(1 + x_1^2 x_2^2)}_{p_1} + \underbrace{(x_2^2 x_3^2)}_{p_2} + \underbrace{(x_3^2 - x_3^2 x_4^2 - x_3^2 x_5^2)}_{p_3}.
+\]</span>
+Invoking Theorem <a href="Structure.html#thm:SparsePutinar">6.3</a>, we can find a sparse SOS representation
+<span class="math display">\[\begin{equation}
+\begin{split}
+p(x) = &amp; 1 + x_1^4 x_2^2 + x_1^2 x_2^4 + x_1^2 x_2^2 g_1(x) \\
+&amp; + x_2^6 x_3^6 + x_2^2 x_3^4 + x_2^2 x_3^2 g_2(x) \\
+&amp; + x_3^4 + x_3^2 g_3(x).
+\end{split}
+\end{equation}\]</span></p>
+</div>
+</div>
+<p>One may wonder how can we find such a partition <span class="math inline">\(I_1,\dots,I_K\)</span>? It turns out this is exactly a graph problem! In particular, we can perform the following procedure.</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a graph <span class="math inline">\(\mathcal{G}\)</span> with <span class="math inline">\(\mathcal{V}= [1,\dots,n]\)</span> nodes</p></li>
+<li><p>For every <span class="math inline">\(g_i(x)\)</span>, find the minimum subset of variables that <span class="math inline">\(g_i(x)\)</span> involves, say <span class="math inline">\(x(I_k)\)</span>. Connect all pairs of nodes in <span class="math inline">\(I_k\)</span>.</p></li>
+<li><p>Write <span class="math inline">\(p(x) = \sum_{\alpha} p_{\alpha} x^{\alpha}\)</span> with nonzero coefficients <span class="math inline">\(p_{\alpha}\)</span>. For every term <span class="math inline">\(x^{\alpha}\)</span>, find the variables with nonzero exponents, say <span class="math inline">\(\alpha_i \neq 0, \forall i \in I_{\alpha}\)</span>. Connect all pairs of nodes in <span class="math inline">\(I_{\alpha}\)</span>.</p></li>
+</ol>
+<p>We obtain a graph from the procedure described above. In particular, for the problem in Example <a href="Structure.html#exm:SparsePutinar">6.2</a>, we obtain a graph in Fig. <a href="Structure.html#fig:CorrelativeSparsity">6.1</a>. This graph is a chordal graph. If it is not chordal, we can find chordal extension.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:CorrelativeSparsity"></span>
+<img src="images/correlative_sparsity.png" alt="Correlative sparsity and chordal graph." width="70%" />
+<p class="caption">
+Figure 6.1: Correlative sparsity and chordal graph.
+</p>
+</div>
+<p>Now in Fig. <a href="Structure.html#fig:CorrelativeSparsity">6.1</a>, one can see that <span class="math inline">\(I_1,I_2,I_3\)</span> correspond to exactly the three maximal cliques of the chordal graph and they satisfy RIP. Indeed, this is true for any chordal graph.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:RIPChordal" class="theorem"><strong>Theorem 6.4  (RIP and Chordal Graph) </strong></span>A connected graph is chordal if and only if its maximal cliques, after an appropriate ordering, satisfy the running intersection property.</p>
+</div>
+</div>
+<p>Therefore, after forming the connectivity graph and make it chordal, one can always find its maximal cliques and order them in a way that satisfies the RIP.</p>
+<p>With the sparse Putinar’s P-satz introduced in Theorem <a href="Structure.html#thm:SparsePutinar">6.3</a>, we can derive the sparse SOS relaxations for POPs. Consider the POP
+<span class="math display">\[
+\min_{x \in S} p(x)
+\]</span>
+with <span class="math inline">\(S\)</span> defined as in <a href="Structure.html#eq:constraint-set-sparse">(6.13)</a>. If <span class="math inline">\(S\)</span> and <span class="math inline">\(p\)</span> satisfy correlative sparsity, then the <span class="math inline">\(\kappa\)</span>-th order SOS relaxation reads
+<span class="math display" id="eq:sparse-SOS-relaxation-Putinar">\[\begin{equation}
+\begin{split}
+\max &amp; \quad \gamma \\
+\mathrm{s.t.}&amp; \quad p(x) - \gamma \in \mathrm{Qmodule}[\{ g_i \}_{i \in I_1}]_{2\kappa} + \cdots + \mathrm{Qmodule}[\{ g_i \}_{i \in I_K}]_{2\kappa},
+\end{split}
+\tag{6.20}
+\end{equation}\]</span>
+which is an instance of SOS programming.</p>
 
+</div>
 </div>
 </div>
 <h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -488,6 +716,9 @@ Fukuda, Mituhiro, Masakazu Kojima, Kazuo Murota, and Kazuhide Nakata. 2001. <spa
 </div>
 <div id="ref-gavril72sic-algorithms" class="csl-entry">
 Gavril, Fănică. 1972. <span>“Algorithms for Minimum Coloring, Maximum Clique, Minimum Covering by Cliques, and Maximum Independent Set of a Chordal Graph.”</span> <em>SIAM Journal on Computing</em> 1 (2): 180–87.
+</div>
+<div id="ref-nie23book-moment" class="csl-entry">
+Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
 </div>
 <div id="ref-vandenberghe15fto-chordal" class="csl-entry">
 Vandenberghe, Lieven, Martin S Andersen, et al. 2015. <span>“Chordal Graphs and Semidefinite Optimization.”</span> <em>Foundations and Trends<span></span> in Optimization</em> 1 (4): 241–433.

@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-04-01}
+\date{2024-04-03}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -6373,6 +6373,268 @@ This conversion was first proposed by \citep{fukuda01siopt-exploiting}.
 \label{eq:dual-sdp-sparse-rewritten-final}
 \end{equation}
 which can be written as a standard SDP using a trick called dualization \citep{zhang2021sparse}.
+
+\section{Sparse Polynomial Optimization}\label{sparse-polynomial-optimization}
+
+Consider the basic closed semialgebraic set
+\begin{equation}
+S = \{ x \in \mathbb{R}^{n} \mid g_i(x) \geq 0, i=1,\dots,l \}.
+\label{eq:constraint-set-sparse}
+\end{equation}
+If the set \(S\) is Archimedean, then Putinar's Positivstellensatz states that any polynomial \(p(x)\) strictly positive on \(S\) must admit an SOS representation
+\begin{equation}
+p(x) = \sigma_0(x) + \sum_{i=1}^l \sigma_i(x) g_i(x), \quad \sigma_i(x) \in \Sigma[x], i=0,\dots,l
+\label{eq:Putinar-Psatz-restate}
+\end{equation}
+where the \(\sigma_i\)'s are SOS polynomials in \(x\). Using this result, the moment-SOS hierarchy for polynomial optimization has been derived.
+
+It should be noted that, when the dimension \(n\) of \(x\) is large, the size of the gram matrix of \(\sigma_0(x)\) grows very fast with the relaxation order, and hence quickly becomes too large to be solved by existing SDP solvers like MOSEK.
+
+In this section, we will show that when the polynomials \(p\) and \(\{ g_i \}_{i=1}^l\) are sparse in some sense, then the moment-SOS hierarchy can be made much more tractable. The discussion below easily generalizes to the case where \(S\) also has equality constraints.
+
+\subsection{Sparse SOS Representation}\label{sparse-sos-representation}
+
+Let us first consider the case with three sets of variables. Let \(\mathbb{R}[x,y,z]\) be the ring of real polynomials in three sets of variables \(x \in \mathbb{R}^{n_x}\), \(y \in \mathbb{R}^{n_y}\), and \(z \in \mathbb{R}^{n_z}\). Let \(S_{xy} \subset \mathbb{R}^{n_x + n_y}\), \(S_{yz} \subset \mathbb{R}^{n_y + n_z}\), and \(S \subset \mathbb{R}^{n_x + n_y + n_z}\) be the compact basic closed semialgebraic sets defined as follows
+\begin{equation}
+\begin{split}
+S_{xy} &= \{ (x,y) \in \mathbb{R}^{n_x + n_y} \mid g_i(x,y) \geq 0, i \in I_{xy} \} \\
+S_{yz} &= \{ (y,z) \in \mathbb{R}^{n_y + n_z} \mid h_i(y,z) \geq 0, i \in I_{yz} \} \\
+S &= \{ (x,y,z) \in \mathbb{R}^{n_x + n_y + n_z} \mid (x,y) \in S_{xy}, (y,z) \in S_{yz} \}
+\end{split}
+\label{eq:three-sets-definition}
+\end{equation}
+for some polynomials \(g_i \in \mathbb{R}[x,y]\) and \(h_i \in \mathbb{R}[y,z]\) and some index sets \(I_{xy}\) and \(I_{yz}\). Denote by \(\Sigma[x,y]\) and \(\Sigma[y,z]\) to be the sets of SOS polynomials in \((x,y)\) and \((y,z)\), respectively.
+
+Let us now consider the following two quadratic modules
+\begin{equation}
+\begin{split}
+\mathrm{Qmodule}[g] &=  \left\{  \sigma_0 + \sum_{i \in I_{xy}} \sigma_i g_i \mid \sigma_i \in \Sigma[x,y], i\in \{ 0 \} \cup I_{xy}  \right\}  \\
+\mathrm{Qmodule}[h] &=  \left\{  \sigma_0 + \sum_{i \in I_{yz}} \sigma_i h_i \mid \sigma_i \in \Sigma[y,z], i\in \{ 0 \} \cup I_{yz}  \right\} 
+\end{split}.
+\label{eq:quadratic-modules-separate-three-sets}
+\end{equation}
+
+We have the following result that gives a sparse Putinar's P-satz.
+
+\begin{theorem}[Sparse Putinar's Positivstellensatz]
+\protect\hypertarget{thm:SparsePutinarThreeSets}{}\label{thm:SparsePutinarThreeSets}Let \(S\), \(S_{xy}\), and \(S_{yz}\) be as defined in \eqref{eq:three-sets-definition}. Assume that both \(S_{xy}\) and \(S_{yz}\) are Archimedean (e.g., with a ball constraint \(M - \Vert (x,y) \Vert^2\) and \(M - \Vert (y,z) \Vert^2\)).
+
+Given any \(p \in \mathbb{R}[x,y] + \mathbb{R}[y,z]\), i.e., a polynomial \(p(x,y,z)\) that can be decomposed as
+\[
+p(x,y,z) = p_1(x,y) + p_2(y,z).
+\]
+If \(p(x,y,z)\) is strictly positive on \(S\), then
+\[
+p \in \mathrm{Qmodule}[g] + \mathrm{Qmodule}[h].
+\]
+\end{theorem}
+
+Let us contrast the sparse Putinar's P-satz in Theorem \ref{thm:SparsePutinarThreeSets} with the dense version in \eqref{eq:Putinar-Psatz-restate}.
+
+Invoking the dense version, we know that any \(p(x,y,z)\) positive on \(S\) has the decomposition
+\begin{equation}
+p = \sigma_0(x,y,z) + \sum_{i \in I_{x,y}} \sigma_i(x,y,z) g_i(x,y) + \sum_{i \in I_{yz}} \sigma_i(x,y,z) h_i(y,z), \quad \sigma_i \in \Sigma[x,y,z].
+\label{eq:dense-Putinar-three-sets}
+\end{equation}
+For a fixed relaxation order, the gram matrix of the SOS polynomial \(\sigma_0(x,y,z)\) has size
+\[
+s(n_x + n_y + n_z + \kappa, \kappa).
+\]
+
+Invoking the sparse version in Theorem \ref{thm:SparsePutinarThreeSets}, we obtain the following decomposition
+\begin{equation}
+\begin{split}
+p = \sigma_0(x,y) + & \sum_{i \in I_{xy}} \sigma_i(x,y) g_i(x,y) + \\ & q_0(y,z) + \sum_{i \in I_{yz}} q_i(y,z) h_i(y,z), \quad \sigma_i \in \Sigma[x,y], q_i \in \Sigma[y,z].
+\end{split}
+\label{eq:sparse-Putinar-three-sets}
+\end{equation}
+For the same relaxation order, the gram matrix of the SOS polynomial \(\sigma_0(x,y)\) has size
+\[
+s(n_x + n_y + \kappa,\kappa),
+\]
+and the gram matrix of the SOS polynomial \(q_0(y,z)\) has size
+\[
+s(n_y + n_z + \kappa, \kappa).
+\]
+
+At the same relaxation order, the SOS program (conic optimization) \eqref{eq:sparse-Putinar-three-sets} is much smaller than that in \eqref{eq:dense-Putinar-three-sets}!
+
+\begin{example}[Sparse SOS Representation]
+\protect\hypertarget{exm:SparseSOSThreeSets}{}\label{exm:SparseSOSThreeSets}Consider
+\[
+S = \{ (x,y,z) \mid g(x,y)= 1- x^2 - y^2 \geq 0, h(y,z) = 1 - y^2 - z^2 \geq 0 \},
+\]
+and
+\[
+p(x,y,z) = \underbrace{1 + x^2 y^2 - x^2 y^4}_{\in \mathbb{R}[x,y]} + \underbrace{y^2 + z^2 - y^2 z^4}_{ \in \mathbb{R}[y,z]}.
+\]
+
+We can find a sparse SOS representation of \(p(x,y,z)\) as
+\[
+p = \underbrace{1 + x^4 y^2 + x^2 y^2 (1 - x^2 - y^2)}_{\in \mathrm{Qmodule}[g]} + \underbrace{y^4 z^2  + y^2 z^2(1-y^2 - z^2)}_{\in \mathrm{Qmodule}[h]}.
+\]
+\end{example}
+
+Let us generalize the result above to more than three sets of variables.
+
+Consider a constraint subset \(S \subset \mathbb{R}^{n}\) as defined by \eqref{eq:constraint-set-sparse}. Denote \(I_0 = [n] = \{ 1,\dots,n \}\). Assume \(I_0\) can be written as the union of \(K\) subsets
+\[
+I_0 = \cup_{k=1}^K I_k, \quad I_k \subset I_0.
+\]
+Let the size of \(I_k\) be \(n_k < n\). Denote
+\[
+x(I_k) = \{ x_i \mid i \in I_k \}
+\]
+as the subset of variables with indexes in \(I_k\). The dimension of \(x(I_k)\) is \(n_k\). Denote by \(\mathbb{R}[x(I_k)]\) be the ring of real polynomials in the \(n_k\) variables \(x(I_k)\).
+
+With this setup, we will make the following definition about the sparsity of the set \(S\) as defined in \eqref{eq:constraint-set-sparse}.
+
+\begin{definition}[Correlative Sparsity]
+\protect\hypertarget{def:CorrelativeSparsity}{}\label{def:CorrelativeSparsity}
+
+Consider the constraint set \(S\) defined in \eqref{eq:constraint-set-sparse}, and a polynomial \(p \in \mathbb{R}[x]\). \(S\) and \(p\) are said to satisfy correlative sparsity, or chordal sparsity, if the following conditions hold:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  For any constraint \(g_i(x),i=1,\dots,l\), there exists \(k \in [K]\) such that \(g_i(x)\) only involves variables \(x(I_k)\), i.e., \(g_i(x)\) can be written as \(g_i(x(I_k))\) for some \(I_k\)
+\item
+  The polynomial \(p(x)\) can be decomposed as
+  \[
+  p = \sum_{k=1}^K p_k, \quad p_k \in \mathbb{R}[x(I_k)],k=1,\dots,K.
+  \]
+\item
+  The partition \(I_1,\dots,I_K\) satisfies the running intersection property (RIP), i.e., for every \(k=1,\dots,K-1\)
+  \[
+  (\cup_{j=1}^k I_k ) \cap I_{k+1} \subseteq I_s, \quad \text{for some } s \leq k.
+  \]
+\end{enumerate}
+
+\end{definition}
+
+When correlative sparsity holds, we can partition the set of all constraints \(\{ 1,\dots,l \}\) into \(K\) subsets \(J_k\) such that
+\begin{equation}
+\cup_{k=1}^K J_k = \{ 1,\dots,l \}, \quad g_i(x) \equiv g_i(x(I_k)), \forall i \in J_k, k=1,\dots,K
+\label{eq:partition-constraints}
+\end{equation}
+and every constraint \(g_i, i \in J_k\) only involves variables \(x(I_k)\).
+
+We are now ready to state the sparse Putinar's Positivstellensatz.
+
+\begin{theorem}[Sparse Putinar's Positivstellensatz]
+\protect\hypertarget{thm:SparsePutinar}{}\label{thm:SparsePutinar}Let \(S\) and \(p\) satisfy correlative sparsity in Definition \ref{def:CorrelativeSparsity}, and \(J_1,\dots,J_K\) be as in \eqref{eq:partition-constraints}.
+
+Assume that
+\[
+S_{x(I_k)} := \{  y \in \mathbb{R}^{n_k} \mid g_i(y) \geq 0, i \in J_k  \}
+\]
+is Archimedean for every \(k=1,\dots,K\).
+
+Then, if \(p(x)\) is strictly positive on \(S\), it admits a representation
+\[
+p(x) = \sum_{k=1}^K \left( \sigma_k + \sum_{i \in J_k} \sigma_{ki} g_i  \right), \quad \sigma_k, \sigma_{ki} \in \Sigma[x(I_k)], k=1,\dots,K.
+\]
+\end{theorem}
+
+A few remarks about the sparse Putinar's Positivstellensatz:
+
+\begin{itemize}
+\item
+  The sparse P-satz is more efficient than the dense P-satz, in the sense that every SOS multiplier \(\sigma_k, \sigma_{ki}\) only involves the subset of variables \(x(I_k)\) of dimension \(n_k < n\).
+\item
+  The running intersection property (RIP) in Definition \ref{def:CorrelativeSparsity} is important. Without RIP, the sparse Putinar's P-satz in general fails to hold, and one can give counterexamples, such as Example 12.1.4 in \citep{nie23book-moment}. For the special case of three sets of variables discussed above, one can easily check that RIP holds:
+  \[
+  (x,y) \cap (y,z) = y \subset (x,y).
+  \]
+\item
+  The constraint index sets \(\{ J_1,\dots,J_K \}\) can have intersections. For example, for certain \(g_i(x)\), if there exist both \(k_1\) and \(k_2\) such that \(g_i(x) \in \mathbb{R}[x(I_{k_1})]\) and \(g_i(x) \in \mathbb{R}[x(I_{k_2})]\) both hold, then \(J_{k_1}\) and \(J_{k_2}\) can have intersections.
+\item
+  When the Archimedean condition does not hold, but correlative sparsity exists, one can derive a similar version of the sparse Schmudgen's Positivstellensatz, where the quadratic modules are replaced with preorders.
+\end{itemize}
+
+\begin{example}[Sparse Putinar's Positivstellensatz]
+\protect\hypertarget{exm:SparsePutinar}{}\label{exm:SparsePutinar}Let \(x = (x_1,\dots,x_5)\), and
+\begin{equation}
+\begin{split}
+g_1(x) &= 1 - x_1^2 - x_2^2 \\
+g_2(x) &= 1 - x_2^4 x_3^4 - x_3^2 \\
+g_3(x) &= 1 - x_3^2 - x_4^2 - x_5^2
+\end{split}.
+\end{equation}
+Consider the polynomial \(p(x)\)
+\[
+p(x) = 1 + x_1^2 x_2^2 + x_2^2 x_3^2 + x_3^2 - x_3^2 x_4^2 - x_3^2 x_5^2.
+\]
+We can create the partition
+\[
+I_1 = \{ 1,2 \}, \quad I_2 = \{ 2,3 \}, \quad I_3 = \{ 3,4,5 \},
+\]
+and verify that they satisfy RIP:
+\[
+I_1 \cap I_2 = \{ 2 \} \subset I_1, \quad (I_1 \cup I_2) \cap I_3 =\{ 3 \} \subset I_2.
+\]
+Every polynomial \(g_i\) only involves a subset of variables:
+\[
+J_1 = {1}, \quad J_2 = {2}, \quad J_3 = {3}.
+\]
+The polynomial \(p(x)\) can be decomposed as
+\[
+p(x) = \underbrace{(1 + x_1^2 x_2^2)}_{p_1} + \underbrace{(x_2^2 x_3^2)}_{p_2} + \underbrace{(x_3^2 - x_3^2 x_4^2 - x_3^2 x_5^2)}_{p_3}.
+\]
+Invoking Theorem \ref{thm:SparsePutinar}, we can find a sparse SOS representation
+\begin{equation}
+\begin{split}
+p(x) = & 1 + x_1^4 x_2^2 + x_1^2 x_2^4 + x_1^2 x_2^2 g_1(x) \\
+& + x_2^6 x_3^6 + x_2^2 x_3^4 + x_2^2 x_3^2 g_2(x) \\
+& + x_3^4 + x_3^2 g_3(x).
+\end{split}
+\end{equation}
+\end{example}
+
+One may wonder how can we find such a partition \(I_1,\dots,I_K\)? It turns out this is exactly a graph problem! In particular, we can perform the following procedure.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Create a graph \(\mathcal{G}\) with \(\mathcal{V}= [1,\dots,n]\) nodes
+\item
+  For every \(g_i(x)\), find the minimum subset of variables that \(g_i(x)\) involves, say \(x(I_k)\). Connect all pairs of nodes in \(I_k\).
+\item
+  Write \(p(x) = \sum_{\alpha} p_{\alpha} x^{\alpha}\) with nonzero coefficients \(p_{\alpha}\). For every term \(x^{\alpha}\), find the variables with nonzero exponents, say \(\alpha_i \neq 0, \forall i \in I_{\alpha}\). Connect all pairs of nodes in \(I_{\alpha}\).
+\end{enumerate}
+
+We obtain a graph from the procedure described above. In particular, for the problem in Example \ref{exm:SparsePutinar}, we obtain a graph in Fig. \ref{fig:CorrelativeSparsity}. This graph is a chordal graph. If it is not chordal, we can find chordal extension.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{images/correlative_sparsity} 
+
+}
+
+\caption{Correlative sparsity and chordal graph.}\label{fig:CorrelativeSparsity}
+\end{figure}
+
+Now in Fig. \ref{fig:CorrelativeSparsity}, one can see that \(I_1,I_2,I_3\) correspond to exactly the three maximal cliques of the chordal graph and they satisfy RIP. Indeed, this is true for any chordal graph.
+
+\begin{theorem}[RIP and Chordal Graph]
+\protect\hypertarget{thm:RIPChordal}{}\label{thm:RIPChordal}A connected graph is chordal if and only if its maximal cliques, after an appropriate ordering, satisfy the running intersection property.
+\end{theorem}
+
+Therefore, after forming the connectivity graph and make it chordal, one can always find its maximal cliques and order them in a way that satisfies the RIP.
+
+With the sparse Putinar's P-satz introduced in Theorem \ref{thm:SparsePutinar}, we can derive the sparse SOS relaxations for POPs. Consider the POP
+\[
+\min_{x \in S} p(x)
+\]
+with \(S\) defined as in \eqref{eq:constraint-set-sparse}. If \(S\) and \(p\) satisfy correlative sparsity, then the \(\kappa\)-th order SOS relaxation reads
+\begin{equation}
+\begin{split}
+\max & \quad \gamma \\
+\mathrm{s.t.}& \quad p(x) - \gamma \in \mathrm{Qmodule}[\{ g_i \}_{i \in I_1}]_{2\kappa} + \cdots + \mathrm{Qmodule}[\{ g_i \}_{i \in I_K}]_{2\kappa},
+\end{split}
+\label{eq:sparse-SOS-relaxation-Putinar}
+\end{equation}
+which is an instance of SOS programming.
 
   \bibliography{book.bib}
 
