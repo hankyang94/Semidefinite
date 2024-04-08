@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-04-03" />
+<meta name="date" content="2024-04-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -286,6 +286,8 @@ div.csl-indent {
 <li class="chapter" data-level="6.2" data-path="Structure.html"><a href="Structure.html#sparse-polynomial-optimization"><i class="fa fa-check"></i><b>6.2</b> Sparse Polynomial Optimization</a>
 <ul>
 <li class="chapter" data-level="6.2.1" data-path="Structure.html"><a href="Structure.html#sparse-sos-representation"><i class="fa fa-check"></i><b>6.2.1</b> Sparse SOS Representation</a></li>
+<li class="chapter" data-level="6.2.2" data-path="Structure.html"><a href="Structure.html#sparse-moment-relaxation"><i class="fa fa-check"></i><b>6.2.2</b> Sparse Moment Relaxation</a></li>
+<li class="chapter" data-level="6.2.3" data-path="Structure.html"><a href="Structure.html#term-sparsity"><i class="fa fa-check"></i><b>6.2.3</b> Term Sparsity</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -690,18 +692,177 @@ Figure 6.1: Correlative sparsity and chordal graph.
 </div>
 <p>Therefore, after forming the connectivity graph and make it chordal, one can always find its maximal cliques and order them in a way that satisfies the RIP.</p>
 <p>With the sparse Putinar’s P-satz introduced in Theorem <a href="Structure.html#thm:SparsePutinar">6.3</a>, we can derive the sparse SOS relaxations for POPs. Consider the POP
-<span class="math display">\[
+<span class="math display" id="eq:pop-restate-correlative-sparse">\[\begin{equation}
 \min_{x \in S} p(x)
-\]</span>
+\tag{6.20}
+\end{equation}\]</span>
 with <span class="math inline">\(S\)</span> defined as in <a href="Structure.html#eq:constraint-set-sparse">(6.13)</a>. If <span class="math inline">\(S\)</span> and <span class="math inline">\(p\)</span> satisfy correlative sparsity, then the <span class="math inline">\(\kappa\)</span>-th order SOS relaxation reads
 <span class="math display" id="eq:sparse-SOS-relaxation-Putinar">\[\begin{equation}
 \begin{split}
 \max &amp; \quad \gamma \\
 \mathrm{s.t.}&amp; \quad p(x) - \gamma \in \mathrm{Qmodule}[\{ g_i \}_{i \in I_1}]_{2\kappa} + \cdots + \mathrm{Qmodule}[\{ g_i \}_{i \in I_K}]_{2\kappa},
 \end{split}
-\tag{6.20}
+\tag{6.21}
 \end{equation}\]</span>
 which is an instance of SOS programming.</p>
+</div>
+<div id="sparse-moment-relaxation" class="section level3 hasAnchor" number="6.2.2">
+<h3><span class="header-section-number">6.2.2</span> Sparse Moment Relaxation<a href="Structure.html#sparse-moment-relaxation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>What is the dual of the sparse SOS relaxation <a href="Structure.html#eq:sparse-SOS-relaxation-Putinar">(6.21)</a>?</p>
+<p>Consider the POP <a href="Structure.html#eq:pop-restate-correlative-sparse">(6.20)</a> and assume that it satisfies the correlative sparsity condition in Definition <a href="Structure.html#def:CorrelativeSparsity">6.2</a>. Define
+<span class="math display" id="eq:projected-subset">\[\begin{equation}
+S_k := \{ x(I_k) \in \mathbb{R}^{n_k} \mid g_i(x(I_k)) \geq 0, i \in J_k \}, \quad k=1,\dots,K.
+\tag{6.22}
+\end{equation}\]</span></p>
+<p>Recall that, for any POP <a href="Structure.html#eq:pop-restate-correlative-sparse">(6.20)</a>, let <span class="math inline">\(\mathcal{P}(S)\)</span> be the space of all possible (nonnegative) measures supported on <span class="math inline">\(S\)</span>, there exists an equivalent linear programming formulation over measures
+<span class="math display" id="eq:measure-lp-dense-restate">\[\begin{equation}
+\begin{split}
+\min_{\mu \in \mathcal{P}(S)} &amp; \quad \int_{S} p(x) d \mu(x) \\
+\mathrm{s.t.}&amp; \quad \int_S 1 d\mu(x) = 1.
+\end{split}
+\tag{6.23}
+\end{equation}\]</span></p>
+<p>We will show that, when correlative sparsity exists, there exists a sparse infinite-dimensional linear programming formulation for the POP <a href="Structure.html#eq:pop-restate-correlative-sparse">(6.20)</a> that is equivalent to the dense formulation <a href="Structure.html#eq:measure-lp-dense-restate">(6.23)</a>.</p>
+<p>Towards this, we will denote <span class="math inline">\(\mathcal{P}(S_k)\)</span> as the space of measures supported on <span class="math inline">\(S_k,k=1,\dots,K\)</span>. Then, we will define the projection <span class="math inline">\(\pi_k: \mathcal{P}(S) \rightarrow \mathcal{P}(S_k)\)</span> from the space of measures supported on <span class="math inline">\(S\)</span> onto the space of measures supported on <span class="math inline">\(S_k\)</span>. In particular, for any <span class="math inline">\(\mu \in \mathcal{P}(S)\)</span>, and any set <span class="math inline">\(B \subseteq S_k\)</span>, we have
+<span class="math display">\[
+\pi_k \mu(B) := \mu \left( \{ x \mid x \in S, x(I_k) \in B \} \right).
+\]</span>
+Similarly, for any <span class="math inline">\(j\neq k \in [K]\)</span> such that <span class="math inline">\(I_j \cap I_k \neq \emptyset\)</span>, we define
+<span class="math display">\[
+S_{jk} = S_{kj} = \{  x(I_j \cap I_k) \mid x(I_j) \in S_j, x(I_k) \in S_k \},
+\]</span>
+and the projection from the space of measures supported on <span class="math inline">\(S\)</span> onto the space of measures supported on <span class="math inline">\(S_{jk}\)</span> as
+<span class="math display">\[
+\pi_{jk}\mu(B) := \mu \left( \{ x \mid x \in S, x(I_j \cap I_k) \in B \} \right)
+\]</span>
+for any <span class="math inline">\(B \subseteq S_{ij}\)</span>.</p>
+<p>Now consider the following infinite-dimensional LP
+<span class="math display" id="eq:measure-lp-sparse">\[\begin{equation}
+\begin{split}
+\min_{\mu_k, k=1,\dots,K} &amp; \quad \int_{S_k} p_k(x)  d \mu_k (x) \\
+\mathrm{s.t.}&amp; \quad \pi_{kj} \mu_j = \pi_{jk} \mu_k, \quad \forall j \neq k, \mathcal{I}_j \cap \mathcal{I}_k \neq \emptyset \\
+&amp; \quad \int_{S_k} 1 d \mu_k(x) = 1, \quad k=1,\dots,K \\
+&amp; \quad \mu_k \in \mathcal{P}(S_k), \quad k=1,\dots,K
+\end{split}
+\tag{6.24}
+\end{equation}\]</span></p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SparseInfDimLP" class="theorem"><strong>Theorem 6.5  (Sparse Infinite-Dimensional LP) </strong></span>Consider the POP <a href="Structure.html#eq:pop-restate-correlative-sparse">(6.20)</a> that satisfies the correlative sparsity pattern in Definition <a href="Structure.html#def:CorrelativeSparsity">6.2</a>. Assume every <span class="math inline">\(S_k\)</span> defined in <a href="Structure.html#eq:projected-subset">(6.22)</a> is compact. Then the global minimum of the dense infinite-dimensional LP <a href="Structure.html#eq:measure-lp-dense-restate">(6.23)</a> is equal to the global minimum of the sparse infinite-dimensional LP <a href="Structure.html#eq:measure-lp-sparse">(6.24)</a>, both of which are the same as the global minimum of the POP <a href="Structure.html#eq:pop-restate-correlative-sparse">(6.20)</a>.</p>
+</div>
+</div>
+<p>The equivalence of the dense LP and the sparse LP boils down to the following Lemma.</p>
+<div class="theorembox">
+<div class="lemma">
+<p><span id="lem:MeasureFromMarginals" class="lemma"><strong>Lemma 6.2  (Measure from Marginals) </strong></span>Let <span class="math inline">\([n] = \cup_{k=1}^K I_k\)</span> with <span class="math inline">\(n_k = |I_k|\)</span>, and <span class="math inline">\(S_k \subset \mathbb{R}^{n_k}\)</span> be compact sets. Let <span class="math inline">\(S\)</span> be defined as
+<span class="math display">\[
+S = \{ x \in \mathbb{R}^{n} \mid x(I_k) \in S_k, k=1,\dots,K \}.
+\]</span></p>
+<p>Let <span class="math inline">\(\mu_k \in \mathcal{P}(S_k),k=1,\dots,K\)</span> be a set of measures that satisfy the equality constraints of <a href="Structure.html#eq:measure-lp-sparse">(6.24)</a>. If RIP holds for <span class="math inline">\(I_1,\dots,I_K\)</span>, then there exists a probability measure <span class="math inline">\(\mu \in \mathcal{M}(S)\)</span> such that
+<span class="math display">\[
+\pi_k \mu = \mu_k, \quad k=1,\dots,K,
+\]</span>
+i.e., <span class="math inline">\(\mu_k\)</span> is the marginal of <span class="math inline">\(\mu\)</span> on <span class="math inline">\(\mathbb{R}^{n_k}\)</span> with respect to variables <span class="math inline">\(x(I_k)\)</span>.</p>
+</div>
+</div>
+<p>With the sparse infinite-dimensional LP <a href="Structure.html#eq:measure-lp-sparse">(6.24)</a>, we can easily write down its moment relaxation. Let <span class="math inline">\(y_k \in \mathbb{R}^{s(n_k,2\kappa)}\)</span> be the truncated moment sequence associated with <span class="math inline">\(\mu_k, k=1,\dots,K\)</span>, the semidefinite relaxation for <a href="Structure.html#eq:measure-lp-sparse">(6.24)</a> reads
+<span class="math display" id="eq:sparse-moment-relaxation">\[\begin{equation}
+\begin{split}
+\min_{y_1,\dots,y_K} &amp; \quad \sum_{k=1}^K \langle y_k, \mathrm{vec}(p_k) \rangle \\
+&amp; \quad M_\kappa[y_k] \succeq 0, \quad L_{g_j}^\kappa[y_k] \succeq 0, j\in J_k, k=1,\dots,K \\
+&amp; \quad y_{k,0} = 1,\quad k=1,\dots,K \\
+&amp; \quad \ell_{y_k} (x^\alpha) = \ell_{y_j} (x^\alpha), \quad \alpha \in \mathcal{F}_{n,2\kappa}, \mathrm{supp}(\alpha) \in I_j \cap I_k, \forall j \neq k \in [K], I_j \cap I_k \neq \emptyset
+\end{split}
+\tag{6.25}
+\end{equation}\]</span>
+which is an SDP with <span class="math inline">\(K\)</span> positive semidefinite constraints, each one corresponding to a moment matrix <span class="math inline">\(M_{\kappa}[y_k],k=1,\dots,K\)</span>. The last constraint in <a href="Structure.html#eq:sparse-moment-relaxation">(6.25)</a> ensures that when two measures <span class="math inline">\(\mu_j\)</span> and <span class="math inline">\(\mu_k\)</span> have overlapping coordinates, their moments in the shared coordinates are equal to other, which corresponds to the first equality constraints in the original sparse LP <a href="Structure.html#eq:measure-lp-sparse">(6.24)</a>.</p>
+</div>
+<div id="term-sparsity" class="section level3 hasAnchor" number="6.2.3">
+<h3><span class="header-section-number">6.2.3</span> Term Sparsity<a href="Structure.html#term-sparsity" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the dense moment-SOS hierarchy and the correlative sparsity based moment-SOS hierarchy, the monomial basis has always been the vector of standard monomials, namely, <span class="math inline">\([x]_{\kappa}\)</span> in the case of dense moment-SOS, and <span class="math inline">\([x(I_k)]_{\kappa},k=1,\dots,K\)</span> in the case of sparse moment-SOS.</p>
+<p>We then ask the question, could we use only a subset of the standard monomials? This is another type of sparsity called <strong>term sparsity</strong>.</p>
+<p>We will give a brief discussion of term sparsity in the case of unconstrained polynomial optimization:
+<span class="math display" id="eq:unconstrained-pop">\[\begin{equation}
+\min_{x \in \mathbb{R}^{n}} \quad p(x).
+\tag{6.26}
+\end{equation}\]</span>
+The <span class="math inline">\(\kappa\)</span>-order SOS relaxation (using Putinar’s Positivstellensatz) to <a href="Structure.html#eq:unconstrained-pop">(6.26)</a> is
+<span class="math display" id="eq:unconstrained-pop-sos">\[\begin{equation}
+\begin{split}
+\max &amp; \quad \gamma \\
+\mathrm{s.t.}&amp; \quad p(x) - \gamma = [x]_\kappa^\top Q [x]_\kappa \\
+&amp; \quad Q \succeq 0
+\end{split}.
+\tag{6.27}
+\end{equation}\]</span></p>
+<p>The following result, due to Reznick <span class="citation">(<a href="#ref-reznick78-extremal">Reznick 1978</a>)</span>, allows us to use a possibly smaller set of monomials by considering the so-called <strong>Newton Polytopes</strong>. Given a polynomial <span class="math inline">\(p = \sum_{\alpha} p_\alpha x^{\alpha}\)</span> with nonzero <span class="math inline">\(p_\alpha\)</span>’s, the support of <span class="math inline">\(p\)</span> is the set of exponents:
+<span class="math display">\[
+\mathrm{supp}(p) = \{ \alpha \mid p_\alpha \neq 0 \}.
+\]</span>
+The Newton polytope of <span class="math inline">\(p\)</span>, denoted as <span class="math inline">\(\mathrm{New}(p)\)</span>, is the convex hull generated by points in its support.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:NewtonPolytope" class="theorem"><strong>Theorem 6.6  (Newton Polytope) </strong></span>If <span class="math inline">\(p, q_i \in \mathbb{R}[x]\)</span>, and <span class="math inline">\(p = \sum_i q_i^2\)</span>, then
+<span class="math display">\[
+\mathrm{New}(q_i) \subset \frac{1}{2} \mathrm{New}(p).
+\]</span></p>
+</div>
+</div>
+<p>What this theorem implies is that if the support of <span class="math inline">\(p\)</span> is sparse and <span class="math inline">\(p\)</span> is SOS, then the supprt of its SOS factors <span class="math inline">\(q_i\)</span> must also be sparse. In particular, it suffices to consider a monomial basis
+<span class="math display" id="eq:Newton-polytope">\[\begin{equation}
+\mathcal{B}= \frac{1}{2} \mathrm{New}(p) \cap \mathcal{F}_n
+\tag{6.28}
+\end{equation}\]</span>
+when searching for SOS factorization of <span class="math inline">\(p\)</span>.</p>
+<div class="examplebox">
+<div class="example">
+<p><span id="exm:NewtonPolytope" class="example"><strong>Example 6.3  (Newton Polytope) </strong></span>Consider the polynomial
+<span class="math display">\[
+p(x) = 4 x_1^4 x_2^6 + x_1^2 - x_1 x_2^2 + x_2^2.
+\]</span>
+The support of <span class="math inline">\(p\)</span> is
+<span class="math display">\[
+\mathrm{supp}(p) = \{ (4,6), (2,0), (1,2), (0,2) \}.
+\]</span>
+We can therefore choose the monomial basis according to <a href="Structure.html#eq:Newton-polytope">(6.28)</a>, which becomes
+<span class="math display">\[
+\mathcal{B}= \{ (1,0),(2,3),(0,1),(1,1),(1,2) \}.
+\]</span>
+This is shown in Fig. <a href="Structure.html#fig:NewtonPolytope">6.2</a>. Note that since the degree of <span class="math inline">\(p\)</span> is <span class="math inline">\(10\)</span>, using the dense monomial basis would lead to
+<span class="math display">\[
+s(2,5) = \begin{pmatrix}
+2 + 5 \\ 2
+\end{pmatrix}= 21
+\]</span>
+terms. However, the monomial basis <span class="math inline">\(\mathcal{B}\)</span> found by Newton polytope has only <span class="math inline">\(5\)</span> terms.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:NewtonPolytope"></span>
+<img src="images/newton_polytope.png" alt="Newton polytope." width="40%" />
+<p class="caption">
+Figure 6.2: Newton polytope.
+</p>
+</div>
+</div>
+</div>
+<p>Let <span class="math inline">\(\mathcal{B}\)</span> be the monomial basis found by using Newton polytope. The SOS relaxation that exploits term sparsity reads
+<span class="math display" id="eq:unconstrained-pop-sos-term-sparsity">\[\begin{equation}
+\begin{split}
+\max &amp; \quad \gamma \\
+\mathrm{s.t.}&amp; \quad p(x) - \gamma = [x]_{\mathcal{B}}^\top Q [x]_{\mathcal{B}} \\
+&amp; \quad Q \succeq 0
+\end{split}.
+\tag{6.29}
+\end{equation}\]</span>
+The dual moment relaxation of <a href="Structure.html#eq:unconstrained-pop-sos-term-sparsity">(6.29)</a> becomes
+<span class="math display" id="eq:unconstrained-pop-moment-term-sparsity">\[\begin{equation}
+\begin{split}
+\min_{y} &amp; \quad \ell_y(p) \\
+\mathrm{s.t.}&amp; \quad M_{\mathcal{B}}[y] \succeq 0 \\
+&amp; \quad y_0 = 1
+\end{split}
+\tag{6.30}
+\end{equation}\]</span>
+where <span class="math inline">\(M_{\mathcal{B}}[y]\)</span> is the principal submatrix of the full moment matrix <span class="math inline">\(M_\kappa[y]\)</span> with rows and columns indexed by the exponents in the sparse basis <span class="math inline">\(\mathcal{B}\)</span>.</p>
+<p>Starting with the basis <span class="math inline">\(\mathcal{B}\)</span>, one can make it even sparser by building the term sparsity graph and exploiting chordal sparsity of that graph. I won’t describe the details of that approach as it can get quite messy, please see <span class="citation">(<a href="#ref-magron23book-sparse">Magron and Wang 2023</a>)</span> for a comprehensive treatment.</p>
 
 </div>
 </div>
@@ -717,8 +878,14 @@ Fukuda, Mituhiro, Masakazu Kojima, Kazuo Murota, and Kazuhide Nakata. 2001. <spa
 <div id="ref-gavril72sic-algorithms" class="csl-entry">
 Gavril, Fănică. 1972. <span>“Algorithms for Minimum Coloring, Maximum Clique, Minimum Covering by Cliques, and Maximum Independent Set of a Chordal Graph.”</span> <em>SIAM Journal on Computing</em> 1 (2): 180–87.
 </div>
+<div id="ref-magron23book-sparse" class="csl-entry">
+Magron, Victor, and Jie Wang. 2023. <em>Sparse Polynomial Optimization: Theory and Practice</em>. World Scientific.
+</div>
 <div id="ref-nie23book-moment" class="csl-entry">
 Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
+</div>
+<div id="ref-reznick78-extremal" class="csl-entry">
+Reznick, Bruce. 1978. <span>“Extremal PSD Forms with Few Terms.”</span> <em>Duke Mathematical Journal</em>.
 </div>
 <div id="ref-vandenberghe15fto-chordal" class="csl-entry">
 Vandenberghe, Lieven, Martin S Andersen, et al. 2015. <span>“Chordal Graphs and Semidefinite Optimization.”</span> <em>Foundations and Trends<span></span> in Optimization</em> 1 (4): 241–433.
