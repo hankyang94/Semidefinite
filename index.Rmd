@@ -20,6 +20,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
+\newcommand{\calB}{\mathcal{B}}
 \newcommand{\calK}{\mathcal{K}}
 \newcommand{\calS}{\mathcal{S}}
 \newcommand{\calM}{\mathcal{M}}
@@ -113,6 +114,7 @@ description: "Lecture notes for Harvard ES 257 Semidefinite Optimization and Rel
 \newcommand{\loc}{\mathrm{loc}}
 \newcommand{\preorder}{\mathrm{Preorder}}
 \newcommand{\supp}{\mathrm{supp}}
+\newcommand{\New}{\mathrm{New}}
 \newcommand{\myspan}{\mathrm{span}}
 
 
