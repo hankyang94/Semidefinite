@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-04-08" />
+<meta name="date" content="2024-04-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -288,6 +288,10 @@ div.csl-indent {
 <li class="chapter" data-level="6.2.1" data-path="Structure.html"><a href="Structure.html#sparse-sos-representation"><i class="fa fa-check"></i><b>6.2.1</b> Sparse SOS Representation</a></li>
 <li class="chapter" data-level="6.2.2" data-path="Structure.html"><a href="Structure.html#sparse-moment-relaxation"><i class="fa fa-check"></i><b>6.2.2</b> Sparse Moment Relaxation</a></li>
 <li class="chapter" data-level="6.2.3" data-path="Structure.html"><a href="Structure.html#term-sparsity"><i class="fa fa-check"></i><b>6.2.3</b> Term Sparsity</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="Structure.html"><a href="Structure.html#low-rank-sdps"><i class="fa fa-check"></i><b>6.3</b> Low-Rank SDPs</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="Structure.html"><a href="Structure.html#burer-monteiro-factorization"><i class="fa fa-check"></i><b>6.3.1</b> Burer-Monteiro Factorization</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -863,6 +867,172 @@ The dual moment relaxation of <a href="Structure.html#eq:unconstrained-pop-sos-t
 \end{equation}\]</span>
 where <span class="math inline">\(M_{\mathcal{B}}[y]\)</span> is the principal submatrix of the full moment matrix <span class="math inline">\(M_\kappa[y]\)</span> with rows and columns indexed by the exponents in the sparse basis <span class="math inline">\(\mathcal{B}\)</span>.</p>
 <p>Starting with the basis <span class="math inline">\(\mathcal{B}\)</span>, one can make it even sparser by building the term sparsity graph and exploiting chordal sparsity of that graph. I won’t describe the details of that approach as it can get quite messy, please see <span class="citation">(<a href="#ref-magron23book-sparse">Magron and Wang 2023</a>)</span> for a comprehensive treatment.</p>
+</div>
+</div>
+<div id="low-rank-sdps" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Low-Rank SDPs<a href="Structure.html#low-rank-sdps" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the previous sections of this Chapter, we discussed ways to exploit the sparsity structures that exist in SDPs and POPs. By exploiting them, we can formulate smaller SDPs –in particular SDPs with positive semidefinite constraints of smaller sizes– that are faster to solve when using interior-point methods (IPMs).</p>
+<p>However, even after exploiting sparsity, the SDPs may still be too large for IPMs to solve. Over the last couple of decades, there have been lots of interests in solving <strong>low-rank SDPs</strong>, i.e., SDPs whose optimal solutions are low-rank. These low-rank SDPs appear frequently in semidefinite relaxations of combinatorial problems, or high-order moment-SOS relaxations, as you have already seen in the Pset problems. In this section, we will introduce specialized algorithms that solve large-scale SDPs by exploiting low-rankness of the optimal solutions.</p>
+<div id="burer-monteiro-factorization" class="section level3 hasAnchor" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Burer-Monteiro Factorization<a href="Structure.html#burer-monteiro-factorization" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One of the very first and most popular algorithms for solving low-rank SDPs is called Burer-Monteiro (B-M) factorization, first proposed by <span class="citation">(<a href="#ref-burer03mp-nonlinear">Burer and Monteiro 2003</a>)</span>, with subsequent analysis and improvement by <span class="citation">(<a href="#ref-journee10siopt-low">Journée et al. 2010</a>)</span>, <span class="citation">(<a href="#ref-boumal16nips-non">Boumal, Voroninski, and Bandeira 2016</a>)</span>, <span class="citation">(<a href="#ref-cifuentes22nips-polynomial">Cifuentes and Moitra 2022</a>)</span>, to name a few. In what follows we describe the basic idea of B-M factorization.</p>
+<p>Consider a standard primal SDP, restated from <a href="sdp.html#eq:SDP-P">(2.5)</a>
+<span class="math display" id="eq:SDP-P-BM">\[\begin{equation}
+\begin{split}
+\min_{X \in \mathbb{S}^{n}} &amp; \quad \langle C, X \rangle \\
+\mathrm{s.t.}&amp; \quad \langle A_i, X \rangle = b_i, i=1,\dots,m \\
+&amp; \quad X \succeq 0
+\end{split}
+\tag{6.31}
+\end{equation}\]</span>
+The dual to <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> is
+<span class="math display" id="eq:SDP-D-BM">\[\begin{equation}
+\begin{split}
+\min_{y \in \mathbb{R}^{m}, Z \in \mathbb{S}^{n}} &amp; \quad \langle b, y \rangle \\
+\mathrm{s.t.}&amp; \quad C - \sum_{i=1}^m y_i A_i = Z \\
+&amp; \quad Z \succeq 0
+\end{split}
+\tag{6.32}
+\end{equation}\]</span>
+We assume that both <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> and <a href="Structure.html#eq:SDP-D-BM">(6.32)</a> have strictly feasible points, and thus strong duality holds. Under this assumption, a feasible pair of primal-dual points <span class="math inline">\(X\)</span> and <span class="math inline">\((y,Z)\)</span> is optimal if and only if
+<span class="math display" id="eq:optimal-primal-dual-pair">\[\begin{equation}
+\langle X, Z \rangle = 0, \quad \Leftrightarrow \quad XZ = ZX = 0,
+\tag{6.33}
+\end{equation}\]</span>
+where we have used that if the inner product of two PSD matrices is zero then their product must be the zero matrix.</p>
+<p>Denote
+<span class="math display" id="eq:optimal-rank">\[\begin{equation}
+r^\star = \min\{ \mathrm{rank}(X_\star) \mid X_\star \text{ is optimal for the primal SDP} \}
+\tag{6.34}
+\end{equation}\]</span>
+as the minimum rank of the optimal solutions of <a href="Structure.html#eq:SDP-P-BM">(6.31)</a>. Empirically, <span class="math inline">\(r^\star\)</span> is often much smaller than <span class="math inline">\(n\)</span>, the dimension of the matrix variable <span class="math inline">\(X\)</span>. For example, in many computer vision and robotics problems <span class="citation">(<a href="#ref-rosen19ijrr-sesync">Rosen et al. 2019</a>)</span> <span class="citation">(<a href="#ref-yang22pami-certifiably">Yang and Carlone 2022</a>)</span>, <span class="math inline">\(r^\star = 1\)</span> despite that <span class="math inline">\(n\)</span> can be in the order of thousands. Theoretically, there is a well-known upper bound on <span class="math inline">\(r^\star\)</span>, due to <span class="citation">(<a href="#ref-barvinok95dcg-problems">Barvinok 1995</a>)</span> and <span class="citation">(<a href="#ref-pataki98mor-rank">Pataki 1998</a>)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:BarvinokPataki" class="theorem"><strong>Theorem 6.7  (Barvinok-Pataki Bound) </strong></span>If the feasible set of <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> contains an extreme point, then
+<span class="math display">\[
+\frac{r^\star (r^\star + 1)}{2} \leq m,
+\]</span>
+i.e., there exists an optimal solution <span class="math inline">\(X_\star\)</span> whose rank satisfies the above inequality.</p>
+</div>
+</div>
+<p>Theorem <a href="Structure.html#thm:BarvinokPataki">6.7</a> states that the existence of low-rank optimal solutions, i.e., <span class="math inline">\(r^\star &lt; n\)</span>, is a generic property of SDPs, as long as the number of equality constraints <span class="math inline">\(m\)</span> is not too large (which unfortunately does get violated in high-order moment-SOS relaxations, as <span class="math inline">\(m = O(n^2)\)</span> there).</p>
+<p>Motivated by the existence of low-rank optimal solutions, Burer and Monteiro proposed the following low-rank factorization formulation for the primal SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a>
+<span class="math display" id="eq:B-M-factorization">\[\begin{equation}
+\begin{split}
+\min_{R \in \mathbb{R}^{n \times r}} &amp; \quad \langle C, RR^\top \rangle \\
+&amp; \quad \langle A_i, RR^\top \rangle = b_i, i=1,\dots,m
+\end{split}
+\tag{6.35}
+\end{equation}\]</span></p>
+<p>Problem <a href="Structure.html#eq:B-M-factorization">(6.35)</a> is a quadratically constrained quadratic program (QCQP), and
+we can easily observe that the new problem <a href="Structure.html#eq:B-M-factorization">(6.35)</a> is equivalent to the SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> if the rank <span class="math inline">\(r\)</span> of <span class="math inline">\(R\)</span> is chosen sufficiently large.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:BMFactorization" class="theorem"><strong>Theorem 6.8  (B-M Factorization) </strong></span>If <span class="math inline">\(r\)</span> in <a href="Structure.html#eq:B-M-factorization">(6.35)</a> is chosen such that
+<span class="math display">\[
+r \geq r^\star,
+\]</span>
+where <span class="math inline">\(r^\star\)</span> is defined in <a href="Structure.html#eq:optimal-rank">(6.34)</a>, then <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> is equivalent to <a href="Structure.html#eq:B-M-factorization">(6.35)</a> in the sense that:</p>
+<ul>
+<li><p>they have the same global minimum;</p></li>
+<li><p>there exists <span class="math inline">\(X_\star\)</span> optimal for <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> such that <span class="math inline">\(X_\star = R_\star R_\star^\top\)</span> with <span class="math inline">\(R_\star\)</span> optimal for <a href="Structure.html#eq:B-M-factorization">(6.35)</a>;</p></li>
+<li><p>for any <span class="math inline">\(R_\star\)</span> that is optimal for <a href="Structure.html#eq:B-M-factorization">(6.35)</a>, <span class="math inline">\(R_\star R_\star^\top\)</span> is an optimal solution to <a href="Structure.html#eq:SDP-P-BM">(6.31)</a>.</p></li>
+</ul>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-20" class="proof"><em>Proof</em>. </span>Let <span class="math inline">\(X_\star\)</span> be an optimal solution of the SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> with <span class="math inline">\(\mathrm{rank}(X_\star) = r^\star\)</span>. Since <span class="math inline">\(X_\star \succeq 0\)</span>, we can factorize
+<span class="math display">\[
+X_\star = \bar{R}_\star \bar{R}_\star^\top, \quad \bar{R}_\star \in \mathbb{R}^{n \times r^\star}.
+\]</span>
+Because <span class="math inline">\(r \geq r^\star\)</span>, we can pad <span class="math inline">\(\bar{R}_\star\)</span> with <span class="math inline">\(r-r^\star\)</span> columns of zeros
+<span class="math display">\[
+R_\star = \begin{bmatrix}
+\bar{R}_\star &amp; 0_{n \times (r - r^\star)}
+\end{bmatrix}.
+\]</span>
+It is easy to check that <span class="math inline">\(R_\star\)</span> is feasible for the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> (because <span class="math inline">\(R_\star R_\star^\top= \bar{R}_\star \bar{R}_\star^\top\)</span>!) and it attains the same cost as <span class="math inline">\(X_\star\)</span> in the SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a>. Therefore, the global minimum of the QCQP must be smaller than or equal to the global minimum of the SDP.</p>
+<p>On the other hand, for any <span class="math inline">\(R\)</span> that is feasible for the QCQP, <span class="math inline">\(X=RR^\top\)</span> must also be feasible for the SDP and attains the same cost in the SDP as <span class="math inline">\(R\)</span> in the QCQP. This implies that the global minimum of the SDP must be smaller than or equal to the global minimum of the QCQP.</p>
+<p>Combining the two arguments above, we conclude that the SDP and the QCQP have the same global minimum. Then, the other two statements in the theorem naturally follow.</p>
+</div>
+</div>
+<p>Theorem <a href="Structure.html#thm:BMFactorization">6.8</a> establishes the equivalence between the SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> and the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a>, but the QCQP has much fewer variables than the SDP (when <span class="math inline">\(r\)</span> is chosen sufficiently small such that <span class="math inline">\(r \ll n\)</span>)! In addition, the QCQP has no positive semidefinite constraints because <span class="math inline">\(RR^\top\succeq 0\)</span> by construction.</p>
+<p>However, if you think more carefully about the reformulation from the SDP to the QCQP, it is quite counterintuitive because now you lose convexity. Indeed, as we have seen in this class, a major benefit of SDP is that it can be used to derive convex relaxations of nonconvex optimization problems. The B-M factorization <a href="Structure.html#eq:B-M-factorization">(6.35)</a>, instead, writes the convex SDP back into a nonconvex problem.</p>
+<p>We will see that the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a>, despite being nonconvex, has very nice connections with the convex SDP that can be leveraged to solve large-scale SDPs beyond the reach of IPMs.</p>
+<p><strong>Optimality conditions</strong>. Let us first analyze the optimality conditions of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> with a fixed choice of <span class="math inline">\(r\)</span>. We associate each constraint in <a href="Structure.html#eq:B-M-factorization">(6.35)</a> with a dual variable and form the Lagrangian
+<span class="math display">\[
+L(R,y) = \langle C, RR^\top \rangle - \sum_{i=1}^m y_i \left( \langle A_i, RR^\top \rangle - b_i \right), \quad R \in \mathbb{R}^{n \times r}, y \in \mathbb{R}^{m}.
+\]</span>
+Denote
+<span class="math display" id="eq:Zofy">\[\begin{equation}
+Z(y) = C - \sum_{i=1}^m y_i A_i,
+\tag{6.36}
+\end{equation}\]</span>
+we can simplify the Lagrangian as
+<span class="math display">\[
+L(R,y) = \langle Z(y), RR^\top \rangle + \langle b, y \rangle.
+\]</span>
+The Lagrangian dual function is
+<span class="math display">\[
+\min_R \langle Z(y), RR^\top \rangle + \langle b, y \rangle = \begin{cases}
+\langle b, y \rangle &amp; \text{if }Z(y) \succeq 0 \\
+-\infty &amp; \text{otherwise}
+\end{cases}
+\]</span>
+Therefore, the Lagrangian dual problem of the nonconvex QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> is not surprisingly just the dual SDP <a href="Structure.html#eq:SDP-D-BM">(6.32)</a>, which we have already seen in Chapter <a href="Shor.html#Shor">3</a>.</p>
+<p>We now state the first-order optimality conditions, which can be readily obtained by applying Theorem 12.1 in <span class="citation">(<a href="#ref-nocedal99book-numerical">Nocedal and Wright 1999</a>)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:FirstOrderOptimality" class="theorem"><strong>Theorem 6.9  (First-order Necessary Conditions for Local Optimality) </strong></span>Let <span class="math inline">\(R_\star\)</span> be a locally optimal solution of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> and assume the linear
+independence constraint qualification (LICQ) holds at <span class="math inline">\(R_\star\)</span>, i.e.,
+<span class="math display">\[
+\nabla_{R} (\langle A_i, R_\star R_\star^\top \rangle - b) = 2A_i R_\star, \quad i=1,\dots,m
+\]</span>
+are linearly independent. Then, there must exist a unique dual variable <span class="math inline">\(y_\star\)</span> such that
+<span class="math display" id="eq:first-order-optimality-condition">\[\begin{equation}
+\begin{split}
+\nabla_{R} L(R_\star, y_\star) = 2 Z(y_\star) R_\star = 0, \\
+\langle A_i, R_\star R_\star^\top \rangle = b_i, i=1,\dots,m
+\end{split}.
+\tag{6.37}
+\end{equation}\]</span></p>
+</div>
+</div>
+<p>The second condition in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> implies <span class="math inline">\(R_\star\)</span> is feasible and the first condition in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> states there must exist <span class="math inline">\(y_\star\)</span> such that the gradient of the Lagrangian with respect to <span class="math inline">\(R\)</span> vanishes at <span class="math inline">\(R_\star\)</span>.</p>
+<p>An immediate corollary of Theorem <a href="Structure.html#thm:FirstOrderOptimality">6.9</a> is that if <span class="math inline">\(Z(y_\star)\)</span> happens to be positive semidefinite, then <span class="math inline">\(R_\star\)</span> is indeed the global minimizer.</p>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:GlobalOptimality" class="corollary"><strong>Corollary 6.1  (Global Optimality from First-Order Conditions) </strong></span>Let <span class="math inline">\(R_\star\)</span> be a locally optimal solution of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> and assume LICQ holds at <span class="math inline">\(R_\star\)</span>. Let <span class="math inline">\(y_\star\)</span> be the dual variable such that <span class="math inline">\((R_\star,y_\star)\)</span> satisfy the first-order optimality conditions in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a>.</p>
+<p>If
+<span class="math display">\[
+Z(y_\star) \succeq 0,
+\]</span>
+then <span class="math inline">\(R_\star\)</span> is a global optimizer of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a>, and <span class="math inline">\((R_\star R_\star^\top, y_\star, Z(y_\star))\)</span> is an optimal pair of primal-dual solutions for the SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a> and <a href="Structure.html#eq:SDP-D-BM">(6.32)</a>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-21" class="proof"><em>Proof</em>. </span>We have that <span class="math inline">\(R_\star R_\star^\top\)</span> is feasible for the primal SDP <a href="Structure.html#eq:SDP-P-BM">(6.31)</a>, and <span class="math inline">\((y_\star, Z(y_\star))\)</span> is feasible for the dual SDP <a href="Structure.html#eq:SDP-D-BM">(6.32)</a> due to <span class="math inline">\(Z(y_\star) \succeq 0\)</span>.</p>
+<p>The first condition in the first-order optimization conditions <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> implies there is zero duality gap, and by <a href="Structure.html#eq:optimal-primal-dual-pair">(6.33)</a>, we conclude <span class="math inline">\((R_\star R_\star^\top, y_\star, Z(y_\star))\)</span> are optimal for the convex SDPs.</p>
+<p>However, by Theorem <a href="Structure.html#thm:BMFactorization">6.8</a>, the convex SDP is equivalent to the nonconvex QCQP, so <span class="math inline">\(R_\star\)</span> is a global minimizer of the nonconvex QCQP.</p>
+</div>
+</div>
+<p>One should notice that, when LICQ holds at <span class="math inline">\(R_\star\)</span>, the dual variables <span class="math inline">\(y_\star\)</span> can be solved in closed form. This can be seen by rewriting the first condition in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> as
+<span class="math display" id="eq:solve-dual-y-linear-system">\[\begin{equation}
+\left( C - \sum_{i=1}^m y_{\star,i} A_i \right) R_\star = 0 \Leftrightarrow \sum_{i=1}^m y_{\star,i} (A_i R_\star) = C R_\star
+\tag{6.38}
+\end{equation}\]</span>
+which is a system of linear equations in <span class="math inline">\(y_\star\)</span>. The LICQ condition, i.e., <span class="math inline">\(A_i R_\star\)</span>’s are linearly independent, implies the solution to the above linear system is unique.</p>
+<p>The above analysis produces a very efficient algorithm for certifying global optimality that is very popular due to <span class="citation">(<a href="#ref-rosen19ijrr-sesync">Rosen et al. 2019</a>)</span>:</p>
+<ul>
+<li><p>Use a gradient-based local optimization algorithm to solve the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> and obtain a solution <span class="math inline">\(R_\star\)</span></p></li>
+<li><p>If LICQ holds at <span class="math inline">\(R_\star\)</span>, solve the linear system <a href="Structure.html#eq:solve-dual-y-linear-system">(6.38)</a> to obtain <span class="math inline">\(y_\star\)</span></p></li>
+<li><p>If <span class="math inline">\(Z(y_\star)\)</span> is positive semidefinite, global optimality of <span class="math inline">\(R_\star\)</span> is certified.</p></li>
+</ul>
+<p>What if <span class="math inline">\(Z(y_\star)\)</span> is not positive semidefinite? Can we find a better solution than <span class="math inline">\(R_\star\)</span>?</p>
+<p>In order to do so, we need to analyze the second-order optimality conditions of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a>.</p>
+<!-- Suppose we employ a nonlinear programming algorithm, e.g., the interior-point algorithm for constrained optimization [@nocedal99book-numerical], to solve the QCQP \@ref(eq:B-M-factorization), how can we  -->
 
 </div>
 </div>
@@ -872,11 +1042,26 @@ where <span class="math inline">\(M_{\mathcal{B}}[y]\)</span> is the principal s
 <div id="ref-arnborg87siadm-complexity" class="csl-entry">
 Arnborg, Stefan, Derek G Corneil, and Andrzej Proskurowski. 1987. <span>“Complexity of Finding Embeddings in Ak-Tree.”</span> <em>SIAM Journal on Algebraic Discrete Methods</em> 8 (2): 277–84.
 </div>
+<div id="ref-barvinok95dcg-problems" class="csl-entry">
+Barvinok, Alexander I. 1995. <span>“Problems of Distance Geometry and Convex Properties of Quadratic Maps.”</span> <em>Discrete &amp; Computational Geometry</em> 13: 189–202.
+</div>
+<div id="ref-boumal16nips-non" class="csl-entry">
+Boumal, Nicolas, Vlad Voroninski, and Afonso Bandeira. 2016. <span>“The Non-Convex Burer-Monteiro Approach Works on Smooth Semidefinite Programs.”</span> <em>Advances in Neural Information Processing Systems</em> 29.
+</div>
+<div id="ref-burer03mp-nonlinear" class="csl-entry">
+Burer, Samuel, and Renato DC Monteiro. 2003. <span>“A Nonlinear Programming Algorithm for Solving Semidefinite Programs via Low-Rank Factorization.”</span> <em>Mathematical Programming</em> 95 (2): 329–57.
+</div>
+<div id="ref-cifuentes22nips-polynomial" class="csl-entry">
+Cifuentes, Diego, and Ankur Moitra. 2022. <span>“Polynomial Time Guarantees for the Burer-Monteiro Method.”</span> <em>Advances in Neural Information Processing Systems</em> 35: 23923–35.
+</div>
 <div id="ref-fukuda01siopt-exploiting" class="csl-entry">
 Fukuda, Mituhiro, Masakazu Kojima, Kazuo Murota, and Kazuhide Nakata. 2001. <span>“Exploiting Sparsity in Semidefinite Programming via Matrix Completion i: General Framework.”</span> <em>SIAM Journal on Optimization</em> 11 (3): 647–74.
 </div>
 <div id="ref-gavril72sic-algorithms" class="csl-entry">
 Gavril, Fănică. 1972. <span>“Algorithms for Minimum Coloring, Maximum Clique, Minimum Covering by Cliques, and Maximum Independent Set of a Chordal Graph.”</span> <em>SIAM Journal on Computing</em> 1 (2): 180–87.
+</div>
+<div id="ref-journee10siopt-low" class="csl-entry">
+Journée, Michel, Francis Bach, P-A Absil, and Rodolphe Sepulchre. 2010. <span>“Low-Rank Optimization on the Cone of Positive Semidefinite Matrices.”</span> <em>SIAM Journal on Optimization</em> 20 (5): 2327–51.
 </div>
 <div id="ref-magron23book-sparse" class="csl-entry">
 Magron, Victor, and Jie Wang. 2023. <em>Sparse Polynomial Optimization: Theory and Practice</em>. World Scientific.
@@ -884,11 +1069,23 @@ Magron, Victor, and Jie Wang. 2023. <em>Sparse Polynomial Optimization: Theory a
 <div id="ref-nie23book-moment" class="csl-entry">
 Nie, Jiawang. 2023. <em>Moment and Polynomial Optimization</em>. SIAM.
 </div>
+<div id="ref-nocedal99book-numerical" class="csl-entry">
+Nocedal, Jorge, and Stephen J Wright. 1999. <em>Numerical Optimization</em>. Springer.
+</div>
+<div id="ref-pataki98mor-rank" class="csl-entry">
+Pataki, Gábor. 1998. <span>“On the Rank of Extreme Matrices in Semidefinite Programs and the Multiplicity of Optimal Eigenvalues.”</span> <em>Mathematics of Operations Research</em> 23 (2): 339–58.
+</div>
 <div id="ref-reznick78-extremal" class="csl-entry">
 Reznick, Bruce. 1978. <span>“Extremal PSD Forms with Few Terms.”</span> <em>Duke Mathematical Journal</em>.
 </div>
+<div id="ref-rosen19ijrr-sesync" class="csl-entry">
+Rosen, David M, Luca Carlone, Afonso S Bandeira, and John J Leonard. 2019. <span>“SE-Sync: A Certifiably Correct Algorithm for Synchronization over the Special Euclidean Group.”</span> <em>The International Journal of Robotics Research</em> 38 (2-3): 95–125.
+</div>
 <div id="ref-vandenberghe15fto-chordal" class="csl-entry">
 Vandenberghe, Lieven, Martin S Andersen, et al. 2015. <span>“Chordal Graphs and Semidefinite Optimization.”</span> <em>Foundations and Trends<span></span> in Optimization</em> 1 (4): 241–433.
+</div>
+<div id="ref-yang22pami-certifiably" class="csl-entry">
+Yang, Heng, and Luca Carlone. 2022. <span>“Certifiably Optimal Outlier-Robust Geometric Perception: Semidefinite Relaxations and Scalable Global Optimization.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> 45 (3): 2816–34.
 </div>
 <div id="ref-zhang2021sparse" class="csl-entry">
 Zhang, Richard Y, and Javad Lavaei. 2021. <span>“Sparse Semidefinite Programs with Guaranteed Near-Linear Time Complexity via Dualized Clique Tree Conversion.”</span> <em>Mathematical Programming</em> 188: 351–93.

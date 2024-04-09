@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-04-08}
+\date{2024-04-09}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -6812,6 +6812,198 @@ The dual moment relaxation of \eqref{eq:unconstrained-pop-sos-term-sparsity} bec
 where \(M_{\mathcal{B}}[y]\) is the principal submatrix of the full moment matrix \(M_\kappa[y]\) with rows and columns indexed by the exponents in the sparse basis \(\mathcal{B}\).
 
 Starting with the basis \(\mathcal{B}\), one can make it even sparser by building the term sparsity graph and exploiting chordal sparsity of that graph. I won't describe the details of that approach as it can get quite messy, please see \citep{magron23book-sparse} for a comprehensive treatment.
+
+\section{Low-Rank SDPs}\label{low-rank-sdps}
+
+In the previous sections of this Chapter, we discussed ways to exploit the sparsity structures that exist in SDPs and POPs. By exploiting them, we can formulate smaller SDPs --in particular SDPs with positive semidefinite constraints of smaller sizes-- that are faster to solve when using interior-point methods (IPMs).
+
+However, even after exploiting sparsity, the SDPs may still be too large for IPMs to solve. Over the last couple of decades, there have been lots of interests in solving \textbf{low-rank SDPs}, i.e., SDPs whose optimal solutions are low-rank. These low-rank SDPs appear frequently in semidefinite relaxations of combinatorial problems, or high-order moment-SOS relaxations, as you have already seen in the Pset problems. In this section, we will introduce specialized algorithms that solve large-scale SDPs by exploiting low-rankness of the optimal solutions.
+
+\subsection{Burer-Monteiro Factorization}\label{burer-monteiro-factorization}
+
+One of the very first and most popular algorithms for solving low-rank SDPs is called Burer-Monteiro (B-M) factorization, first proposed by \citep{burer03mp-nonlinear}, with subsequent analysis and improvement by \citep{journee10siopt-low}, \citep{boumal16nips-non}, \citep{cifuentes22nips-polynomial}, to name a few. In what follows we describe the basic idea of B-M factorization.
+
+Consider a standard primal SDP, restated from \eqref{eq:SDP-P}
+\begin{equation}
+\begin{split}
+\min_{X \in \mathbb{S}^{n}} & \quad \langle C, X \rangle \\
+\mathrm{s.t.}& \quad \langle A_i, X \rangle = b_i, i=1,\dots,m \\
+& \quad X \succeq 0
+\end{split}
+\label{eq:SDP-P-BM}
+\end{equation}
+The dual to \eqref{eq:SDP-P-BM} is
+\begin{equation}
+\begin{split}
+\min_{y \in \mathbb{R}^{m}, Z \in \mathbb{S}^{n}} & \quad \langle b, y \rangle \\
+\mathrm{s.t.}& \quad C - \sum_{i=1}^m y_i A_i = Z \\
+& \quad Z \succeq 0
+\end{split}
+\label{eq:SDP-D-BM}
+\end{equation}
+We assume that both \eqref{eq:SDP-P-BM} and \eqref{eq:SDP-D-BM} have strictly feasible points, and thus strong duality holds. Under this assumption, a feasible pair of primal-dual points \(X\) and \((y,Z)\) is optimal if and only if
+\begin{equation}
+\langle X, Z \rangle = 0, \quad \Leftrightarrow \quad XZ = ZX = 0,
+\label{eq:optimal-primal-dual-pair}
+\end{equation}
+where we have used that if the inner product of two PSD matrices is zero then their product must be the zero matrix.
+
+Denote
+\begin{equation}
+r^\star = \min\{ \mathrm{rank}(X_\star) \mid X_\star \text{ is optimal for the primal SDP} \}
+\label{eq:optimal-rank}
+\end{equation}
+as the minimum rank of the optimal solutions of \eqref{eq:SDP-P-BM}. Empirically, \(r^\star\) is often much smaller than \(n\), the dimension of the matrix variable \(X\). For example, in many computer vision and robotics problems \citep{rosen19ijrr-sesync} \citep{yang22pami-certifiably}, \(r^\star = 1\) despite that \(n\) can be in the order of thousands. Theoretically, there is a well-known upper bound on \(r^\star\), due to \citep{barvinok95dcg-problems} and \citep{pataki98mor-rank}.
+
+\begin{theorem}[Barvinok-Pataki Bound]
+\protect\hypertarget{thm:BarvinokPataki}{}\label{thm:BarvinokPataki}If the feasible set of \eqref{eq:SDP-P-BM} contains an extreme point, then
+\[
+\frac{r^\star (r^\star + 1)}{2} \leq m,
+\]
+i.e., there exists an optimal solution \(X_\star\) whose rank satisfies the above inequality.
+\end{theorem}
+
+Theorem \ref{thm:BarvinokPataki} states that the existence of low-rank optimal solutions, i.e., \(r^\star < n\), is a generic property of SDPs, as long as the number of equality constraints \(m\) is not too large (which unfortunately does get violated in high-order moment-SOS relaxations, as \(m = O(n^2)\) there).
+
+Motivated by the existence of low-rank optimal solutions, Burer and Monteiro proposed the following low-rank factorization formulation for the primal SDP \eqref{eq:SDP-P-BM}
+\begin{equation}
+\begin{split}
+\min_{R \in \mathbb{R}^{n \times r}} & \quad \langle C, RR^\top \rangle \\
+& \quad \langle A_i, RR^\top \rangle = b_i, i=1,\dots,m
+\end{split}
+\label{eq:B-M-factorization}
+\end{equation}
+
+Problem \eqref{eq:B-M-factorization} is a quadratically constrained quadratic program (QCQP), and
+we can easily observe that the new problem \eqref{eq:B-M-factorization} is equivalent to the SDP \eqref{eq:SDP-P-BM} if the rank \(r\) of \(R\) is chosen sufficiently large.
+
+\begin{theorem}[B-M Factorization]
+\protect\hypertarget{thm:BMFactorization}{}\label{thm:BMFactorization}
+
+If \(r\) in \eqref{eq:B-M-factorization} is chosen such that
+\[
+r \geq r^\star,
+\]
+where \(r^\star\) is defined in \eqref{eq:optimal-rank}, then \eqref{eq:SDP-P-BM} is equivalent to \eqref{eq:B-M-factorization} in the sense that:
+
+\begin{itemize}
+\item
+  they have the same global minimum;
+\item
+  there exists \(X_\star\) optimal for \eqref{eq:SDP-P-BM} such that \(X_\star = R_\star R_\star^\top\) with \(R_\star\) optimal for \eqref{eq:B-M-factorization};
+\item
+  for any \(R_\star\) that is optimal for \eqref{eq:B-M-factorization}, \(R_\star R_\star^\top\) is an optimal solution to \eqref{eq:SDP-P-BM}.
+\end{itemize}
+
+\end{theorem}
+
+\begin{proof}
+Let \(X_\star\) be an optimal solution of the SDP \eqref{eq:SDP-P-BM} with \(\mathrm{rank}(X_\star) = r^\star\). Since \(X_\star \succeq 0\), we can factorize
+\[
+X_\star = \bar{R}_\star \bar{R}_\star^\top, \quad \bar{R}_\star \in \mathbb{R}^{n \times r^\star}.
+\]
+Because \(r \geq r^\star\), we can pad \(\bar{R}_\star\) with \(r-r^\star\) columns of zeros
+\[
+R_\star = \begin{bmatrix}
+\bar{R}_\star & 0_{n \times (r - r^\star)}
+\end{bmatrix}.
+\]
+It is easy to check that \(R_\star\) is feasible for the QCQP \eqref{eq:B-M-factorization} (because \(R_\star R_\star^\top= \bar{R}_\star \bar{R}_\star^\top\)!) and it attains the same cost as \(X_\star\) in the SDP \eqref{eq:SDP-P-BM}. Therefore, the global minimum of the QCQP must be smaller than or equal to the global minimum of the SDP.
+
+On the other hand, for any \(R\) that is feasible for the QCQP, \(X=RR^\top\) must also be feasible for the SDP and attains the same cost in the SDP as \(R\) in the QCQP. This implies that the global minimum of the SDP must be smaller than or equal to the global minimum of the QCQP.
+
+Combining the two arguments above, we conclude that the SDP and the QCQP have the same global minimum. Then, the other two statements in the theorem naturally follow.
+\end{proof}
+
+Theorem \ref{thm:BMFactorization} establishes the equivalence between the SDP \eqref{eq:SDP-P-BM} and the QCQP \eqref{eq:B-M-factorization}, but the QCQP has much fewer variables than the SDP (when \(r\) is chosen sufficiently small such that \(r \ll n\))! In addition, the QCQP has no positive semidefinite constraints because \(RR^\top\succeq 0\) by construction.
+
+However, if you think more carefully about the reformulation from the SDP to the QCQP, it is quite counterintuitive because now you lose convexity. Indeed, as we have seen in this class, a major benefit of SDP is that it can be used to derive convex relaxations of nonconvex optimization problems. The B-M factorization \eqref{eq:B-M-factorization}, instead, writes the convex SDP back into a nonconvex problem.
+
+We will see that the QCQP \eqref{eq:B-M-factorization}, despite being nonconvex, has very nice connections with the convex SDP that can be leveraged to solve large-scale SDPs beyond the reach of IPMs.
+
+\textbf{Optimality conditions}. Let us first analyze the optimality conditions of the QCQP \eqref{eq:B-M-factorization} with a fixed choice of \(r\). We associate each constraint in \eqref{eq:B-M-factorization} with a dual variable and form the Lagrangian
+\[
+L(R,y) = \langle C, RR^\top \rangle - \sum_{i=1}^m y_i \left( \langle A_i, RR^\top \rangle - b_i \right), \quad R \in \mathbb{R}^{n \times r}, y \in \mathbb{R}^{m}.
+\]
+Denote
+\begin{equation}
+Z(y) = C - \sum_{i=1}^m y_i A_i,
+\label{eq:Zofy}
+\end{equation}
+we can simplify the Lagrangian as
+\[
+L(R,y) = \langle Z(y), RR^\top \rangle + \langle b, y \rangle.
+\]
+The Lagrangian dual function is
+\[
+\min_R \langle Z(y), RR^\top \rangle + \langle b, y \rangle = \begin{cases}
+\langle b, y \rangle & \text{if }Z(y) \succeq 0 \\
+-\infty & \text{otherwise}
+\end{cases}
+\]
+Therefore, the Lagrangian dual problem of the nonconvex QCQP \eqref{eq:B-M-factorization} is not surprisingly just the dual SDP \eqref{eq:SDP-D-BM}, which we have already seen in Chapter \ref{Shor}.
+
+We now state the first-order optimality conditions, which can be readily obtained by applying Theorem 12.1 in \citep{nocedal99book-numerical}.
+
+\begin{theorem}[First-order Necessary Conditions for Local Optimality]
+\protect\hypertarget{thm:FirstOrderOptimality}{}\label{thm:FirstOrderOptimality}Let \(R_\star\) be a locally optimal solution of the QCQP \eqref{eq:B-M-factorization} and assume the linear
+independence constraint qualification (LICQ) holds at \(R_\star\), i.e.,
+\[
+\nabla_{R} (\langle A_i, R_\star R_\star^\top \rangle - b) = 2A_i R_\star, \quad i=1,\dots,m
+\]
+are linearly independent. Then, there must exist a unique dual variable \(y_\star\) such that
+\begin{equation}
+\begin{split}
+\nabla_{R} L(R_\star, y_\star) = 2 Z(y_\star) R_\star = 0, \\
+\langle A_i, R_\star R_\star^\top \rangle = b_i, i=1,\dots,m
+\end{split}.
+\label{eq:first-order-optimality-condition}
+\end{equation}
+\end{theorem}
+
+The second condition in \eqref{eq:first-order-optimality-condition} implies \(R_\star\) is feasible and the first condition in \eqref{eq:first-order-optimality-condition} states there must exist \(y_\star\) such that the gradient of the Lagrangian with respect to \(R\) vanishes at \(R_\star\).
+
+An immediate corollary of Theorem \ref{thm:FirstOrderOptimality} is that if \(Z(y_\star)\) happens to be positive semidefinite, then \(R_\star\) is indeed the global minimizer.
+
+\begin{corollary}[Global Optimality from First-Order Conditions]
+\protect\hypertarget{cor:GlobalOptimality}{}\label{cor:GlobalOptimality}Let \(R_\star\) be a locally optimal solution of the QCQP \eqref{eq:B-M-factorization} and assume LICQ holds at \(R_\star\). Let \(y_\star\) be the dual variable such that \((R_\star,y_\star)\) satisfy the first-order optimality conditions in \eqref{eq:first-order-optimality-condition}.
+
+If
+\[
+Z(y_\star) \succeq 0,
+\]
+then \(R_\star\) is a global optimizer of the QCQP \eqref{eq:B-M-factorization}, and \((R_\star R_\star^\top, y_\star, Z(y_\star))\) is an optimal pair of primal-dual solutions for the SDP \eqref{eq:SDP-P-BM} and \eqref{eq:SDP-D-BM}.
+\end{corollary}
+
+\begin{proof}
+We have that \(R_\star R_\star^\top\) is feasible for the primal SDP \eqref{eq:SDP-P-BM}, and \((y_\star, Z(y_\star))\) is feasible for the dual SDP \eqref{eq:SDP-D-BM} due to \(Z(y_\star) \succeq 0\).
+
+The first condition in the first-order optimization conditions \eqref{eq:first-order-optimality-condition} implies there is zero duality gap, and by \eqref{eq:optimal-primal-dual-pair}, we conclude \((R_\star R_\star^\top, y_\star, Z(y_\star))\) are optimal for the convex SDPs.
+
+However, by Theorem \ref{thm:BMFactorization}, the convex SDP is equivalent to the nonconvex QCQP, so \(R_\star\) is a global minimizer of the nonconvex QCQP.
+\end{proof}
+
+One should notice that, when LICQ holds at \(R_\star\), the dual variables \(y_\star\) can be solved in closed form. This can be seen by rewriting the first condition in \eqref{eq:first-order-optimality-condition} as
+\begin{equation}
+\left( C - \sum_{i=1}^m y_{\star,i} A_i \right) R_\star = 0 \Leftrightarrow \sum_{i=1}^m y_{\star,i} (A_i R_\star) = C R_\star
+\label{eq:solve-dual-y-linear-system}
+\end{equation}
+which is a system of linear equations in \(y_\star\). The LICQ condition, i.e., \(A_i R_\star\)'s are linearly independent, implies the solution to the above linear system is unique.
+
+The above analysis produces a very efficient algorithm for certifying global optimality that is very popular due to \citep{rosen19ijrr-sesync}:
+
+\begin{itemize}
+\item
+  Use a gradient-based local optimization algorithm to solve the QCQP \eqref{eq:B-M-factorization} and obtain a solution \(R_\star\)
+\item
+  If LICQ holds at \(R_\star\), solve the linear system \eqref{eq:solve-dual-y-linear-system} to obtain \(y_\star\)
+\item
+  If \(Z(y_\star)\) is positive semidefinite, global optimality of \(R_\star\) is certified.
+\end{itemize}
+
+What if \(Z(y_\star)\) is not positive semidefinite? Can we find a better solution than \(R_\star\)?
+
+In order to do so, we need to analyze the second-order optimality conditions of the QCQP \eqref{eq:B-M-factorization}.
 
   \bibliography{book.bib}
 
