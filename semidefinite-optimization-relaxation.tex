@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-04-09}
+\date{2024-04-10}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -6983,7 +6983,12 @@ The first condition in the first-order optimization conditions \eqref{eq:first-o
 However, by Theorem \ref{thm:BMFactorization}, the convex SDP is equivalent to the nonconvex QCQP, so \(R_\star\) is a global minimizer of the nonconvex QCQP.
 \end{proof}
 
-One should notice that, when LICQ holds at \(R_\star\), the dual variables \(y_\star\) can be solved in closed form. This can be seen by rewriting the first condition in \eqref{eq:first-order-optimality-condition} as
+It is worth noting that even if LICQ fails to hold at \(R_\star\), as long as \(y_\star\) exists such that
+\[
+Z(y_\star) \succeq 0, \quad Z(y_\star) R_\star = 0
+\]
+\(R_\star\) can also be certified as the global minimizer.
+However, when LICQ holds at \(R_\star\), the dual variables \(y_\star\) can be solved in closed form. This can be seen by rewriting the first condition in \eqref{eq:first-order-optimality-condition} as
 \begin{equation}
 \left( C - \sum_{i=1}^m y_{\star,i} A_i \right) R_\star = 0 \Leftrightarrow \sum_{i=1}^m y_{\star,i} (A_i R_\star) = C R_\star
 \label{eq:solve-dual-y-linear-system}
@@ -7004,6 +7009,97 @@ The above analysis produces a very efficient algorithm for certifying global opt
 What if \(Z(y_\star)\) is not positive semidefinite? Can we find a better solution than \(R_\star\)?
 
 In order to do so, we need to analyze the second-order optimality conditions of the QCQP \eqref{eq:B-M-factorization}.
+
+For a point \(R_\star\) to be a local optimizer, it not only needs to satisfy the first-order optimality conditions in Theorem \ref{thm:FirstOrderOptimality}, but also the following second-order optimality conditions, which essentially places more conditions on the matrix \(Z(y_\star)\). The following result can be directly obtained from Theorem 12.5 in \citep{nocedal99book-numerical}.
+
+\begin{theorem}[Second-order Necessary Conditions for Local Optimality]
+\protect\hypertarget{thm:SecondOrderOptimalityConditions}{}\label{thm:SecondOrderOptimalityConditions}Let \(R_\star\) be a locally optimal solution of the QCQP \eqref{eq:B-M-factorization} and assume LICQ holds at \(R_\star\). Let \(y_\star\) be the dual variable in Theorem \ref{thm:FirstOrderOptimality} such that \((R_\star,y_\star)\) satisfy the first-order optimality conditions.
+
+Then, the following inequality
+\begin{equation}
+\langle Z(y_\star), DD^\top \rangle \geq 0
+\label{eq:non-decreasing-cost}
+\end{equation}
+holds for any matrix \(D \in \mathbb{R}^{n \times r}\) satisfying
+\begin{equation}
+\langle A_i R_\star , D \rangle = 0, i=1,\dots,m.
+\label{eq:feasible-direction}
+\end{equation}
+\end{theorem}
+
+The geometric interpretation of the second-order necessary conditions is that, at \(R_\star\), the cost along any feasible direction \(D\) (i.e., no constraint violation as in \eqref{eq:feasible-direction}) must be non-decreasing.
+
+One can also formulate the optimality conditions of a strict local optimizer (i.e., the cost along any feasible direction is strictly increasing), see Theorem 12.6 of \citep{nocedal99book-numerical}. However, we can observe that the QCQP cannot have strict local optimizers. To see this, suppose \(R_\star\) is a local optimizer, then \(R_\star Q\) for any \(Q \in \mathrm{O}(r)\) is also feasible for the QCQP and attains the same cost because
+\[
+\langle A_i, R_\star Q Q^\top R_\star^\top \rangle = \langle A_i, R_\star R_\star^\top \rangle = b_i, i=1,\dots,m
+\]
+and
+\[
+\langle C, R_\star Q Q^\top R_\star^\top \rangle = \langle C, R_\star R_\star^\top \rangle.
+\]
+Since the distance between \(R_\star Q\) and \(R_\star\)
+\[
+\Vert R_\star Q - R_\star \Vert_\mathrm{F} = \Vert R_\star(Q - I) \Vert_\mathrm{F}
+\]
+can be made arbitrarily small, we conclude that \(R_\star\) cannot be a strict local optimizer.
+
+Using the second-order optimality conditions in Theorem \ref{thm:SecondOrderOptimalityConditions}, we can derive a surprising result about global optimality of the QCQP.
+
+\begin{theorem}[Global Optimality from Local Optimality]
+\protect\hypertarget{thm:GlobalOptimalityFromLocalOptimality}{}\label{thm:GlobalOptimalityFromLocalOptimality}Denote by QCQP\(_r\) problem \eqref{eq:B-M-factorization} at rank \(r\). Let \(R_\star\) be a local optimizer of QCQP\(_r\) satisfying the second-order optimality conditions in Theorem \ref{thm:SecondOrderOptimalityConditions} with dual variables \(y_\star\).
+
+Now consider QCQP\(_{r+1}\), i.e., problem \eqref{eq:B-M-factorization} at rank \(r+1\). If
+\[
+\hat{R}_\star = \begin{bmatrix}
+R_\star & 0
+\end{bmatrix} \in \mathbb{R}^{n \times (r+1)}
+\]
+is a local optimizer of QCQP\(_{r+1}\) satisfying second-order optimality conditions, then \(R_\star\) is the global minimizer of QCQP\(_r\), and \((R_\star R_\star^\top, y_\star, Z(y_\star))\) are pair of primal-dual optimal solutions for the SDP.
+\end{theorem}
+
+\begin{proof}
+According to Corollary \ref{cor:GlobalOptimality}, it suffices to show that \(Z(y_\star)\) is positive semidefinite at \(R_\star\).
+
+The linear independence of \(\{ A_i R_\star \}_{i=1}^m\) implies the linear independence of \(\{ A_i \hat{R}_\star \}\) because
+\[
+A_i \hat{R}_\star = \begin{bmatrix} A_i R_\star & 0 \end{bmatrix}, i=1,\dots,m.
+\]
+Therefore, there exists a unique dual variable \(\hat{y}_\star\) such that \((\hat{R}_\star, \hat{y}_\star)\) satisfy the second-order optimality conditions. It is not too difficult to observe that
+\[
+\hat{y}_\star = y_\star,
+\]
+becase
+\[
+Z(y_\star) \hat{R}_\star = \begin{bmatrix}
+Z(y_\star) R_\star & 0
+\end{bmatrix} = 0
+\]
+satisfy the first-order optimality conditions.
+
+Now we will use the second-order optimality conditions, in particular \eqref{eq:non-decreasing-cost} and \eqref{eq:feasible-direction} to show that \(Z(y_\star) = Z(\hat{y}_\star) \succeq 0\). Towards this, we observe that, given any \(d \in \mathbb{R}^{n}\), the following
+\[
+D = \begin{bmatrix}
+0_{n \times r} & d
+\end{bmatrix}
+\]
+is a feasible direction as it satisfies \eqref{eq:feasible-direction}. Then, using the non-decreasing condition \eqref{eq:non-decreasing-cost}, we have
+\[
+\langle Z(y_\star), DD^\top \rangle = \langle Z(y_\star), dd^\top \rangle = d^\top Z(y_\star) d \geq 0, \quad \forall d \in \mathbb{R}^{n},
+\]
+proving the positive semidefiniteness of \(Z(y_\star)\) and hence the global optimality of \(R_\star\).
+\end{proof}
+
+An immediate corollary of Theorem \ref{thm:GlobalOptimalityFromLocalOptimality} is that if one solves the nonconvex QCQP at certain rank \(r\) and obtains a rank-deficient local optimizer, then it certifies global optimality.
+
+\begin{corollary}[Global Optimality from Rank Deficiency]
+\protect\hypertarget{cor:RankDeficient}{}\label{cor:RankDeficient}Consider QCQP\(_r\) and let \(R_\star \in \mathbb{R}^{n \times r}\) be a local optimizer satisfying second-order optimality conditions.
+
+If \(R_\star\) is rank-deficient, i.e., \(\mathrm{rank}(R_\star) < r\), then \(R_\star\) is a global optimizer of QCQP\(_r\).
+\end{corollary}
+
+\begin{proof}
+Perform an LQ decomposition of \(R_\star\) (or equivalently the QR decomposition of \(R_\star^\top\))
+\end{proof}
 
   \bibliography{book.bib}
 

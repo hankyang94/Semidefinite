@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-04-09" />
+<meta name="date" content="2024-04-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1018,7 +1018,12 @@ then <span class="math inline">\(R_\star\)</span> is a global optimizer of the Q
 <p>However, by Theorem <a href="Structure.html#thm:BMFactorization">6.8</a>, the convex SDP is equivalent to the nonconvex QCQP, so <span class="math inline">\(R_\star\)</span> is a global minimizer of the nonconvex QCQP.</p>
 </div>
 </div>
-<p>One should notice that, when LICQ holds at <span class="math inline">\(R_\star\)</span>, the dual variables <span class="math inline">\(y_\star\)</span> can be solved in closed form. This can be seen by rewriting the first condition in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> as
+<p>It is worth noting that even if LICQ fails to hold at <span class="math inline">\(R_\star\)</span>, as long as <span class="math inline">\(y_\star\)</span> exists such that
+<span class="math display">\[
+Z(y_\star) \succeq 0, \quad Z(y_\star) R_\star = 0
+\]</span>
+<span class="math inline">\(R_\star\)</span> can also be certified as the global minimizer.
+However, when LICQ holds at <span class="math inline">\(R_\star\)</span>, the dual variables <span class="math inline">\(y_\star\)</span> can be solved in closed form. This can be seen by rewriting the first condition in <a href="Structure.html#eq:first-order-optimality-condition">(6.37)</a> as
 <span class="math display" id="eq:solve-dual-y-linear-system">\[\begin{equation}
 \left( C - \sum_{i=1}^m y_{\star,i} A_i \right) R_\star = 0 \Leftrightarrow \sum_{i=1}^m y_{\star,i} (A_i R_\star) = C R_\star
 \tag{6.38}
@@ -1032,6 +1037,92 @@ which is a system of linear equations in <span class="math inline">\(y_\star\)</
 </ul>
 <p>What if <span class="math inline">\(Z(y_\star)\)</span> is not positive semidefinite? Can we find a better solution than <span class="math inline">\(R_\star\)</span>?</p>
 <p>In order to do so, we need to analyze the second-order optimality conditions of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a>.</p>
+<p>For a point <span class="math inline">\(R_\star\)</span> to be a local optimizer, it not only needs to satisfy the first-order optimality conditions in Theorem <a href="Structure.html#thm:FirstOrderOptimality">6.9</a>, but also the following second-order optimality conditions, which essentially places more conditions on the matrix <span class="math inline">\(Z(y_\star)\)</span>. The following result can be directly obtained from Theorem 12.5 in <span class="citation">(<a href="#ref-nocedal99book-numerical">Nocedal and Wright 1999</a>)</span>.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:SecondOrderOptimalityConditions" class="theorem"><strong>Theorem 6.10  (Second-order Necessary Conditions for Local Optimality) </strong></span>Let <span class="math inline">\(R_\star\)</span> be a locally optimal solution of the QCQP <a href="Structure.html#eq:B-M-factorization">(6.35)</a> and assume LICQ holds at <span class="math inline">\(R_\star\)</span>. Let <span class="math inline">\(y_\star\)</span> be the dual variable in Theorem <a href="Structure.html#thm:FirstOrderOptimality">6.9</a> such that <span class="math inline">\((R_\star,y_\star)\)</span> satisfy the first-order optimality conditions.</p>
+<p>Then, the following inequality
+<span class="math display" id="eq:non-decreasing-cost">\[\begin{equation}
+\langle Z(y_\star), DD^\top \rangle \geq 0
+\tag{6.39}
+\end{equation}\]</span>
+holds for any matrix <span class="math inline">\(D \in \mathbb{R}^{n \times r}\)</span> satisfying
+<span class="math display" id="eq:feasible-direction">\[\begin{equation}
+\langle A_i R_\star , D \rangle = 0, i=1,\dots,m.
+\tag{6.40}
+\end{equation}\]</span></p>
+</div>
+</div>
+<p>The geometric interpretation of the second-order necessary conditions is that, at <span class="math inline">\(R_\star\)</span>, the cost along any feasible direction <span class="math inline">\(D\)</span> (i.e., no constraint violation as in <a href="Structure.html#eq:feasible-direction">(6.40)</a>) must be non-decreasing.</p>
+<p>One can also formulate the optimality conditions of a strict local optimizer (i.e., the cost along any feasible direction is strictly increasing), see Theorem 12.6 of <span class="citation">(<a href="#ref-nocedal99book-numerical">Nocedal and Wright 1999</a>)</span>. However, we can observe that the QCQP cannot have strict local optimizers. To see this, suppose <span class="math inline">\(R_\star\)</span> is a local optimizer, then <span class="math inline">\(R_\star Q\)</span> for any <span class="math inline">\(Q \in \mathrm{O}(r)\)</span> is also feasible for the QCQP and attains the same cost because
+<span class="math display">\[
+\langle A_i, R_\star Q Q^\top R_\star^\top \rangle = \langle A_i, R_\star R_\star^\top \rangle = b_i, i=1,\dots,m
+\]</span>
+and
+<span class="math display">\[
+\langle C, R_\star Q Q^\top R_\star^\top \rangle = \langle C, R_\star R_\star^\top \rangle.
+\]</span>
+Since the distance between <span class="math inline">\(R_\star Q\)</span> and <span class="math inline">\(R_\star\)</span>
+<span class="math display">\[
+\Vert R_\star Q - R_\star \Vert_\mathrm{F} = \Vert R_\star(Q - I) \Vert_\mathrm{F}
+\]</span>
+can be made arbitrarily small, we conclude that <span class="math inline">\(R_\star\)</span> cannot be a strict local optimizer.</p>
+<p>Using the second-order optimality conditions in Theorem <a href="Structure.html#thm:SecondOrderOptimalityConditions">6.10</a>, we can derive a surprising result about global optimality of the QCQP.</p>
+<div class="theorembox">
+<div class="theorem">
+<p><span id="thm:GlobalOptimalityFromLocalOptimality" class="theorem"><strong>Theorem 6.11  (Global Optimality from Local Optimality) </strong></span>Denote by QCQP<span class="math inline">\(_r\)</span> problem <a href="Structure.html#eq:B-M-factorization">(6.35)</a> at rank <span class="math inline">\(r\)</span>. Let <span class="math inline">\(R_\star\)</span> be a local optimizer of QCQP<span class="math inline">\(_r\)</span> satisfying the second-order optimality conditions in Theorem <a href="Structure.html#thm:SecondOrderOptimalityConditions">6.10</a> with dual variables <span class="math inline">\(y_\star\)</span>.</p>
+<p>Now consider QCQP<span class="math inline">\(_{r+1}\)</span>, i.e., problem <a href="Structure.html#eq:B-M-factorization">(6.35)</a> at rank <span class="math inline">\(r+1\)</span>. If
+<span class="math display">\[
+\hat{R}_\star = \begin{bmatrix}
+R_\star &amp; 0
+\end{bmatrix} \in \mathbb{R}^{n \times (r+1)}
+\]</span>
+is a local optimizer of QCQP<span class="math inline">\(_{r+1}\)</span> satisfying second-order optimality conditions, then <span class="math inline">\(R_\star\)</span> is the global minimizer of QCQP<span class="math inline">\(_r\)</span>, and <span class="math inline">\((R_\star R_\star^\top, y_\star, Z(y_\star))\)</span> are pair of primal-dual optimal solutions for the SDP.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-22" class="proof"><em>Proof</em>. </span>According to Corollary <a href="Structure.html#cor:GlobalOptimality">6.1</a>, it suffices to show that <span class="math inline">\(Z(y_\star)\)</span> is positive semidefinite at <span class="math inline">\(R_\star\)</span>.</p>
+<p>The linear independence of <span class="math inline">\(\{ A_i R_\star \}_{i=1}^m\)</span> implies the linear independence of <span class="math inline">\(\{ A_i \hat{R}_\star \}\)</span> because
+<span class="math display">\[
+A_i \hat{R}_\star = \begin{bmatrix} A_i R_\star &amp; 0 \end{bmatrix}, i=1,\dots,m.
+\]</span>
+Therefore, there exists a unique dual variable <span class="math inline">\(\hat{y}_\star\)</span> such that <span class="math inline">\((\hat{R}_\star, \hat{y}_\star)\)</span> satisfy the second-order optimality conditions. It is not too difficult to observe that
+<span class="math display">\[
+\hat{y}_\star = y_\star,
+\]</span>
+becase
+<span class="math display">\[
+Z(y_\star) \hat{R}_\star = \begin{bmatrix}
+Z(y_\star) R_\star &amp; 0
+\end{bmatrix} = 0
+\]</span>
+satisfy the first-order optimality conditions.</p>
+<p>Now we will use the second-order optimality conditions, in particular <a href="Structure.html#eq:non-decreasing-cost">(6.39)</a> and <a href="Structure.html#eq:feasible-direction">(6.40)</a> to show that <span class="math inline">\(Z(y_\star) = Z(\hat{y}_\star) \succeq 0\)</span>. Towards this, we observe that, given any <span class="math inline">\(d \in \mathbb{R}^{n}\)</span>, the following
+<span class="math display">\[
+D = \begin{bmatrix}
+0_{n \times r} &amp; d
+\end{bmatrix}
+\]</span>
+is a feasible direction as it satisfies <a href="Structure.html#eq:feasible-direction">(6.40)</a>. Then, using the non-decreasing condition <a href="Structure.html#eq:non-decreasing-cost">(6.39)</a>, we have
+<span class="math display">\[
+\langle Z(y_\star), DD^\top \rangle = \langle Z(y_\star), dd^\top \rangle = d^\top Z(y_\star) d \geq 0, \quad \forall d \in \mathbb{R}^{n},
+\]</span>
+proving the positive semidefiniteness of <span class="math inline">\(Z(y_\star)\)</span> and hence the global optimality of <span class="math inline">\(R_\star\)</span>.</p>
+</div>
+</div>
+<p>An immediate corollary of Theorem <a href="Structure.html#thm:GlobalOptimalityFromLocalOptimality">6.11</a> is that if one solves the nonconvex QCQP at certain rank <span class="math inline">\(r\)</span> and obtains a rank-deficient local optimizer, then it certifies global optimality.</p>
+<div class="theorembox">
+<div class="corollary">
+<p><span id="cor:RankDeficient" class="corollary"><strong>Corollary 6.2  (Global Optimality from Rank Deficiency) </strong></span>Consider QCQP<span class="math inline">\(_r\)</span> and let <span class="math inline">\(R_\star \in \mathbb{R}^{n \times r}\)</span> be a local optimizer satisfying second-order optimality conditions.</p>
+<p>If <span class="math inline">\(R_\star\)</span> is rank-deficient, i.e., <span class="math inline">\(\mathrm{rank}(R_\star) &lt; r\)</span>, then <span class="math inline">\(R_\star\)</span> is a global optimizer of QCQP<span class="math inline">\(_r\)</span>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-23" class="proof"><em>Proof</em>. </span>Perform an LQ decomposition of <span class="math inline">\(R_\star\)</span> (or equivalently the QR decomposition of <span class="math inline">\(R_\star^\top\)</span>)</p>
+</div>
+</div>
 <!-- Suppose we employ a nonlinear programming algorithm, e.g., the interior-point algorithm for constrained optimization [@nocedal99book-numerical], to solve the QCQP \@ref(eq:B-M-factorization), how can we  -->
 
 </div>
