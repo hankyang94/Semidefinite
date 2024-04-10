@@ -1120,9 +1120,67 @@ proving the positive semidefiniteness of <span class="math inline">\(Z(y_\star)\
 </div>
 <div class="proofbox">
 <div class="proof">
-<p><span id="unlabeled-div-23" class="proof"><em>Proof</em>. </span>Perform an LQ decomposition of <span class="math inline">\(R_\star\)</span> (or equivalently the QR decomposition of <span class="math inline">\(R_\star^\top\)</span>)</p>
+<p><span id="unlabeled-div-23" class="proof"><em>Proof</em>. </span>Perform an LQ decomposition of <span class="math inline">\(R_\star\)</span> (or equivalently the QR decomposition of <span class="math inline">\(R_\star^\top\)</span>):
+<span class="math display">\[
+R_\star = L Q,
+\]</span>
+where <span class="math inline">\(Q \in \mathrm{O}(r)\)</span> is an orthogonal matrix and <span class="math inline">\(L \in \mathbb{R}^{n \times r}\)</span> is lower triangular. Let <span class="math inline">\(\mathrm{rank}(R_\star) = l &lt; r\)</span>, then <span class="math inline">\(L\)</span> must have <span class="math inline">\(r - l\)</span> zero columns.</p>
+<p>Suppose <span class="math inline">\(y_\star\)</span> is the dual variable associated with <span class="math inline">\(R_\star\)</span> such that second-order optimality conditions are verified. Consider the matrix
+<span class="math display">\[
+D = E Q,
+\]</span>
+where <span class="math inline">\(E \in \mathbb{R}^{n \times r}\)</span> has an arbitrary vector <span class="math inline">\(d \in \mathbb{R}^{n}\)</span> in one of the columns corresponding to the <span class="math inline">\(r - l\)</span> zero columns in <span class="math inline">\(L\)</span> and zero everywhere else. Then we can verify that
+<span class="math display">\[
+\langle A_i R_\star, D \rangle = \langle A_i L Q, E Q \rangle = \langle A_i L, E \rangle = 0
+\]</span>
+for any <span class="math inline">\(d\)</span>. However, the non-decreasing condition
+<span class="math display">\[
+\langle Z(y_\star), DD^\top \rangle = \langle Z(y_\star), EE^\top \rangle = d^\top Z(y_\star) d \geq 0
+\]</span>
+implies <span class="math inline">\(Z(y_\star) \succeq 0\)</span>.</p>
 </div>
 </div>
+<p>If the local optimization algorithm converged to a suboptimal solution <span class="math inline">\(R_\star\)</span>, i.e., <span class="math inline">\(Z(y_\star)\)</span> is not PSD. Then we can find a direction of descent.</p>
+<div class="theorembox">
+<div class="proposition">
+<p><span id="prp:DescentDirection" class="proposition"><strong>Proposition 6.1  (Descent Direction) </strong></span>Consider QCQP<span class="math inline">\(_r\)</span> and suppose we have found a second-order critical point <span class="math inline">\(R_\star\)</span> with dual variables <span class="math inline">\(y_\star\)</span> such that <span class="math inline">\(Z(y_\star)\)</span> is not positive semidefinite. Suppose <span class="math inline">\(v \in \mathbb{R}^{n}\)</span> is an eigenvector corresponding to a negative eigenvalue of <span class="math inline">\(Z(y_\star)\)</span>.</p>
+<p>Now consider QCQP<span class="math inline">\(_{r+1}\)</span> with the point
+<span class="math display">\[
+\hat{R}_{\star} = \begin{bmatrix}
+R_\star &amp; 0
+\end{bmatrix}
+\]</span>
+and the direction
+<span class="math display">\[
+D = \begin{bmatrix}
+0 &amp; v
+\end{bmatrix}.
+\]</span>
+We have that <span class="math inline">\(D\)</span> is a descent direction at <span class="math inline">\(\hat{R}_{\star}\)</span>.</p>
+</div>
+</div>
+<div class="proofbox">
+<div class="proof">
+<p><span id="unlabeled-div-24" class="proof"><em>Proof</em>. </span><span class="math inline">\(\hat{R}_\star\)</span> is a first-order critical point, and we have
+<span class="math display">\[
+\langle A_i \hat{R}_\star, D \rangle = \left\langle \begin{bmatrix} A_i R_\star &amp; 0 \end{bmatrix},  \begin{bmatrix} 0 &amp; v \end{bmatrix} \right\rangle = 0.
+\]</span>
+However,
+<span class="math display">\[
+\langle Z(y_\star),  DD^\top \rangle = v^\top Z(y_\star) v &lt; 0,
+\]</span>
+showing that <span class="math inline">\(D\)</span> is a descent direction.</p>
+</div>
+</div>
+<p>With this we obtain the full algorithm for Burer-Monteiro factorization:</p>
+<ol style="list-style-type: decimal">
+<li><p>Start at some rank <span class="math inline">\(r\)</span></p></li>
+<li><p>Find a second order critical point for QCQP<span class="math inline">\(_r\)</span>, say <span class="math inline">\(R_\star\)</span> with dual variables <span class="math inline">\(y_\star\)</span></p></li>
+<li><p>If <span class="math inline">\(R_\star\)</span> is rank deficient, or <span class="math inline">\(Z(y_\star) \succeq 0\)</span>, <span class="math inline">\(R_\star\)</span> is optimal and terminate</p></li>
+<li><p>Otherwise, initialize QCQP<span class="math inline">\(_{r+1}\)</span> at <span class="math inline">\(\hat{R}_{\star}=[R_\star,0]\)</span>; use the descent direction in Proposition <a href="Structure.html#prp:DescentDirection">6.1</a> to escape the saddle point and find a better local optimizer, go to step 2.</p></li>
+</ol>
+<p>Note that the algorithm terminates in the latest when <span class="math inline">\(r=n\)</span>. To see this, if <span class="math inline">\(R_\star\)</span> is rank deficient at <span class="math inline">\(r=n\)</span>, then it is already global optimal. If <span class="math inline">\(R_\star\)</span> is full rank, then by the first-order optimality condition <span class="math inline">\(Z(y_\star) R_\star = 0\)</span> we conclude <span class="math inline">\(Z(y_\star)=0\)</span> is also positive semidefinite.</p>
+<p>In <span class="citation">(<a href="#ref-boumal16nips-non">Boumal, Voroninski, and Bandeira 2016</a>)</span>, the authors showed that for a class of SDPs whose QCQP formulations are defined on smooth manifolds, then as long as as <span class="math inline">\(r(r+1)/2 \geq m\)</span>, first order and second order necessary conditions for local optimality are also sufficient for global optimality.</p>
 <!-- Suppose we employ a nonlinear programming algorithm, e.g., the interior-point algorithm for constrained optimization [@nocedal99book-numerical], to solve the QCQP \@ref(eq:B-M-factorization), how can we  -->
 
 </div>

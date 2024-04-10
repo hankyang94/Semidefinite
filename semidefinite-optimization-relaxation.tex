@@ -7098,8 +7098,76 @@ If \(R_\star\) is rank-deficient, i.e., \(\mathrm{rank}(R_\star) < r\), then \(R
 \end{corollary}
 
 \begin{proof}
-Perform an LQ decomposition of \(R_\star\) (or equivalently the QR decomposition of \(R_\star^\top\))
+Perform an LQ decomposition of \(R_\star\) (or equivalently the QR decomposition of \(R_\star^\top\)):
+\[
+R_\star = L Q, 
+\]
+where \(Q \in \mathrm{O}(r)\) is an orthogonal matrix and \(L \in \mathbb{R}^{n \times r}\) is lower triangular. Let \(\mathrm{rank}(R_\star) = l < r\), then \(L\) must have \(r - l\) zero columns.
+
+Suppose \(y_\star\) is the dual variable associated with \(R_\star\) such that second-order optimality conditions are verified. Consider the matrix
+\[
+D = E Q,
+\]
+where \(E \in \mathbb{R}^{n \times r}\) has an arbitrary vector \(d \in \mathbb{R}^{n}\) in one of the columns corresponding to the \(r - l\) zero columns in \(L\) and zero everywhere else. Then we can verify that
+\[
+\langle A_i R_\star, D \rangle = \langle A_i L Q, E Q \rangle = \langle A_i L, E \rangle = 0
+\]
+for any \(d\). However, the non-decreasing condition
+\[
+\langle Z(y_\star), DD^\top \rangle = \langle Z(y_\star), EE^\top \rangle = d^\top Z(y_\star) d \geq 0
+\]
+implies \(Z(y_\star) \succeq 0\).
 \end{proof}
+
+If the local optimization algorithm converged to a suboptimal solution \(R_\star\), i.e., \(Z(y_\star)\) is not PSD. Then we can find a direction of descent.
+
+\begin{proposition}[Descent Direction]
+\protect\hypertarget{prp:DescentDirection}{}\label{prp:DescentDirection}Consider QCQP\(_r\) and suppose we have found a second-order critical point \(R_\star\) with dual variables \(y_\star\) such that \(Z(y_\star)\) is not positive semidefinite. Suppose \(v \in \mathbb{R}^{n}\) is an eigenvector corresponding to a negative eigenvalue of \(Z(y_\star)\).
+
+Now consider QCQP\(_{r+1}\) with the point
+\[
+\hat{R}_{\star} = \begin{bmatrix}
+R_\star & 0
+\end{bmatrix}
+\]
+and the direction
+\[
+D = \begin{bmatrix}
+0 & v
+\end{bmatrix}.
+\]
+We have that \(D\) is a descent direction at \(\hat{R}_{\star}\).
+\end{proposition}
+
+\begin{proof}
+\(\hat{R}_\star\) is a first-order critical point, and we have
+\[
+\langle A_i \hat{R}_\star, D \rangle = \left\langle \begin{bmatrix} A_i R_\star & 0 \end{bmatrix},  \begin{bmatrix} 0 & v \end{bmatrix} \right\rangle = 0.
+\]
+However,
+\[
+\langle Z(y_\star),  DD^\top \rangle = v^\top Z(y_\star) v < 0,
+\]
+showing that \(D\) is a descent direction.
+\end{proof}
+
+With this we obtain the full algorithm for Burer-Monteiro factorization:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Start at some rank \(r\)
+\item
+  Find a second order critical point for QCQP\(_r\), say \(R_\star\) with dual variables \(y_\star\)
+\item
+  If \(R_\star\) is rank deficient, or \(Z(y_\star) \succeq 0\), \(R_\star\) is optimal and terminate
+\item
+  Otherwise, initialize QCQP\(_{r+1}\) at \(\hat{R}_{\star}=[R_\star,0]\); use the descent direction in Proposition \ref{prp:DescentDirection} to escape the saddle point and find a better local optimizer, go to step 2.
+\end{enumerate}
+
+Note that the algorithm terminates in the latest when \(r=n\). To see this, if \(R_\star\) is rank deficient at \(r=n\), then it is already global optimal. If \(R_\star\) is full rank, then by the first-order optimality condition \(Z(y_\star) R_\star = 0\) we conclude \(Z(y_\star)=0\) is also positive semidefinite.
+
+In \citep{boumal16nips-non}, the authors showed that for a class of SDPs whose QCQP formulations are defined on smooth manifolds, then as long as as \(r(r+1)/2 \geq m\), first order and second order necessary conditions for local optimality are also sufficient for global optimality.
 
   \bibliography{book.bib}
 
