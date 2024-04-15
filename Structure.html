@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 6 Exploit Structure | Semidefinite Optimization and Relaxation</title>
   <meta name="description" content="Lecture notes for Harvard ES 257 Semidefinite Optimization and Relaxation." />
-  <meta name="generator" content="bookdown 0.38 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 6 Exploit Structure | Semidefinite Optimization and Relaxation" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Heng Yang" />
 
 
-<meta name="date" content="2024-04-10" />
+<meta name="date" content="2024-04-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -292,6 +292,8 @@ div.csl-indent {
 <li class="chapter" data-level="6.3" data-path="Structure.html"><a href="Structure.html#low-rank-sdps"><i class="fa fa-check"></i><b>6.3</b> Low-Rank SDPs</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="Structure.html"><a href="Structure.html#burer-monteiro-factorization"><i class="fa fa-check"></i><b>6.3.1</b> Burer-Monteiro Factorization</a></li>
+<li class="chapter" data-level="6.3.2" data-path="Structure.html"><a href="Structure.html#alternating-direction-method-of-multipliers"><i class="fa fa-check"></i><b>6.3.2</b> Alternating Direction Method of Multipliers</a></li>
+<li class="chapter" data-level="6.3.3" data-path="Structure.html"><a href="Structure.html#stride"><i class="fa fa-check"></i><b>6.3.3</b> STRIDE</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -1181,6 +1183,141 @@ showing that <span class="math inline">\(D\)</span> is a descent direction.</p>
 </ol>
 <p>Note that the algorithm terminates in the latest when <span class="math inline">\(r=n\)</span>. To see this, if <span class="math inline">\(R_\star\)</span> is rank deficient at <span class="math inline">\(r=n\)</span>, then it is already global optimal. If <span class="math inline">\(R_\star\)</span> is full rank, then by the first-order optimality condition <span class="math inline">\(Z(y_\star) R_\star = 0\)</span> we conclude <span class="math inline">\(Z(y_\star)=0\)</span> is also positive semidefinite.</p>
 <p>In <span class="citation">(<a href="#ref-boumal16nips-non">Boumal, Voroninski, and Bandeira 2016</a>)</span>, the authors showed that for a class of SDPs whose QCQP formulations are defined on smooth manifolds, then as long as as <span class="math inline">\(r(r+1)/2 \geq m\)</span>, first order and second order necessary conditions for local optimality are also sufficient for global optimality.</p>
+</div>
+<div id="alternating-direction-method-of-multipliers" class="section level3 hasAnchor" number="6.3.2">
+<h3><span class="header-section-number">6.3.2</span> Alternating Direction Method of Multipliers<a href="Structure.html#alternating-direction-method-of-multipliers" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider the following convex optimization problem
+<span class="math display" id="eq:admm-problem">\[\begin{equation}
+\begin{split}
+\min_{u,v} &amp; \quad f(u) + g(v) \\
+\mathrm{s.t.}&amp; \quad Fu + Gv = e
+\end{split}
+\tag{6.41}
+\end{equation}\]</span>
+where <span class="math inline">\(f\)</span> is convex and smooth, <span class="math inline">\(g\)</span> is convex, and <span class="math inline">\(F,G,e\)</span> are matrices of appropriate sizes.</p>
+<p>The augmented Lagrangian of problem <a href="Structure.html#eq:admm-problem">(6.41)</a> is
+<span class="math display" id="eq:admm-augmented-Lagrangian">\[\begin{equation}
+\mathcal{L}(u,v,\lambda) = f(u) + g(v) + \lambda^\top(Fu + Gv - e) + \frac{\rho}{2}\Vert Fu + Gv - e \Vert^2
+\tag{6.42}
+\end{equation}\]</span>
+with <span class="math inline">\(\rho &gt; 0\)</span> a chosen penalty parameter.</p>
+<p>The alternating direction method of multipliers (ADMM) seeks to find a saddle point of the augmented Lagrangian, and it updates <span class="math inline">\(u\)</span>, <span class="math inline">\(v\)</span>, and <span class="math inline">\(\lambda\)</span> separately at each iteration. In particular, at the <span class="math inline">\(k\)</span>-th iteration, the ADMM algorithm performs
+<span class="math display" id="eq:admm-meta">\[\begin{equation}
+\begin{split}
+u^{k+1} &amp; = \arg\min_{u} \mathcal{L}(u, v^{k}, \lambda^{k}) \\
+v^{k+1} &amp; = \arg\min_{v} \mathcal{L}(u^{k+1},v, \lambda^{k}) \\
+\lambda^{k+1} &amp;= \lambda^{k} + \rho (F u^{k+1} + G v^{k+1} - e)
+\end{split}
+\tag{6.43}
+\end{equation}\]</span>
+where the last step can be seen as gradient ascent on the dual variable <span class="math inline">\(\lambda\)</span>. Under mild conditions, the ADMM algorithm converges to a solution of <a href="Structure.html#eq:admm-problem">(6.41)</a> with rate <span class="math inline">\(O(1/k)\)</span>.</p>
+<p>Often times, the ADMM algorithm is applied when the updates of <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> in <a href="Structure.html#eq:admm-meta">(6.43)</a> are cheap or even better can be done in closed form.</p>
+<p>Let us apply the ADMM algorithm to solve the SDP. Consider the dual standard form SDP
+<span class="math display">\[\begin{equation}
+\begin{split}
+\min_{y,Z} &amp; \quad - b^\top y \\
+\mathrm{s.t.}&amp; \quad C - \sum_{i=1}^m y_i A_i = Z \succeq 0
+\end{split}.
+\end{equation}\]</span>
+Let <span class="math inline">\(c = \mathrm{svec}(C)\)</span>, <span class="math inline">\(z = \mathrm{svec}(Z)\)</span>, and
+<span class="math display">\[
+A^\top= \begin{bmatrix}
+\mathrm{svec}(A_1) &amp; \cdots &amp; \mathrm{svec}(A_m)
+\end{bmatrix},
+\]</span>
+the dual SDP above can be written as
+<span class="math display" id="eq:dual-sdp-svec">\[\begin{equation}
+\begin{split}
+\min_{y,z} &amp; \quad - b^\top y + \delta_{\mathbb{S}^{n}_{+}}(z)\\
+\mathrm{s.t.}&amp; \quad A^\top y + z = c
+\end{split},
+\tag{6.44}
+\end{equation}\]</span>
+where <span class="math inline">\(\delta_{\mathbb{S}^{n}_{+}}(\cdot)\)</span> is the indicator function of the PSD cone <span class="math inline">\(\mathbb{S}^{n}_{+}\)</span>. Problem <a href="Structure.html#eq:dual-sdp-svec">(6.44)</a> now matches the form of <a href="Structure.html#eq:admm-problem">(6.41)</a> and we can write its augmented Lagrangian as
+<span class="math display" id="eq:dual-sdp-augmented-Lagrangian">\[\begin{equation}
+\mathcal{L}(y,z,x) = - b^\top y + \delta_{\mathbb{S}^{n}_{+}} (z) + x^\top(A^\top y + z - c) + \frac{\rho}{2} \Vert A^\top y + z - c \Vert^2,
+\tag{6.45}
+\end{equation}\]</span>
+where <span class="math inline">\(x\)</span> is the dual variable.</p>
+<p>Now we apply the ADMM algorithm <a href="Structure.html#eq:admm-meta">(6.43)</a> to the augmented Lagrangian <a href="Structure.html#eq:dual-sdp-augmented-Lagrangian">(6.45)</a> and show that it leads to a very simple algorithm. In particular, at the <span class="math inline">\(k\)</span>-th iteration the ADMM algorithm performs the following three steps.</p>
+<ol style="list-style-type: decimal">
+<li><p>Update <span class="math inline">\(y\)</span> by solving
+<span class="math display" id="eq:admm-sdp-update-y">\[\begin{equation}
+y^{k+1} = \arg\min_{y} \mathcal{L}(y,z^k,x^k).
+\tag{6.46}
+\end{equation}\]</span>
+We expand the objective of <a href="Structure.html#eq:admm-sdp-update-y">(6.46)</a>
+<span class="math display">\[
+\mathcal{L}(y,z^k,x^k) = -b^\top y + \delta_{\mathbb{S}^{n}_{+}}(z^k) + (x^k)^\top(A^\top y + z^k - c) + \frac{\rho}{2} \Vert A^\top y + z^k - c \Vert^2
+\]</span>
+and observe that this is a convex quadratic function of <span class="math inline">\(y\)</span>. Since <span class="math inline">\(y\)</span> is unconstrained, we can solve the problem by setting the gradient of the objective with respect to <span class="math inline">\(y\)</span> as zero.
+<span class="math display">\[
+\nabla_y \mathcal{L}(y,z^k,x^k) = - b + A x^k + \rho A (A^\top y + z^k - c) = 0
+\]</span>
+The solution of this is
+<span class="math display" id="eq:admm-sdp-update-y-sol">\[\begin{equation}
+\boxed{
+y^{k+1} = (AA^\top)^{-1}\left( \frac{1}{\rho} b - A \left( \frac{1}{\rho} x^k + z^k - c\right)  \right)
+}.
+\tag{6.47}
+\end{equation}\]</span></p></li>
+<li><p>Update <span class="math inline">\(z\)</span> by solving
+<span class="math display" id="eq:admm-sdp-update-z">\[\begin{equation}
+z^{k+1} = \arg\min_{z} \mathcal{L}(y^{k+1},z,x^k).
+\tag{6.48}
+\end{equation}\]</span>
+We expand the objective of <a href="Structure.html#eq:admm-sdp-update-z">(6.48)</a> as
+<span class="math display">\[
+\mathcal{L}(y^{k+1}, z, x^k) = -b^\top y^{k+1} + \delta_{\mathbb{S}^{n}_{+}} (z) + (x^k)^\top(A^\top y^{k+1} + z - c) + \frac{\rho}{2} \Vert z + A^\top y^{k+1} - c \Vert^2,
+\]</span>
+and note that it is equivalent to the following objective, up to removal of terms irrelavant to <span class="math inline">\(z\)</span>:
+<span class="math display">\[
+\mathcal{L}&#39;(y^{k+1}, z, x^k) = \delta_{\mathbb{S}^{n}_{+}} (z) + \frac{\rho}{2} \left\Vert z - \left( c - \frac{1}{\rho} x^k - A^\top y^{k+1} \right) \right\Vert^2.
+\]</span>
+Finding the minimizer of <span class="math inline">\(\mathcal{L}&#39;\)</span> above boils down to finding <span class="math inline">\(z \in \mathbb{S}^{n}_{+}\)</span> such that it minimizes the distance (Frobenius norm) to the given matrix <span class="math inline">\(c - \frac{1}{\rho} x^k - A^\top y^{k+1}\)</span>. This is equivalent to the defition of a projection onto the PSD cone, which has solution
+<span class="math display" id="eq:admm-sdp-update-z-sol">\[\begin{equation}
+\boxed{
+z^{k+1} = \Pi_{\mathbb{S}^{n}_{+}} \left( c - \frac{1}{\rho}x^k - A^\top y^{k+1} \right)
+}.
+\tag{6.49}
+\end{equation}\]</span>
+Note that the projection of a symmetric matrix to the PSD cone can be done in closed-form. In particular, let <span class="math inline">\(M = V \Lambda V^\top\)</span> be the spectral decomposition of <span class="math inline">\(M \in \mathbb{S}^{n}\)</span> with
+<span class="math display">\[
+\Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_n)
+\]</span>
+a diagonal matrix with all the eigenvalues sorted as <span class="math inline">\(\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_n\)</span>. Let
+<span class="math display">\[
+\Lambda_+ = \mathrm{diag}(\max\{ \lambda_1,0 \}, \dots, \max\{ \lambda_n, 0 \}),
+\]</span>
+then the projection of <span class="math inline">\(M\)</span> onto the PSD cone is
+<span class="math display">\[
+\Pi_{M} = V \Lambda_+ V^\top.
+\]</span></p></li>
+<li><p>Update <span class="math inline">\(x\)</span> by
+<span class="math display" id="eq:admm-sdp-update-x-sol">\[\begin{equation}
+\boxed{
+x^{k+1} = x^k + \rho(A^\top y^{k+1} + z^{k+1} - c)
+}.
+\tag{6.50}
+\end{equation}\]</span></p></li>
+</ol>
+<p>In summary, the ADMM algorithm for solving a standard SDP performs <a href="Structure.html#eq:admm-sdp-update-y-sol">(6.47)</a>, <a href="Structure.html#eq:admm-sdp-update-z-sol">(6.49)</a>, and <a href="Structure.html#eq:admm-sdp-update-x-sol">(6.50)</a> at every iteration, with default initialization <span class="math inline">\(y^0=0,z^0=0,x^0 = 0\)</span>.</p>
+<p>The ADMM algorithm has the following pros and cons.</p>
+<p>Pros:</p>
+<ul>
+<li><p>The algorithm is very simple to implement. It fully leverages the sparsity in the matrix <span class="math inline">\(A\)</span>. Usually <span class="math inline">\(A\)</span> is very sparse and the Cholesky decomposition of <span class="math inline">\(AA^\top\)</span> can be solved very quickly. In addition, you only need to perform Cholesky decomposition once.</p></li>
+<li><p>ADMM can be warmstarted, i.e., if the initial point <span class="math inline">\(y^0,z^0,x^0\)</span> is close to the optimal solution, then ADMM converges very fast. This is very different from interior point method which is in general difficult to be warmstarted.</p></li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li><p>ADMM in general converges much slower than IPM, and therefore usually it only produces a medium to low accuracy solution.</p></li>
+<li><p>The penalty factor <span class="math inline">\(\rho\)</span> needs to be dynamically adjusted at every iteration to balance primal and dual residuals.</p></li>
+</ul>
+<p>Recently, there are faster versions of ADMM inspired by Nesterov’s accelerated gradient algorithm, see <span class="citation">(<a href="#ref-goldstein14sijis-fastadmm">Goldstein et al. 2014</a>)</span> and <span class="citation">(<a href="#ref-kim21mp-accelerated">Kim 2021</a>)</span>.</p>
+</div>
+<div id="stride" class="section level3 hasAnchor" number="6.3.3">
+<h3><span class="header-section-number">6.3.3</span> STRIDE<a href="Structure.html#stride" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="citation">(<a href="#ref-yang22mp-inexact">Yang et al. 2022</a>)</span>.</p>
 <!-- Suppose we employ a nonlinear programming algorithm, e.g., the interior-point algorithm for constrained optimization [@nocedal99book-numerical], to solve the QCQP \@ref(eq:B-M-factorization), how can we  -->
 
 </div>
@@ -1209,8 +1346,14 @@ Fukuda, Mituhiro, Masakazu Kojima, Kazuo Murota, and Kazuhide Nakata. 2001. <spa
 <div id="ref-gavril72sic-algorithms" class="csl-entry">
 Gavril, Fănică. 1972. <span>“Algorithms for Minimum Coloring, Maximum Clique, Minimum Covering by Cliques, and Maximum Independent Set of a Chordal Graph.”</span> <em>SIAM Journal on Computing</em> 1 (2): 180–87.
 </div>
+<div id="ref-goldstein14sijis-fastadmm" class="csl-entry">
+Goldstein, Tom, Brendan O’Donoghue, Simon Setzer, and Richard Baraniuk. 2014. <span>“Fast Alternating Direction Optimization Methods.”</span> <em>SIAM Journal on Imaging Sciences</em> 7 (3): 1588–1623.
+</div>
 <div id="ref-journee10siopt-low" class="csl-entry">
 Journée, Michel, Francis Bach, P-A Absil, and Rodolphe Sepulchre. 2010. <span>“Low-Rank Optimization on the Cone of Positive Semidefinite Matrices.”</span> <em>SIAM Journal on Optimization</em> 20 (5): 2327–51.
+</div>
+<div id="ref-kim21mp-accelerated" class="csl-entry">
+Kim, Donghwan. 2021. <span>“Accelerated Proximal Point Method for Maximally Monotone Operators.”</span> <em>Mathematical Programming</em> 190 (1): 57–87.
 </div>
 <div id="ref-magron23book-sparse" class="csl-entry">
 Magron, Victor, and Jie Wang. 2023. <em>Sparse Polynomial Optimization: Theory and Practice</em>. World Scientific.
@@ -1235,6 +1378,9 @@ Vandenberghe, Lieven, Martin S Andersen, et al. 2015. <span>“Chordal Graphs an
 </div>
 <div id="ref-yang22pami-certifiably" class="csl-entry">
 Yang, Heng, and Luca Carlone. 2022. <span>“Certifiably Optimal Outlier-Robust Geometric Perception: Semidefinite Relaxations and Scalable Global Optimization.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> 45 (3): 2816–34.
+</div>
+<div id="ref-yang22mp-inexact" class="csl-entry">
+Yang, Heng, Ling Liang, Luca Carlone, and Kim-Chuan Toh. 2022. <span>“An Inexact Projected Gradient Method with Rounding and Lifting by Nonlinear Programming for Solving Rank-One Semidefinite Relaxation of Polynomial Optimization.”</span> <em>Mathematical Programming</em>, 1–64.
 </div>
 <div id="ref-zhang2021sparse" class="csl-entry">
 Zhang, Richard Y, and Javad Lavaei. 2021. <span>“Sparse Semidefinite Programs with Guaranteed Near-Linear Time Complexity via Dualized Clique Tree Conversion.”</span> <em>Mathematical Programming</em> 188: 351–93.

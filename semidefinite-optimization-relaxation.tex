@@ -166,7 +166,7 @@ arc=4pt}
 
 \title{Semidefinite Optimization and Relaxation}
 \author{Heng Yang}
-\date{2024-04-10}
+\date{2024-04-15}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -200,6 +200,7 @@ arc=4pt}
 \newcommand{\calP}{\mathcal{P}}
 \newcommand{\calQ}{\mathcal{Q}}
 \newcommand{\calA}{\mathcal{A}}
+\newcommand{\calL}{\mathcal{L}}
 \newcommand{\calB}{\mathcal{B}}
 \newcommand{\calK}{\mathcal{K}}
 \newcommand{\calS}{\mathcal{S}}
@@ -7168,6 +7169,162 @@ With this we obtain the full algorithm for Burer-Monteiro factorization:
 Note that the algorithm terminates in the latest when \(r=n\). To see this, if \(R_\star\) is rank deficient at \(r=n\), then it is already global optimal. If \(R_\star\) is full rank, then by the first-order optimality condition \(Z(y_\star) R_\star = 0\) we conclude \(Z(y_\star)=0\) is also positive semidefinite.
 
 In \citep{boumal16nips-non}, the authors showed that for a class of SDPs whose QCQP formulations are defined on smooth manifolds, then as long as as \(r(r+1)/2 \geq m\), first order and second order necessary conditions for local optimality are also sufficient for global optimality.
+
+\subsection{Alternating Direction Method of Multipliers}\label{alternating-direction-method-of-multipliers}
+
+Consider the following convex optimization problem
+\begin{equation}
+\begin{split}
+\min_{u,v} & \quad f(u) + g(v) \\
+\mathrm{s.t.}& \quad Fu + Gv = e
+\end{split}
+\label{eq:admm-problem}
+\end{equation}
+where \(f\) is convex and smooth, \(g\) is convex, and \(F,G,e\) are matrices of appropriate sizes.
+
+The augmented Lagrangian of problem \eqref{eq:admm-problem} is
+\begin{equation}
+\mathcal{L}(u,v,\lambda) = f(u) + g(v) + \lambda^\top(Fu + Gv - e) + \frac{\rho}{2}\Vert Fu + Gv - e \Vert^2
+\label{eq:admm-augmented-Lagrangian}
+\end{equation}
+with \(\rho > 0\) a chosen penalty parameter.
+
+The alternating direction method of multipliers (ADMM) seeks to find a saddle point of the augmented Lagrangian, and it updates \(u\), \(v\), and \(\lambda\) separately at each iteration. In particular, at the \(k\)-th iteration, the ADMM algorithm performs
+\begin{equation}
+\begin{split}
+u^{k+1} & = \arg\min_{u} \mathcal{L}(u, v^{k}, \lambda^{k}) \\
+v^{k+1} & = \arg\min_{v} \mathcal{L}(u^{k+1},v, \lambda^{k}) \\
+\lambda^{k+1} &= \lambda^{k} + \rho (F u^{k+1} + G v^{k+1} - e)
+\end{split}
+\label{eq:admm-meta}
+\end{equation}
+where the last step can be seen as gradient ascent on the dual variable \(\lambda\). Under mild conditions, the ADMM algorithm converges to a solution of \eqref{eq:admm-problem} with rate \(O(1/k)\).
+
+Often times, the ADMM algorithm is applied when the updates of \(u\) and \(v\) in \eqref{eq:admm-meta} are cheap or even better can be done in closed form.
+
+Let us apply the ADMM algorithm to solve the SDP. Consider the dual standard form SDP
+\begin{equation}
+\begin{split}
+\min_{y,Z} & \quad - b^\top y \\
+\mathrm{s.t.}& \quad C - \sum_{i=1}^m y_i A_i = Z \succeq 0
+\end{split}.
+\end{equation}
+Let \(c = \mathrm{svec}(C)\), \(z = \mathrm{svec}(Z)\), and
+\[
+A^\top= \begin{bmatrix}
+\mathrm{svec}(A_1) & \cdots & \mathrm{svec}(A_m)
+\end{bmatrix},
+\]
+the dual SDP above can be written as
+\begin{equation}
+\begin{split}
+\min_{y,z} & \quad - b^\top y + \delta_{\mathbb{S}^{n}_{+}}(z)\\
+\mathrm{s.t.}& \quad A^\top y + z = c
+\end{split},
+\label{eq:dual-sdp-svec}
+\end{equation}
+where \(\delta_{\mathbb{S}^{n}_{+}}(\cdot)\) is the indicator function of the PSD cone \(\mathbb{S}^{n}_{+}\). Problem \eqref{eq:dual-sdp-svec} now matches the form of \eqref{eq:admm-problem} and we can write its augmented Lagrangian as
+\begin{equation}
+\mathcal{L}(y,z,x) = - b^\top y + \delta_{\mathbb{S}^{n}_{+}} (z) + x^\top(A^\top y + z - c) + \frac{\rho}{2} \Vert A^\top y + z - c \Vert^2,
+\label{eq:dual-sdp-augmented-Lagrangian}
+\end{equation}
+where \(x\) is the dual variable.
+
+Now we apply the ADMM algorithm \eqref{eq:admm-meta} to the augmented Lagrangian \eqref{eq:dual-sdp-augmented-Lagrangian} and show that it leads to a very simple algorithm. In particular, at the \(k\)-th iteration the ADMM algorithm performs the following three steps.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Update \(y\) by solving
+  \begin{equation}
+  y^{k+1} = \arg\min_{y} \mathcal{L}(y,z^k,x^k).
+  \label{eq:admm-sdp-update-y}
+  \end{equation}
+  We expand the objective of \eqref{eq:admm-sdp-update-y}
+  \[
+  \mathcal{L}(y,z^k,x^k) = -b^\top y + \delta_{\mathbb{S}^{n}_{+}}(z^k) + (x^k)^\top(A^\top y + z^k - c) + \frac{\rho}{2} \Vert A^\top y + z^k - c \Vert^2
+  \]
+  and observe that this is a convex quadratic function of \(y\). Since \(y\) is unconstrained, we can solve the problem by setting the gradient of the objective with respect to \(y\) as zero.
+  \[
+  \nabla_y \mathcal{L}(y,z^k,x^k) = - b + A x^k + \rho A (A^\top y + z^k - c) = 0
+  \]
+  The solution of this is
+  \begin{equation}
+  \boxed{
+   y^{k+1} = (AA^\top)^{-1}\left( \frac{1}{\rho} b - A \left( \frac{1}{\rho} x^k + z^k - c\right)  \right)
+  }.
+  \label{eq:admm-sdp-update-y-sol}
+  \end{equation}
+\item
+  Update \(z\) by solving
+  \begin{equation}
+  z^{k+1} = \arg\min_{z} \mathcal{L}(y^{k+1},z,x^k).
+  \label{eq:admm-sdp-update-z}
+  \end{equation}
+  We expand the objective of \eqref{eq:admm-sdp-update-z} as
+  \[
+  \mathcal{L}(y^{k+1}, z, x^k) = -b^\top y^{k+1} + \delta_{\mathbb{S}^{n}_{+}} (z) + (x^k)^\top(A^\top y^{k+1} + z - c) + \frac{\rho}{2} \Vert z + A^\top y^{k+1} - c \Vert^2,
+  \]
+  and note that it is equivalent to the following objective, up to removal of terms irrelavant to \(z\):
+  \[
+  \mathcal{L}'(y^{k+1}, z, x^k) = \delta_{\mathbb{S}^{n}_{+}} (z) + \frac{\rho}{2} \left\Vert z - \left( c - \frac{1}{\rho} x^k - A^\top y^{k+1} \right) \right\Vert^2.
+  \]
+  Finding the minimizer of \(\mathcal{L}'\) above boils down to finding \(z \in \mathbb{S}^{n}_{+}\) such that it minimizes the distance (Frobenius norm) to the given matrix \(c - \frac{1}{\rho} x^k - A^\top y^{k+1}\). This is equivalent to the defition of a projection onto the PSD cone, which has solution
+  \begin{equation}
+  \boxed{
+   z^{k+1} = \Pi_{\mathbb{S}^{n}_{+}} \left( c - \frac{1}{\rho}x^k - A^\top y^{k+1} \right)
+  }.
+  \label{eq:admm-sdp-update-z-sol}
+  \end{equation}
+  Note that the projection of a symmetric matrix to the PSD cone can be done in closed-form. In particular, let \(M = V \Lambda V^\top\) be the spectral decomposition of \(M \in \mathbb{S}^{n}\) with
+  \[
+  \Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_n)
+  \]
+  a diagonal matrix with all the eigenvalues sorted as \(\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_n\). Let
+  \[
+  \Lambda_+ = \mathrm{diag}(\max\{ \lambda_1,0 \}, \dots, \max\{ \lambda_n, 0 \}),
+  \]
+  then the projection of \(M\) onto the PSD cone is
+  \[
+  \Pi_{M} = V \Lambda_+ V^\top.
+  \]
+\item
+  Update \(x\) by
+  \begin{equation}
+  \boxed{
+  x^{k+1} = x^k + \rho(A^\top y^{k+1} + z^{k+1} - c)
+  }.
+  \label{eq:admm-sdp-update-x-sol}
+  \end{equation}
+\end{enumerate}
+
+In summary, the ADMM algorithm for solving a standard SDP performs \eqref{eq:admm-sdp-update-y-sol}, \eqref{eq:admm-sdp-update-z-sol}, and \eqref{eq:admm-sdp-update-x-sol} at every iteration, with default initialization \(y^0=0,z^0=0,x^0 = 0\).
+
+The ADMM algorithm has the following pros and cons.
+
+Pros:
+
+\begin{itemize}
+\item
+  The algorithm is very simple to implement. It fully leverages the sparsity in the matrix \(A\). Usually \(A\) is very sparse and the Cholesky decomposition of \(AA^\top\) can be solved very quickly. In addition, you only need to perform Cholesky decomposition once.
+\item
+  ADMM can be warmstarted, i.e., if the initial point \(y^0,z^0,x^0\) is close to the optimal solution, then ADMM converges very fast. This is very different from interior point method which is in general difficult to be warmstarted.
+\end{itemize}
+
+Cons:
+
+\begin{itemize}
+\item
+  ADMM in general converges much slower than IPM, and therefore usually it only produces a medium to low accuracy solution.
+\item
+  The penalty factor \(\rho\) needs to be dynamically adjusted at every iteration to balance primal and dual residuals.
+\end{itemize}
+
+Recently, there are faster versions of ADMM inspired by Nesterov's accelerated gradient algorithm, see \citep{goldstein14sijis-fastadmm} and \citep{kim21mp-accelerated}.
+
+\subsection{STRIDE}\label{stride}
+
+\citep{yang22mp-inexact}.
 
   \bibliography{book.bib}
 
