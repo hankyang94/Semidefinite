@@ -42,7 +42,7 @@ $$
 
 A distinguished class of linear functionals are the point evaluations (our first example above): given any point $v \in \Real{n}$, we can generate a linear functional 
 $$
-\ell_v \in \poly{x}^*_{2d}: \ell_v(p) = p(x), \forall p \in \poly{x}_{2d}.
+\ell_v \in \poly{x}^*_{2d}: \ell_v(p) = p(v), \forall p \in \poly{x}_{2d}.
 $$
 Then, we can generate additional linear functionals by taking linear combinations of point evaluations, i.e., maps of the form
 $$
@@ -689,7 +689,7 @@ p(x) \geq p^\star, \forall x \in S.
 $$
 Therefore,
 $$
-\int_S p(x) d\mu(x) \geq \int_S p^\star d \mu(x) \geq p^\star, \quad \forall \mu \in \calP(S), \int_S 1 d\mu(x) = 1.
+\int_S p(x) d\mu(x) \geq \int_S p^\star d \mu(x) = p^\star, \quad \forall \mu \in \calP(S), \int_S 1 d\mu(x) = 1.
 $$
 This shows that 
 $$
